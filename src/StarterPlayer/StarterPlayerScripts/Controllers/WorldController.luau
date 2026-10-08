@@ -27,6 +27,7 @@ local AudioController = require(script.Parent.AudioController)
 local DataController = require(script.Parent.DataController)
 local FxController = require(script.Parent.FxController)
 local HamsterAnimator = require(script.Parent.HamsterAnimator)
+local Icons = require(script.Parent.Parent:WaitForChild("UI"):WaitForChild("Icons"))
 
 local WorldController = {}
 
@@ -54,6 +55,8 @@ export type Ball = {
 	RarityLabel: TextLabel,
 	NameLabel: TextLabel,
 	InfoLabel: TextLabel,
+	CoinIcon: GuiObject,
+	Anchor: BasePart,
 	Pos: Vector3,
 	PrevPos: Vector3,
 	Target: Vector3,
@@ -146,32 +149,84 @@ local function makeShell(radius: number, color: Color3, rank: number): Model
 	return model
 end
 
-local function createTag(species: any, ball: Model, id: string, radius: number): (BillboardGui, Frame, UIStroke, TextLabel, TextLabel, TextLabel)
+-- Floating label above a ball: RARITY / Name / price. It hangs on its own anchor part that only
+-- follows the ball's position: a BillboardGui's StudsOffsetWorldSpace is applied in the adornee's
+-- rotated frame, so adorning the rolling glass made the label orbit, flip and sink into the road.
+local function createTag(species: any, anchor: BasePart, id: string, radius: number): (BillboardGui, Frame, UIStroke, TextLabel, TextLabel, TextLabel, GuiObject)
 	local color = rarityColor(species)
 	local definition = RarityConfig.ById[species.Rarity]
+	local rank = definition.Rank
 
 	local gui = Instance.new("BillboardGui")
 	gui.Name = "BallTag_" .. id
-	gui.Adornee = ball.PrimaryPart
-	gui.Size = UDim2.fromOffset(190, 78)
-	gui.StudsOffsetWorldSpace = Vector3.new(0, radius + 1.8, 0)
+	gui.Adornee = anchor
+	gui.Size = UDim2.fromOffset(170, 74)
+	gui.StudsOffsetWorldSpace = Vector3.new(0, radius + 2.2, 0)
 	gui.MaxDistance = 170
 	gui.LightInfluence = 0
 	gui.Active = true
 	gui.ResetOnSpawn = false
 
+	-- soft halo for the rarer tiers
+	if rank >= 7 then
+		local halo = Instance.new("Frame")
+		halo.Size = UDim2.new(1, 10, 1, 10)
+		halo.Position = UDim2.fromScale(0.5, 0.5)
+		halo.AnchorPoint = Vector2.new(0.5, 0.5)
+		halo.BackgroundColor3 = color
+		halo.BackgroundTransparency = 0.72
+		halo.Parent = gui
+		local haloCorner = Instance.new("UICorner")
+		haloCorner.CornerRadius = UDim.new(0, 20)
+		haloCorner.Parent = halo
+	end
+
 	local frame = Instance.new("Frame")
-	frame.Size = UDim2.fromScale(1, 1)
-	frame.BackgroundColor3 = Color3.fromRGB(38, 28, 40)
-	frame.BackgroundTransparency = 0.2
+	frame.Size = UDim2.new(1, 0, 1, 0)
+	frame.Position = UDim2.fromScale(0.5, 0.5)
+	frame.AnchorPoint = Vector2.new(0.5, 0.5)
+	frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	frame.BackgroundTransparency = 0.12
 	frame.Parent = gui
+	local background = Instance.new("UIGradient")
+	background.Color = ColorSequence.new(Color3.fromRGB(58, 42, 60), Color3.fromRGB(32, 22, 36))
+	background.Rotation = 90
+	background.Parent = frame
 	local corner = Instance.new("UICorner")
-	corner.CornerRadius = UDim.new(0, 14)
+	corner.CornerRadius = UDim.new(0, 16)
 	corner.Parent = frame
 	local stroke = Instance.new("UIStroke")
 	stroke.Color = color
-	stroke.Thickness = 2
+	stroke.Thickness = if rank >= 7 then 3 else 2
 	stroke.Parent = frame
+	if rank >= 10 then
+		local shimmer = Instance.new("UIGradient")
+		shimmer.Color = ColorSequence.new({
+			ColorSequenceKeypoint.new(0, color),
+			ColorSequenceKeypoint.new(0.5, Color3.new(1, 1, 1)),
+			ColorSequenceKeypoint.new(1, color),
+		})
+		shimmer.Parent = stroke
+		shimmer:SetAttribute("Spin", true)
+	end
+
+	-- rarity chip
+	local chip = Instance.new("TextLabel")
+	chip.AnchorPoint = Vector2.new(0.5, 0)
+	chip.Position = UDim2.new(0.5, 0, 0, 6)
+	chip.Size = UDim2.fromOffset(96, 18)
+	chip.BackgroundColor3 = color
+	chip.Font = Enum.Font.GothamBlack
+	chip.TextSize = 11
+	chip.TextColor3 = if (color.R + color.G + color.B) / 3 > 0.72 then Color3.fromRGB(60, 40, 44) else Color3.new(1, 1, 1)
+	chip.Text = string.upper(definition.Name)
+	chip.Parent = frame
+	local chipCorner = Instance.new("UICorner")
+	chipCorner.CornerRadius = UDim.new(1, 0)
+	chipCorner.Parent = chip
+	if rank >= 7 then
+		Icons.create("Sparkle", 22, frame, { Position = UDim2.new(1, -6, 0, -6), AnchorPoint = Vector2.new(0.5, 0.5) })
+	end
 
 	local function label(y: number, height: number, font: Enum.Font, size: number, textColor: Color3, text: string): TextLabel
 		local textLabel = Instance.new("TextLabel")
@@ -186,9 +241,9 @@ local function createTag(species: any, ball: Model, id: string, radius: number):
 		textLabel.Parent = frame
 		return textLabel
 	end
-	local rarityLabel = label(5, 16, Enum.Font.GothamBold, 13, color, string.upper(definition.Name))
-	local nameLabel = label(21, 24, Enum.Font.FredokaOne, 20, Color3.new(1, 1, 1), displayName(species))
-	local infoLabel = label(47, 22, Enum.Font.GothamBold, 15, Color3.fromRGB(255, 220, 110), "")
+	local nameLabel = label(25, 24, Enum.Font.FredokaOne, 20, Color3.new(1, 1, 1), displayName(species))
+	local infoLabel = label(49, 20, Enum.Font.FredokaOne, 16, Color3.fromRGB(255, 220, 110), "")
+	local coinIcon = Icons.create("Coin", 17, frame, { Position = UDim2.new(0.5, -34, 0, 50), AnchorPoint = Vector2.new(1, 0) })
 
 	local button = Instance.new("TextButton")
 	button.BackgroundTransparency = 1
@@ -200,7 +255,7 @@ local function createTag(species: any, ball: Model, id: string, radius: number):
 	end)
 
 	gui.Parent = player:WaitForChild("PlayerGui")
-	return gui, frame, stroke, rarityLabel, nameLabel, infoLabel
+	return gui, frame, stroke, chip, nameLabel, infoLabel, coinIcon
 end
 
 local function destroyBall(id: string)
@@ -210,6 +265,7 @@ local function destroyBall(id: string)
 	end
 	balls[id] = nil
 	ball.Gui:Destroy()
+	ball.Anchor:Destroy()
 	ball.Shell:Destroy()
 	ball.Hamster:Destroy()
 	if currentTarget == id then
@@ -246,7 +302,18 @@ local function addBall(data: { [string]: any })
 	hamster.Parent = container
 	FxController.attach(hamster, species.Rarity)
 
-	local gui, frame, stroke, rarityLabel, nameLabel, infoLabel = createTag(species, shell, id, radius)
+	local anchor = Instance.new("Part")
+	anchor.Name = "TagAnchor_" .. id
+	anchor.Size = Vector3.one * 0.2
+	anchor.Transparency = 1
+	anchor.Anchored = true
+	anchor.CanCollide = false
+	anchor.CanQuery = false
+	anchor.CanTouch = false
+	anchor.CastShadow = false
+	anchor.CFrame = CFrame.new(data.X, data.Y + radius, data.Z)
+	anchor.Parent = container
+	local gui, frame, stroke, rarityLabel, nameLabel, infoLabel, coinIcon = createTag(species, anchor, id, radius)
 	local animator = HamsterAnimator.new(hamster)
 	animator.OnStep = function()
 		local now = os.clock()
@@ -281,6 +348,8 @@ local function addBall(data: { [string]: any })
 		RarityLabel = rarityLabel,
 		NameLabel = nameLabel,
 		InfoLabel = infoLabel,
+		CoinIcon = coinIcon,
+		Anchor = anchor,
 		Pos = position,
 		PrevPos = position,
 		Target = position,
@@ -437,25 +506,26 @@ local function actionFor(ball: Ball): string?
 	return nil
 end
 
-local function infoText(ball: Ball, coins: number): string
+-- Third line of the label. Returns the text and whether it is a price (shown with a coin icon).
+local function infoText(ball: Ball, coins: number): (string, boolean)
 	local me = player.UserId
 	if ball.State == S.Travelling or ball.State == S.Spawning then
 		local color = if coins >= ball.Price then "#FFDC6E" else "#FF7878"
-		return string.format('<font color="%s">🪙 %s</font>', color, Format.short(ball.Price))
+		return string.format('<font color="%s">%s</font>', color, Format.coins(ball.Price)), true
 	elseif ball.State == S.InTransit then
 		if ball.PayerUserId == me then
-			return '<font color="#8CFFAA">Yours - rolling home</font>'
+			return '<font color="#8CFFAA">Yours - rolling home</font>', false
 		end
-		return string.format('<font color="#FF8C8C">%s\'s - STEAL IT!</font>', ball.PayerName)
+		return string.format('<font color="#FF8C8C">%s\'s - STEAL IT!</font>', ball.PayerName), false
 	elseif ball.State == S.Carried then
 		if ball.PayerUserId == me and ball.HolderUserId ~= me then
-			return string.format('<font color="#FF6060">🚨 STOLEN by %s!</font>', ball.HolderName)
+			return string.format('<font color="#FF6060">STOLEN by %s!</font>', ball.HolderName), false
 		end
-		return string.format('<font color="#FFDC6E">🏃 %s</font>', ball.HolderName)
+		return string.format('<font color="#FFDC6E">Carried by %s</font>', ball.HolderName), false
 	elseif ball.State == S.Dropped or ball.State == S.Recoverable then
-		return '<font color="#FFA860">💥 DROPPED!</font>'
+		return '<font color="#FFA860">DROPPED!</font>', false
 	end
-	return ""
+	return "", false
 end
 
 ---------------------------------------------------------------------------
@@ -524,6 +594,7 @@ local function step(dt: number)
 		local radius = ball.Radius * ball.Scale
 		local center = Vector3.new(ball.Pos.X, ball.Pos.Y + radius, ball.Pos.Z)
 		ball.Shell:PivotTo(CFrame.new(center + Vector3.new(0, if ball.Hop > 0 and ball.Speed > 1 then math.abs(math.sin(clock * 5 + ball.Id:len())) * ball.Hop * ball.Scale else 0, 0)) * ball.Roll)
+		ball.Anchor.CFrame = CFrame.new(center) -- position only: the label never rolls with the ball
 
 		-- Divine and above bounce along (visual only: the server position is untouched)
 		local hop = 0
@@ -567,9 +638,16 @@ local function step(dt: number)
 				ball.Stroke.Thickness = if isTarget then 4 else 2
 				ball.Stroke.Color = if isTarget then Color3.new(1, 1, 1) else stroke
 				ball.NameLabel.Text = displayName(ball.Species)
-				ball.InfoLabel.Text = infoText(ball, coins)
+				local text, isPrice = infoText(ball, coins)
+				ball.InfoLabel.Text = text
 				ball.InfoLabel.Visible = ball.State ~= S.Travelling or DataController.setting("ShowValues") == true
-				ball.Frame.BackgroundTransparency = if isTarget then 0.05 else 0.25
+				ball.CoinIcon.Visible = isPrice and ball.InfoLabel.Visible
+				ball.InfoLabel.Position = UDim2.fromOffset(if isPrice then 9 else 0, 49)
+				ball.Frame.BackgroundTransparency = if isTarget then 0 else 0.12
+				local shimmer = ball.Stroke:FindFirstChildOfClass("UIGradient")
+				if shimmer then
+					shimmer.Rotation = (clock * 120) % 360
+				end
 				-- my own stolen / dropped hamsters stay visible from far away
 				ball.Gui.AlwaysOnTop = ball.PayerUserId == player.UserId and (ball.State == S.Carried or ball.State == S.Dropped or ball.State == S.Recoverable) and ball.HolderUserId ~= player.UserId
 			end

@@ -1,5 +1,5 @@
 --[[
-	SecurityController: the countdown above every gate ("🛡️ 00:47" while the gate is on, "🔴 OPEN" when it is off),
+	SecurityController: the countdown above every gate ("SECURE 00:47" while the gate is on, "GATE OPEN" when it is off),
 	so thieves can watch the timers and owners know when they are exposed.
 	The server only publishes SecUntil / SecReady (server clock) and the owner on each house model;
 	everything shown here is computed from those, so the numbers stay exact without any network traffic.
@@ -8,6 +8,8 @@
 local Workspace = game:GetService("Workspace")
 
 local Format = require(game:GetService("ReplicatedStorage"):WaitForChild("Modules"):WaitForChild("Format"))
+
+local Icons = require(script.Parent.Parent:WaitForChild("UI"):WaitForChild("Icons"))
 
 local SecurityController = {}
 
@@ -55,19 +57,29 @@ local function attach(house: Model)
 	end
 	local gui = Instance.new("BillboardGui")
 	gui.Name = "SecurityTimer"
-	gui.Size = UDim2.fromOffset(150, 34)
+	gui.Size = UDim2.fromOffset(180, 38)
 	gui.MaxDistance = 130
 	gui.LightInfluence = 0
 	gui.Adornee = anchor
 	gui.Parent = anchor
+	local back = Instance.new("Frame")
+	back.Size = UDim2.fromScale(1, 1)
+	back.BackgroundColor3 = Color3.fromRGB(34, 24, 32)
+	back.BackgroundTransparency = 0.25
+	back.Parent = gui
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(1, 0)
+	corner.Parent = back
+	Icons.create("Shield", 30, back, { Position = UDim2.new(0, 4, 0.5, 0), AnchorPoint = Vector2.new(0, 0.5) })
 	local label = Instance.new("TextLabel")
-	label.Size = UDim2.fromScale(1, 1)
+	label.Size = UDim2.new(1, -44, 1, -6)
+	label.Position = UDim2.fromOffset(38, 3)
 	label.BackgroundTransparency = 1
 	label.Font = Enum.Font.FredokaOne
 	label.TextScaled = true
 	label.TextStrokeTransparency = 0.35
 	label.Text = ""
-	label.Parent = gui
+	label.Parent = back
 	labels[house] = label
 end
 
@@ -78,12 +90,12 @@ local function refresh()
 			continue
 		end
 		local status = SecurityController.status(house)
-		local gui = label.Parent :: BillboardGui
+		local gui = (label.Parent :: Frame).Parent :: BillboardGui
 		gui.Enabled = status.Owned
 		if status.State == "Active" then
-			label.Text = "🛡️ " .. Format.clock(math.ceil(status.Seconds))
+			label.Text = "SECURE  " .. Format.clock(math.ceil(status.Seconds))
 		elseif status.Owned then
-			label.Text = "🔴 OPEN"
+			label.Text = "GATE OPEN"
 		end
 		label.TextColor3 = SecurityController.color(status)
 	end

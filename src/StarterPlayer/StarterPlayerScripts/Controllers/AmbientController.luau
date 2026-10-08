@@ -135,20 +135,6 @@ local function cull()
 			decor.Active = (decor.Position - cameraPosition).Magnitude < DECOR_DISTANCE
 		end
 	end
-	for model, info in drifts do
-		local offset = ((time * info.Speed + DRIFT_RANGE) % (DRIFT_RANGE * 2)) - DRIFT_RANGE
-		model:PivotTo(info.Home + Vector3.new(offset, 0, 0))
-	end
-	for model in birds do
-		local radius = model:GetAttribute("Radius") or 30
-		local speed = model:GetAttribute("Speed") or 0.15
-		local phase = (model:GetAttribute("Phase") or 0) + time * speed
-		local center = Vector3.new(model:GetAttribute("CenterX") or 0, model:GetAttribute("CenterY") or 80, model:GetAttribute("CenterZ") or 0)
-		local position = center + Vector3.new(math.cos(phase) * radius, math.sin(time * 1.3 + radius) * 2, math.sin(phase) * radius)
-		local heading = Vector3.new(-math.sin(phase), 0, math.cos(phase))
-		local flap = math.sin(time * 9 + radius) * 0.35
-		model:PivotTo(CFrame.lookAt(position, position + heading) * CFrame.Angles(0, 0, flap * 0.3))
-	end
 	for part, info in ripples do
 		info.Active = (part.Position - cameraPosition).Magnitude < DECOR_DISTANCE
 	end
@@ -267,6 +253,20 @@ local function step(dt: number)
 			local rotation = if axis == "X" then CFrame.Angles(angle, 0, 0) elseif axis == "Y" then CFrame.Angles(0, angle, 0) else CFrame.Angles(0, 0, angle)
 			instance:PivotTo(decor.Home * rotation)
 		end
+	end
+	for model, info in drifts do
+		local offset = ((time * info.Speed + DRIFT_RANGE) % (DRIFT_RANGE * 2)) - DRIFT_RANGE
+		model:PivotTo(info.Home + Vector3.new(offset, 0, 0))
+	end
+	for model in birds do
+		local radius = model:GetAttribute("Radius") or 30
+		local speed = model:GetAttribute("Speed") or 0.15
+		local phase = (model:GetAttribute("Phase") or 0) + time * speed
+		local center = Vector3.new(model:GetAttribute("CenterX") or 0, model:GetAttribute("CenterY") or 80, model:GetAttribute("CenterZ") or 0)
+		local position = center + Vector3.new(math.cos(phase) * radius, math.sin(time * 1.3 + radius) * 2, math.sin(phase) * radius)
+		local heading = Vector3.new(-math.sin(phase), 0, math.cos(phase))
+		local flap = math.sin(time * 9 + radius) * 0.35
+		model:PivotTo(CFrame.lookAt(position, position + heading) * CFrame.Angles(0, 0, flap * 0.3))
 	end
 	for part, info in ripples do
 		if info.Active then

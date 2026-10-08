@@ -1,9 +1,9 @@
 --[[
 	HamsterHUD: everything about hamsters that are on their way home.
-	  - transport tracker (left): every ball you paid for or carry, with its status
-	      "🐹 LEGENDARY HAMSTER  Transporting to: Kobe" / "STOLEN by Alex!" / "Dropped - grab it!"
+	  - transport tracker (right): every ball you paid for or carry, with its status
+	      "LEGENDARY  Golden King - Transporting to: Kobe" / "STOLEN by Alex!" / "Dropped - grab it!"
 	  - progress bar while you steal / pick up
-	  - security pill (top right): your gate timer "🛡️ SECURITY 00:47", then "🔴 SECURITY OFF" + what to do
+	  - security pill (top right): your gate timer "SECURITY 00:47", then "SECURITY OFF" + what to do
 	Clear but small: nothing here is shown when it does not apply.
 ]]
 
@@ -38,7 +38,7 @@ local function ballStatus(ball: WorldController.Ball): (string, Color3)
 	elseif ball.State == S.InTransit then
 		return "Transporting to: " .. player.DisplayName, C.Mint
 	elseif ball.State == S.Carried then
-		return string.format("🚨 STOLEN by %s!", ball.HolderName), C.Red
+		return string.format("STOLEN by %s!", ball.HolderName), C.Red
 	elseif ball.State == S.Dropped or ball.State == S.Recoverable then
 		return "Dropped - grab it!", Color3.fromRGB(255, 168, 96)
 	end
@@ -74,37 +74,40 @@ function HamsterHUD.start()
 	local tracker = UIKit.frame(gui, {
 		Name = "Tracker",
 		Size = UDim2.fromOffset(300, 200),
-		Position = UDim2.fromOffset(14, 156),
+		Position = UDim2.new(1, -16, 0, 116),
+		AnchorPoint = Vector2.new(1, 0),
 		BackgroundTransparency = 1,
 	})
 	addScale(tracker)
-	UIKit.list(tracker, Enum.FillDirection.Vertical, 6)
+	UIKit.list(tracker, Enum.FillDirection.Vertical, 6, Enum.HorizontalAlignment.Right)
 
 	local rows: { { Frame: Frame, Rarity: TextLabel, Status: TextLabel, Stroke: UIStroke } } = {}
 	for index = 1, MAX_ROWS do
 		local row = UIKit.frame(tracker, {
-			Size = UDim2.fromOffset(300, 52),
-			BackgroundColor3 = C.Dim,
-			BackgroundTransparency = 0.18,
+			Size = UDim2.fromOffset(300, 54),
+			BackgroundColor3 = C.White,
 			LayoutOrder = index,
 			Visible = false,
 		})
-		UIKit.corner(row, 14)
+		UIKit.corner(row, 18)
+		UIKit.shadow(row, 18, 3)
 		local stroke = UIKit.stroke(row, C.Gold, 2.5)
+		UIKit.icon(row, "Hamster", 38, { Position = UDim2.new(0, 8, 0.5, 0), AnchorPoint = Vector2.new(0, 0.5) })
 		local rarity = UIKit.label(row, {
-			Position = UDim2.fromOffset(12, 5),
-			Size = UDim2.new(1, -20, 0, 22),
-			TextSize = 16,
+			Position = UDim2.fromOffset(54, 6),
+			Size = UDim2.new(1, -62, 0, 22),
+			TextSize = 15,
 			Font = UIKit.Fonts.Title,
-			TextColor3 = C.White,
+			TextColor3 = C.Ink,
 			Text = "",
+			TextTruncate = Enum.TextTruncate.AtEnd,
 		})
 		local status = UIKit.label(row, {
-			Position = UDim2.fromOffset(12, 27),
-			Size = UDim2.new(1, -20, 0, 20),
-			TextSize = 14,
+			Position = UDim2.fromOffset(54, 28),
+			Size = UDim2.new(1, -62, 0, 20),
+			TextSize = 13,
 			Font = UIKit.Fonts.Body,
-			TextColor3 = C.White,
+			TextColor3 = C.Ink,
 			Text = "",
 		})
 		table.insert(rows, { Frame = row, Rarity = rarity, Status = status, Stroke = stroke })
@@ -121,7 +124,7 @@ function HamsterHUD.start()
 				local definition = RarityConfig.ById[ball.Species.Rarity]
 				local color = UIKit.rarityColor(definition)
 				local text, statusColor = ballStatus(ball)
-				row.Rarity.Text = string.format('🐹 <font color="#%s">%s HAMSTER</font>  %s', color:ToHex(), string.upper(definition.Name), ball.Species.Name)
+				row.Rarity.Text = string.format('<font color="#%s">%s</font>  %s', color:ToHex(), string.upper(definition.Name), ball.Species.Name)
 				row.Status.Text = text
 				row.Status.TextColor3 = statusColor
 				row.Stroke.Color = statusColor
@@ -144,12 +147,12 @@ function HamsterHUD.start()
 		Size = UDim2.fromOffset(320, 46),
 		Position = UDim2.new(0.5, 0, 1, -250),
 		AnchorPoint = Vector2.new(0.5, 1),
-		BackgroundColor3 = C.Dim,
-		BackgroundTransparency = 0.12,
+		BackgroundColor3 = C.White,
 		Visible = false,
 	})
 	addScale(barFrame)
 	UIKit.corner(barFrame, 23)
+	UIKit.shadow(barFrame, 23, 3)
 	UIKit.stroke(barFrame, C.Red, 3)
 	local barText = UIKit.label(barFrame, {
 		Size = UDim2.new(1, 0, 0, 22),
@@ -157,13 +160,13 @@ function HamsterHUD.start()
 		TextXAlignment = Enum.TextXAlignment.Center,
 		TextSize = 16,
 		Font = UIKit.Fonts.Title,
-		TextColor3 = C.White,
+		TextColor3 = C.Ink,
 		Text = "Stealing...",
 	})
 	local barBack = UIKit.frame(barFrame, {
 		Size = UDim2.new(1, -28, 0, 10),
 		Position = UDim2.fromOffset(14, 28),
-		BackgroundColor3 = Color3.fromRGB(70, 56, 66),
+		BackgroundColor3 = C.CreamDark,
 	})
 	UIKit.corner(barBack, 5)
 	local barFill = UIKit.frame(barBack, { Size = UDim2.fromScale(0, 1), BackgroundColor3 = C.Gold })
@@ -185,22 +188,23 @@ function HamsterHUD.start()
 	local pill = UIKit.frame(gui, {
 		Name = "Security",
 		Size = UDim2.fromOffset(268, 42),
-		Position = UDim2.new(1, -14, 0, 84),
+		Position = UDim2.new(1, -16, 0, 64),
 		AnchorPoint = Vector2.new(1, 0),
-		BackgroundColor3 = C.Dim,
-		BackgroundTransparency = 0.15,
+		BackgroundColor3 = C.White,
 		Visible = false,
 	})
 	addScale(pill)
 	UIKit.corner(pill, 21)
+	UIKit.shadow(pill, 21, 3)
 	local pillStroke = UIKit.stroke(pill, C.Green, 3)
+	UIKit.icon(pill, "Shield", 34, { Position = UDim2.new(0, 4, 0.5, 0), AnchorPoint = Vector2.new(0, 0.5) })
 	local pillText = UIKit.label(pill, {
-		Size = UDim2.new(1, -20, 1, 0),
-		Position = UDim2.fromOffset(10, 0),
-		TextXAlignment = Enum.TextXAlignment.Center,
-		TextSize = 17,
+		Size = UDim2.new(1, -50, 1, 0),
+		Position = UDim2.fromOffset(42, 0),
+		TextXAlignment = Enum.TextXAlignment.Left,
+		TextSize = 16,
 		Font = UIKit.Fonts.Title,
-		TextColor3 = C.White,
+		TextColor3 = C.Ink,
 		Text = "",
 	})
 
@@ -217,19 +221,19 @@ function HamsterHUD.start()
 		pill.Visible = status.Owned
 		local color = SecurityController.color(status)
 		pillStroke.Color = color
-		pillText.TextColor3 = color
+		pillText.TextColor3 = UIKit.darker(color, 0.7)
 		if status.State == "Active" then
-			pillText.Text = "🛡️ SECURITY  " .. Format.clock(math.ceil(status.Seconds))
+			pillText.Text = "SECURITY  " .. Format.clock(math.ceil(status.Seconds))
 			local whole = math.ceil(status.Seconds)
 			if whole <= 5 and whole ~= lastBeep then
 				lastBeep = whole
 				AudioController.play("Alarm", { Pitch = 1 + (5 - whole) * 0.12 })
 			end
 		elseif status.State == "Recharging" then
-			pillText.Text = string.format("🔴 SECURITY OFF  (%ds)", math.ceil(status.Seconds))
+			pillText.Text = string.format("SECURITY OFF  (%ds)", math.ceil(status.Seconds))
 			lastBeep = -1
 		else
-			pillText.Text = "🔴 OFF - press E at the gate panel"
+			pillText.Text = "OFF - press E at the gate panel"
 			lastBeep = -1
 		end
 	end
@@ -256,10 +260,10 @@ function HamsterHUD.start()
 			return
 		end
 		local hints = {
-			"🐹 Hamster balls roll down the road in the middle. Walk close and press [E] to CLAIM one.",
-			"🏠 It rolls to YOUR house and lands on the glowing pad. Only then is it really yours!",
-			"🥷 Other players can steal it on the way - and you can steal theirs. Slap thieves with [Q].",
-			"🛡️ Your gate protects the house for a while. Press [E] at the gate panel when it switches off.",
+			"Hamster balls roll down the road in the middle. Walk close and press [E] to CLAIM one.",
+			"It rolls to YOUR apartment and lands on the glowing pad. Only then is it really yours!",
+			"Other players can steal it on the way - and you can steal theirs. Slap thieves with [Q].",
+			"Your gate protects the apartment for a while. Press [E] at the gate panel when it switches off.",
 		}
 		task.spawn(function()
 			task.wait(4)

@@ -52,12 +52,7 @@ local function showBanner(text: string, rarityId: string, subtitle: string?)
 	UIKit.corner(banner, 22)
 	UIKit.stroke(banner, color, 4)
 	UIKit.gradient(banner, Color3.fromRGB(70, 48, 66), C.Dim, 90)
-	UIKit.label(banner, {
-		Size = UDim2.fromOffset(70, 74),
-		Text = "🚨",
-		TextSize = 40,
-		TextXAlignment = Enum.TextXAlignment.Center,
-	})
+	UIKit.icon(banner, if rank >= 7 then "Sparkle" else "Star", 48, { Position = UDim2.fromOffset(14, 13) })
 	UIKit.label(banner, {
 		Size = UDim2.new(1, -90, 0, if subtitle then 42 else 74),
 		Position = UDim2.fromOffset(78, if subtitle then 6 else 0),
@@ -119,7 +114,7 @@ function AnnouncementUI.reveal(speciesId: string, isNew: boolean)
 	UIKit.label(frame, {
 		Size = UDim2.new(1, 0, 0, 40),
 		Position = UDim2.fromOffset(0, 12),
-		Text = if isNew then "✨ NEW HAMSTER! ✨" else "You got a hamster!",
+		Text = if isNew then "NEW HAMSTER!" else "You got a hamster!",
 		Font = UIKit.Fonts.Title,
 		TextSize = 28,
 		TextXAlignment = Enum.TextXAlignment.Center,
@@ -137,14 +132,8 @@ function AnnouncementUI.reveal(speciesId: string, isNew: boolean)
 		TextXAlignment = Enum.TextXAlignment.Center,
 	})
 	UIKit.chip(frame, string.upper(definition.Name), color, UDim2.fromOffset(150, 28)).Position = UDim2.new(0.5, -75, 0, 332)
-	UIKit.label(frame, {
-		Size = UDim2.new(1, 0, 0, 26),
-		Position = UDim2.fromOffset(0, 368),
-		Text = string.format("🪙 +%s / sec", Format.short(HamsterDatabase.income(species))),
-		TextSize = 18,
-		TextColor3 = C.GoldDark,
-		TextXAlignment = Enum.TextXAlignment.Center,
-	})
+	local incomeRow = UIKit.amount(frame, "Coin", string.format("+%s / sec", Format.coins(HamsterDatabase.income(species))), { Size = UDim2.fromOffset(170, 26), TextSize = 19, Color = C.GoldDark })
+	incomeRow.Position = UDim2.new(0.5, -70, 0, 368)
 
 	UIKit.tween(scale, 0.45, { Scale = 1 }, Enum.EasingStyle.Back)
 	doFlash(color, 0.3)

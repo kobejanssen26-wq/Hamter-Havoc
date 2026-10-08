@@ -35,14 +35,49 @@ gradient.Color = ColorSequence.new(Color3.fromRGB(255, 236, 206), Color3.fromRGB
 gradient.Rotation = 90
 gradient.Parent = background
 
-local hamster = Instance.new("TextLabel")
+-- hamster head drawn from the shared icon shapes (no emoji: they don't render in every font)
+local hamster = Instance.new("Frame")
 hamster.BackgroundTransparency = 1
-hamster.Size = UDim2.fromOffset(160, 160)
+hamster.Size = UDim2.fromOffset(150, 150)
 hamster.Position = UDim2.fromScale(0.5, 0.36)
 hamster.AnchorPoint = Vector2.new(0.5, 0.5)
-hamster.Text = "🐹"
-hamster.TextSize = 120
 hamster.Parent = background
+task.spawn(function()
+	local modules = game:GetService("ReplicatedStorage"):WaitForChild("Modules", 10)
+	local source = modules and modules:WaitForChild("IconShapes", 10)
+	if not source then
+		return
+	end
+	local IconShapes = require(source) :: any
+	for _, shape in IconShapes.Shapes.Hamster do
+		local part = Instance.new("Frame")
+		part.BorderSizePixel = 0
+		part.AnchorPoint = Vector2.new(0.5, 0.5)
+		part.Position = UDim2.fromScale(shape.x / 100, shape.y / 100)
+		part.Size = UDim2.fromScale(shape.w / 100, shape.h / 100)
+		part.Rotation = shape.r or 0
+		part.BackgroundColor3 = if shape.c then Color3.fromHex(shape.c) else Color3.new(1, 1, 1)
+		part.BackgroundTransparency = if shape.c then (shape.t or 0) else 1
+		if shape.rad then
+			local corner = Instance.new("UICorner")
+			corner.CornerRadius = UDim.new(math.min(shape.rad, 0.5), 0)
+			corner.Parent = part
+		end
+		if shape.g and shape.c then
+			local gradient = Instance.new("UIGradient")
+			gradient.Color = ColorSequence.new(Color3.fromHex(shape.c), Color3.fromHex(shape.g))
+			gradient.Rotation = 90
+			gradient.Parent = part
+		end
+		if shape.s and shape.sw then
+			local stroke = Instance.new("UIStroke")
+			stroke.Color = Color3.fromHex(shape.s)
+			stroke.Thickness = shape.sw * 1.5
+			stroke.Parent = part
+		end
+		part.Parent = hamster
+	end
+end)
 
 local title = Instance.new("TextLabel")
 title.BackgroundTransparency = 1

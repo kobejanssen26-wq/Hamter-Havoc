@@ -95,7 +95,7 @@ local function publish(house: HouseBuilder.House)
 				Remotes.event("Fx"):FireAllClients("SecurityOn", "", house.GatePosition, house.Index)
 			elseif before == "Active" then
 				Remotes.event("Fx"):FireAllClients("SecurityOff", "", house.GatePosition, house.Index)
-				Notifier.send(owner, "🔴 SECURITY OFF! Your gate is open.", "error")
+				Notifier.send(owner, "SECURITY OFF! Your gate is open.", "error")
 			elseif status == "Ready" then
 				Notifier.send(owner, "Security recharged. Press E at the gate panel to switch it on.", "info")
 			end
@@ -142,7 +142,7 @@ local function zap(player: Player, house: HouseBuilder.House)
 	Remotes.event("Knockback"):FireClient(player, outward * 46 + Vector3.new(0, 24, 0))
 	Remotes.event("Fx"):FireAllClients("Zap", "", root.Position, house.Index)
 	local ownerName = if house.Owner then house.Owner.DisplayName else "this"
-	Notifier.send(player, string.format("🛡️ %s's security zapped you!%s", ownerName, if dropped then " You dropped your hamster." else ""), "error")
+	Notifier.send(player, string.format("%s's security zapped you!%s", ownerName, if dropped then " You dropped your hamster." else ""), "error")
 end
 
 local function scanZaps(house: HouseBuilder.House)
@@ -187,7 +187,7 @@ function SecuritySystem.start()
 		local status = SecuritySystem.status(house)
 		if status == "Ready" then
 			SecuritySystem.activate(house)
-			Notifier.send(player, "🛡️ Security activated!", "success")
+			Notifier.send(player, "Security activated!", "success")
 		elseif status == "Recharging" then
 			Notifier.send(player, "The gate is still recharging.", "info")
 		end

@@ -36,13 +36,13 @@ end
 local function pushRecent(player: Player, rarityId: string, name: string)
 	local definition = RarityConfig.ById[rarityId]
 	local color = if definition.Hidden then definition.Accent else definition.Color
-	local entry = string.format('<font color="#%s">● %s</font>  %s  <font color="#9a9ab0">— %s</font>', color:ToHex(), definition.Name, name, player.DisplayName)
+	local entry = string.format('<font color="#%s">%s</font>  %s  <font color="#9a9ab0">- %s</font>', color:ToHex(), definition.Name, name, player.DisplayName)
 	table.insert(recentEntries, 1, entry)
 	while #recentEntries > #recentLabels do
 		table.remove(recentEntries)
 	end
 	for index, label in recentLabels do
-		label.Text = recentEntries[index] or "—"
+		label.Text = recentEntries[index] or "-"
 	end
 end
 
@@ -72,7 +72,7 @@ function AnnounceSystem.stolen(thief: Player, victim: Player, species: any)
 		RarityId = species.Rarity,
 		UserId = thief.UserId,
 		PlayerName = thief.DisplayName,
-		Text = string.format("🚨 %s stole a %s hamster from %s!", thief.DisplayName, string.upper(definition.Name), victim.DisplayName),
+		Text = string.format("%s stole a %s hamster from %s!", thief.DisplayName, string.upper(definition.Name), victim.DisplayName),
 	})
 end
 

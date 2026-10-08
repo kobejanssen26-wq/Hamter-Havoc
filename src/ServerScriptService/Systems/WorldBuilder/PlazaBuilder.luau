@@ -148,7 +148,7 @@ local function buildRecentBoard(parent: Instance, cframe: CFrame): { TextLabel }
 		label.TextXAlignment = Enum.TextXAlignment.Left
 		label.TextColor3 = Color3.fromRGB(200, 200, 215)
 		label.RichText = true
-		label.Text = "—"
+		label.Text = "-"
 		label.Parent = gui
 		table.insert(labels, label)
 	end

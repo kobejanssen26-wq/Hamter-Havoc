@@ -17,7 +17,7 @@ local DailyRewardUI = {}
 local C = UIKit.Colors
 
 function DailyRewardUI.start()
-	local panel = UIKit.panel({ Name = "Daily", Title = "Daily Rewards", Icon = "🎁", Design = Vector2.new(960, 470), Accent = C.Pink })
+	local panel = UIKit.panel({ Name = "Daily", Title = "Daily Rewards", Icon = "Daily", Design = Vector2.new(960, 470), Accent = C.Pink })
 	local body = panel.Body
 
 	UIKit.label(body, {
@@ -31,11 +31,10 @@ function DailyRewardUI.start()
 	local row = UIKit.frame(body, { Size = UDim2.new(1, 0, 0, 240), Position = UDim2.fromOffset(0, 40), BackgroundTransparency = 1 })
 	UIKit.list(row, Enum.FillDirection.Horizontal, 8, Enum.HorizontalAlignment.Center)
 
-	local cards: { { Frame: Frame, Stroke: UIStroke, State: TextLabel, Icon: TextLabel } } = {}
+	local cards: { { Frame: Frame, Stroke: UIStroke, State: TextLabel, Icon: GuiObject } } = {}
 	for index, day in DailyRewardConfig.Days do
-		local card = UIKit.frame(row, { Size = UDim2.fromOffset(120, 236), LayoutOrder = index })
-		UIKit.corner(card, 18)
-		local stroke = UIKit.stroke(card, Color3.fromRGB(226, 208, 180), 3)
+		local card = UIKit.card(row, { Size = UDim2.fromOffset(120, 236), LayoutOrder = index })
+		local stroke = card:FindFirstChildOfClass("UIStroke") :: UIStroke
 		UIKit.label(card, {
 			Size = UDim2.new(1, 0, 0, 34),
 			Text = "Day " .. day.Day,
@@ -43,13 +42,9 @@ function DailyRewardUI.start()
 			TextSize = 20,
 			TextXAlignment = Enum.TextXAlignment.Center,
 		})
-		local icon = UIKit.label(card, {
-			Size = UDim2.new(1, 0, 0, 80),
-			Position = UDim2.fromOffset(0, 38),
-			Text = day.Icon,
-			TextSize = 52,
-			TextXAlignment = Enum.TextXAlignment.Center,
-		})
+		local bubble = UIKit.frame(card, { Size = UDim2.fromOffset(84, 84), Position = UDim2.new(0.5, 0, 0, 36), AnchorPoint = Vector2.new(0.5, 0), BackgroundColor3 = UIKit.lighter(C.Pink, 0.85) })
+		UIKit.corner(bubble, 99)
+		local icon = UIKit.icon(bubble, day.Icon, 58, { Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5) })
 		UIKit.label(card, {
 			Size = UDim2.new(1, -10, 0, 40),
 			Position = UDim2.fromOffset(5, 120),
@@ -118,15 +113,15 @@ function DailyRewardUI.start()
 				card.Stroke.Color = C.Gold
 				card.Stroke.Thickness = 5
 			elseif index <= claimedInCycle then
-				card.State.Text = "✓ Claimed"
-				card.State.TextColor3 = C.Green
-				card.Stroke.Color = C.Green
-				card.Stroke.Thickness = 3
+				card.State.Text = "Claimed"
+				card.State.TextColor3 = C.Mint
+				card.Stroke.Color = C.Mint
+				card.Stroke.Thickness = 2.5
 			else
 				card.State.Text = "Locked"
 				card.State.TextColor3 = C.Muted
-				card.Stroke.Color = Color3.fromRGB(226, 208, 180)
-				card.Stroke.Thickness = 3
+				card.Stroke.Color = C.Line
+				card.Stroke.Thickness = 1.5
 			end
 		end
 		UIKit.setEnabled(claim, canClaim)
@@ -139,7 +134,7 @@ function DailyRewardUI.start()
 		end
 	end
 
-	panel.OnOpen[1] = refresh
+	table.insert(panel.OnOpen, refresh)
 	DataController.onChanged(function(keys)
 		if panel.IsOpen and keys.Daily then
 			refresh()

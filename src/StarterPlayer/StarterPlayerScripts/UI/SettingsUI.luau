@@ -19,7 +19,7 @@ function SettingsUI.start()
 	-----------------------------------------------------------------------
 	-- settings
 	-----------------------------------------------------------------------
-	local panel = UIKit.panel({ Name = "Settings", Title = "Settings", Icon = "⚙️", Design = Vector2.new(680, 660), Accent = C.BrownLight })
+	local panel = UIKit.panel({ Name = "Settings", Title = "Settings", Icon = "Settings", Design = Vector2.new(680, 660), Accent = Color3.fromRGB(120, 132, 156) })
 	local scroll = UIKit.scroll(panel.Body, { Size = UDim2.fromScale(1, 1) })
 	UIKit.list(scroll, Enum.FillDirection.Vertical, 8)
 	UIKit.padding(scroll, 4)
@@ -27,13 +27,12 @@ function SettingsUI.start()
 	local controls: { [string]: { Set: (any) -> () } } = {}
 
 	for order, entry in SettingsConfig.List do
-		local row = UIKit.frame(scroll, { Size = UDim2.new(1, -10, 0, 54), LayoutOrder = order })
-		UIKit.corner(row, 14)
-		UIKit.stroke(row, Color3.fromRGB(226, 208, 180), 2)
+		local row = UIKit.card(scroll, { Size = UDim2.new(1, -10, 0, 54), LayoutOrder = order })
+		UIKit.icon(row, entry.Icon, 30, { Position = UDim2.new(0, 12, 0.5, 0), AnchorPoint = Vector2.new(0, 0.5) })
 		UIKit.label(row, {
-			Position = UDim2.fromOffset(14, 0),
-			Size = UDim2.new(0.55, 0, 1, 0),
-			Text = entry.Icon .. "  " .. entry.Label,
+			Position = UDim2.fromOffset(52, 0),
+			Size = UDim2.new(0.55, -40, 1, 0),
+			Text = entry.Label,
 			TextSize = 17,
 			Font = UIKit.Fonts.Title,
 		})
@@ -101,12 +100,12 @@ function SettingsUI.start()
 			control.Set(DataController.setting(key))
 		end
 	end
-	panel.OnOpen[1] = sync
+	table.insert(panel.OnOpen, sync)
 
 	-----------------------------------------------------------------------
 	-- codes
 	-----------------------------------------------------------------------
-	local codes = UIKit.panel({ Name = "Codes", Title = "Promo Codes", Icon = "🎟️", Design = Vector2.new(560, 330), Accent = C.Purple })
+	local codes = UIKit.panel({ Name = "Codes", Title = "Promo Codes", Icon = "Ticket", Design = Vector2.new(560, 330), Accent = C.Purple })
 	UIKit.label(codes.Body, {
 		Size = UDim2.new(1, 0, 0, 50),
 		Text = "Enter a code to get free rewards!\nNew codes appear during updates and events.",
@@ -122,7 +121,7 @@ function SettingsUI.start()
 		TextSize = 26,
 		TextColor3 = C.Ink,
 		PlaceholderText = "ENTER CODE",
-		PlaceholderColor3 = Color3.fromRGB(190, 170, 150),
+		PlaceholderColor3 = C.Muted,
 		Text = "",
 		ClearTextOnFocus = false,
 		BorderSizePixel = 0,
@@ -143,7 +142,7 @@ function SettingsUI.start()
 		end
 		local result = DataController.request("RedeemCode", { Code = text })
 		if result.ok then
-			status.Text = '<font color="#60c47e">✓ ' .. result.msg .. "</font>"
+			status.Text = '<font color="#34C79A">' .. result.msg .. "</font>"
 			box.Text = ""
 		else
 			status.Text = '<font color="#f06262">' .. result.msg .. "</font>"
@@ -163,9 +162,9 @@ function SettingsUI.start()
 			redeem()
 		end
 	end)
-	codes.OnOpen[1] = function()
+	table.insert(codes.OnOpen, function()
 		status.Text = ""
-	end
+	end)
 end
 
 return SettingsUI

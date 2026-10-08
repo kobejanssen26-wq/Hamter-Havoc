@@ -351,6 +351,9 @@ local function baseEnvironment(scriptInstance)
 		PhysicalProperties = roblox.PhysicalProperties,
 		Enum = Enum,
 		Random = Random,
+		TweenInfo = { new = function(time, style, direction, repeats, reverses, delayTime)
+			return { Time = time or 1, EasingStyle = style, EasingDirection = direction, RepeatCount = repeats or 0, Reverses = reverses or false, DelayTime = delayTime or 0 }
+		end },
 		task = guardedTask,
 		tick = os.clock,
 		time = os.clock,

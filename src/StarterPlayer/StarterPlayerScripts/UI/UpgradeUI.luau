@@ -1,11 +1,13 @@
 --[[
 	UpgradeUI: buy upgrades with coins (reset on rebirth) or rebirth tokens (permanent).
-	Opening it from a pedestal in your house scrolls to and highlights that upgrade.
+	Advanced upgrades unlock with the Research Lab (Floor 3). Coin upgrade prices grow with rebirths.
+	Opening it from a pedestal in your apartment scrolls to and highlights that upgrade.
 ]]
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Modules = ReplicatedStorage:WaitForChild("Modules")
+local FloorConfig = require(Modules:WaitForChild("FloorConfig"))
 local Format = require(Modules:WaitForChild("Format"))
 local UpgradeConfig = require(Modules:WaitForChild("UpgradeConfig"))
 
@@ -18,26 +20,23 @@ local UpgradeUI = {}
 local C = UIKit.Colors
 
 function UpgradeUI.start()
-	local panel = UIKit.panel({ Name = "Upgrades", Title = "Upgrades", Icon = "⬆️", Design = Vector2.new(860, 640), Accent = C.Green })
+	local panel = UIKit.panel({ Name = "Upgrades", Title = "Upgrades", Icon = "Upgrade", Design = Vector2.new(860, 640), Accent = C.Green })
 	local body = panel.Body
 
 	-- stat summary
-	local summary = UIKit.frame(body, { Size = UDim2.new(1, 0, 0, 52), BackgroundColor3 = C.Card })
-	UIKit.corner(summary, 14)
-	UIKit.stroke(summary, Color3.fromRGB(226, 208, 180), 2)
-	local summaryLabel = UIKit.label(summary, {
-		Size = UDim2.new(1, -24, 1, 0),
-		Position = UDim2.fromOffset(12, 0),
-		TextSize = 15,
-		TextXAlignment = Enum.TextXAlignment.Center,
-		Text = "",
-	})
+	local summary = UIKit.card(body, { Size = UDim2.new(1, 0, 0, 52) })
+	UIKit.list(summary, Enum.FillDirection.Horizontal, 14, Enum.HorizontalAlignment.Center, Enum.VerticalAlignment.Center)
+	local summaryLabels: { [string]: TextLabel } = {}
+	for index, entry in { { "Luck", "Luck" }, { "Range", "Magnet" }, { "Speed", "Speed" }, { "Slots", "Hamster" }, { "Income", "Income" } } do
+		local _, label = UIKit.amount(summary, entry[2], "", { Size = UDim2.fromOffset(130, 26), TextSize = 16, LayoutOrder = index })
+		summaryLabels[entry[1]] = label
+	end
 
 	local scroll = UIKit.scroll(body, { Size = UDim2.new(1, 0, 1, -62), Position = UDim2.fromOffset(0, 60) })
 	UIKit.list(scroll, Enum.FillDirection.Vertical, 8)
 	UIKit.padding(scroll, 4)
 
-	local rows: { [string]: { Frame: Frame, Level: TextLabel, Effect: TextLabel, Button: TextButton, Bar: any, Stroke: UIStroke } } = {}
+	local rows: { [string]: { Frame: Frame, Level: TextLabel, Effect: TextLabel, Button: TextButton, Bar: any, Stroke: UIStroke, Lock: Frame } } = {}
 
 	local function sectionHeader(text: string, order: number)
 		UIKit.label(scroll, {
@@ -45,20 +44,23 @@ function UpgradeUI.start()
 			Text = text,
 			Font = UIKit.Fonts.Title,
 			TextSize = 18,
-			TextColor3 = C.BrownLight,
+			TextColor3 = C.Muted,
 			LayoutOrder = order,
 		})
 	end
 
 	local function buildRow(id: string, order: number)
 		local definition = UpgradeConfig.Definitions[id]
-		local frame = UIKit.frame(scroll, { Size = UDim2.new(1, -8, 0, 92), LayoutOrder = order })
-		UIKit.corner(frame, 16)
-		local stroke = UIKit.stroke(frame, Color3.fromRGB(226, 208, 180), 3)
+		local frame = UIKit.card(scroll, { Size = UDim2.new(1, -8, 0, 92), LayoutOrder = order })
+		local stroke = frame:FindFirstChildOfClass("UIStroke") :: UIStroke
 
-		local iconBox = UIKit.frame(frame, { Size = UDim2.fromOffset(68, 68), Position = UDim2.fromOffset(12, 12), BackgroundColor3 = C.CreamDark })
-		UIKit.corner(iconBox, 16)
-		UIKit.label(iconBox, { Size = UDim2.fromScale(1, 1), Text = definition.Icon, TextSize = 38, TextXAlignment = Enum.TextXAlignment.Center })
+		local iconBox = UIKit.frame(frame, { Size = UDim2.fromOffset(68, 68), Position = UDim2.fromOffset(12, 12), BackgroundColor3 = C.Cream })
+		UIKit.corner(iconBox, 18)
+		UIKit.icon(iconBox, definition.Icon, 48, { Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5) })
+		local lock = UIKit.frame(frame, { Name = "Lock", Size = UDim2.fromScale(1, 1), BackgroundColor3 = C.Cream, BackgroundTransparency = 0.25, Visible = false, ZIndex = 5 })
+		UIKit.corner(lock, 16)
+		UIKit.icon(lock, "Lock", 34, { Position = UDim2.new(0.5, -110, 0.5, 0), AnchorPoint = Vector2.new(0.5, 0.5), ZIndex = 6 })
+		UIKit.label(lock, { Text = string.format("Unlocks with Floor %d (Research Lab)", definition.RequiresFloor or 1), Position = UDim2.new(0.5, -86, 0, 0), Size = UDim2.new(0.5, 80, 1, 0), Font = UIKit.Fonts.Title, TextSize = 18, ZIndex = 6 })
 
 		UIKit.label(frame, {
 			Position = UDim2.fromOffset(92, 8),
@@ -93,14 +95,16 @@ function UpgradeUI.start()
 		local bar = UIKit.progress(frame, {
 			Size = UDim2.new(1, -330, 0, 10),
 			Position = UDim2.fromOffset(92, 74),
-			Color = if definition.Currency == "Tokens" then C.Peach else C.Mint,
+			Color = if definition.Currency == "Tokens" then C.Orange else C.Mint,
 		})
 		local button = UIKit.button(frame, {
 			Text = "",
 			Size = UDim2.fromOffset(150, 52),
 			Position = UDim2.new(1, -12, 0.5, 0),
 			AnchorPoint = Vector2.new(1, 0.5),
-			Color = if definition.Currency == "Tokens" then C.Peach else C.Green,
+			Color = if definition.Currency == "Tokens" then C.Orange else C.Green,
+			Icon = if definition.Currency == "Tokens" then "Token" else "Coin",
+			IconSize = 28,
 			TextSize = 18,
 			Name = "Buy_" .. id,
 			OnClick = function()
@@ -113,21 +117,31 @@ function UpgradeUI.start()
 				end
 			end,
 		})
-		rows[id] = { Frame = frame, Level = levelLabel, Effect = effectLabel, Button = button, Bar = bar, Stroke = stroke }
+		rows[id] = { Frame = frame, Level = levelLabel, Effect = effectLabel, Button = button, Bar = bar, Stroke = stroke, Lock = lock }
 	end
 
 	local order = 0
-	sectionHeader("🪙 Coin upgrades  (reset when you rebirth)", order)
+	sectionHeader("Coin upgrades  (reset when you rebirth)", order)
 	for _, id in UpgradeConfig.Order do
-		if UpgradeConfig.Definitions[id].Currency == "Coins" then
+		local definition = UpgradeConfig.Definitions[id]
+		if definition.Currency == "Coins" and not definition.RequiresFloor then
 			order += 1
 			buildRow(id, order)
 		end
 	end
 	order += 1
-	sectionHeader("🔥 Token upgrades  (permanent)", order)
+	sectionHeader("Token upgrades  (permanent)", order)
 	for _, id in UpgradeConfig.Order do
-		if UpgradeConfig.Definitions[id].Currency == "Tokens" then
+		local definition = UpgradeConfig.Definitions[id]
+		if definition.Currency == "Tokens" and not definition.RequiresFloor then
+			order += 1
+			buildRow(id, order)
+		end
+	end
+	order += 1
+	sectionHeader("Advanced upgrades  (Research Lab, Floor 3)", order)
+	for _, id in UpgradeConfig.Order do
+		if UpgradeConfig.Definitions[id].RequiresFloor then
 			order += 1
 			buildRow(id, order)
 		end
@@ -139,30 +153,29 @@ function UpgradeUI.start()
 			return
 		end
 		local derived = DataController.derived()
-		summaryLabel.Text = string.format(
-			"🍀 Luck x%.2f   🧲 Range %.1f   👟 Speed %.1f   🏠 Shelf %d   🪙 Income x%.2f",
-			derived.Luck or 1,
-			derived.CollectRange or 16,
-			derived.WalkSpeed or 16,
-			derived.Slots or 3,
-			derived.IncomeMultiplier or 1
-		)
+		summaryLabels.Luck.Text = string.format("x%.2f", derived.Luck or 1)
+		summaryLabels.Range.Text = string.format("%.1f", derived.CollectRange or 16)
+		summaryLabels.Speed.Text = string.format("%.1f", derived.WalkSpeed or 16)
+		summaryLabels.Slots.Text = string.format("%d slots", derived.Slots or 3)
+		summaryLabels.Income.Text = Format.multiplier(derived.IncomeMultiplier or 1)
+		local rebirths = data.Rebirths or 0
+		local floors = FloorConfig.unlocked(rebirths)
 		for id, row in rows do
 			local definition = UpgradeConfig.Definitions[id]
 			local level = data.Upgrades[id] or 0
-			local cost = UpgradeConfig.cost(id, level)
+			local cost = UpgradeConfig.cost(id, level, rebirths)
+			row.Lock.Visible = not UpgradeConfig.available(id, floors)
 			row.Level.Text = if cost then string.format("Lv %d / %d", level, definition.MaxLevel) else "MAX"
 			row.Bar.Set(level / definition.MaxLevel)
 			local current = UpgradeConfig.effectText(id, level)
 			if cost then
-				row.Effect.Text = string.format("%s  →  %s", if level == 0 then "none" else current, UpgradeConfig.effectText(id, level + 1))
+				row.Effect.Text = string.format("%s  ->  %s", if level == 0 then "none" else current, UpgradeConfig.effectText(id, level + 1))
 				local balance = if definition.Currency == "Tokens" then DataController.tokens() else DataController.coins()
-				local icon = if definition.Currency == "Tokens" then "🔥" else "🪙"
-				row.Button.Text = string.format("%s %s", icon, Format.short(cost))
-				UIKit.setEnabled(row.Button, balance >= cost)
+				row.Button.Text = if definition.Currency == "Tokens" then Format.short(cost) else Format.coins(cost)
+				UIKit.setEnabled(row.Button, balance >= cost and not row.Lock.Visible)
 			else
 				row.Effect.Text = current
-				row.Button.Text = "MAXED ✓"
+				row.Button.Text = "MAXED"
 				UIKit.setEnabled(row.Button, false)
 			end
 		end
@@ -170,7 +183,8 @@ function UpgradeUI.start()
 
 	local function focusRow(id: string?)
 		for rowId, row in rows do
-			row.Stroke.Color = if rowId == id then C.Gold else Color3.fromRGB(226, 208, 180)
+			row.Stroke.Color = if rowId == id then C.Gold else C.Line
+			row.Stroke.Thickness = if rowId == id then 3 else 1.5
 		end
 		if id and rows[id] then
 			task.defer(function()
@@ -179,12 +193,12 @@ function UpgradeUI.start()
 		end
 	end
 
-	panel.OnOpen[1] = function()
+	table.insert(panel.OnOpen, function()
 		refresh()
 		focusRow(panel.Focus)
-	end
+	end)
 	DataController.onChanged(function(keys)
-		if panel.IsOpen and (keys.Upgrades or keys.Derived or keys.Boosts) then
+		if panel.IsOpen and (keys.Upgrades or keys.Derived or keys.Boosts or keys.Rebirths) then
 			refresh()
 		end
 	end)
