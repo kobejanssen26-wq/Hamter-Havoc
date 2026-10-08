@@ -1,12 +1,17 @@
 {
-  "name": "HamsterTycoon",
+  "name": "HamsterPlaza",
   "tree": {
     "$className": "DataModel",
+    "ReplicatedFirst": {
+      "$className": "ReplicatedFirst",
+      "$path": "src/ReplicatedFirst"
+    },
     "ReplicatedStorage": {
       "$className": "ReplicatedStorage",
-      "Shared": {
-        "$path": "src/ReplicatedStorage/Shared"
-      }
+      "Modules": { "$path": "src/ReplicatedStorage/Modules" },
+      "Remotes": { "$path": "src/ReplicatedStorage/Remotes" },
+      "Assets": { "$path": "src/ReplicatedStorage/Assets" },
+      "Hamsters": { "$path": "src/ReplicatedStorage/Hamsters" }
     },
     "ServerScriptService": {
       "$className": "ServerScriptService",
@@ -26,6 +31,12 @@
     "StarterGui": {
       "$className": "StarterGui",
       "$path": "src/StarterGui"
+    },
+    "Lighting": {
+      "$className": "Lighting",
+      "$properties": {
+        "Technology": "ShadowMap"
+      }
     }
   }
 }
