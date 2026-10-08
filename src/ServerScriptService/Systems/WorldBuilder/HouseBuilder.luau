@@ -98,7 +98,7 @@ local function makePrompt(parent: BasePart, objectText: string, actionText: stri
 	local prompt = Instance.new("ProximityPrompt")
 	prompt.ObjectText = objectText
 	prompt.ActionText = actionText
-	prompt.KeyboardKeyCode = Enum.KeyCode.E
+	prompt.KeyboardKeyCode = Enum.KeyCode.F
 	prompt.HoldDuration = 0
 	prompt.MaxActivationDistance = distance or 10
 	prompt.RequiresLineOfSight = false
