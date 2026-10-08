@@ -46,7 +46,7 @@ local function showBanner(text: string, rarityId: string, subtitle: string?)
 		Size = UDim2.fromOffset(620, 74),
 		Position = UDim2.new(0.5, 0, 0, -90),
 		AnchorPoint = Vector2.new(0.5, 0),
-		BackgroundColor3 = C.Dim,
+		BackgroundColor3 = C.White, -- the gradient below carries the colours
 		BackgroundTransparency = 0.05,
 	})
 	UIKit.corner(banner, 22)

@@ -540,6 +540,7 @@ function IndexUI.start()
 		mode = newMode
 		for id, button in modeButtons do
 			UIKit.setButtonColor(button, if id == newMode then C.Sky else C.CreamDark)
+			button.TextColor3 = if id == newMode then C.White else C.Ink
 		end
 		list.Visible = newMode ~= "Rewards"
 		inspect.Visible = false
@@ -555,8 +556,10 @@ function IndexUI.start()
 	for order, id in MODES do
 		modeButtons[id] = UIKit.button(modeRow, {
 			Text = MODE_LABELS[id],
-			Size = UDim2.fromOffset(if id == "Rewards" then 214 else 69, 28),
+			-- 3 per row in the 214px column: Rarity Theme World / Event Rewards
+			Size = UDim2.fromOffset(if id == "Rewards" then 142 else 68, 28),
 			Color = if id == mode then C.Sky else C.CreamDark,
+			TextColor = if id == mode then C.White else C.Ink,
 			TextSize = 13,
 			Corner = 10,
 			LayoutOrder = order,

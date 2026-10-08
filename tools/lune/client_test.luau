@@ -131,7 +131,9 @@ for index, species in HamsterDatabase.Species do
 	end
 	if index % 9 == 0 then
 		data.Inventory[species.Id] = 2
-		table.insert(data.Equipped, species.Id)
+		if #data.Equipped < 9 then -- 9 slots at rebirth 6
+			table.insert(data.Equipped, species.Id)
+		end
 	end
 end
 data.Stats.Found = { Basic = 30, Rare = 4, Legendary = 1 }
@@ -155,14 +157,29 @@ Runtime.signalFor(dataUpdate, "OnClientEvent"):Fire(data, true)
 task.wait(0.2)
 check(DataController.Ready, "profile delivered")
 
+-- optional: write the UI tree of the HUD and every window for tools/render_gui.py
+local dumpDir = process.env.GUI_DUMP
+local function dumpGui(name: string)
+	if dumpDir then
+		local fs = require("@lune/fs")
+		local serde = require("@lune/serde")
+		local GuiDump = require("./guidump")
+		fs.writeDir(dumpDir)
+		fs.writeFile(dumpDir .. "/" .. name .. ".json", serde.encode("json", GuiDump.dump(playerGui)))
+	end
+end
+task.wait(1.1)
+dumpGui("HUD")
+
 for _, name in { "Inventory", "Index", "Rebirth", "Upgrades", "Daily", "Quests", "Shop", "Settings", "Codes" } do
 	local panel = UIKit.getPanel(name)
 	check(panel ~= nil, "window exists: " .. name)
 	if panel then
 		local before = #Runtime.errors
 		panel:Open()
-		task.wait(0.05)
+		task.wait(if dumpDir then 0.4 else 0.05)
 		check(panel.IsOpen, "window opens: " .. name)
+		dumpGui(name)
 		check(UIKit.anyWindowOpen(), "mouse is released while " .. name .. " is open")
 		local newErrors = 0
 		for index = before + 1, #Runtime.errors do
@@ -172,7 +189,7 @@ for _, name in { "Inventory", "Index", "Rebirth", "Upgrades", "Daily", "Quests",
 		end
 		check(newErrors == 0, "no errors while opening " .. name, Runtime.errors[#Runtime.errors])
 		panel:Close()
-		task.wait(0.05)
+		task.wait(if dumpDir then 0.5 else 0.05) -- let the close animation finish before the next dump
 		check(not UIKit.anyWindowOpen(), "mouse goes back to the camera after closing " .. name)
 	end
 end

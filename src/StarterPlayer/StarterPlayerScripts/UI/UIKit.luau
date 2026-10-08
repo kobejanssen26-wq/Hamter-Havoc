@@ -115,6 +115,8 @@ function UIKit.list(parent: Instance, direction: Enum.FillDirection?, gap: numbe
 end
 
 function UIKit.gradient(parent: Instance, top: Color3, bottom: Color3, rotation: number?): UIGradient
+	-- Note: a UIGradient MULTIPLIES the background colour. Use white/grey stops to shade a coloured
+	-- frame, or a white background when the gradient carries the real colours.
 	return UIKit.new("UIGradient", { Color = ColorSequence.new(top, bottom), Rotation = rotation or 90 }, parent)
 end
 
@@ -198,6 +200,10 @@ UIKit.lighter = lighter
 
 -- Soft drop shadow behind a frame (a blurred look from two stacked transparent layers).
 function UIKit.shadow(target: GuiObject, radius: number?, offset: number?): Frame
+	-- With ZIndexBehavior.Sibling a child always draws on top of its parent, so a shadow child would
+	-- darken the card itself. The card's background therefore moves to a "Fill" child that sits above
+	-- the shadow and below the content; the card itself becomes transparent and its colour,
+	-- transparency, corner and gradient keep being mirrored onto the fill.
 	local holder = UIKit.frame(target, {
 		Name = "Shadow",
 		Size = UDim2.new(1, 6, 1, 6),
@@ -205,7 +211,7 @@ function UIKit.shadow(target: GuiObject, radius: number?, offset: number?): Fram
 		AnchorPoint = Vector2.new(0.5, 0.5),
 		BackgroundColor3 = UIKit.Colors.Shadow,
 		BackgroundTransparency = 0.82,
-		ZIndex = 0,
+		ZIndex = -2,
 	})
 	UIKit.corner(holder, (radius or 16) + 3)
 	local inner = UIKit.frame(holder, {
@@ -214,9 +220,45 @@ function UIKit.shadow(target: GuiObject, radius: number?, offset: number?): Fram
 		AnchorPoint = Vector2.new(0.5, 0.5),
 		BackgroundColor3 = UIKit.Colors.Shadow,
 		BackgroundTransparency = 0.8,
-		ZIndex = 0,
+		ZIndex = -2,
 	})
 	UIKit.corner(inner, radius or 16)
+
+	local fill = UIKit.frame(target, {
+		Name = "Fill",
+		Size = UDim2.fromScale(1, 1),
+		BackgroundColor3 = target.BackgroundColor3,
+		BackgroundTransparency = target.BackgroundTransparency,
+		ZIndex = -1,
+	})
+	target.BackgroundTransparency = 1
+	local syncing = false
+	target:GetPropertyChangedSignal("BackgroundTransparency"):Connect(function()
+		if syncing or target.BackgroundTransparency == 1 then
+			return
+		end
+		syncing = true
+		fill.BackgroundTransparency = target.BackgroundTransparency
+		target.BackgroundTransparency = 1
+		syncing = false
+	end)
+	target:GetPropertyChangedSignal("BackgroundColor3"):Connect(function()
+		fill.BackgroundColor3 = target.BackgroundColor3
+	end)
+	local function mirror(child: Instance)
+		if child:IsA("UICorner") then
+			local copy = fill:FindFirstChildOfClass("UICorner") or Instance.new("UICorner")
+			copy.CornerRadius = child.CornerRadius
+			copy.Parent = fill
+		elseif child:IsA("UIGradient") then
+			-- a gradient on the card would now only tint its (transparent) background: move it to the fill
+			child.Parent = fill
+		end
+	end
+	for _, child in target:GetChildren() do
+		mirror(child)
+	end
+	target.ChildAdded:Connect(mirror)
 	return holder
 end
 
@@ -273,7 +315,8 @@ function UIKit.button(parent: Instance?, props: ButtonProps): TextButton
 		local text = props.Text or ""
 		local icon = Icons.create(props.Icon :: string, iconSize, button, {
 			Name = "ButtonIcon",
-			Position = if text == "" then UDim2.fromScale(0.5, 0.5) else UDim2.new(0, 10, 0.5, 0),
+			-- with text, the UIPadding below (iconSize + 8) also shifts this icon: compensate so it sits 10px in
+			Position = if text == "" then UDim2.fromScale(0.5, 0.5) else UDim2.new(0, 2 - iconSize, 0.5, 0),
 			AnchorPoint = if text == "" then Vector2.new(0.5, 0.5) else Vector2.new(0, 0.5),
 		})
 		icon.ZIndex = button.ZIndex
@@ -750,9 +793,12 @@ function UIKit.panel(options: { Name: string, Title: string, Icon: string?, Desi
 	UIKit.corner(header, 26)
 	-- square off the bottom corners of the header
 	UIKit.frame(header, { Size = UDim2.new(1, 0, 0, 26), Position = UDim2.new(0, 0, 1, -26), BackgroundColor3 = accent })
+	-- the gradients carry the colours, so the frames themselves go white (a gradient multiplies)
+	header.BackgroundColor3 = C.White
 	UIKit.gradient(header, lighter(accent, 0.25), accent, 90)
 	for _, child in header:GetChildren() do
 		if child:IsA("Frame") then
+			child.BackgroundColor3 = C.White
 			UIKit.gradient(child, accent, darker(accent, 0.96), 90)
 		end
 	end

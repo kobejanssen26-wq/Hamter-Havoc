@@ -40,7 +40,7 @@ function InventoryUI.start()
 		Icon = "Star",
 		IconSize = 24,
 		Size = UDim2.fromOffset(160, 38),
-		Position = UDim2.new(1, -184, 0.5, 0),
+		Position = UDim2.new(1, -208, 0.5, 0),
 		AnchorPoint = Vector2.new(1, 0.5),
 		Color = C.Green,
 		TextSize = 16,
@@ -93,7 +93,7 @@ function InventoryUI.start()
 	UIKit.button(pager, {
 		Text = "<",
 		Size = UDim2.fromOffset(60, 38),
-		Position = UDim2.new(0.5, -120, 0.5, 0),
+		Position = UDim2.new(0.5, -200, 0.5, 0),
 		AnchorPoint = Vector2.new(0.5, 0.5),
 		Color = C.Peach,
 		OnClick = function()
@@ -104,7 +104,7 @@ function InventoryUI.start()
 	UIKit.button(pager, {
 		Text = ">",
 		Size = UDim2.fromOffset(60, 38),
-		Position = UDim2.new(0.5, 120, 0.5, 0),
+		Position = UDim2.new(0.5, 200, 0.5, 0),
 		AnchorPoint = Vector2.new(0.5, 0.5),
 		Color = C.Peach,
 		OnClick = function()
@@ -148,7 +148,7 @@ function InventoryUI.start()
 
 		grid:ClearAllChildren()
 		UIKit.new("UIGridLayout", {
-			CellSize = UDim2.fromOffset(216, 232),
+			CellSize = UDim2.fromOffset(216, 206),
 			CellPadding = UDim2.fromOffset(9, 10),
 			SortOrder = Enum.SortOrder.LayoutOrder,
 			HorizontalAlignment = Enum.HorizontalAlignment.Center,
@@ -201,7 +201,7 @@ function InventoryUI.start()
 			local equipButton = UIKit.button(card, {
 				Text = "Equip",
 				Size = UDim2.fromOffset(98, 32),
-				Position = UDim2.fromOffset(8, 192),
+				Position = UDim2.fromOffset(8, 166),
 				Color = C.Green,
 				TextSize = 15,
 				OnClick = function()
@@ -215,7 +215,7 @@ function InventoryUI.start()
 			UIKit.button(card, {
 				Text = if equipped > 0 then "Remove" else "Sell",
 				Size = UDim2.fromOffset(98, 32),
-				Position = UDim2.new(1, -106, 0, 192),
+				Position = UDim2.new(1, -106, 0, 166),
 				Color = if equipped > 0 then Color3.fromRGB(150, 140, 160) else C.Red,
 				TextSize = 15,
 				OnClick = function()

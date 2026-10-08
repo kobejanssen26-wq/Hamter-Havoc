@@ -13,7 +13,6 @@ ReplicatedFirst:RemoveDefaultLoadingScreen()
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
-local CREAM = Color3.fromRGB(255, 247, 233)
 local BROWN = Color3.fromRGB(126, 84, 58)
 local PEACH = Color3.fromRGB(255, 176, 122)
 
@@ -27,7 +26,7 @@ gui.Parent = playerGui
 
 local background = Instance.new("Frame")
 background.Size = UDim2.fromScale(1, 1)
-background.BackgroundColor3 = CREAM
+background.BackgroundColor3 = Color3.new(1, 1, 1) -- the gradient below carries the colours
 background.BorderSizePixel = 0
 background.Parent = gui
 local gradient = Instance.new("UIGradient")
@@ -64,6 +63,7 @@ task.spawn(function()
 			corner.Parent = part
 		end
 		if shape.g and shape.c then
+			part.BackgroundColor3 = Color3.new(1, 1, 1) -- the gradient multiplies the background colour
 			local gradient = Instance.new("UIGradient")
 			gradient.Color = ColorSequence.new(Color3.fromHex(shape.c), Color3.fromHex(shape.g))
 			gradient.Rotation = 90

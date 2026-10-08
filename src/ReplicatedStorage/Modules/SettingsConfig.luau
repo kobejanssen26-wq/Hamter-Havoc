@@ -22,16 +22,16 @@ SettingsConfig.Defaults = {
 
 -- Type: toggle | slider | choice
 SettingsConfig.List = {
-	{ Key = "Music", Label = "Music", Type = "toggle", Icon = "Sparkle" },
-	{ Key = "MusicVolume", Label = "Music volume", Type = "slider", Min = 0, Max = 1, Icon = "Info" },
-	{ Key = "SFX", Label = "Sound effects", Type = "toggle", Icon = "Info" },
-	{ Key = "SFXVolume", Label = "Effects volume", Type = "slider", Min = 0, Max = 1, Icon = "Info" },
+	{ Key = "Music", Label = "Music", Type = "toggle", Icon = "Music" },
+	{ Key = "MusicVolume", Label = "Music volume", Type = "slider", Min = 0, Max = 1, Icon = "Music" },
+	{ Key = "SFX", Label = "Sound effects", Type = "toggle", Icon = "Sound" },
+	{ Key = "SFXVolume", Label = "Effects volume", Type = "slider", Min = 0, Max = 1, Icon = "Sound" },
 	{ Key = "Particles", Label = "Particle effects", Type = "toggle", Icon = "Sparkle" },
 	{ Key = "LowGraphics", Label = "Low graphics mode", Type = "toggle", Icon = "Settings" },
 	{ Key = "ShowOtherPlayers", Label = "Show other players", Type = "toggle", Icon = "Hamster" },
 	{ Key = "ShowValues", Label = "Show hamster values", Type = "toggle", Icon = "Coins" },
-	{ Key = "Notifications", Label = "Notifications", Type = "toggle", Icon = "Info" },
-	{ Key = "CameraShake", Label = "Camera shake", Type = "toggle", Icon = "Speed" },
+	{ Key = "Notifications", Label = "Notifications", Type = "toggle", Icon = "Bell" },
+	{ Key = "CameraShake", Label = "Camera shake", Type = "toggle", Icon = "Camera" },
 	{ Key = "AutoEquip", Label = "Auto-equip best hamsters", Type = "toggle", Icon = "Star" },
 	{
 		Key = "AutoDelete",

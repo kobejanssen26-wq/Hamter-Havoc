@@ -99,6 +99,8 @@ local function run()
 		meetRequirements()
 		local performed, why = RebirthSystem.perform(player)
 		check(performed, "rebirth " .. n .. " works", why)
+		-- read coins right away: the kept hamsters keep earning, so an income tick may land during the wait
+		local coinsAfter = data.Coins
 		task.wait(0.05)
 		check(house.FloorCount == FloorConfig.unlocked(n), "apartment has the right floors after rebirth " .. n, house.FloorCount)
 		check(data.Rebirths == n, "rebirth counter", data.Rebirths)
@@ -107,7 +109,7 @@ local function run()
 			kept += amount
 		end
 		check(kept == RebirthConfig.keepBest(n), "keeps exactly the best hamsters after rebirth " .. n, kept)
-		check(data.Coins == RebirthConfig.startingCoins(n), "coins reset after rebirth " .. n)
+		check(coinsAfter == RebirthConfig.startingCoins(n), "coins reset after rebirth " .. n, coinsAfter)
 	end
 	check(house.FloorCount == 5, "five floors at rebirth 14")
 	check(house.Stations.TurboWheels ~= nil, "lab has the advanced station")

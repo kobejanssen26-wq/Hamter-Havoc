@@ -37,6 +37,7 @@ local function buildShape(parent: GuiObject, shape: { [string]: any }, pixelSize
 		corner.Parent = frame
 	end
 	if shape.g and shape.c then
+		frame.BackgroundColor3 = Color3.new(1, 1, 1) -- the gradient multiplies the background colour
 		local gradient = Instance.new("UIGradient")
 		gradient.Color = ColorSequence.new(hex(shape.c), hex(shape.g))
 		gradient.Rotation = 90 -- top to bottom in the shape's own frame (matches the PNG export)

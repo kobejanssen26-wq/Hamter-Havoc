@@ -70,8 +70,8 @@ function UpgradeUI.start()
 			TextSize = 20,
 		})
 		local levelLabel = UIKit.label(frame, {
-			Position = UDim2.new(1, -230, 0, 8),
-			Size = UDim2.fromOffset(100, 24),
+			Position = UDim2.new(1, -176, 0, 2),
+			Size = UDim2.fromOffset(140, 16),
 			Text = "Lv 0",
 			TextSize = 14,
 			TextColor3 = C.Muted,
@@ -98,7 +98,7 @@ function UpgradeUI.start()
 			Color = if definition.Currency == "Tokens" then C.Orange else C.Mint,
 		})
 		local button = UIKit.button(frame, {
-			Text = "",
+			Text = "...", -- (non-empty: the icon goes left of the price that refresh() fills in)
 			Size = UDim2.fromOffset(150, 52),
 			Position = UDim2.new(1, -12, 0.5, 0),
 			AnchorPoint = Vector2.new(1, 0.5),

@@ -476,6 +476,9 @@ function MainUI.start()
 	end
 	readAttributes()
 	shown.Coins, shown.Gems, shown.Tokens = actual.Coins, actual.Gems, actual.Tokens
+	for name, pill in pills do
+		pill.Value.Text = if name == "Coins" then Format.coins(shown[name]) else Format.short(shown[name])
+	end
 	for _, name in { "Coins", "Gems", "Tokens" } do
 		player:GetAttributeChangedSignal(name):Connect(function()
 			local before = actual[name]
