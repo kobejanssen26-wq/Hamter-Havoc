@@ -3,11 +3,11 @@
 
 	Top view (x to the right, z up). Everything is mirror-symmetric around both axes:
 
-	      [house][house]      plaza gap       [house][house]        north row
+	      [house]   [house]      Hamster Plaza      [house]   [house]       north row
 	   ------- promenade (transit hamsters roll home here) -------
 	   ===== road: burrow ->  ARCH / Hamster Plaza  -> exit tunnel =====
 	   ------- promenade -------
-	      [house][house]      plaza gap       [house][house]        south row
+	      [house]   [house]      Hamster Plaza      [house]   [house]       south row
 
 	House frame (local): origin = the middle of the gate line, +Z = into the lot, +X = to the right of
 	someone standing at the gate looking in. South-row houses are the north row rotated 180 degrees.
@@ -17,23 +17,25 @@ local Route = require(script.Parent.Route)
 
 local WorldLayout = {}
 
-WorldLayout.HouseColumns = { -108, -44, 44, 108 }
+-- x of the house columns. Inner pair leaves a wide open square for Hamster Plaza in the middle.
+WorldLayout.HouseColumns = { -176, -80, 80, 176 }
 WorldLayout.HouseCount = #WorldLayout.HouseColumns * 2
 
-WorldLayout.GateDistance = 27 -- |z| of the gate line
-WorldLayout.LotHalfWidth = 24
-WorldLayout.LotDepth = 58
+WorldLayout.GateDistance = 42 -- |z| of the gate line
+WorldLayout.LotHalfWidth = 38 -- plots are 76 x 96 studs, with 20 studs of garden between neighbours
+WorldLayout.LotDepth = 96
 
-WorldLayout.RoadHalfWidth = 8
-WorldLayout.PromenadeZ = 18 -- |z| of the promenade centre line
-WorldLayout.PromenadeHalfWidth = 7
+WorldLayout.RoadHalfWidth = 11
+WorldLayout.PromenadeZ = 23 -- |z| of the promenade centre line
+WorldLayout.PromenadeHalfWidth = 10
+WorldLayout.PlazaHalfWidth = 34 -- open square around the arch (|x| < this)
 
-WorldLayout.GroundHalfX = 185
-WorldLayout.GroundHalfZ = 112
+WorldLayout.GroundHalfX = 300
+WorldLayout.GroundHalfZ = 168
 
 -- inside the house (local)
-WorldLayout.DoorZ = 17
-WorldLayout.PadLocal = Vector3.new(0, 0.6, 24) -- arrival pad: hamsters are secured here
+WorldLayout.DoorZ = 32 -- front wall of the apartment
+WorldLayout.PadLocal = Vector3.new(0, 0.6, 40) -- arrival pad in the lobby: hamsters are secured here
 WorldLayout.SecureRadius = 7 -- a carrier this close to the pad secures
 
 function WorldLayout.houseCFrame(index: number): CFrame
@@ -65,12 +67,12 @@ end
 -- How wide the rollable corridor is at this spot (half width). Balls stay inside it.
 function WorldLayout.corridorHalfWidth(position: Vector3): number
 	local z = math.abs(position.Z)
-	if z < 9.5 then
+	if z < WorldLayout.RoadHalfWidth + 1.5 then
 		return WorldLayout.RoadHalfWidth
 	elseif z < WorldLayout.GateDistance - 0.5 then
 		return WorldLayout.PromenadeHalfWidth
 	end
-	return 4.2 -- driveway and doorway (the double door is 8.4 wide)
+	return 4.6 -- driveway and doorway (the entrance is 10 wide)
 end
 
 -- Waypoints that roll a ball from `from` (road or promenade) to the pad of a house.
@@ -84,11 +86,11 @@ function WorldLayout.transitPoints(houseCFrame: CFrame, from: Vector3): { Vector
 	local direction = if math.abs(dx) < 1 then 0 else (if dx > 0 then 1 else -1)
 	local onPromenade = math.abs(from.Z - side * WorldLayout.PromenadeZ) < 3
 	if not onPromenade then
-		local lead = if direction == 0 then 0 else math.min(16, math.abs(dx) * 0.5)
-		table.insert(points, Vector3.new(from.X + direction * lead, 0.1, side * (WorldLayout.PromenadeZ - 4)))
+		local lead = if direction == 0 then 0 else math.min(20, math.abs(dx) * 0.5)
+		table.insert(points, Vector3.new(from.X + direction * lead, 0.1, side * (WorldLayout.PromenadeZ - 5)))
 	end
 	table.insert(points, Vector3.new(houseX, 0.1, side * WorldLayout.PromenadeZ))
-	for _, localPoint in { Vector3.new(0, 0.1, 0), Vector3.new(0, 0.1, 12), Vector3.new(0, 0.6, WorldLayout.DoorZ + 1.5), WorldLayout.PadLocal } do
+	for _, localPoint in { Vector3.new(0, 0.1, 0), Vector3.new(0, 0.1, 16), Vector3.new(0, 0.6, WorldLayout.DoorZ + 1.5), WorldLayout.PadLocal } do
 		table.insert(points, houseCFrame:PointToWorldSpace(localPoint))
 	end
 	return points

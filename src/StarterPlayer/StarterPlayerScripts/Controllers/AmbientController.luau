@@ -4,6 +4,9 @@
 	  - WheelHamster models (hamsters working in the houses) run on their wheel, with a floating +coins pop
 	    and a quiet tick every so often (only when you're close, throttled)
 	  - decorations tagged Bob / Sway / SpinModel / Ripple move locally
+	  - clouds (Drift) slide slowly across the sky, birds (Bird) circle above the map
+	  - hamster wheels are SpinModel models whose hub X axis is the axle; their signed Speed is set by
+	    the server (HouseBuilder.setWheelSpeed) so the wheel turns the right way under the hamster
 	  - ambient particle emitters (fountain, chimney smoke, fireflies, hamster auras on shelves)
 	    are only enabled near the camera and when the Particles setting is on
 	Everything is distance-culled and throttled.
@@ -42,6 +45,9 @@ local bobs: { [Instance]: Decor } = {}
 local sways: { [Instance]: Decor } = {}
 local spins: { [Instance]: Decor } = {}
 local ripples: { [BasePart]: { Phase: number, Active: boolean, Base: number } } = {}
+local drifts: { [Model]: { Home: CFrame, Speed: number } } = {}
+local birds: { [Model]: boolean } = {}
+local DRIFT_RANGE = 900 -- clouds wrap around after drifting this far
 
 local emitterParents: { [BasePart]: boolean } = {}
 
@@ -128,6 +134,20 @@ local function cull()
 		for _, decor in registry do
 			decor.Active = (decor.Position - cameraPosition).Magnitude < DECOR_DISTANCE
 		end
+	end
+	for model, info in drifts do
+		local offset = ((time * info.Speed + DRIFT_RANGE) % (DRIFT_RANGE * 2)) - DRIFT_RANGE
+		model:PivotTo(info.Home + Vector3.new(offset, 0, 0))
+	end
+	for model in birds do
+		local radius = model:GetAttribute("Radius") or 30
+		local speed = model:GetAttribute("Speed") or 0.15
+		local phase = (model:GetAttribute("Phase") or 0) + time * speed
+		local center = Vector3.new(model:GetAttribute("CenterX") or 0, model:GetAttribute("CenterY") or 80, model:GetAttribute("CenterZ") or 0)
+		local position = center + Vector3.new(math.cos(phase) * radius, math.sin(time * 1.3 + radius) * 2, math.sin(phase) * radius)
+		local heading = Vector3.new(-math.sin(phase), 0, math.cos(phase))
+		local flap = math.sin(time * 9 + radius) * 0.35
+		model:PivotTo(CFrame.lookAt(position, position + heading) * CFrame.Angles(0, 0, flap * 0.3))
 	end
 	for part, info in ripples do
 		info.Active = (part.Position - cameraPosition).Magnitude < DECOR_DISTANCE
@@ -290,6 +310,20 @@ function AmbientController.start()
 		registerDecor(spins, instance)
 	end, function(instance)
 		spins[instance] = nil
+	end)
+	track("Drift", function(instance)
+		if instance:IsA("Model") then
+			drifts[instance] = { Home = instance:GetPivot(), Speed = (instance:GetAttribute("Speed") :: number?) or 1.5 }
+		end
+	end, function(instance)
+		drifts[instance :: Model] = nil
+	end)
+	track("Bird", function(instance)
+		if instance:IsA("Model") then
+			birds[instance] = true
+		end
+	end, function(instance)
+		birds[instance :: Model] = nil
 	end)
 	track("AmbientParticles", function(instance)
 		if instance:IsA("BasePart") then

@@ -336,4 +336,138 @@ function Decor.pawPrint(parent: Instance, cframe: CFrame, color: Color3)
 	end
 end
 
+---------------------------------------------------------------------------
+-- Landscape pieces (bigger, calmer scenery; see EnvironmentBuilder)
+---------------------------------------------------------------------------
+
+-- Broad old tree with a layered canopy. The canopy sways gently on the client.
+function Decor.largeTree(parent: Instance, pos: Vector3, scale: number, rng: Random, color: Color3?): Model
+	local model = Build.model(parent, "LargeTree")
+	local trunkHeight = 9 * scale
+	Build.pillar(model, "Trunk", 2.6 * scale, trunkHeight, at(pos + Vector3.new(0, trunkHeight / 2, 0)), Palette.Wood, WOOD)
+	for _, angle in { 0.6, 2.7, 4.6 } do
+		local branchEnd = pos + Vector3.new(math.cos(angle) * 3.2 * scale, trunkHeight * 0.92, math.sin(angle) * 3.2 * scale)
+		local branchStart = pos + Vector3.new(0, trunkHeight * 0.62, 0)
+		local mid = (branchStart + branchEnd) / 2
+		Build.part(model, "Branch", Vector3.new(0.9 * scale, 0.9 * scale, (branchEnd - branchStart).Magnitude), CFrame.lookAt(mid, branchEnd), Palette.Wood, WOOD, { CanCollide = false })
+	end
+	local main = color or Palette.Leaf
+	local dark = Color3.new(main.R * 0.8, main.G * 0.84, main.B * 0.8)
+	local canopy = Build.model(model, "Canopy")
+	local blobs = {
+		{ Vector3.new(0, trunkHeight + 3.2, 0), 15, main },
+		{ Vector3.new(4.4, trunkHeight + 1.4, 1.8), 10, dark },
+		{ Vector3.new(-4.2, trunkHeight + 1.8, -1.6), 10.5, dark },
+		{ Vector3.new(0.8, trunkHeight + 6.4, -0.6), 10, main },
+		{ Vector3.new(-1.6, trunkHeight + 2.2, 4.2), 8.5, main },
+	}
+	for index, info in blobs do
+		local size = info[2] * scale * (0.92 + rng:NextNumber() * 0.16)
+		Build.blob(canopy, "Leaves" .. index, Vector3.new(size, size * 0.78, size), at(pos + info[1] * Vector3.new(scale, scale, scale) + Vector3.new(0, 0, 0), rng:NextNumber() * 6), info[3], GRASS, { CanCollide = false, CastShadow = true })
+	end
+	Build.animate(canopy, "Sway", { Amplitude = 1.2, Speed = 0.7 })
+	local trunk = model:FindFirstChild("Trunk") :: Part
+	trunk.CanCollide = true
+	return model
+end
+
+-- One well-kept flower bed: stone border, soil, a low hedge ring and blooms in two colours.
+function Decor.flowerBed(parent: Instance, cframe: CFrame, size: Vector2, colors: { Color3 }, rng: Random): Model
+	local model = Build.model(parent, "FlowerBed")
+	Build.part(model, "Border", Vector3.new(size.X + 1, 0.7, size.Y + 1), cframe * CFrame.new(0, 0.35, 0), Palette.Stone, Enum.Material.Slate, { CanCollide = true })
+	Build.deco(model, "Soil", Vector3.new(size.X, 0.2, size.Y), cframe * CFrame.new(0, 0.72, 0), Palette.Dirt, Enum.Material.Ground)
+	local columns = math.max(2, math.floor(size.X / 1.6))
+	local rows = math.max(2, math.floor(size.Y / 1.6))
+	for i = 1, columns do
+		for j = 1, rows do
+			local x = (i - (columns + 1) / 2) * (size.X / columns)
+			local z = (j - (rows + 1) / 2) * (size.Y / rows)
+			local color = colors[((i + j) % #colors) + 1]
+			Build.blob(model, "Leaves", Vector3.new(1.4, 0.9, 1.4), cframe * CFrame.new(x, 1.1, z), Palette.LeafDark, GRASS, { CanCollide = false, CastShadow = false })
+			Build.deco(model, "Bloom", Vector3.new(0.8, 0.55, 0.8), cframe * CFrame.new(x + (rng:NextNumber() - 0.5) * 0.4, 1.55, z), color, PLASTIC, { Shape = Enum.PartType.Ball })
+		end
+	end
+	return model
+end
+
+-- Slim modern street lamp with a warm head.
+function Decor.streetLamp(parent: Instance, cframe: CFrame, height: number?): Model
+	local model = Build.model(parent, "StreetLamp")
+	local h = height or 12
+	Build.pillar(model, "Base", 1.6, 0.6, cframe * CFrame.new(0, 0.3, 0), Palette.StoneDark, Enum.Material.Metal)
+	Build.pillar(model, "Pole", 0.45, h, cframe * CFrame.new(0, h / 2, 0), Palette.Ink, Enum.Material.Metal)
+	Build.part(model, "Arm", Vector3.new(0.35, 0.35, 3), cframe * CFrame.new(0, h - 0.2, -1.4), Palette.Ink, Enum.Material.Metal, { CanCollide = false })
+	Build.part(model, "Head", Vector3.new(1.6, 0.5, 2.2), cframe * CFrame.new(0, h - 0.5, -2.6), Palette.Ink, Enum.Material.Metal, { CanCollide = false })
+	local glow = Build.deco(model, "Glow", Vector3.new(1.3, 0.2, 1.9), cframe * CFrame.new(0, h - 0.82, -2.6), Color3.fromRGB(255, 228, 170), Enum.Material.Neon)
+	local light = Instance.new("SpotLight")
+	light.Face = Enum.NormalId.Bottom
+	light.Angle = 110
+	light.Brightness = 1.4
+	light.Range = 26
+	light.Color = Color3.fromRGB(255, 220, 160)
+	light.Parent = glow
+	return model
+end
+
+-- Distant mountain made of stacked, slightly rotated rock masses with an optional snow cap.
+-- Pure backdrop: no collisions, no shadows. `tint` fades far mountains into the haze.
+function Decor.mountain(parent: Instance, pos: Vector3, width: number, height: number, rng: Random, tint: number?, snow: boolean?): Model
+	local model = Build.model(parent, "Mountain")
+	local fade = tint or 0
+	local function mix(color: Color3): Color3
+		return color:Lerp(Color3.fromRGB(176, 196, 222), fade)
+	end
+	local rock = mix(Color3.fromRGB(116, 122, 136))
+	local rockDark = mix(Color3.fromRGB(92, 98, 114))
+	local green = mix(Color3.fromRGB(92, 140, 92))
+	local props = { CanCollide = false, CanQuery = false, CanTouch = false, CastShadow = false }
+	-- rotated cubes (45 degrees around Z, random yaw) read as rugged peaks from every side
+	local layers = 5
+	for layer = 1, layers do
+		local t = (layer - 1) / (layers - 1)
+		local w = width * (1 - t * 0.78) * 0.72
+		local y = height * t * 0.82 + w * 0.12
+		local offset = Vector3.new((rng:NextNumber() - 0.5) * width * 0.08, y, (rng:NextNumber() - 0.5) * width * 0.08)
+		local color = if layer == 1 then green elseif layer % 2 == 0 then rock else rockDark
+		Build.part(model, "Rock" .. layer, Vector3.new(w, w, w * 0.86), CFrame.new(pos + offset) * CFrame.Angles(0, rng:NextNumber() * math.pi, 0) * CFrame.Angles(0, 0, math.rad(45)), color, Enum.Material.Slate, props)
+	end
+	if snow ~= false then
+		local capSize = width * 0.2
+		Build.part(model, "Snow", Vector3.new(capSize, capSize, capSize * 0.85), CFrame.new(pos + Vector3.new(0, height * 0.86 + capSize * 0.12, 0)) * CFrame.Angles(0, rng:NextNumber() * math.pi, 0) * CFrame.Angles(0, 0, math.rad(45)), mix(Color3.fromRGB(248, 250, 255)), Enum.Material.Snow, props)
+	end
+	return model
+end
+
+-- Soft rolling hill (half-buried ellipsoid).
+function Decor.hill(parent: Instance, pos: Vector3, size: Vector3, color: Color3?, collide: boolean?): Part
+	return Build.blob(parent, "Hill", size, CFrame.new(pos + Vector3.new(0, size.Y * 0.18, 0)), color or Palette.Grass, GRASS, { CanCollide = collide == true, CastShadow = false })
+end
+
+-- A puffy cloud that drifts slowly on the client (tag Drift).
+function Decor.cloud(parent: Instance, pos: Vector3, scale: number, rng: Random): Model
+	local model = Build.model(parent, "Cloud")
+	local props = { CanCollide = false, CanQuery = false, CanTouch = false, CastShadow = false }
+	local puffs = 4 + rng:NextInteger(0, 2)
+	for index = 1, puffs do
+		local size = (14 + rng:NextNumber() * 12) * scale
+		local offset = Vector3.new((index - (puffs + 1) / 2) * 11 * scale, (rng:NextNumber() - 0.3) * 5 * scale, (rng:NextNumber() - 0.5) * 10 * scale)
+		Build.blob(model, "Puff", Vector3.new(size * 1.3, size * 0.7, size), CFrame.new(pos + offset), Color3.fromRGB(255, 255, 255), PLASTIC, props).Transparency = 0.08
+	end
+	Build.animate(model, "Drift", { Speed = 1.2 + rng:NextNumber() * 1.6 })
+	return model
+end
+
+-- Small bird that circles above (tag Bird, animated on the client).
+function Decor.bird(parent: Instance, center: Vector3, radius: number, rng: Random): Model
+	local model = Build.model(parent, "Bird")
+	local props = { CanCollide = false, CanQuery = false, CanTouch = false, CastShadow = false }
+	local body = Build.blob(model, "Body", Vector3.new(0.8, 0.7, 1.6), CFrame.new(center), Color3.fromRGB(70, 66, 80), PLASTIC, props)
+	for _, side in { -1, 1 } do
+		Build.part(model, "Wing", Vector3.new(2.2, 0.12, 0.9), CFrame.new(center + Vector3.new(side * 1.3, 0.1, 0)), Color3.fromRGB(90, 86, 104), PLASTIC, props)
+	end
+	model.PrimaryPart = body
+	Build.animate(model, "Bird", { Radius = radius, Speed = 0.12 + rng:NextNumber() * 0.08, Phase = rng:NextNumber() * 6.28, CenterX = center.X, CenterY = center.Y, CenterZ = center.Z })
+	return model
+end
+
 return Decor

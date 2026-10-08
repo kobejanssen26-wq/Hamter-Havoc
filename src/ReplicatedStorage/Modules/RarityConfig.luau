@@ -15,8 +15,19 @@
 
 local RarityConfig = {}
 
--- Price of collecting a hamster = Income * PriceFactor * species value multiplier.
-RarityConfig.PriceFactor = 18
+--[[
+	ECONOMY FORMULA (one rule for every hamster, see docs/ECONOMY.md and tools/lune/economy_sim.luau):
+
+	  Price   = rarity Price   * species ValueMult      (ValueMult spreads 1.00 .. 1.50 inside a rarity)
+	  Income  = Price / rarity Payback                  (seconds a hamster needs to earn back its price)
+
+	Each rarity is ~4.5x the price of the one below and earns ~3.3x more per second, so a rarer hamster
+	always costs more AND earns more than any hamster of a lower rarity (the best of a rarity is still
+	worth 1.5x less than the cheapest of the next). Rarer hamsters pay back more slowly, but they are
+	much better per house slot - slots are limited, so progression naturally pushes towards rarer ones.
+]]
+RarityConfig.ValueSpread = 0.5 -- the last species of a rarity is worth 1 + ValueSpread times the first
+RarityConfig.ExclusiveValue = 1.25 -- event / reward-only hamsters
 RarityConfig.SellRatio = 0.5
 RarityConfig.LuckCap = 15
 
@@ -27,7 +38,7 @@ end
 local list = {
 	{
 		Id = "Basic", Name = "Basic", Color = c("C8BEAF"), Accent = c("8F8575"),
-		Weight = 520, MinRebirth = 0, Speed = 9, Income = 1, Announce = 0,
+		Weight = 520, MinRebirth = 0, Speed = 9, Price = 100, Payback = 60, Announce = 0,
 		Style = "Plain fur, simple and sweet",
 		Difficulty = "Very easy",
 		IndexReward = { Gems = 25 },
@@ -35,7 +46,7 @@ local list = {
 	},
 	{
 		Id = "Cute", Name = "Cute", Color = c("FF9FC8"), Accent = c("FF6FAE"),
-		Weight = 250, MinRebirth = 0, Speed = 10.5, Income = 3, Announce = 0,
+		Weight = 250, MinRebirth = 0, Speed = 10.5, Price = 450, Payback = 80, Announce = 0,
 		Style = "Soft pink hearts float up",
 		Difficulty = "Easy",
 		IndexReward = { Gems = 40 },
@@ -45,7 +56,7 @@ local list = {
 	},
 	{
 		Id = "Shiny", Name = "Shiny", Color = c("6FE3C1"), Accent = c("35C9A0"),
-		Weight = 120, MinRebirth = 0, Speed = 12, Income = 8, Announce = 0,
+		Weight = 120, MinRebirth = 0, Speed = 12, Price = 2000, Payback = 110, Announce = 0,
 		Style = "Sparkling mint glitter",
 		Difficulty = "Easy",
 		IndexReward = { Gems = 60 },
@@ -56,7 +67,7 @@ local list = {
 	},
 	{
 		Id = "Rare", Name = "Rare", Color = c("5AA0FF"), Accent = c("2F78E8"),
-		Weight = 60, MinRebirth = 0, Speed = 14, Income = 20, Announce = 0,
+		Weight = 60, MinRebirth = 0, Speed = 14, Price = 9000, Payback = 150, Announce = 0,
 		Style = "Cool blue glow with a road ring",
 		Difficulty = "Medium",
 		IndexReward = { Gems = 90 },
@@ -69,7 +80,7 @@ local list = {
 	},
 	{
 		Id = "Epic", Name = "Epic", Color = c("B070FF"), Accent = c("8A3DFF"),
-		Weight = 25, MinRebirth = 0, Speed = 16.5, Income = 55, Announce = 1,
+		Weight = 24, MinRebirth = 0, Speed = 16.5, Price = 40000, Payback = 200, Announce = 1,
 		Style = "Purple orbs swirl around",
 		Difficulty = "Medium",
 		IndexReward = { Gems = 140 },
@@ -83,7 +94,7 @@ local list = {
 	},
 	{
 		Id = "Ultra", Name = "Ultra", Color = c("FF5FD2"), Accent = c("E0239F"),
-		Weight = 12, MinRebirth = 0, Speed = 19, Income = 150, Announce = 1,
+		Weight = 10, MinRebirth = 0, Speed = 19, Price = 180000, Payback = 260, Announce = 1,
 		Style = "Magenta neon with a streaking trail",
 		Difficulty = "Hard",
 		IndexReward = { Gems = 200 },
@@ -97,7 +108,7 @@ local list = {
 	},
 	{
 		Id = "Legendary", Name = "Legendary", Color = c("FFC83D"), Accent = c("FF9F0A"),
-		Weight = 6, MinRebirth = 0, Speed = 22, Income = 450, Announce = 2,
+		Weight = 4, MinRebirth = 0, Speed = 22, Price = 800000, Payback = 340, Announce = 2,
 		Style = "Golden light pillar and coin sparkles",
 		Difficulty = "Hard",
 		IndexReward = { Gems = 300 },
@@ -112,7 +123,7 @@ local list = {
 	},
 	{
 		Id = "Mythic", Name = "Mythic", Color = c("FF4B4B"), Accent = c("C41818"),
-		Weight = 2.5, MinRebirth = 1, Speed = 26, Income = 1400, Announce = 2,
+		Weight = 1.6, MinRebirth = 1, Speed = 26, Price = 3600000, Payback = 440, Announce = 2,
 		Style = "Burning embers and a crimson beam",
 		Difficulty = "Very hard",
 		IndexReward = { Gems = 450 },
@@ -127,7 +138,7 @@ local list = {
 	},
 	{
 		Id = "Divine", Name = "Divine", Color = c("FFF4B8"), Accent = c("FFD866"),
-		Weight = 1.2, MinRebirth = 2, Speed = 30, Income = 4500, Announce = 2,
+		Weight = 0.6, MinRebirth = 3, Speed = 30, Price = 16000000, Payback = 560, Announce = 2,
 		Style = "Holy rays, a halo ring and soft light",
 		Difficulty = "Very hard",
 		IndexReward = { Gems = 650 },
@@ -143,7 +154,7 @@ local list = {
 	},
 	{
 		Id = "Cosmic", Name = "Cosmic", Color = c("4A5CFF"), Accent = c("A0B0FF"),
-		Weight = 0.5, MinRebirth = 3, Speed = 34, Income = 15000, Announce = 2,
+		Weight = 0.25, MinRebirth = 5, Speed = 34, Price = 75000000, Payback = 700, Announce = 2,
 		Style = "A tiny galaxy of stars follows it",
 		Difficulty = "Extreme",
 		IndexReward = { Gems = 900 },
@@ -159,7 +170,7 @@ local list = {
 	},
 	{
 		Id = "Celestial", Name = "Celestial", Color = c("9FFCFF"), Accent = c("FFFFFF"),
-		Weight = 0.25, MinRebirth = 4, Speed = 38, Income = 50000, Announce = 2,
+		Weight = 0.12, MinRebirth = 7, Speed = 38, Price = 340000000, Payback = 880, Announce = 2,
 		Style = "Shimmering aurora ribbons",
 		Difficulty = "Extreme",
 		IndexReward = { Gems = 1200 },
@@ -176,7 +187,7 @@ local list = {
 	},
 	{
 		Id = "Secret", Name = "Secret", Color = c("2B0A4D"), Accent = c("B84DFF"),
-		Weight = 0.08, MinRebirth = 3, Speed = 42, Income = 200000, Announce = 2,
+		Weight = 0.05, MinRebirth = 9, Speed = 42, Price = 1500000000, Payback = 1100, Announce = 2,
 		Style = "Black-purple with glitching shadows",
 		Difficulty = "Insane",
 		Hidden = true,
@@ -194,7 +205,7 @@ local list = {
 	},
 	{
 		Id = "Ancient", Name = "Ancient", Color = c("B8864B"), Accent = c("3DE0C0"),
-		Weight = 0.03, MinRebirth = 6, Speed = 48, Income = 800000, Announce = 2,
+		Weight = 0.02, MinRebirth = 12, Speed = 48, Price = 7000000000, Payback = 1400, Announce = 2,
 		Style = "Glowing runes drift over bronze fur",
 		Difficulty = "Insane",
 		IndexReward = { Gems = 2200 },
@@ -210,7 +221,7 @@ local list = {
 	},
 	{
 		Id = "Unknown", Name = "???", Color = c("111111"), Accent = c("FF00E5"),
-		Weight = 0.005, MinRebirth = 10, Speed = 56, Income = 4000000, Announce = 2,
+		Weight = 0.004, MinRebirth = 15, Speed = 56, Price = 35000000000, Payback = 1800, Announce = 2,
 		Style = "Nobody knows what it is",
 		Difficulty = "Impossible?",
 		Hidden = true,
@@ -240,6 +251,11 @@ for rank, definition in list do
 end
 
 RarityConfig.Count = #list
+
+-- Base income per second of the cheapest species of each rarity (before player multipliers).
+for _, definition in list do
+	definition.Income = definition.Price / definition.Payback
+end
 
 function RarityConfig.get(id: string)
 	return RarityConfig.ById[id]

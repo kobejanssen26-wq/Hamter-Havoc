@@ -9,7 +9,7 @@ return {
 	Version = 1,
 
 	-- currencies
-	Coins = 60,
+	Coins = 250,
 	Gems = 25,
 	Tokens = 0,
 	Rebirths = 0,

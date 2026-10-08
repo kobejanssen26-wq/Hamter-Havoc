@@ -9,8 +9,9 @@
 	  size  ec eyeColor  hc hatColor  ei earInner  pc pawColor  tc tailColor  tt tailTip  nb noBlush
 	  x = true  -> exclusive reward (never spawns, only given by dailies / codes / quests)
 
-	Value: every species has a ValueMult (1.0 for the first of its rarity, +0.07 per entry) so even
-	hamsters of the same rarity differ in price and income.
+	Value: every species has a ValueMult spread evenly from 1.00 (first of its rarity) to
+	1 + RarityConfig.ValueSpread (last), so hamsters of the same rarity differ in price and income
+	but never overtake the next rarity. See RarityConfig for the formula.
 ]]
 
 local RarityConfig = require(script.Parent.RarityConfig)
@@ -314,12 +315,12 @@ for _, rarityId in RarityConfig.Order do
 			species.Glow = { Color3.fromHex(entry.glow[1]), entry.glow[2], entry.glow[3] }
 		end
 
-		-- value: 1.0 for the first entry, +0.07 per entry; exclusives are worth 1.5x
+		-- value: spread evenly inside the rarity (see RarityConfig); exclusives have a fixed value
 		if species.Exclusive then
-			species.ValueMult = 1.5
+			species.ValueMult = RarityConfig.ExclusiveValue
 		else
 			ordinal += 1
-			species.ValueMult = 1 + 0.07 * (ordinal - 1)
+			species.Ordinal = ordinal
 			table.insert(HamsterDatabase.Spawnable[rarityId], species)
 		end
 
@@ -327,6 +328,11 @@ for _, rarityId in RarityConfig.Order do
 		table.insert(HamsterDatabase.ByRarity[rarityId], species)
 		assert(HamsterDatabase.ById[species.Id] == nil, "duplicate hamster id " .. species.Id)
 		HamsterDatabase.ById[species.Id] = species
+	end
+
+	local pool = HamsterDatabase.Spawnable[rarityId]
+	for _, species in pool do
+		species.ValueMult = 1 + RarityConfig.ValueSpread * (species.Ordinal - 1) / math.max(1, #pool - 1)
 	end
 end
 
@@ -336,18 +342,52 @@ function HamsterDatabase.get(id: string)
 	return HamsterDatabase.ById[id]
 end
 
--- Income per second of one hamster (before player multipliers).
-function HamsterDatabase.income(species: any): number
-	return RarityConfig.ById[species.Rarity].Income * species.ValueMult
+-- Price of one hamster: the rarity's price scaled by the species' value (see RarityConfig).
+function HamsterDatabase.price(species: any): number
+	local value = RarityConfig.ById[species.Rarity].Price * species.ValueMult
+	-- round to 2 significant-ish digits so prices read cleanly ($1,250 instead of $1,247)
+	local magnitude = 10 ^ math.max(0, math.floor(math.log10(value)) - 1)
+	return math.floor(value / magnitude + 0.5) * magnitude
 end
 
--- What it costs to collect the hamster when it runs by.
-function HamsterDatabase.price(species: any): number
-	return math.floor(HamsterDatabase.income(species) * RarityConfig.PriceFactor + 0.5)
+-- Income per second of one hamster (before player multipliers).
+function HamsterDatabase.income(species: any): number
+	return HamsterDatabase.price(species) / RarityConfig.ById[species.Rarity].Payback
 end
 
 function HamsterDatabase.sellValue(species: any): number
 	return math.floor(HamsterDatabase.price(species) * RarityConfig.SellRatio)
+end
+
+-- Chance that one spawn on the road is this exact species (no luck, rarity unlocked).
+function HamsterDatabase.spawnChance(species: any): number
+	if species.Exclusive then
+		return 0
+	end
+	local total = 0
+	for _, id in RarityConfig.Order do
+		total += RarityConfig.ById[id].Weight
+	end
+	return RarityConfig.ById[species.Rarity].Weight / total / #HamsterDatabase.Spawnable[species.Rarity]
+end
+
+-- Points a species adds to the collection (Index score): rarer = worth more.
+function HamsterDatabase.collectionValue(species: any): number
+	return math.floor(10 * 1.8 ^ (RarityConfig.ById[species.Rarity].Rank - 1) * species.ValueMult + 0.5)
+end
+
+-- Every number of a species in one table (UI, asset metadata, tests).
+function HamsterDatabase.stats(species: any)
+	local rarity = RarityConfig.ById[species.Rarity]
+	return {
+		Rarity = rarity.Name,
+		Price = HamsterDatabase.price(species),
+		Income = HamsterDatabase.income(species),
+		SpawnChance = HamsterDatabase.spawnChance(species),
+		Speed = rarity.Speed,
+		CollectionValue = HamsterDatabase.collectionValue(species),
+		MinRebirth = rarity.MinRebirth,
+	}
 end
 
 -- Rarities whose names stay hidden in the index until the player owns one.

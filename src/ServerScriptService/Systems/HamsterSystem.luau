@@ -55,7 +55,7 @@ local Config = HamsterStates.Config
 
 local STEP = 1 / 20
 local SNAP_EVERY = 2 -- steps between position snapshots (10 Hz)
-local MAX_ON_ROAD = 9
+local MAX_ON_ROAD = 14 -- the road is 500 studs long: a Basic needs ~55 s to roll through
 local LATERAL_SPEED = 5.5
 local PLAYER_RADIUS = 1.6 -- balls steer around people standing on the road / promenade
 
