@@ -2,16 +2,45 @@
   "name": "HamsterPlaza",
   "tree": {
     "$className": "DataModel",
+    "Workspace": {
+      "$className": "Workspace",
+      "HamsterPlaza": {
+        "$path": "world/HamsterPlaza.model.json"
+      },
+      "HamsterPath": {
+        "$path": "world/HamsterPath.model.json"
+      },
+      "PlayerHouses": {
+        "$path": "world/PlayerHouses.model.json"
+      },
+      "Environment": {
+        "$path": "world/Environment.model.json"
+      },
+      "SpawnLocations": {
+        "$path": "world/SpawnLocations.model.json"
+      },
+      "HamsterShowcase": {
+        "$path": "world/HamsterShowcase.model.json"
+      }
+    },
     "ReplicatedFirst": {
       "$className": "ReplicatedFirst",
       "$path": "src/ReplicatedFirst"
     },
     "ReplicatedStorage": {
       "$className": "ReplicatedStorage",
-      "Modules": { "$path": "src/ReplicatedStorage/Modules" },
-      "Remotes": { "$path": "src/ReplicatedStorage/Remotes" },
-      "Assets": { "$path": "src/ReplicatedStorage/Assets" },
-      "Hamsters": { "$path": "src/ReplicatedStorage/Hamsters" }
+      "Modules": {
+        "$path": "src/ReplicatedStorage/Modules"
+      },
+      "Remotes": {
+        "$path": "src/ReplicatedStorage/Remotes"
+      },
+      "Assets": {
+        "$path": "src/ReplicatedStorage/Assets"
+      },
+      "Hamsters": {
+        "$path": "src/ReplicatedStorage/Hamsters"
+      }
     },
     "ServerScriptService": {
       "$className": "ServerScriptService",

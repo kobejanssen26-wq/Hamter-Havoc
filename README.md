@@ -7,15 +7,15 @@ A cozy multiplayer hamster game for Roblox (Luau + [Rojo](https://rojo.space)).
 > and once it lands on the pad in your house it is **secured for good** and runs on a **hamster wheel** earning coins.
 > Upgrade, rebirth, hunt rarer hamsters, fill the Hamster Index.
 
+> **Waar staat wat?** Zie [`WAAR_STAAT_WAT.md`](WAAR_STAAT_WAT.md) (Explorer-kaart, Nederlands). De wereld en alle 172 hamsters staan als voorbeeldkopie in `world/` en zijn in Studio direct zichtbaar zonder Play.
+
 ## Run it
 
 1. `rokit install` (installs Rojo 7.4.4 from `rokit.toml`).
 2. `rojo build -o HamsterPlaza.rbxl`, open it in Roblox Studio (or `rojo serve` + the Rojo plugin).
    `HamsterPlaza.rbxl` is also committed, prebuilt.
 3. Studio → Game Settings → Security → **Enable Studio Access to API Services** (DataStore saving).
-4. Press Play / **Test with 2+ players**. The world is generated at runtime (the editor view is empty).
-   To preview it without Play: command bar → `require(game.ServerScriptService.Systems.WorldBuilder).build()`
-   (don't save the place afterwards).
+4. Press Play / **Test with 2+ players**. The world you see in the editor is a preview copy (`world/*.model.json`); on Play the server rebuilds it from code.
 
 Controls: **E** claim / steal / carry / pick up · **Q** slap · **F** shops, upgrades, altar (world prompts) · E at the gate panel re-arms your security.
 
