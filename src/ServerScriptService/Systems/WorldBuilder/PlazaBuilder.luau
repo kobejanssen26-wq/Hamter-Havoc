@@ -56,8 +56,7 @@ local function buildStall(parent: Instance, name: string, cframe: CFrame, title:
 	for _, side in { -1, 1 } do
 		Build.part(model, "SideWall", Vector3.new(0.6, 7.4, 6), cframe * CFrame.new(side * 4.8, 4.2, 3), Palette.Wall, PLASTIC)
 		Build.part(model, "Post", Vector3.new(0.8, 8.2, 0.8), cframe * CFrame.new(side * 4.9, 4.6, -0.2), Palette.WoodDark, WOOD)
-		local lantern = Build.blob(model, "Lantern", Vector3.new(0.9, 1.1, 0.9), cframe * CFrame.new(side * 4.9, 3.4, -0.9), Color3.fromRGB(255, 226, 150), NEON, { CanCollide = false })
-		Build.light(lantern, Color3.fromRGB(255, 214, 140), 0.7, 10)
+		Build.blob(model, "Lantern", Vector3.new(0.9, 1.1, 0.9), cframe * CFrame.new(side * 4.9, 3.4, -0.9), Color3.fromRGB(255, 226, 150), NEON, { CanCollide = false })
 	end
 	local counter = Build.part(model, "Counter", Vector3.new(9.2, 2.6, 2.4), cframe * CFrame.new(0, 1.8, 0.4), Palette.WoodLight, WOOD)
 	Build.part(model, "CounterTop", Vector3.new(9.8, 0.4, 3), cframe * CFrame.new(0, 3.3, 0.3), Palette.WoodDark, WOOD, { CanCollide = false })

@@ -49,8 +49,7 @@ function Decor.tree(parent: Instance, pos: Vector3, kind: string, scale: number,
 		local blobs = {
 			{ Vector3.new(0, top, 0), 8.5, canopyColor },
 			{ Vector3.new(2.8, top - 0.8, 1.2), 5.6, canopyDark },
-			{ Vector3.new(-2.6, top - 0.6, -1.6), 5.8, canopyColor },
-			{ Vector3.new(0.4, top + 2.2, -0.4), 5.4, canopyDark },
+			{ Vector3.new(-1.4, top + 1.8, -1.0), 6, canopyColor },
 		}
 		for index, info in blobs do
 			local size = info[2] * scale
@@ -75,7 +74,7 @@ function Decor.bush(parent: Instance, pos: Vector3, scale: number, rng: Random, 
 		Build.blob(model, "Leaves" .. index, Vector3.new(size, size * 0.85, size), at(pos + offset), color, GRASS, { CanCollide = false })
 	end
 	if berries then
-		for _ = 1, 5 do
+		for _ = 1, 3 do
 			local offset = Vector3.new((rng:NextNumber() - 0.5) * 3.4 * scale, (0.8 + rng:NextNumber() * 1.2) * scale, (rng:NextNumber() - 0.5) * 2.4 * scale)
 			Build.deco(model, "Berry", Vector3.one * 0.5, at(pos + offset), Palette.FlowerColors[1 + rng:NextInteger(0, 1)], PLASTIC, { Shape = Enum.PartType.Ball })
 		end
@@ -84,16 +83,16 @@ function Decor.bush(parent: Instance, pos: Vector3, scale: number, rng: Random, 
 end
 
 function Decor.flowers(parent: Instance, pos: Vector3, radius: number, count: number, rng: Random): Model
+	-- one leafy mound with a handful of blooms on top (few parts, still colourful)
 	local model = Build.model(parent, "Flowers")
-	for _ = 1, count do
+	Build.blob(model, "Leaves", Vector3.new(radius * 1.7, 0.8, radius * 1.7), CFrame.new(pos + Vector3.new(0, 0.2, 0)), Palette.LeafDark, GRASS, { CanCollide = false, CanTouch = false, CastShadow = false })
+	for _ = 1, math.max(3, math.floor(count / 2)) do
 		local angle = rng:NextNumber() * math.pi * 2
-		local distance = math.sqrt(rng:NextNumber()) * radius
-		local base = pos + Vector3.new(math.cos(angle) * distance, 0, math.sin(angle) * distance)
-		local height = 0.9 + rng:NextNumber() * 0.7
-		Build.deco(model, "Stem", Vector3.new(0.12, height, 0.12), CFrame.new(base + Vector3.new(0, height / 2, 0)), Palette.LeafDark, GRASS)
+		local distance = math.sqrt(rng:NextNumber()) * radius * 0.8
+		local base = pos + Vector3.new(math.cos(angle) * distance, 0.5 + rng:NextNumber() * 0.3, math.sin(angle) * distance)
 		local color = Palette.FlowerColors[rng:NextInteger(1, #Palette.FlowerColors)]
-		Build.deco(model, "Bloom", Vector3.new(0.65, 0.35, 0.65), CFrame.new(base + Vector3.new(0, height + 0.1, 0)), color, PLASTIC, { Shape = Enum.PartType.Ball })
-		Build.deco(model, "Center", Vector3.new(0.25, 0.25, 0.25), CFrame.new(base + Vector3.new(0, height + 0.28, 0)), Palette.Gold, PLASTIC, { Shape = Enum.PartType.Ball })
+		local size = 0.65 + rng:NextNumber() * 0.3
+		Build.deco(model, "Bloom", Vector3.new(size, size * 0.7, size), CFrame.new(base), color, PLASTIC, { Shape = Enum.PartType.Ball })
 	end
 	return model
 end
@@ -215,11 +214,11 @@ function Decor.fenceRun(parent: Instance, a: Vector3, b: Vector3, options: { Col
 	Build.part(model, "RailTop", Vector3.new(0.3, 0.35, length), runCFrame * CFrame.new(0, 2.7, 0), color, WOOD, { CanCollide = false })
 	Build.part(model, "RailLow", Vector3.new(0.3, 0.35, length), runCFrame * CFrame.new(0, 1.2, 0), color, WOOD, { CanCollide = false })
 
-	local count = math.max(2, math.floor(length / 1.9))
+	local count = math.max(2, math.floor(length / 3.2))
 	for index = 0, count do
 		local point = a + direction * (length * index / count)
 		local tall = if index % 4 == 0 then 3.8 else 3.2
-		Build.deco(model, "Picket", Vector3.new(0.7, tall, 0.35), CFrame.lookAt(point + Vector3.new(0, tall / 2, 0), point + Vector3.new(0, tall / 2, 0) + direction), color, WOOD)
+		Build.deco(model, "Picket", Vector3.new(1.1, tall, 0.35), CFrame.lookAt(point + Vector3.new(0, tall / 2, 0), point + Vector3.new(0, tall / 2, 0) + direction), color, WOOD)
 	end
 
 	if opts.Wall ~= false then

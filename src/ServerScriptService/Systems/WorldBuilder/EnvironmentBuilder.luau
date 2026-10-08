@@ -82,7 +82,7 @@ function EnvironmentBuilder.build(parent: Instance, rng: Random): Folder
 
 	-- forest border
 	local forest = Build.folder(folder, "Forest")
-	local step = 10
+	local step = 12
 	for x = -GROUND_HALF_X + 6, GROUND_HALF_X - 6, step do
 		for z = -GROUND_HALF_Z + 6, GROUND_HALF_Z - 6, step do
 			local px = x + (rng:NextNumber() - 0.5) * 7

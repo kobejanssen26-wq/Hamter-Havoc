@@ -82,7 +82,7 @@ end
 function PathBuilder.build(parent: Instance, rng: Random): Folder
 	local folder = Build.folder(parent, "HamsterPath")
 	local width = PathConfig.Width
-	local samples = PathConfig.sample(3.5)
+	local samples = PathConfig.sample(5)
 
 	for index = 1, #samples - 1 do
 		local a = samples[index].Position
@@ -97,9 +97,9 @@ function PathBuilder.build(parent: Instance, rng: Random): Folder
 	end
 
 	-- paw prints along the road show the direction of travel
-	for index = 3, #samples - 2, 4 do
+	for index = 3, #samples - 2, 3 do
 		local sample = samples[index]
-		local side = if (index // 4) % 2 == 0 then -1 else 1
+		local side = if (index // 3) % 2 == 0 then -1 else 1
 		local position = sample.Position + Vector3.new(0, PathConfig.RoadHeight, 0) + sample.Tangent:Cross(Vector3.yAxis) * (side * 1.8)
 		Decor.pawPrint(folder, CFrame.lookAt(position, position + sample.Tangent), Color3.fromRGB(214, 160, 100))
 	end

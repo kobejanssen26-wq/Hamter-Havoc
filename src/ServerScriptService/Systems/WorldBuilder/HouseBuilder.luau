@@ -275,8 +275,7 @@ function HouseBuilder.build(parent: Instance, index: number, cframe: CFrame, rng
 	for _, side in { -1, 1 } do
 		local pos = (cframe * CFrame.new(side * 4.5, 0, -21.5)).Position
 		Build.pillar(yard, "GatePost", 0.9, 4.6, CFrame.new(pos + Vector3.new(0, 2.3, 0)), Palette.WoodDark, WOOD)
-		local lantern = Build.blob(yard, "GateLantern", Vector3.new(1.1, 1.3, 1.1), CFrame.new(pos + Vector3.new(0, 5.2, 0)), Color3.fromRGB(255, 226, 150), NEON, { CanCollide = false })
-		Build.light(lantern, Color3.fromRGB(255, 214, 140), 0.8, 14)
+		Build.blob(yard, "GateLantern", Vector3.new(1.1, 1.3, 1.1), CFrame.new(pos + Vector3.new(0, 5.2, 0)), Color3.fromRGB(255, 226, 150), NEON, { CanCollide = false })
 	end
 	-- Gate arch sign (a hamster-sized welcome)
 	Build.part(yard, "GateArch", Vector3.new(10, 0.5, 0.6), L(0, 5.2, -21.5), Palette.WoodDark, WOOD, { CanCollide = false })
@@ -338,8 +337,7 @@ function HouseBuilder.build(parent: Instance, index: number, cframe: CFrame, rng
 	Build.part(structure, "PorchStep", Vector3.new(7, 0.5, 2.6), L(0, 0.25, 0.8), Palette.Stone, Enum.Material.Cobblestone)
 	Build.deco(structure, "WelcomeMat", Vector3.new(3.6, 0.08, 1.6), L(0, 0.54, 0.8), Palette.Pink, PLASTIC)
 	for _, side in { -1, 1 } do
-		local lamp = Build.blob(structure, "PorchLamp", Vector3.new(0.9, 1.2, 0.9), L(side * 3.7, 6.2, 1.7), Color3.fromRGB(255, 226, 150), NEON, { CanCollide = false })
-		Build.light(lamp, Color3.fromRGB(255, 214, 140), 0.7, 12)
+		Build.blob(structure, "PorchLamp", Vector3.new(0.9, 1.2, 0.9), L(side * 3.7, 6.2, 1.7), Color3.fromRGB(255, 226, 150), NEON, { CanCollide = false })
 	end
 
 	-----------------------------------------------------------------------

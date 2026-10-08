@@ -1,52 +1,50 @@
-# Hamster Havoc (Roblox / Rojo) – Fase 1 prototype
+# 🐹 Hamster Plaza
 
-Alle code is Luau en wordt met Rojo naar Roblox Studio gesynchroniseerd.
+A cozy hamster-collection simulator for Roblox, written in Luau and synced with [Rojo](https://rojo.space).
 
-**Snel proberen zonder Rojo:** open `HamsterTycoon.rbxl` in Roblox Studio en druk op Play.
+Loop: **hamsters walk the road → you collect them → they earn coins → upgrade → rarer hamsters → fill the Index → Rebirth → repeat.**
 
-## Starten (Windows)
+## Run it
 
-1. Rokit installeren (PowerShell): `Invoke-RestMethod https://raw.githubusercontent.com/rojo-rbx/rokit/main/scripts/install.ps1 | Invoke-Expression`, nieuw venster openen.
-2. In de projectmap: `rokit install` (leest `rokit.toml`, installeert Rojo).
-3. Rojo-plugin in Studio: `rojo plugin install` (of via de VS Code Rojo-extensie).
-4. `rojo serve` draaien in de projectmap.
-5. Studio: nieuwe **Baseplate**, Plugins → Rojo → **Connect**.
-6. Play, of Test → Clients and Servers → 2 spelers.
+1. Install tools: `rokit install` (installs Rojo 7.4.4 from `rokit.toml`).
+2. Build the place: `rojo build -o HamsterPlaza.rbxl` and open it in Roblox Studio
+   (or `rojo serve` + the Rojo plugin to live-sync).
+3. In Studio: **Game Settings → Security → Enable Studio Access to API Services** (needed for DataStore saving).
+4. Press Play (or Test with 2 players). The world (houses, plaza, road, forest) is generated at runtime by `WorldBuilder`.
 
-## Spelen / testen
+## Controls
+- **E / tap / click** – collect a hamster near you
+- **F** – interact with world prompts (house, plaza stalls)
 
-| Actie | Hoe |
-|---|---|
-| Hamster kopen | Naast een bal op de route staan, **[E]** |
-| Geld ophalen | Groene collector in je basis, **[E]** |
-| Hamster stelen | Bij andermans wiel **[E] vasthouden (1s)**, dan naar je eigen basis rennen |
-| Dief "raken" (test) | Dichtbij de dief **[F]** → hamster gaat terug |
-
-Test-hulpmiddelen staan in `GameConfig.Debug` (`ForceRarity`, `SpawnIntervalOverride`).
-
-## Structuur
-
+## Structure
 ```
 src/
-  ReplicatedStorage/Shared/
-    Config/   GameConfig, Rarities, HamsterCatalog, Mutations, Rebirth
-    Types/    Hamster
-    Util/     Format, PartUtil, RouteMath
-    Remotes/  (alleen server -> client "Notify")
+  ReplicatedFirst/        LoadingScreen
+  ReplicatedStorage/
+    Modules/              configs (Rarity, Hamster database, Upgrades, Rebirth, Quests, Shop, Settings, Audio…),
+                          EconomyMath, PathConfig, HamsterBuilder (procedural models)
+    Remotes/              RemoteEvents + single Request function
   ServerScriptService/
-    Main.server.luau
-    Services/ DataService, HamsterFactory, HamsterModel, VisualEffects, RouteService,
-              PurchaseService, BaseService, SecurityService, IncomeService, StealService,
-              MapService, Notifier
-  ServerStorage/Assets/        (leeg, voor later)
+    Config/CodesConfig    promo codes (single place)
+    Systems/              Data, Economy, Spawn, Pickup, Collection, Rebirth, Upgrade, Quest, Reward,
+                          Shop, Settings, House, Leaderboard, Announce, RequestRouter, WorldBuilder/
   StarterPlayer/StarterPlayerScripts/
-    Main.client.luau
-    Controllers/ HudController, PromptController, WheelAnimator
-  StarterGui/UI/               (leeg; HUD wordt nu vanuit code gebouwd)
+    Controllers/          Data, Audio, Animator, Fx, World, Input, Settings, Ambient
+    UI/                   Main HUD, Index, Inventory, Upgrades, Rebirth, Shop, Settings/Codes, Quests, Daily, Announcements
 ```
 
-## Server-autoriteit
+## Design notes
+- Server-authoritative: every action goes through `RequestRouter` (validation + rate limit). Collecting is checked by distance and affordability.
+- Each player gets their own hamster stream (id, species, spawn time, speed, price); position = `PathConfig.pointAt((now - spawn) * speed)`, so clients animate locally and the server stays cheap.
+- 14 rarities, 164 hamster species built procedurally from primitive parts (Motor6D rig, animated client-side). Luck is capped.
+- Saving: DataStore with session lock, autosave and `BindToClose`.
 
-Geld, kopen, eigendom, inkomen en stelen draaien volledig op de server via ProximityPrompts.
-De client stuurt geen gameplay-requests; hij toont alleen attributen (`Cash`, `Stored`, `IncomePerSecond`)
-en verbergt prompts die niet voor jou zijn (puur cosmetisch).
+## What you must fill in
+- `AudioConfig`: music track asset ids (`Music.Tracks` is empty; built-in placeholder sounds are used for SFX).
+- `ShopConfig`: gamepass / developer product ids are `0` ("coming soon") until you create them on Roblox.
+- `CodesConfig`: your own promo codes.
+
+## Verification status (honest)
+Verified here: `rojo build`, `luau-lsp` typecheck (clean), pure-logic tests (economy, luck, rebirth), and a mock-Roblox simulation of boot → join → client start → collect → requests → rebirth → second player (0 errors).
+**Not verified:** real Roblox Studio / real devices. Visuals, performance on mobile, audio and DataStore behaviour have not been seen running. Expect small tuning/bug fixes after your first playtest.
+The world is ~6.4k parts; see `Decor`/`HouseBuilder` if you need to trim further for low-end mobile.
