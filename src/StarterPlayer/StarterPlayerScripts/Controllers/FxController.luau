@@ -22,6 +22,7 @@ local FxController = {}
 -- UI modules register here (avoids circular requires)
 FxController.OnRareAlert = nil :: ((rarityId: string) -> ())?
 FxController.OnQuestDone = nil :: (() -> ())?
+FxController.OnAlarm = nil :: (() -> ())? -- somebody is stealing from you
 
 local TEXTURES = {
 	sparkle = "rbxasset://textures/particles/sparkles_main.dds",
@@ -362,10 +363,97 @@ local function step(dt: number)
 	end
 end
 
+---------------------------------------------------------------------------
+-- world events from the claim / steal / secure loop
+---------------------------------------------------------------------------
+
+local WORLD_COLORS = {
+	Claim = Color3.fromRGB(255, 214, 90),
+	Steal = Color3.fromRGB(255, 90, 90),
+	Drop = Color3.fromRGB(200, 200, 215),
+	Recover = Color3.fromRGB(120, 255, 160),
+	Pickup = Color3.fromRGB(150, 220, 255),
+	Zap = Color3.fromRGB(120, 190, 255),
+	Hit = Color3.fromRGB(255, 255, 255),
+	SecurityOn = Color3.fromRGB(110, 230, 140),
+	SecurityOff = Color3.fromRGB(255, 90, 90),
+}
+
+local function distanceToMe(position: Vector3): number
+	local root = Players.LocalPlayer.Character and Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+	if root and root:IsA("BasePart") then
+		return (root.Position - position).Magnitude
+	end
+	return math.huge
+end
+
+function FxController.worldEvent(kind: string, rarityId: string, position: Vector3?, extra: any)
+	if not position then
+		return
+	end
+	local me = Players.LocalPlayer.UserId
+	local near = distanceToMe(position)
+	local lifted = position + Vector3.new(0, 2.5, 0)
+	local definition = RarityConfig.ById[rarityId]
+	local rank = if definition then definition.Rank else 1
+
+	if kind == "Spawn" then
+		-- every ball announces itself softly near the burrow; rarer = a bit louder
+		if near < 90 then
+			AudioController.play("Collect", { Position = position, Volume = 0.25 + rank * 0.03, Pitch = 0.7 })
+		end
+	elseif kind == "Alarm" then
+		AudioController.play("Alarm", { Pitch = 1.3 })
+		AudioController.play("Alarm", { Pitch = 1.6 })
+		if FxController.OnAlarm then
+			FxController.OnAlarm()
+		end
+	elseif kind == "Claim" then
+		FxController.burst(lifted, WORLD_COLORS.Claim, math.max(2, rank))
+		AudioController.play("Claim", { Position = position })
+	elseif kind == "Steal" then
+		FxController.burst(lifted, WORLD_COLORS.Steal, math.max(3, rank))
+		AudioController.play("Steal", { Position = position })
+		if near < 60 then
+			FxController.shake(0.25, 0.35)
+		end
+	elseif kind == "Drop" then
+		FxController.burst(lifted, WORLD_COLORS.Drop, 3)
+		AudioController.play("Drop", { Position = position })
+	elseif kind == "Recover" or kind == "Pickup" then
+		FxController.burst(lifted, WORLD_COLORS[kind], 3)
+		AudioController.play("Recover", { Position = position, Pitch = if kind == "Pickup" then 0.8 else 1 })
+	elseif kind == "Secure" then
+		local color = if definition then (if definition.Hidden then definition.Accent else definition.Color) else Color3.new(1, 1, 1)
+		FxController.burst(lifted, color, math.max(3, rank))
+		if extra ~= me then
+			AudioController.play("Secure", { Position = position, Volume = 0.7 })
+		end
+	elseif kind == "SecurityOn" then
+		AudioController.play("SecurityOn", { Position = position })
+	elseif kind == "SecurityOff" then
+		AudioController.play("SecurityOff", { Position = position })
+	elseif kind == "Zap" then
+		FxController.burst(lifted, WORLD_COLORS.Zap, 6)
+		AudioController.play("Zap", { Position = position })
+		if near < 25 then
+			FxController.shake(0.5, 0.4)
+		end
+	elseif kind == "Slap" then
+		AudioController.play("Slap", { Position = position, Pitch = 0.9 + math.random() * 0.3 })
+	elseif kind == "Hit" then
+		FxController.burst(lifted, WORLD_COLORS.Hit, 4)
+		AudioController.play("Hit", { Position = position })
+		if extra == me then
+			FxController.shake(0.7, 0.45)
+		end
+	end
+end
+
 function FxController.start()
 	RunService.RenderStepped:Connect(step)
 
-	Remotes.event("Fx").OnClientEvent:Connect(function(kind: string, argument: any)
+	Remotes.event("Fx").OnClientEvent:Connect(function(kind: string, argument: any, position: Vector3?, extra: any)
 		if kind == "RareSpawn" then
 			AudioController.playRareAlert(argument)
 			if FxController.OnRareAlert then
@@ -382,6 +470,8 @@ function FxController.start()
 			if FxController.OnQuestDone then
 				FxController.OnQuestDone()
 			end
+		else
+			FxController.worldEvent(kind, if type(argument) == "string" then argument else "", position, extra)
 		end
 	end)
 end

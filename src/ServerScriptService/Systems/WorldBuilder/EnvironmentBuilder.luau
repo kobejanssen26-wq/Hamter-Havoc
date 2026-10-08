@@ -1,29 +1,31 @@
 --[[
-	Ground, promenades, lamps, the forest border and the invisible world boundary.
-	The playable core is compact: houses at z = +-76, promenades at z = +-50, plaza in the middle.
+	Ground, promenades, the paths from every gate to the road, a few lamps, the forest border and the
+	invisible world boundary. Deliberately calm: no signs, barrels or random props.
+	Everything is mirror-symmetric around the road (z = 0) and the plaza (x = 0).
 ]]
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Build = require(script.Parent.Build)
 local Decor = require(script.Parent.Decor)
 local Palette = require(script.Parent.Palette)
 
+local WorldLayout = require(ReplicatedStorage.Modules.WorldLayout)
+
 local EnvironmentBuilder = {}
 
 local COSMETIC = Enum.Material.Cobblestone
 
-local GROUND_HALF_X = 178
-local GROUND_HALF_Z = 132
+local GROUND_HALF_X = WorldLayout.GroundHalfX
+local GROUND_HALF_Z = WorldLayout.GroundHalfZ
+local LOT_BACK = WorldLayout.GateDistance + WorldLayout.LotDepth -- |z| of the back hedges
 
--- True for points that belong to the dense core (houses, plaza, promenades) or the road corridors.
+-- True for points that belong to the playable core (road, promenades, lots, plaza annexes).
 local function isCore(x: number, z: number): boolean
-	if math.abs(x) < 116 and math.abs(z) < 104 then
-		return true
+	if math.abs(z) < 26 and math.abs(x) > 148 then
+		return true -- burrow and exit tunnel
 	end
-	-- keep the road ends and burrow/exit areas free
-	if math.abs(z + 16) < 18 and math.abs(x) > 110 then
-		return true
-	end
-	return false
+	return math.abs(x) < 160 and math.abs(z) < LOT_BACK + 8
 end
 
 function EnvironmentBuilder.build(parent: Instance, rng: Random): Folder
@@ -32,7 +34,7 @@ function EnvironmentBuilder.build(parent: Instance, rng: Random): Folder
 	-- ground + soft grass patches so the lawn isn't one flat colour
 	Build.part(folder, "Ground", Vector3.new(GROUND_HALF_X * 2, 4, GROUND_HALF_Z * 2), CFrame.new(0, -2, 0), Palette.Grass, Enum.Material.Grass)
 	local patches = Build.folder(folder, "GrassPatches")
-	for _ = 1, 70 do
+	for _ = 1, 40 do
 		local x = (rng:NextNumber() * 2 - 1) * (GROUND_HALF_X - 8)
 		local z = (rng:NextNumber() * 2 - 1) * (GROUND_HALF_Z - 8)
 		local radius = 6 + rng:NextNumber() * 12
@@ -40,45 +42,32 @@ function EnvironmentBuilder.build(parent: Instance, rng: Random): Folder
 		Build.pillar(patches, "Patch", radius * 2, 0.04, CFrame.new(x, 0.01, z), color, Enum.Material.Grass, { CanCollide = false, CastShadow = false })
 	end
 
-	-- promenades in front of the houses
+	-- promenades (the wide walkways in front of the houses; hamsters roll home along them too)
 	local walks = Build.folder(folder, "Promenades")
+	local promenadeLength = 320
 	for _, sign in { 1, -1 } do
-		Build.part(walks, "Promenade", Vector3.new(232, 0.2, 6), CFrame.new(0, 0.1, sign * 50), Palette.Pavement, COSMETIC, { CanCollide = false })
-		for _, edge in { -3.2, 3.2 } do
-			Build.deco(walks, "PromenadeEdge", Vector3.new(232, 0.24, 0.4), CFrame.new(0, 0.11, sign * 50 + edge), Palette.PavementDark, COSMETIC)
+		local z = sign * WorldLayout.PromenadeZ
+		Build.part(walks, "Promenade", Vector3.new(promenadeLength, 0.2, WorldLayout.PromenadeHalfWidth * 2), CFrame.new(0, 0.1, z), Palette.Pavement, COSMETIC, { CanCollide = false })
+		for _, edge in { -1, 1 } do
+			Build.deco(walks, "PromenadeEdge", Vector3.new(promenadeLength, 0.24, 0.5), CFrame.new(0, 0.11, z + edge * (WorldLayout.PromenadeHalfWidth - 0.25)), Palette.PavementDark, COSMETIC)
 		end
-		for _, x in { -88, -44, 0, 44, 88 } do
-			Build.part(walks, "GateTile", Vector3.new(4.4, 0.2, 2.4), CFrame.new(x, 0.1, sign * 53.8), Palette.Pavement, COSMETIC, { CanCollide = false })
+		-- a paved path from every gate straight to the road
+		for _, x in WorldLayout.HouseColumns do
+			Build.part(walks, "GatePath", Vector3.new(7, 0.16, WorldLayout.GateDistance - WorldLayout.RoadHalfWidth), CFrame.new(x, 0.09, sign * (WorldLayout.GateDistance + WorldLayout.RoadHalfWidth) / 2), Palette.PavementDark, COSMETIC, { CanCollide = false })
 		end
 	end
-	-- connectors to the plaza
-	Build.part(walks, "ConnectorNorth", Vector3.new(6, 0.2, 14), CFrame.new(0, 0.1, 40.5), Palette.Pavement, COSMETIC, { CanCollide = false })
-	for _, x in { -9.5, 9.5 } do
-		Build.part(walks, "ConnectorSouth", Vector3.new(5, 0.2, 16), CFrame.new(x, 0.1, -39.5), Palette.Pavement, COSMETIC, { CanCollide = false })
-	end
-	-- garden paths to windmill and pond
-	Build.part(walks, "GardenPathWest", Vector3.new(4, 0.2, 14), CFrame.new(-60, 0.1, 43) * CFrame.Angles(0, math.rad(-10), 0), Palette.Pavement, COSMETIC, { CanCollide = false })
-	Build.part(walks, "GardenPathEast", Vector3.new(4, 0.2, 14), CFrame.new(60, 0.1, 43) * CFrame.Angles(0, math.rad(10), 0), Palette.Pavement, COSMETIC, { CanCollide = false })
 
-	-- street furniture along both promenades
+	-- street furniture: a few lamps and benches between the road and the promenade
 	local props = Build.folder(folder, "Props")
 	for _, sign in { 1, -1 } do
-		for _, x in { -100, -72, -44, -16, 16, 44, 72, 100 } do
-			Decor.lamp(props, Vector3.new(x, 0, sign * 46.2), 7)
+		for _, x in { -130, -76, 76, 130 } do
+			Decor.lamp(props, Vector3.new(x, 0, sign * 10.2), 7)
 		end
-		for _, x in { -66, -22, 22, 66 } do
+		for _, x in { -34, 34 } do
 			local facing = if sign > 0 then math.pi else 0
-			Decor.bench(props, CFrame.new(x, 0, sign * 46.4) * CFrame.Angles(0, facing, 0))
-		end
-		for _, x in { -110, -58, 58, 110 } do
-			Decor.bush(props, Vector3.new(x, 0, sign * 47), 1.1, rng, true)
+			Decor.bench(props, CFrame.new(x, 0, sign * 10.6) * CFrame.Angles(0, facing, 0))
 		end
 	end
-	Decor.signpost(props, CFrame.new(-22, 0, 47.5) * CFrame.Angles(0, math.pi, 0), "Houses ↑ Plaza ↓", Palette.Cream)
-	Decor.signpost(props, CFrame.new(22, 0, -47.5), "Houses ↓ Plaza ↑", Palette.Cream)
-	Decor.barrel(props, Vector3.new(-108, 0, 47))
-	Decor.crate(props, Vector3.new(-106, 0, 46), 0.4)
-	Decor.barrel(props, Vector3.new(108, 0, -47))
 
 	-- forest border
 	local forest = Build.folder(folder, "Forest")
@@ -93,25 +82,28 @@ function EnvironmentBuilder.build(parent: Instance, rng: Random): Folder
 				if roll < 0.5 then
 					local kinds = { "round", "pine", "pine", "cherry", "round" }
 					Decor.tree(forest, pos, kinds[rng:NextInteger(1, #kinds)], 0.9 + rng:NextNumber() * 0.7, rng)
-				elseif roll < 0.68 then
+				elseif roll < 0.7 then
 					Decor.bush(forest, pos, 0.9 + rng:NextNumber() * 0.5, rng, rng:NextNumber() > 0.6)
-				elseif roll < 0.78 then
+				elseif roll < 0.8 then
 					Decor.rock(forest, pos, 0.8 + rng:NextNumber() * 1.2, rng)
-				elseif roll < 0.9 then
-					Decor.flowers(forest, pos, 3.5, 10, rng)
-				elseif roll < 0.95 then
-					Decor.mushrooms(forest, pos, rng)
-				else
+				elseif roll < 0.86 then
 					Decor.stump(forest, pos, 0.9 + rng:NextNumber() * 0.5)
 				end
 			end
 		end
 	end
-	-- a few tree clumps inside the core corners (between promenades and the world edge)
-	for _, corner in { Vector3.new(-120, 0, 70), Vector3.new(120, 0, 70), Vector3.new(-120, 0, -70), Vector3.new(120, 0, -70) } do
-		for _ = 1, 3 do
-			local offset = Vector3.new((rng:NextNumber() - 0.5) * 16, 0, (rng:NextNumber() - 0.5) * 30)
-			Decor.tree(forest, corner + offset, "round", 1.2, rng)
+
+	-- scenery beyond the invisible walls: a darker lawn with a sparse ring of pines, so the world has no visible edge
+	local outer = Build.folder(folder, "Beyond")
+	Build.part(outer, "OuterGround", Vector3.new(GROUND_HALF_X * 2 + 300, 4, GROUND_HALF_Z * 2 + 300), CFrame.new(0, -2.1, 0), Palette.GrassDark, Enum.Material.Grass, { CanCollide = false })
+	for x = -GROUND_HALF_X - 150, GROUND_HALF_X + 150, 34 do
+		for z = -GROUND_HALF_Z - 150, GROUND_HALF_Z + 150, 34 do
+			if math.abs(x) > GROUND_HALF_X + 6 or math.abs(z) > GROUND_HALF_Z + 6 then
+				local pos = Vector3.new(x + (rng:NextNumber() - 0.5) * 14, 0, z + (rng:NextNumber() - 0.5) * 14)
+				if rng:NextNumber() < 0.75 then
+					Decor.tree(outer, pos, "pine", 1.3 + rng:NextNumber() * 1.0, rng)
+				end
+			end
 		end
 	end
 

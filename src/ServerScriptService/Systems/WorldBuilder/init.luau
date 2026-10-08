@@ -2,10 +2,10 @@
 	WorldBuilder: creates the whole map at server start.
 
 	Workspace
-	├── HamsterPlaza   fountain, shops, library, boards, garden
+	├── HamsterPlaza   arch, shop, hamster library, recent-finds board
 	├── HamsterPath    the physical road + spawn burrow + exit tunnel
-	├── PlayerHouses   10 houses (5 north row, 5 south row)
-	├── Environment    ground, promenades, lamps, forest, boundary
+	├── PlayerHouses   8 houses (4 north row, 4 south row), see WorldLayout
+	├── Environment    ground, promenades, gate paths, lamps, forest, boundary
 	└── SpawnLocations guest spawn
 ]]
 
@@ -21,6 +21,7 @@ local PlazaBuilder = require(script.PlazaBuilder)
 
 local HamsterBuilder = require(ReplicatedStorage.Modules.HamsterBuilder)
 local HamsterDatabase = require(ReplicatedStorage.Modules.HamsterDatabase)
+local WorldLayout = require(ReplicatedStorage.Modules.WorldLayout)
 
 local WorldBuilder = {}
 
@@ -30,9 +31,6 @@ export type World = {
 	StatueCFrame: CFrame,
 	PlazaFolder: Folder,
 }
-
-local HOUSE_COLUMNS = { -88, -44, 0, 44, 88 }
-local HOUSE_ROW_Z = 76
 
 local function setupLighting()
 	Lighting.ClockTime = 15.4
@@ -94,7 +92,7 @@ function WorldBuilder.build(): World
 	PathBuilder.build(Workspace, rng)
 	local plaza = PlazaBuilder.build(Workspace, rng)
 
-	-- the golden king watches over the fountain
+	-- the golden king watches over the road from the top of the arch
 	local statue = HamsterBuilder.build(HamsterDatabase.ById.golden_king, { Scale = 2.6, Particles = false })
 	statue.Name = "PlazaStatue"
 	statue:PivotTo(plaza.StatueCFrame)
@@ -110,12 +108,8 @@ function WorldBuilder.build(): World
 
 	local housesFolder = Build.folder(Workspace, "PlayerHouses")
 	local houses = {}
-	for column, x in HOUSE_COLUMNS do
-		-- north row faces south (towards the plaza), south row faces north
-		table.insert(houses, HouseBuilder.build(housesFolder, column, CFrame.new(x, 0, HOUSE_ROW_Z), rng))
-	end
-	for column, x in HOUSE_COLUMNS do
-		table.insert(houses, HouseBuilder.build(housesFolder, 5 + column, CFrame.new(x, 0, -HOUSE_ROW_Z) * CFrame.Angles(0, math.pi, 0), rng))
+	for index = 1, WorldLayout.HouseCount do
+		table.insert(houses, HouseBuilder.build(housesFolder, index, WorldLayout.houseCFrame(index), rng))
 	end
 
 	return {

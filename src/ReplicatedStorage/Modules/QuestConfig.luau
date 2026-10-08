@@ -1,6 +1,7 @@
 --[[
 	Quests. Each quest is a one-time goal measured by a stat; reward is claimed manually in the Quest UI.
-	Stats: HamstersCollected, CoinsEarned, UpgradesBought, Sold, Rebirths, Unique (index size), Found:<RarityId>.
+	Stats: HamstersCollected (secured), CoinsEarned, UpgradesBought, Sold, Rebirths, Unique (index size), Found:<RarityId>,
+	Claimed, Secured, Steals, Recovered, Slaps.
 	Reward: { Coins, Gems, Tokens, Boost = { Id, Seconds }, Hamster = speciesId }
 ]]
 
@@ -23,6 +24,10 @@ QuestConfig.Quests = {
 	{ Id = "sell10", Title = "Tidy House", Desc = "Sell 10 duplicate hamsters", Stat = "Sold", Target = 10, Reward = { Coins = 2500 } },
 	{ Id = "rebirth3", Title = "Triple Rebirth", Desc = "Reach 3 rebirths", Stat = "Rebirths", Target = 3, Reward = { Gems = 500, Tokens = 2 } },
 	{ Id = "findMythic", Title = "Myth Hunter", Desc = "Find a Mythic hamster", Stat = "Found:Mythic", Target = 1, Reward = { Gems = 500 } },
+	{ Id = "secure10", Title = "Safe And Sound", Desc = "Get 10 hamsters home safely", Stat = "Secured", Target = 10, Reward = { Gems = 60 } },
+	{ Id = "steal1", Title = "Sticky Paws", Desc = "Steal a hamster and get it home", Stat = "Stolen", Target = 1, Reward = { Gems = 120 } },
+	{ Id = "recover3", Title = "Not On My Watch", Desc = "Take back 3 hamsters that were stolen or dropped", Stat = "Recovered", Target = 3, Reward = { Coins = 5000, Gems = 80 } },
+	{ Id = "slap10", Title = "Bouncer", Desc = "Slap 10 thieves", Stat = "Slaps", Target = 10, Reward = { Boost = { Id = "Speed2x", Seconds = 600 } } },
 }
 
 QuestConfig.ById = {} :: { [string]: any }

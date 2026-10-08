@@ -1,7 +1,9 @@
 --[[
-	IndexUI: the Hamster Index. Every rarity is a tab; every hamster is a card with its 3D icon.
+	IndexUI: the Hamster Index.
+	  - browse by Rarity, Theme, World or Event (left list); every hamster is a card with its 3D icon
+	  - click a card to inspect the hamster: spinning 3D model, rarity, value, discovery status, copies owned
+	  - "Rewards" tab: collection milestones (permanent % bonuses), titles and the final prestige reward
 	Uncollected hamsters are silhouettes, Secret/??? hamsters stay completely hidden until found.
-	Completing a whole rarity unlocks a gem reward; every unique hamster gives a permanent coin bonus.
 ]]
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -10,6 +12,8 @@ local Modules = ReplicatedStorage:WaitForChild("Modules")
 local EconomyMath = require(Modules:WaitForChild("EconomyMath"))
 local Format = require(Modules:WaitForChild("Format"))
 local HamsterDatabase = require(Modules:WaitForChild("HamsterDatabase"))
+local HamsterGroups = require(Modules:WaitForChild("HamsterGroups"))
+local IndexRewardConfig = require(Modules:WaitForChild("IndexRewardConfig"))
 local RarityConfig = require(Modules:WaitForChild("RarityConfig"))
 
 local DataController = require(script.Parent.Parent.Controllers.DataController)
@@ -19,8 +23,36 @@ local IndexUI = {}
 
 local C = UIKit.Colors
 
+type Entry = { Id: string, Name: string, Icon: string, Info: string, Color: Color3, Species: { any }, Rarity: string? }
+
+local MODES = { "Rarity", "Theme", "World", "Event", "Rewards" }
+local MODE_LABELS = { Rarity = "Rarity", Theme = "Theme", World = "World", Event = "Event", Rewards = "🏅 Rewards" }
+
+local function entriesFor(mode: string): { Entry }
+	local result: { Entry } = {}
+	if mode == "Rarity" then
+		for _, rarityId in RarityConfig.Order do
+			local definition = RarityConfig.ById[rarityId]
+			table.insert(result, {
+				Id = rarityId,
+				Name = definition.Name,
+				Icon = "●",
+				Info = "",
+				Color = UIKit.rarityColor(definition),
+				Species = HamsterDatabase.ByRarity[rarityId],
+				Rarity = rarityId,
+			})
+		end
+	else
+		for _, group in HamsterGroups.groups(mode) do
+			table.insert(result, { Id = group.Id, Name = group.Name, Icon = group.Icon, Info = group.Info, Color = C.Sky, Species = group.Species })
+		end
+	end
+	return result
+end
+
 function IndexUI.start()
-	local panel = UIKit.panel({ Name = "Index", Title = "Hamster Index", Icon = "📖", Design = Vector2.new(980, 640), Accent = C.Sky })
+	local panel = UIKit.panel({ Name = "Index", Title = "Hamster Index", Icon = "📖", Design = Vector2.new(1000, 660), Accent = C.Sky })
 	local body = panel.Body
 
 	-- summary row
@@ -29,50 +61,51 @@ function IndexUI.start()
 	UIKit.stroke(summary, Color3.fromRGB(226, 208, 180), 2)
 	local collectedLabel = UIKit.label(summary, {
 		Position = UDim2.fromOffset(16, 4),
-		Size = UDim2.fromOffset(320, 26),
+		Size = UDim2.fromOffset(360, 26),
 		Font = UIKit.Fonts.Title,
 		TextSize = 22,
-		Text = "Collected: 0 / 0",
+		Text = "0 / 0 COLLECTED",
 	})
 	local bonusLabel = UIKit.label(summary, {
 		Position = UDim2.fromOffset(16, 30),
-		Size = UDim2.fromOffset(400, 22),
-		TextSize = 14,
+		Size = UDim2.fromOffset(460, 22),
+		TextSize = 13,
 		TextColor3 = C.Muted,
 		Text = "",
 	})
 	local bar = UIKit.progress(summary, {
-		Size = UDim2.new(1, -460, 0, 22),
+		Size = UDim2.new(1, -500, 0, 22),
 		Position = UDim2.new(1, -14, 0.5, 0),
 		AnchorPoint = Vector2.new(1, 0.5),
 		Color = C.Sky,
 	})
 
-	-- rarity list (left)
-	local list = UIKit.scroll(body, { Size = UDim2.new(0, 200, 1, -70), Position = UDim2.fromOffset(0, 68) })
+	-- browse mode buttons + group list (left)
+	local modeRow = UIKit.frame(body, { Size = UDim2.new(0, 214, 0, 62), Position = UDim2.fromOffset(0, 66), BackgroundTransparency = 1 })
+	local list = UIKit.scroll(body, { Size = UDim2.new(0, 214, 1, -134), Position = UDim2.fromOffset(0, 132) })
 	UIKit.list(list, Enum.FillDirection.Vertical, 6)
 	UIKit.padding(list, 2)
 
 	-- detail area (right)
-	local detail = UIKit.frame(body, { Size = UDim2.new(1, -212, 1, -70), Position = UDim2.fromOffset(212, 68), BackgroundTransparency = 1 })
-	local rarityHeader = UIKit.frame(detail, { Size = UDim2.new(1, 0, 0, 56), BackgroundColor3 = C.Card })
-	UIKit.corner(rarityHeader, 14)
-	local headerStroke = UIKit.stroke(rarityHeader, C.Brown, 3)
-	local headerTitle = UIKit.label(rarityHeader, {
+	local detail = UIKit.frame(body, { Size = UDim2.new(1, -226, 1, -66), Position = UDim2.fromOffset(226, 66), BackgroundTransparency = 1 })
+	local header = UIKit.frame(detail, { Size = UDim2.new(1, 0, 0, 56), BackgroundColor3 = C.Card })
+	UIKit.corner(header, 14)
+	local headerStroke = UIKit.stroke(header, C.Brown, 3)
+	local headerTitle = UIKit.label(header, {
 		Position = UDim2.fromOffset(14, 4),
 		Size = UDim2.new(1, -230, 0, 28),
 		Font = UIKit.Fonts.Title,
 		TextSize = 24,
 		Text = "",
 	})
-	local headerInfo = UIKit.label(rarityHeader, {
+	local headerInfo = UIKit.label(header, {
 		Position = UDim2.fromOffset(14, 30),
 		Size = UDim2.new(1, -230, 0, 22),
 		TextSize = 13,
 		TextColor3 = C.Muted,
 		Text = "",
 	})
-	local claimButton = UIKit.button(rarityHeader, {
+	local claimButton = UIKit.button(header, {
 		Text = "Claim 💎",
 		Size = UDim2.fromOffset(190, 40),
 		Position = UDim2.new(1, -8, 0.5, 0),
@@ -84,16 +117,113 @@ function IndexUI.start()
 
 	local grid = UIKit.scroll(detail, { Size = UDim2.new(1, 0, 1, -64), Position = UDim2.fromOffset(0, 64) })
 
-	local selected = "Basic"
-	local tabButtons: { [string]: { Button: TextButton, Count: TextLabel } } = {}
-	local claimRarity: string? = nil
+	-- inspect popup
+	local inspect = UIKit.frame(body, { Size = UDim2.fromScale(1, 1), BackgroundColor3 = C.Dim, BackgroundTransparency = 0.35, Visible = false, ZIndex = 20 })
+	inspect.Active = true
+	local inspectCard = UIKit.frame(inspect, {
+		Size = UDim2.fromOffset(440, 460),
+		Position = UDim2.fromScale(0.5, 0.5),
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		BackgroundColor3 = C.Card,
+		ZIndex = 21,
+	})
+	UIKit.corner(inspectCard, 22)
+	local inspectStroke = UIKit.stroke(inspectCard, C.Sky, 4)
+	local inspectIconHolder = UIKit.frame(inspectCard, { Size = UDim2.new(1, -40, 0, 250), Position = UDim2.fromOffset(20, 16), BackgroundTransparency = 1, ZIndex = 22 })
+	local inspectName = UIKit.label(inspectCard, {
+		Position = UDim2.fromOffset(0, 270),
+		Size = UDim2.new(1, 0, 0, 34),
+		Font = UIKit.Fonts.Title,
+		TextSize = 28,
+		TextXAlignment = Enum.TextXAlignment.Center,
+		Text = "",
+		ZIndex = 22,
+	})
+	local inspectRarity = UIKit.label(inspectCard, {
+		Position = UDim2.fromOffset(0, 304),
+		Size = UDim2.new(1, 0, 0, 22),
+		TextSize = 16,
+		Font = UIKit.Fonts.Title,
+		TextXAlignment = Enum.TextXAlignment.Center,
+		Text = "",
+		ZIndex = 22,
+	})
+	local inspectFacts = UIKit.label(inspectCard, {
+		Position = UDim2.fromOffset(24, 332),
+		Size = UDim2.new(1, -48, 0, 88),
+		TextSize = 15,
+		TextColor3 = C.Ink,
+		TextYAlignment = Enum.TextYAlignment.Top,
+		TextWrapped = true,
+		Text = "",
+		ZIndex = 22,
+	})
+	UIKit.button(inspectCard, {
+		Text = "Close",
+		Size = UDim2.fromOffset(140, 38),
+		Position = UDim2.new(0.5, 0, 1, -12),
+		AnchorPoint = Vector2.new(0.5, 1),
+		Color = C.Sky,
+		TextSize = 17,
+		ZIndex = 23,
+		OnClick = function()
+			inspect.Visible = false
+		end,
+	})
 
-	local function rarityProgress(data: any, rarityId: string): (number, number)
+	local mode = "Rarity"
+	local selected: { [string]: string } = { Rarity = "Basic", Theme = "treats", World = "meadow", Event = "event" }
+	local tabButtons: { [string]: { Button: TextButton, Count: TextLabel } } = {}
+	local modeButtons: { [string]: TextButton } = {}
+	local claimTarget: string? = nil
+
+	local function bestRarityFound(data: any): string
+		local best, bestRank = "none yet", 0
+		for rarityId, count in data.Stats.Found or {} do
+			local rank = RarityConfig.rank(rarityId)
+			if count > 0 and rank > bestRank then
+				best, bestRank = RarityConfig.ById[rarityId].Name, rank
+			end
+		end
+		return best
+	end
+
+	local function openInspect(species: any, found: boolean)
+		local data = DataController.Data
+		local definition = RarityConfig.ById[species.Rarity]
+		local color = UIKit.rarityColor(definition)
+		local hidden = definition.Hidden and not found
+		for _, child in inspectIconHolder:GetChildren() do
+			child:Destroy()
+		end
+		if not hidden then
+			UIKit.hamsterIcon(inspectIconHolder, species, { Size = UDim2.fromScale(1, 1), Silhouette = not found, Spin = found })
+		else
+			UIKit.label(inspectIconHolder, { Size = UDim2.fromScale(1, 1), Text = "?", TextSize = 140, Font = UIKit.Fonts.Title, TextColor3 = Color3.fromRGB(190, 170, 150), TextXAlignment = Enum.TextXAlignment.Center, ZIndex = 23 })
+		end
+		inspectStroke.Color = color
+		inspectName.Text = if hidden then "???" else species.Name
+		inspectRarity.Text = string.format('<font color="#%s">%s</font>%s', color:ToHex(), definition.Name, if species.Exclusive then "  ★ Exclusive" else "")
+		local owned = (data.Inventory or {})[species.Id] or 0
+		inspectFacts.Text = string.format(
+			"Discovery: %s\nValue: 🪙 %s / second\nPrice when rolling past: 🪙 %s\nCopies in your collection: %d\nBest rarity you found so far: %s",
+			if found then "✓ Discovered" else "✗ Not found yet",
+			if hidden then "???" else Format.short(HamsterDatabase.income(species)),
+			if hidden then "???" else Format.short(HamsterDatabase.price(species)),
+			owned,
+			bestRarityFound(data)
+		)
+		inspect.Visible = true
+	end
+
+	local function groupProgress(data: any, entry: Entry): (number, number)
 		local have, total = 0, 0
-		for _, species in HamsterDatabase.ByRarity[rarityId] do
-			total += 1
-			if data.Index and data.Index[species.Id] then
-				have += 1
+		for _, species in entry.Species do
+			if not species.Exclusive or entry.Id == "event" then
+				total += 1
+				if data.Index[species.Id] then
+					have += 1
+				end
 			end
 		end
 		return have, total
@@ -105,59 +235,162 @@ function IndexUI.start()
 			return
 		end
 		local unique = EconomyMath.uniqueCount(data)
-		collectedLabel.Text = string.format("Collected: %d / %d", unique, HamsterDatabase.Total)
-		bonusLabel.Text = string.format("Index bonus: +%.1f%% coins for every hamster you ever found", unique * EconomyMath.IndexBonusPerHamster * 100)
+		collectedLabel.Text = string.format("%d / %d COLLECTED", unique, HamsterDatabase.Total)
+		local derived = DataController.derived()
+		local title = derived.Title
+		bonusLabel.Text = string.format(
+			"Index bonus +%.1f%% coins  •  Milestones +%d%% coins, +%d%% luck%s",
+			unique * EconomyMath.IndexBonusPerHamster * 100,
+			math.floor((derived.IndexCoinBonus or 0) * 100 + 0.5),
+			math.floor((derived.IndexLuckBonus or 0) * 100 + 0.5),
+			if title and title ~= "" then "  •  🏅 " .. title else ""
+		)
 		bar.Set(unique / HamsterDatabase.Total, string.format("%d%%", math.floor(unique / HamsterDatabase.Total * 100)))
-		for rarityId, entry in tabButtons do
-			local have, total = rarityProgress(data, rarityId)
-			entry.Count.Text = string.format("%d/%d", have, total)
+		for id, entry in tabButtons do
+			local entryData = nil
+			for _, candidate in entriesFor(mode) do
+				if candidate.Id == id then
+					entryData = candidate
+				end
+			end
+			if entryData then
+				local have, total = groupProgress(data, entryData)
+				entry.Count.Text = string.format("%d/%d", have, total)
+			end
 		end
 	end
 
-	local function renderRarity()
+	local function clearGrid()
+		grid:ClearAllChildren()
+	end
+
+	local function renderRewards()
 		local data = DataController.Data
 		if not data.Index then
 			return
 		end
-		local definition = RarityConfig.ById[selected]
-		local color = UIKit.rarityColor(definition)
-		headerStroke.Color = color
-		headerTitle.Text = string.format('<font color="#%s">%s</font>', color:ToHex(), definition.Name)
-		headerInfo.Text = string.format("Speed %g studs/s  •  %s  •  Income %s/s%s", definition.Speed, definition.Difficulty, Format.short(definition.Income), if definition.MinRebirth > 0 then "  •  Unlocks at Rebirth " .. definition.MinRebirth else "")
+		headerStroke.Color = C.Gold
+		headerTitle.Text = "🏅 Collection rewards"
+		headerInfo.Text = "Bonuses are permanent and apply automatically as soon as you find enough hamsters."
+		local final = IndexRewardConfig.FinalReward
+		local complete = IndexRewardConfig.finalComplete(data)
+		local claimed = data.IndexRewards and data.IndexRewards[IndexRewardConfig.FinalKey]
+		claimTarget = IndexRewardConfig.FinalKey
+		if claimed then
+			claimButton.Text = "Index reward claimed ✓"
+			UIKit.setEnabled(claimButton, false)
+		elseif complete then
+			claimButton.Text = string.format("Claim 💎 %s + 🔥 %d", Format.short(final.Gems), final.Tokens)
+			UIKit.setEnabled(claimButton, true)
+		else
+			claimButton.Text = string.format("Finish the Index: 💎 %s", Format.short(final.Gems))
+			UIKit.setEnabled(claimButton, false)
+		end
 
-		local spawnableTotal = #HamsterDatabase.Spawnable[selected]
-		local spawnableHave = 0
-		for _, species in HamsterDatabase.ByRarity[selected] do
-			if data.Index[species.Id] then
-				if not species.Exclusive then
+		clearGrid()
+		UIKit.list(grid, Enum.FillDirection.Vertical, 6)
+		UIKit.padding(grid, 4)
+		local order = 0
+		local function row(icon: string, title: string, subtitle: string, fraction: number, done: boolean, color: Color3)
+			order += 1
+			local frame = UIKit.frame(grid, { Size = UDim2.new(1, -12, 0, 54), BackgroundColor3 = if done then C.Card else C.CreamDark, LayoutOrder = order })
+			UIKit.corner(frame, 14)
+			UIKit.stroke(frame, if done then color else Color3.fromRGB(214, 194, 164), if done then 3 else 2)
+			UIKit.label(frame, { Position = UDim2.fromOffset(12, 0), Size = UDim2.fromOffset(40, 54), Text = icon, TextSize = 26, Font = UIKit.Fonts.Title, TextXAlignment = Enum.TextXAlignment.Center })
+			UIKit.label(frame, { Position = UDim2.fromOffset(58, 5), Size = UDim2.new(1, -240, 0, 22), Text = title, TextSize = 17, Font = UIKit.Fonts.Title, TextColor3 = C.Ink })
+			UIKit.label(frame, { Position = UDim2.fromOffset(58, 28), Size = UDim2.new(1, -240, 0, 20), Text = subtitle, TextSize = 13, TextColor3 = C.Muted })
+			local progress = UIKit.progress(frame, { Size = UDim2.fromOffset(150, 20), Position = UDim2.new(1, -12, 0.5, 0), AnchorPoint = Vector2.new(1, 0.5), Color = if done then C.Green else color })
+			progress.Set(math.clamp(fraction, 0, 1), if done then "✓ Done" else string.format("%d%%", math.floor(fraction * 100)))
+		end
+
+		for _, milestone in IndexRewardConfig.Milestones do
+			local definition = RarityConfig.ById[milestone.Rarity]
+			local have = IndexRewardConfig.found(data, milestone.Rarity)
+			local done = have >= milestone.Count
+			row(
+				if milestone.Stat == "Coins" then "🪙" else "🍀",
+				string.format("Find %d %s hamsters", milestone.Count, definition.Name),
+				string.format("+%d%% %s forever  (%d/%d)", math.floor(milestone.Percent * 100 + 0.5), milestone.Stat, math.min(have, milestone.Count), milestone.Count),
+				have / milestone.Count,
+				done,
+				UIKit.rarityColor(definition)
+			)
+		end
+		for _, rarityId in RarityConfig.Order do
+			if #HamsterDatabase.Spawnable[rarityId] > 0 then
+				local definition = RarityConfig.ById[rarityId]
+				local have = 0
+				for _, species in HamsterDatabase.Spawnable[rarityId] do
+					if data.Index[species.Id] then
+						have += 1
+					end
+				end
+				local total = #HamsterDatabase.Spawnable[rarityId]
+				row("🏷️", string.format("Title: %s Collector", definition.Name), string.format("Complete the %s set (%d/%d)", definition.Name, have, total), have / total, have >= total, UIKit.rarityColor(definition))
+			end
+		end
+		local unique = EconomyMath.uniqueCount(data)
+		row("🏆", "Title: " .. final.Title, string.format("Complete the Index: +%d%% coins forever, 💎 %s, 🔥 %d", math.floor(final.CoinPercent * 100), Format.short(final.Gems), final.Tokens), unique / HamsterDatabase.Total, complete, C.Gold)
+	end
+
+	local function renderGroup()
+		local data = DataController.Data
+		if not data.Index then
+			return
+		end
+		local entries = entriesFor(mode)
+		local entry = entries[1]
+		for _, candidate in entries do
+			if candidate.Id == selected[mode] then
+				entry = candidate
+			end
+		end
+		headerStroke.Color = entry.Color
+		headerTitle.Text = string.format('<font color="#%s">%s %s</font>', entry.Color:ToHex(), entry.Icon, entry.Name)
+		claimTarget = nil
+
+		if mode == "Rarity" and entry.Rarity then
+			local definition = RarityConfig.ById[entry.Rarity]
+			headerInfo.Text = string.format("Speed %g studs/s  •  %s  •  Income %s/s%s", definition.Speed, definition.Difficulty, Format.short(definition.Income), if definition.MinRebirth > 0 then "  •  Unlocks at Rebirth " .. definition.MinRebirth else "")
+			local spawnableTotal = #HamsterDatabase.Spawnable[entry.Rarity]
+			local spawnableHave = 0
+			for _, species in HamsterDatabase.ByRarity[entry.Rarity] do
+				if data.Index[species.Id] and not species.Exclusive then
 					spawnableHave += 1
 				end
 			end
-		end
-		local complete = spawnableHave >= spawnableTotal and spawnableTotal > 0
-		local claimed = data.IndexRewards and data.IndexRewards[selected]
-		claimRarity = selected
-		local reward = definition.IndexReward
-		if claimed then
-			claimButton.Text = "Reward claimed ✓"
-			UIKit.setEnabled(claimButton, false)
-		elseif complete then
-			claimButton.Text = string.format("Claim 💎 %s", Format.short(reward.Gems))
-			UIKit.setEnabled(claimButton, true)
+			local complete = spawnableHave >= spawnableTotal and spawnableTotal > 0
+			local claimed = data.IndexRewards and data.IndexRewards[entry.Rarity]
+			claimTarget = entry.Rarity
+			local reward = definition.IndexReward
+			if claimed then
+				claimButton.Text = "Reward claimed ✓"
+				UIKit.setEnabled(claimButton, false)
+			elseif complete then
+				claimButton.Text = string.format("Claim 💎 %s", Format.short(reward.Gems))
+				UIKit.setEnabled(claimButton, true)
+			else
+				claimButton.Text = string.format("Complete: %d/%d  💎 %s", spawnableHave, spawnableTotal, Format.short(reward.Gems))
+				UIKit.setEnabled(claimButton, false)
+			end
 		else
-			claimButton.Text = string.format("Complete: %d/%d  💎 %s", spawnableHave, spawnableTotal, Format.short(reward.Gems))
+			local have, total = groupProgress(data, entry)
+			headerInfo.Text = string.format("%s  •  %d/%d found", entry.Info, have, total)
+			claimButton.Text = string.format("%d / %d", have, total)
 			UIKit.setEnabled(claimButton, false)
 		end
 
-		grid:ClearAllChildren()
+		clearGrid()
 		UIKit.new("UIGridLayout", {
-			CellSize = UDim2.fromOffset(168, 206),
+			CellSize = UDim2.fromOffset(160, 206),
 			CellPadding = UDim2.fromOffset(10, 10),
 			SortOrder = Enum.SortOrder.LayoutOrder,
 		}, grid)
 		UIKit.padding(grid, 4)
 
-		for order, species in HamsterDatabase.ByRarity[selected] do
+		for order, species in entry.Species do
+			local definition = RarityConfig.ById[species.Rarity]
+			local color = UIKit.rarityColor(definition)
 			local found = data.Index[species.Id] == true
 			local hiddenRarity = definition.Hidden
 			local card = UIKit.frame(grid, { LayoutOrder = order, BackgroundColor3 = if found then C.Card else C.CreamDark })
@@ -181,7 +414,7 @@ function IndexUI.start()
 			UIKit.label(card, {
 				Size = UDim2.new(1, -10, 0, 24),
 				Position = UDim2.fromOffset(5, 122),
-				Text = if found then species.Name elseif hiddenRarity then "???" else species.Name,
+				Text = if found or not hiddenRarity then species.Name else "???",
 				TextSize = 17,
 				Font = UIKit.Fonts.Title,
 				TextXAlignment = Enum.TextXAlignment.Center,
@@ -204,72 +437,124 @@ function IndexUI.start()
 			end
 			local chip = UIKit.chip(card, chipText, chipColor, UDim2.fromOffset(118, 22))
 			chip.Position = UDim2.new(0.5, -59, 1, -30)
+
+			-- click anywhere on the card to inspect it
+			local click = UIKit.new("TextButton", { Text = "", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), ZIndex = 5 }, card)
+			click.Activated:Connect(function()
+				openInspect(species, found)
+			end)
 		end
 	end
 
-	-- build the rarity list
-	for order, rarityId in RarityConfig.Order do
-		local definition = RarityConfig.ById[rarityId]
-		local color = UIKit.rarityColor(definition)
-		local button = UIKit.button(list, {
-			Text = "",
-			Size = UDim2.new(1, -8, 0, 44),
-			Color = C.CreamDark,
-			Corner = 12,
+	local function render()
+		if mode == "Rewards" then
+			renderRewards()
+		else
+			renderGroup()
+		end
+	end
+
+	local function buildList()
+		for _, child in list:GetChildren() do
+			if child:IsA("TextButton") then
+				child:Destroy()
+			end
+		end
+		tabButtons = {}
+		if mode == "Rewards" then
+			return
+		end
+		for order, entry in entriesFor(mode) do
+			local button = UIKit.button(list, {
+				Text = "",
+				Size = UDim2.new(1, -8, 0, 44),
+				Color = if entry.Id == selected[mode] then C.White else C.CreamDark,
+				Corner = 12,
+				LayoutOrder = order,
+				Name = "Group_" .. entry.Id,
+				OnClick = function()
+					selected[mode] = entry.Id
+					for id, tab in tabButtons do
+						UIKit.setButtonColor(tab.Button, if id == entry.Id then C.White else C.CreamDark)
+					end
+					render()
+				end,
+			})
+			local marker = UIKit.frame(button, { Size = UDim2.fromOffset(10, 28), Position = UDim2.fromOffset(8, 8), BackgroundColor3 = entry.Color })
+			UIKit.corner(marker, 5)
+			UIKit.label(button, {
+				Position = UDim2.fromOffset(26, 0),
+				Size = UDim2.new(1, -86, 1, 0),
+				Text = if mode == "Rarity" then entry.Name else entry.Icon .. " " .. entry.Name,
+				TextSize = 16,
+				Font = UIKit.Fonts.Title,
+				TextColor3 = C.Ink,
+				TextTruncate = Enum.TextTruncate.AtEnd,
+			})
+			local count = UIKit.label(button, {
+				Position = UDim2.new(1, -62, 0, 0),
+				Size = UDim2.fromOffset(54, 44),
+				Text = "0/0",
+				TextSize = 14,
+				TextColor3 = C.Muted,
+				TextXAlignment = Enum.TextXAlignment.Right,
+			})
+			tabButtons[entry.Id] = { Button = button, Count = count }
+		end
+	end
+
+	local function setMode(newMode: string)
+		mode = newMode
+		for id, button in modeButtons do
+			UIKit.setButtonColor(button, if id == newMode then C.Sky else C.CreamDark)
+		end
+		list.Visible = newMode ~= "Rewards"
+		inspect.Visible = false
+		buildList()
+		refreshSummary()
+		render()
+	end
+
+	-- mode buttons (two rows)
+	UIKit.list(modeRow, Enum.FillDirection.Horizontal, 4)
+	local modeLayout = modeRow:FindFirstChildOfClass("UIListLayout") :: UIListLayout
+	modeLayout.Wraps = true
+	for order, id in MODES do
+		modeButtons[id] = UIKit.button(modeRow, {
+			Text = MODE_LABELS[id],
+			Size = UDim2.fromOffset(if id == "Rewards" then 214 else 69, 28),
+			Color = if id == mode then C.Sky else C.CreamDark,
+			TextSize = 13,
+			Corner = 10,
 			LayoutOrder = order,
-			Name = "Rarity_" .. rarityId,
+			Name = "Mode_" .. id,
 			OnClick = function()
-				selected = rarityId
-				for id, entry in tabButtons do
-					UIKit.setButtonColor(entry.Button, if id == rarityId then C.White else C.CreamDark)
-				end
-				renderRarity()
+				setMode(id)
 			end,
 		})
-		UIKit.frame(button, { Size = UDim2.fromOffset(10, 28), Position = UDim2.fromOffset(8, 8), BackgroundColor3 = color })
-		UIKit.corner(button:FindFirstChildOfClass("Frame") :: Frame, 5)
-		UIKit.label(button, {
-			Position = UDim2.fromOffset(26, 0),
-			Size = UDim2.new(1, -84, 1, 0),
-			Text = definition.Name,
-			TextSize = 17,
-			Font = UIKit.Fonts.Title,
-			TextColor3 = C.Ink,
-		})
-		local count = UIKit.label(button, {
-			Position = UDim2.new(1, -62, 0, 0),
-			Size = UDim2.fromOffset(54, 44),
-			Text = "0/0",
-			TextSize = 14,
-			TextColor3 = C.Muted,
-			TextXAlignment = Enum.TextXAlignment.Right,
-		})
-		tabButtons[rarityId] = { Button = button, Count = count }
 	end
-	UIKit.setButtonColor(tabButtons.Basic.Button, C.White)
 
 	claimButton.Activated:Connect(function()
-		if claimRarity and not claimButton:GetAttribute("Disabled") then
-			local result = DataController.request("ClaimIndexReward", { Rarity = claimRarity })
-			if not result.ok then
-				-- the server message is shown by the toast system through Notify when it pays out
-				require(script.Parent.MainUI).toast(result.msg, "error")
-			else
-				require(script.Parent.MainUI).toast(result.msg, "reward")
-			end
+		if claimTarget and not claimButton:GetAttribute("Disabled") then
+			local result = DataController.request("ClaimIndexReward", { Rarity = claimTarget })
+			require(script.Parent.MainUI).toast(result.msg, if result.ok then "reward" else "error")
 		end
 	end)
 
 	panel.OnOpen[1] = function()
+		inspect.Visible = false
+		buildList()
 		refreshSummary()
-		renderRarity()
+		render()
 	end
 	DataController.onChanged(function(keys)
-		if panel.IsOpen and (keys.Index or keys.IndexRewards or keys.Derived) then
+		if panel.IsOpen and (keys.Index or keys.IndexRewards or keys.Derived or keys.Inventory) then
 			refreshSummary()
-			renderRarity()
+			render()
 		end
 	end)
+
+	buildList()
 end
 
 return IndexUI

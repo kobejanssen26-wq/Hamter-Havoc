@@ -9,6 +9,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Modules = ReplicatedStorage.Modules
 local EconomyMath = require(Modules.EconomyMath)
 local HamsterDatabase = require(Modules.HamsterDatabase)
+local IndexRewardConfig = require(Modules.IndexRewardConfig)
 local RarityConfig = require(Modules.RarityConfig)
 
 local AnnounceSystem = require(script.Parent.AnnounceSystem)
@@ -210,6 +211,19 @@ end
 -- Returns (ok, message, reward)
 function CollectionSystem.claimIndexReward(player: Player, rarityId: string): (boolean, string, any?)
 	local data = DataSystem.get(player)
+	if data and rarityId == IndexRewardConfig.FinalKey then
+		-- the whole Index: one-time prestige reward (the +coins bonus and the title are automatic)
+		if data.IndexRewards[rarityId] then
+			return false, "Already claimed"
+		end
+		if not IndexRewardConfig.finalComplete(data) then
+			return false, "Find every hamster first"
+		end
+		data.IndexRewards[rarityId] = true
+		ReplicationSystem.mark(player, "IndexRewards")
+		local final = IndexRewardConfig.FinalReward
+		return true, "HAMSTER INDEX COMPLETE! You are now a " .. final.Title .. ".", { Gems = final.Gems, Tokens = final.Tokens }
+	end
 	local definition = RarityConfig.ById[rarityId]
 	if not data or not definition then
 		return false, "Unknown rarity"

@@ -176,7 +176,9 @@ function AnnouncementUI.start()
 	Remotes.event("Announce").OnClientEvent:Connect(function(info: { Kind: string, RarityId: string, Text: string, PlayerName: string, UserId: number })
 		local subtitle = nil
 		if info.Kind == "Spawn" then
-			subtitle = if info.UserId == player.UserId then "It's running for YOU - catch it!" else string.format("Running for %s", info.PlayerName)
+			subtitle = if info.PlayerName ~= "" then string.format("Rolled by %s's luck - claim it before anyone else!", info.PlayerName) else "Claim it before anyone else!"
+		elseif info.Kind == "Steal" then
+			subtitle = "Chase them down and slap it loose!"
 		end
 		showBanner(info.Text, info.RarityId, subtitle)
 		AudioController.playRareAlert(info.RarityId)
@@ -190,6 +192,10 @@ function AnnouncementUI.start()
 		end
 	end
 	FxController.OnQuestDone = function() end
+	-- somebody is stealing from me: red flash
+	FxController.OnAlarm = function()
+		doFlash(Color3.fromRGB(255, 70, 70), 0.3)
+	end
 
 	-- reveal cards for big finds
 	WorldController.OnCollectResult = function(success, speciesId, isNew, _note)

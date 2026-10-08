@@ -15,6 +15,9 @@ local order = {
 	"FxController",
 	"WorldController",
 	"InputController",
+	"CombatController",
+	"SecurityController",
+	"NavController",
 	"SettingsController",
 	"AmbientController",
 }
@@ -37,6 +40,7 @@ local screens = {
 	"SettingsUI",
 	"QuestUI",
 	"DailyRewardUI",
+	"HamsterHUD",
 	"AnnouncementUI",
 }
 for _, name in screens do

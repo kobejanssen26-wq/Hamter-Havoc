@@ -19,7 +19,6 @@ local EconomySystem = require(script.Parent.EconomySystem)
 local Events = require(script.Parent.Events)
 local Notifier = require(script.Parent.Notifier)
 local ReplicationSystem = require(script.Parent.ReplicationSystem)
-local SpawnSystem = require(script.Parent.SpawnSystem)
 
 local RebirthSystem = {}
 
@@ -54,7 +53,6 @@ function RebirthSystem.perform(player: Player): (boolean, string)
 	local tokens = RebirthConfig.tokenReward(nextRebirth)
 	EconomySystem.addTokens(player, tokens)
 
-	SpawnSystem.clear(player)
 	EconomySystem.updateAttributes(player)
 	ReplicationSystem.mark(player, "Rebirths", "Inventory", "Equipped", "Upgrades", "Stats")
 	Events.EquippedChanged:Fire(player)

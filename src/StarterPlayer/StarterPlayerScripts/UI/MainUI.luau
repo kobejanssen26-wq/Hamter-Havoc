@@ -42,9 +42,13 @@ local TOAST_COLORS = {
 }
 
 local TIPS = {
-	"🐹 Hamsters run past the plaza - get close and press [E] to grab one!",
-	"💡 Rarer hamsters run faster. Upgrade Collection Range to catch them!",
-	"🏠 Your best hamsters earn coins while they sit on your house shelf.",
+	"🐹 Hamster balls roll down the road - get close and press [E] to claim one!",
+	"🏠 A claimed hamster is NOT yours yet: it must reach the pad in your house!",
+	"🥷 See a hamster rolling to someone else's house? Press [E] to steal it, then run it home.",
+	"👊 Press [Q] to slap a thief - a hit carrier can drop the hamster.",
+	"🛡️ Your security gate switches off after a while - press [E] at the gate panel to turn it on again.",
+	"💡 Rarer hamsters roll faster. Upgrade Collection Range to catch them!",
+	"🏃 Your hamsters run on wheels in your house and earn coins for you.",
 	"🔥 Reach the coin goal and visit your Rebirth Altar for permanent boosts.",
 	"📖 Fill the Hamster Index - every hamster gives a permanent coin bonus!",
 	"🍀 Spawn Luck makes rare hamsters appear more often.",
@@ -397,7 +401,7 @@ function MainUI.start()
 	})
 	local promptClick = UIKit.new("TextButton", { Text = "", BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1) }, prompt)
 	promptClick.Activated:Connect(function()
-		WorldController.collect()
+		WorldController.interact()
 	end)
 
 	WorldController.onTargetChanged(function(info)
@@ -410,7 +414,15 @@ function MainUI.start()
 		local index = DataController.get("Index") or {}
 		local name = if definition.Hidden and not index[info.Species.Id] then "???" else info.Species.Name
 		promptStroke.Color = color
-		promptText.Text = string.format('Grab <font color="#%s">%s %s</font>  🪙 %s', color:ToHex(), definition.Name, name, Format.short(info.Price))
+		local colored = string.format('<font color="#%s">%s %s</font>', color:ToHex(), definition.Name, name)
+		if info.Action == "Claim" then
+			promptText.Text = string.format("Claim %s  🪙 %s", colored, Format.short(info.Price))
+		elseif info.Action == "Steal" then
+			promptStroke.Color = C.Red
+			promptText.Text = string.format("Steal %s  from %s", colored, info.OwnerName)
+		else
+			promptText.Text = string.format("%s %s", info.Action, colored)
+		end
 		prompt.Visible = true
 		prompt.Size = UDim2.fromOffset(300, 50)
 		UIKit.tween(prompt, 0.18, { Size = UDim2.fromOffset(380, 60) }, Enum.EasingStyle.Back)

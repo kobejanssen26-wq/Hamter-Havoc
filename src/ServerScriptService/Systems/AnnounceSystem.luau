@@ -46,8 +46,8 @@ local function pushRecent(player: Player, rarityId: string, name: string)
 	end
 end
 
--- A rare hamster started running for `player`.
-function AnnounceSystem.rareSpawn(player: Player, species: any)
+-- A rare hamster ball rolled out of the burrow. `sponsor` is the player whose luck rolled it.
+function AnnounceSystem.rareSpawn(sponsor: Player?, species: any)
 	local definition = RarityConfig.ById[species.Rarity]
 	if definition.Announce < 2 or not allow(definition.Rank) then
 		return
@@ -55,9 +55,39 @@ function AnnounceSystem.rareSpawn(player: Player, species: any)
 	Remotes.event("Announce"):FireAllClients({
 		Kind = "Spawn",
 		RarityId = species.Rarity,
-		UserId = player.UserId,
-		PlayerName = player.DisplayName,
+		UserId = if sponsor then sponsor.UserId else 0,
+		PlayerName = if sponsor then sponsor.DisplayName else "",
 		Text = string.format("A %s HAMSTER HAS APPEARED!", string.upper(definition.Name)),
+	})
+end
+
+-- Somebody stole a rare hamster from its payer.
+function AnnounceSystem.stolen(thief: Player, victim: Player, species: any)
+	local definition = RarityConfig.ById[species.Rarity]
+	if definition.Rank < 7 or not allow(definition.Rank + 0.25) then
+		return
+	end
+	Remotes.event("Announce"):FireAllClients({
+		Kind = "Steal",
+		RarityId = species.Rarity,
+		UserId = thief.UserId,
+		PlayerName = thief.DisplayName,
+		Text = string.format("🚨 %s stole a %s hamster from %s!", thief.DisplayName, string.upper(definition.Name), victim.DisplayName),
+	})
+end
+
+-- A stolen hamster made it into the thief's house.
+function AnnounceSystem.stolenSecured(thief: Player, victim: Player?, species: any)
+	local definition = RarityConfig.ById[species.Rarity]
+	if definition.Rank < 7 or not allow(definition.Rank + 0.3) then
+		return
+	end
+	Remotes.event("Announce"):FireAllClients({
+		Kind = "Steal",
+		RarityId = species.Rarity,
+		UserId = thief.UserId,
+		PlayerName = thief.DisplayName,
+		Text = string.format("%s got away with %s's %s hamster!", thief.DisplayName, if victim then victim.DisplayName else "somebody", string.upper(definition.Name)),
 	})
 end
 

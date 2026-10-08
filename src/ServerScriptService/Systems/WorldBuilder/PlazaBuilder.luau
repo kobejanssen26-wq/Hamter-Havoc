@@ -1,17 +1,12 @@
 --[[
-	Hamster Plaza: the heart of the map. Paved circle with a fountain, five little buildings/stalls on the
-	south arc (quests, shop, the Hamster Library, daily gift, promo codes), benches and lamps facing the road,
-	a garden with a windmill and a pond on the north side, a rarity chart and a "recent finds" board.
-	The hamster road arcs around the north side of the fountain, so everything faces the action.
+	Hamster Plaza: the calm centre of the map. The hamster road runs straight through a paved circle and
+	under a big golden-hamster arch; two short annex paths lead to the two buildings that matter
+	(Shop and Hamster Index). Everything is mirror-symmetric, nothing else is placed on purpose.
 ]]
-
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Build = require(script.Parent.Build)
 local Decor = require(script.Parent.Decor)
 local Palette = require(script.Parent.Palette)
-
-local RarityConfig = require(ReplicatedStorage.Modules.RarityConfig)
 
 local PlazaBuilder = {}
 
@@ -24,15 +19,6 @@ export type PlazaInfo = {
 	RecentLabels: { TextLabel },
 	StatueCFrame: CFrame,
 }
-
-local function polar(radius: number, degrees: number): Vector3
-	local radians = math.rad(degrees)
-	return Vector3.new(math.cos(radians) * radius, 0, math.sin(radians) * radius)
-end
-
-local function facingCenter(position: Vector3): CFrame
-	return CFrame.lookAt(position, Vector3.new(0, position.Y, 0))
-end
 
 local function publicPrompt(parent: BasePart, objectText: string, actionText: string, opens: string, distance: number?)
 	local prompt = Instance.new("ProximityPrompt")
@@ -124,108 +110,24 @@ local function buildLibrary(parent: Instance, cframe: CFrame)
 	publicPrompt(lectern, "Hamster Index", "Open", "Index", 14)
 end
 
-local function buildQuestBoard(parent: Instance, cframe: CFrame)
-	local model = Build.model(parent, "QuestBoard")
-	for _, side in { -1, 1 } do
-		Build.part(model, "Post", Vector3.new(0.7, 8, 0.7), cframe * CFrame.new(side * 4.6, 4, 1), Palette.WoodDark, WOOD)
-	end
-	local board = Build.part(model, "Board", Vector3.new(10, 6, 0.6), cframe * CFrame.new(0, 5, 1), Palette.WoodLight, WOOD)
-	Build.part(model, "Roof", Vector3.new(11.4, 0.6, 2.6), cframe * CFrame.new(0, 8.4, 0.8) * CFrame.Angles(math.rad(-10), 0, 0), Palette.RoofColors[1], PLASTIC, { CanCollide = false })
-	Build.surfaceText(board, Enum.NormalId.Front, "📜 QUESTS", { TextColor = Palette.Ink, PixelsPerStud = 50, BackgroundTransparency = 1 })
-	for index = 1, 6 do
-		local color = if index % 2 == 0 then Palette.Cream else Palette.Peach
-		Build.deco(model, "Note", Vector3.new(1.4, 1.8, 0.1), cframe * CFrame.new(-3.6 + (index - 1) * 1.45, 3.4 + (index % 2) * 0.5, 0.65) * CFrame.Angles(0, 0, math.rad((index % 3 - 1) * 4)), color, PLASTIC)
-	end
-	Build.part(model, "Step", Vector3.new(8, 0.4, 3), cframe * CFrame.new(0, 0.2, -1), Palette.Stone, Enum.Material.Cobblestone)
-	publicPrompt(board, "Quest Board", "Quests", "Quests", 14)
-end
-
-local function buildGiftStand(parent: Instance, cframe: CFrame)
-	local model = Build.model(parent, "DailyGift")
-	Build.pillar(model, "Stand", 7, 0.8, cframe * CFrame.new(0, 0.4, 2.5), Palette.Stone, Enum.Material.Cobblestone)
-	local gift = Build.part(model, "Gift", Vector3.new(3.4, 3, 3.4), cframe * CFrame.new(0, 2.4, 2.5), Palette.Pink, PLASTIC)
-	Build.part(model, "Lid", Vector3.new(3.8, 0.8, 3.8), cframe * CFrame.new(0, 4.2, 2.5), Palette.RoofColors[6], PLASTIC, { CanCollide = false })
-	Build.deco(model, "RibbonA", Vector3.new(0.7, 3.2, 3.5), cframe * CFrame.new(0, 2.4, 2.5), Palette.Gold, PLASTIC)
-	Build.deco(model, "RibbonB", Vector3.new(3.5, 3.2, 0.7), cframe * CFrame.new(0, 2.4, 2.5), Palette.Gold, PLASTIC)
-	Build.blob(model, "BowL", Vector3.new(1.6, 1.1, 1), cframe * CFrame.new(-0.9, 5, 2.5), Palette.Gold, PLASTIC, { CanCollide = false })
-	Build.blob(model, "BowR", Vector3.new(1.6, 1.1, 1), cframe * CFrame.new(0.9, 5, 2.5), Palette.Gold, PLASTIC, { CanCollide = false })
-	Build.animate(model, "Bob", { Amplitude = 0.25, Speed = 1.8 })
-	local anchor = Build.deco(model, "Anchor", Vector3.one * 0.2, cframe * CFrame.new(0, 7.2, 2.5), Color3.new(1, 1, 1), PLASTIC, { Transparency = 1 })
-	Build.billboard(anchor, "🎁 Daily Gift", Vector2.new(190, 34), Vector3.zero, { MaxDistance = 60 })
-	publicPrompt(gift, "Daily Gift", "Open", "Daily", 12)
-end
-
-local function buildRarityBoard(parent: Instance, cframe: CFrame)
-	local model = Build.model(parent, "RarityBoard")
-	for _, side in { -1, 1 } do
-		Build.part(model, "Post", Vector3.new(0.9, 12, 0.9), cframe * CFrame.new(side * 10.4, 6, 0.8), Palette.WoodDark, WOOD)
-	end
-	local board = Build.part(model, "Board", Vector3.new(22, 12.6, 0.8), cframe * CFrame.new(0, 7.4, 0.8), Palette.Cream, WOOD)
-	Build.part(model, "Frame", Vector3.new(23, 13.6, 0.5), cframe * CFrame.new(0, 7.4, 1.2), Palette.WoodDark, WOOD, { CanCollide = false })
-
-	local gui = Instance.new("SurfaceGui")
-	gui.Face = Enum.NormalId.Front
-	gui.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
-	gui.PixelsPerStud = 32
-	gui.Parent = board
-
-	local title = Instance.new("TextLabel")
-	title.BackgroundTransparency = 1
-	title.Size = UDim2.new(1, 0, 0, 52)
-	title.Font = Enum.Font.FredokaOne
-	title.TextSize = 40
-	title.TextColor3 = Palette.Ink
-	title.Text = "🐹 HAMSTER RARITIES"
-	title.Parent = gui
-
-	local total = 0
-	for _, id in RarityConfig.Order do
-		total += RarityConfig.ById[id].Weight
-	end
-	for index, id in RarityConfig.Order do
-		local definition = RarityConfig.ById[id]
-		local y = 56 + (index - 1) * 21.5
-		local function cell(text: string, x: number, width: number, align: Enum.TextXAlignment, color: Color3)
-			local label = Instance.new("TextLabel")
-			label.BackgroundTransparency = 1
-			label.Position = UDim2.new(x, 0, 0, y)
-			label.Size = UDim2.new(width, 0, 0, 21)
-			label.Font = Enum.Font.GothamBold
-			label.TextSize = 17
-			label.TextXAlignment = align
-			label.TextColor3 = color
-			label.Text = text
-			label.Parent = gui
-		end
-		local nameColor = if definition.Hidden then definition.Accent else definition.Color
-		cell("● " .. definition.Name, 0.05, 0.3, Enum.TextXAlignment.Left, nameColor)
-		local percent = definition.Weight / total * 100
-		local chance = if percent >= 1 then string.format("%.1f%%", percent) else string.format("1 in %s", tostring(math.floor(100 / percent + 0.5)))
-		cell(chance, 0.36, 0.26, Enum.TextXAlignment.Right, Palette.Ink)
-		cell(string.format("%g studs/s", definition.Speed), 0.64, 0.2, Enum.TextXAlignment.Right, Color3.fromRGB(120, 70, 40))
-		cell(if definition.MinRebirth > 0 then "R" .. definition.MinRebirth else "", 0.87, 0.1, Enum.TextXAlignment.Right, Color3.fromRGB(190, 90, 60))
-	end
-	return model
-end
-
 local function buildRecentBoard(parent: Instance, cframe: CFrame): { TextLabel }
 	local model = Build.model(parent, "RecentFinds")
 	for _, side in { -1, 1 } do
-		Build.part(model, "Post", Vector3.new(0.9, 10, 0.9), cframe * CFrame.new(side * 7.4, 5, 0.8), Palette.WoodDark, WOOD)
+		Build.part(model, "Post", Vector3.new(0.9, 9, 0.9), cframe * CFrame.new(side * 5.7, 4.5, 0.8), Palette.WoodDark, WOOD)
 	end
-	local board = Build.part(model, "Board", Vector3.new(16, 8.6, 0.8), cframe * CFrame.new(0, 6.2, 0.8), Palette.Ink, PLASTIC)
-	Build.part(model, "Frame", Vector3.new(17, 9.6, 0.5), cframe * CFrame.new(0, 6.2, 1.2), Palette.WoodDark, WOOD, { CanCollide = false })
+	local board = Build.part(model, "Board", Vector3.new(12, 7.4, 0.8), cframe * CFrame.new(0, 5.6, 0.8), Palette.Ink, PLASTIC)
+	Build.part(model, "Frame", Vector3.new(13, 8.4, 0.5), cframe * CFrame.new(0, 5.6, 1.2), Palette.WoodDark, WOOD, { CanCollide = false })
 	local gui = Instance.new("SurfaceGui")
 	gui.Face = Enum.NormalId.Front
 	gui.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
-	gui.PixelsPerStud = 32
+	gui.PixelsPerStud = 40
 	gui.Parent = board
 
 	local title = Instance.new("TextLabel")
 	title.BackgroundTransparency = 1
 	title.Size = UDim2.new(1, 0, 0, 46)
 	title.Font = Enum.Font.FredokaOne
-	title.TextSize = 34
+	title.TextSize = 32
 	title.TextColor3 = Palette.Gold
 	title.Text = "✨ RECENT FINDS"
 	title.Parent = gui
@@ -234,10 +136,10 @@ local function buildRecentBoard(parent: Instance, cframe: CFrame): { TextLabel }
 	for index = 1, 6 do
 		local label = Instance.new("TextLabel")
 		label.BackgroundTransparency = 1
-		label.Position = UDim2.new(0.05, 0, 0, 52 + (index - 1) * 33)
+		label.Position = UDim2.new(0.05, 0, 0, 52 + (index - 1) * 32)
 		label.Size = UDim2.new(0.9, 0, 0, 30)
 		label.Font = Enum.Font.GothamBold
-		label.TextSize = 19
+		label.TextSize = 16
 		label.TextXAlignment = Enum.TextXAlignment.Left
 		label.TextColor3 = Color3.fromRGB(200, 200, 215)
 		label.RichText = true
@@ -248,101 +150,60 @@ local function buildRecentBoard(parent: Instance, cframe: CFrame): { TextLabel }
 	return labels
 end
 
-local function buildFountain(parent: Instance): CFrame
-	local model = Build.model(parent, "Fountain")
-	Build.pillar(model, "Basin", 17, 1.4, CFrame.new(0, 0.7, 0), Palette.Stone, Enum.Material.Slate)
-	Build.pillar(model, "BasinRim", 15.4, 1.6, CFrame.new(0, 0.8, 0), Palette.Pavement, Enum.Material.Marble, { CanCollide = false })
-	local water = Build.pillar(model, "Water", 14.2, 1.3, CFrame.new(0, 0.85, 0), Palette.Water, Enum.Material.Glass, { CanCollide = false, Transparency = 0.2, Reflectance = 0.15 })
-	water:SetAttribute("Ripple", true)
-	Build.pillar(model, "Pedestal", 5.4, 3.4, CFrame.new(0, 2.2, 0), Palette.Pavement, Enum.Material.Marble)
-	Build.pillar(model, "PedestalTop", 6.4, 0.6, CFrame.new(0, 4.2, 0), Palette.Gold, Enum.Material.Metal, { CanCollide = false })
-
-	local jets = Build.deco(model, "Jets", Vector3.new(6, 1, 6), CFrame.new(0, 4.8, 0), Color3.new(1, 1, 1), PLASTIC, { Transparency = 1, CanQuery = false })
-	local spray = Instance.new("ParticleEmitter")
-	spray.Texture = "rbxasset://textures/particles/sparkles_main.dds"
-	spray.Color = ColorSequence.new(Color3.fromRGB(190, 232, 255))
-	spray.LightEmission = 0.6
-	spray.Rate = 22
-	spray.Lifetime = NumberRange.new(1.2, 1.8)
-	spray.Speed = NumberRange.new(9, 12)
-	spray.SpreadAngle = Vector2.new(24, 24)
-	spray.EmissionDirection = Enum.NormalId.Top
-	spray.Acceleration = Vector3.new(0, -22, 0)
-	spray.Size = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.7), NumberSequenceKeypoint.new(1, 0.2) })
-	spray.Parent = jets
-	jets:AddTag("AmbientParticles")
-	Build.light(jets, Color3.fromRGB(150, 220, 255), 1, 22)
-
-	-- statue anchor: a big golden hamster sits on top (see WorldBuilder)
-	return CFrame.new(0, 4.5, 0) * CFrame.Angles(0, math.rad(-90), 0)
+-- The arch over the road: two pillars, a beam with the plaza name and the golden king on top.
+local function buildArch(parent: Instance): CFrame
+	local model = Build.model(parent, "PlazaArch")
+	for _, side in { -1, 1 } do
+		Build.part(model, "Pillar", Vector3.new(3.4, 15, 3.4), CFrame.new(0, 7.5, side * 11.2), Palette.Stone, Enum.Material.Slate)
+		Build.part(model, "PillarBase", Vector3.new(4.6, 1.2, 4.6), CFrame.new(0, 0.6, side * 11.2), Palette.StoneDark, Enum.Material.Slate)
+		Build.part(model, "PillarCap", Vector3.new(4.4, 0.8, 4.4), CFrame.new(0, 15.4, side * 11.2), Palette.Gold, Enum.Material.Metal, { CanCollide = false })
+	end
+	local beam = Build.part(model, "ArchBeam", Vector3.new(3.6, 2.8, 26), CFrame.new(0, 16.8, 0), Palette.Cream, Enum.Material.Marble)
+	Build.deco(model, "ArchTrim", Vector3.new(4.2, 0.5, 26.6), CFrame.new(0, 18.4, 0), Palette.Gold, Enum.Material.Metal)
+	Build.deco(model, "ArchTrim", Vector3.new(4.2, 0.5, 26.6), CFrame.new(0, 15.2, 0), Palette.Gold, Enum.Material.Metal)
+	for _, face in { Enum.NormalId.Right, Enum.NormalId.Left } do
+		Build.surfaceText(beam, face, "🐹 HAMSTER PLAZA", { TextColor = Palette.WoodDark, PixelsPerStud = 40 })
+	end
+	Build.part(model, "StatuePlinth", Vector3.new(6, 1, 6), CFrame.new(0, 18.7, 0), Palette.Gold, Enum.Material.Metal)
+	return CFrame.new(0, 19.2, 0) * CFrame.Angles(0, math.rad(90), 0)
 end
 
 function PlazaBuilder.build(parent: Instance, rng: Random): PlazaInfo
 	local folder = Build.folder(parent, "HamsterPlaza")
 
-	-- concentric paving
-	Build.pillar(folder, "PavingOuter", 68, 0.2, CFrame.new(0, 0.1, 0), Palette.Pavement, Enum.Material.Cobblestone)
-	Build.pillar(folder, "PavingRing", 66, 0.22, CFrame.new(0, 0.11, 0), Palette.PavementDark, Enum.Material.Cobblestone, { CanCollide = false })
-	Build.pillar(folder, "PavingInner", 64.4, 0.24, CFrame.new(0, 0.12, 0), Palette.Pavement, Enum.Material.Cobblestone, { CanCollide = false })
-	Build.pillar(folder, "PavingCenter", 32, 0.26, CFrame.new(0, 0.13, 0), Palette.PavementDark, Enum.Material.Cobblestone, { CanCollide = false })
-	Build.pillar(folder, "PavingCore", 30.4, 0.27, CFrame.new(0, 0.135, 0), Palette.Pavement, Enum.Material.Cobblestone, { CanCollide = false })
+	-- paving (the road lies on top of it)
+	Build.pillar(folder, "PavingOuter", 36, 0.22, CFrame.new(0, 0.11, 0), Palette.Pavement, Enum.Material.Cobblestone)
+	Build.pillar(folder, "PavingRing", 31, 0.24, CFrame.new(0, 0.12, 0), Palette.PavementDark, Enum.Material.Cobblestone, { CanCollide = false })
+	Build.pillar(folder, "PavingInner", 29.6, 0.26, CFrame.new(0, 0.13, 0), Palette.Pavement, Enum.Material.Cobblestone, { CanCollide = false })
 
-	local statueCFrame = buildFountain(folder)
+	local statueCFrame = buildArch(folder)
 
-	-- south arc buildings, all facing the fountain
-	buildQuestBoard(folder, facingCenter(polar(32, 200)))
-	buildStall(folder, "ShopStall", facingCenter(polar(31, 235)), "Shop", "🛍️", Palette.RoofColors[2], "Shop", "Browse")
-	buildLibrary(folder, facingCenter(polar(32, 270)))
-	buildGiftStand(folder, facingCenter(polar(31, 305)))
-	buildStall(folder, "CodesStall", facingCenter(polar(31, 340)), "Promo Codes", "🎟️", Palette.RoofColors[5], "Codes", "Redeem")
+	-- annex paths to the two buildings, mirrored north / south
+	for _, sign in { 1, -1 } do
+		Build.part(folder, "AnnexPath", Vector3.new(8, 0.2, 24), CFrame.new(0, 0.12, sign * 40), Palette.Pavement, Enum.Material.Cobblestone, { CanCollide = false })
+	end
+	local north = CFrame.new(0, 0, 52)
+	local south = CFrame.new(0, 0, -52) * CFrame.Angles(0, math.pi, 0)
+	buildStall(folder, "ShopStall", north, "Shop", "🛍️", Palette.RoofColors[2], "Shop", "Browse")
+	buildLibrary(folder, south)
 
-	-- benches (watch the road), lamps and flowers
-	for _, angle in { 40, 70, 110, 140 } do
-		local position = polar(13.5, angle)
-		Decor.bench(folder, CFrame.lookAt(position, position * 2))
-	end
-	for _, angle in { 217, 252, 288, 323 } do
-		Decor.lamp(folder, polar(31, angle), 8)
-	end
-	for _, angle in { 20, 160, 200, 340 } do
-		Decor.flowers(folder, polar(12, angle), 3.2, 14, rng)
-	end
-	Decor.flowers(folder, polar(11, 270), 4, 16, rng)
-	Decor.flowers(folder, polar(11, 235), 3, 12, rng)
-	Decor.flowers(folder, polar(11, 305), 3, 12, rng)
-	for _, position in { Vector3.new(-37, 0, -4), Vector3.new(37, 0, -4) } do
-		Decor.flag(folder, position, Palette.RoofColors[1])
-	end
-	for index, angle in { 250, 290, 215, 325 } do
-		Decor.balloon(folder, polar(36, angle), Palette.RoofColors[index + 1])
+	-- a few quiet details: lamps along the annex, two trees per annex
+	for _, sign in { 1, -1 } do
+		for _, x in { -11, 11 } do
+			Decor.lamp(folder, Vector3.new(x * 0.5, 0, sign * 36), 8)
+		end
+		Decor.tree(folder, Vector3.new(-13, 0, sign * 44), "cherry", 1.1, rng)
+		Decor.tree(folder, Vector3.new(13, 0, sign * 44), "cherry", 1.1, rng)
 	end
 
-	-- north garden
-	for index = -2, 2 do
-		Decor.sunflower(folder, Vector3.new(index * 5.5, 0, 41 + math.abs(index) * 0.4), 0.9 + rng:NextNumber() * 0.2)
-	end
-	Decor.windmill(folder, Vector3.new(-64, 0, 38), math.rad(180))
-	Decor.pond(folder, Vector3.new(62, 0, 38), 7, rng)
-	Decor.fireflies(folder, Vector3.new(62, 0, 38), 9)
-	Decor.fireflies(folder, Vector3.new(-30, 0, 34), 12)
-	Decor.bench(folder, CFrame.new(50, 0, 29) * CFrame.Angles(0, math.rad(200), 0))
-	Decor.bench(folder, CFrame.new(-50, 0, 29) * CFrame.Angles(0, math.rad(160), 0))
-	for _, x in { -48, 48 } do
-		Decor.lamp(folder, Vector3.new(x, 0, 36), 8)
-	end
-	Decor.tree(folder, Vector3.new(-42, 0, 44), "cherry", 1.1, rng)
-	Decor.tree(folder, Vector3.new(42, 0, 46), "cherry", 1.1, rng)
-
-	-- boards (north side of the plaza, facing the road and the fountain)
-	buildRarityBoard(folder, CFrame.new(-19, 0, 42))
-	local recentLabels = buildRecentBoard(folder, CFrame.new(19, 0, 42))
-	Decor.signpost(folder, CFrame.new(0, 0, 41), "Collect hamsters as they run past!", Palette.Cream)
+	-- recent finds board (the only board in the plaza), next to the library path
+	local recentLabels = buildRecentBoard(folder, CFrame.new(-11.5, 0, -40) * CFrame.Angles(0, math.pi, 0))
 
 	-- guest spawn on the plaza (players without a house)
 	local spawn = Instance.new("SpawnLocation")
 	spawn.Name = "PlazaSpawn"
 	spawn.Size = Vector3.new(8, 1, 8)
-	spawn.Position = Vector3.new(0, 0.7, -13)
+	spawn.Position = Vector3.new(0, 0.7, -14)
 	spawn.Anchored = true
 	spawn.Neutral = true
 	spawn.Duration = 0

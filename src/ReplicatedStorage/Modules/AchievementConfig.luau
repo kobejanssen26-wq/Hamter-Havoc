@@ -17,6 +17,9 @@ AchievementConfig.List = {
 	{ Id = "mythic_master", Title = "Mythic Master", Desc = "Find 3 Mythic hamsters", Icon = "🐉", Stat = "Found:Mythic", Target = 3, Reward = { Gems = 800 } },
 	{ Id = "secret_finder", Title = "Secret Finder", Desc = "Find a Secret hamster", Icon = "🔮", Stat = "Found:Secret", Target = 1, Reward = { Gems = 1500, Tokens = 3 } },
 	{ Id = "who_are_you", Title = "Who Are You?", Desc = "Find a ??? hamster", Icon = "❓", Stat = "Found:Unknown", Target = 1, Reward = { Gems = 5000, Tokens = 10 } },
+	{ Id = "master_thief", Title = "Master Thief", Desc = "Steal 25 hamsters and get them home", Icon = "🥷", Stat = "Stolen", Target = 25, Reward = { Gems = 600, Tokens = 1 } },
+	{ Id = "guardian", Title = "Guardian", Desc = "Take back 20 hamsters", Icon = "🛡️", Stat = "Recovered", Target = 20, Reward = { Gems = 600, Tokens = 1 } },
+	{ Id = "home_run", Title = "Home Run", Desc = "Get 250 hamsters home safely", Icon = "🏠", Stat = "Secured", Target = 250, Reward = { Gems = 800 } },
 	{ Id = "completionist", Title = "Completionist", Desc = "Complete the entire Hamster Index", Icon = "🏆", Stat = "Unique", Target = HamsterDatabase.Total, Reward = { Gems = 10000, Tokens = 20 } },
 }
 

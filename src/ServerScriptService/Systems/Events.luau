@@ -29,5 +29,7 @@ Events.UpgradeChanged = Signal.new() -- (player, upgradeId)
 Events.Rebirthed = Signal.new() -- (player, newRebirths)
 Events.RoofChanged = Signal.new() -- (player)
 Events.StatsChanged = Signal.new() -- (player)
+Events.HouseClaimed = Signal.new() -- (house, player)
+Events.HouseFreed = Signal.new() -- (house)
 
 return Events

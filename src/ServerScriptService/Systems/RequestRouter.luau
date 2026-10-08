@@ -9,6 +9,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Remotes = require(ReplicatedStorage.Remotes)
 
 local CollectionSystem = require(script.Parent.CollectionSystem)
+local HamsterSystem = require(script.Parent.HamsterSystem)
 local DataSystem = require(script.Parent.DataSystem)
 local ReplicationSystem = require(script.Parent.ReplicationSystem)
 local QuestSystem = require(script.Parent.QuestSystem)
@@ -56,6 +57,12 @@ local actions: { [string]: (Player, any) -> any } = {}
 
 actions.Resync = function(player)
 	ReplicationSystem.sendFull(player)
+	return result(true)
+end
+
+-- The client just connected its hamster listeners: send it every ball that exists right now.
+actions.SyncHamsters = function(player)
+	HamsterSystem.sendAll(player)
 	return result(true)
 end
 

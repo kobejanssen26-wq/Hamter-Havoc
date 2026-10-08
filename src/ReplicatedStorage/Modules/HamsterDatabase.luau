@@ -1,5 +1,5 @@
 --[[
-	Every collectable hamster. 160+ unique designs across 14 rarities.
+	Every collectable hamster. 170+ unique designs across 14 rarities.
 
 	Entry keys (short on purpose, expanded by `expand` below):
 	  n name | f fur | b belly | c2 pattern colour | ac accent colour
@@ -42,6 +42,7 @@ raw.Basic = {
 	{ n = "Toast", f = "F0D9A8", b = "FFF6DC", ears = "bear", eyes = "dot", acc = { "held_cheese" } },
 	{ n = "Pudding", f = "D9A55B", b = "FFF0C8", c2 = "5A3A22", pat = "blaze", ears = "fluffy", eyes = "big", acc = { "held_cupcake" } },
 	{ n = "Nugget", f = "C8903E", c2 = "8A5A22", pat = "freckles", ears = "round", eyes = "happy", mouth = "open", acc = { "beanie" }, hc = "E4B04A" },
+	{ n = "Nibbles", f = "CDA67A", b = "F4E2C4", ears = "tiny", eyes = "big", mouth = "open", acc = { "held_seed" }, size = 0.85 },
 }
 
 ---------------------------------------------------------------------------
@@ -113,6 +114,10 @@ raw.Epic = {
 	{ n = "Pumpkin", f = "FF9A3C", b = "FFD4A0", ears = "tiny", eyes = "angry", mouth = "grin", acc = { "sprout", "held_lantern" } },
 	{ n = "Ghost", f = "F4F4FF", b = "FFFFFF", ears = "none", eyes = "dot", mouth = "oh", size = 0.95, acc = { "ghost_sheet" } },
 	{ n = "Jester", f = "F59AC4", b = "FFD6E8", ears = "round", eyes = "happy", mouth = "tongue", acc = { "jester", "bellcollar" } },
+	{ n = "Wizard", f = "8F7BEA", b = "D8CEFF", ears = "elf", eyes = "sparkle", mouth = "grin", acc = { "wizard", "held_book", "tail_star" }, tail = "none", hc = "3E2A9A", ac = "FFE066" },
+	{ n = "Astronaut", f = "F2F2F8", b = "FFFFFF", ears = "tiny", eyes = "big", mouth = "oh", acc = { "astro", "jetpack", "held_gem" }, hc = "FF8A3A", ac = "7DF9FF" },
+	{ n = "DJ", f = "B084FF", b = "E6D6FF", ears = "big", eyes = "happy", mouth = "open", acc = { "headphones", "heart_glasses", "medal" }, hc = "FF4DA6", ac = "FF4DA6" },
+	{ n = "Gamer", f = "4B4F78", b = "8A90C0", ears = "round", eyes = "dot", mouth = "tongue", acc = { "headphones", "nerd_glasses", "held_donut" }, hc = "2ADBA8", ac = "2ADBA8", glow = { "2ADBA8", 0.9, 8 } },
 	{ n = "Founder Fuzz", f = "FFE0A0", b = "FFF4D8", ears = "fluffy", eyes = "sparkle", acc = { "party", "medal", "bowtie" }, hc = "FF7A59", fx = { { "sparkle", "FFE066" } }, x = true },
 }
 
@@ -146,6 +151,9 @@ raw.Legendary = {
 	{ n = "Dark Knight", f = "3A3A48", b = "6A6A80", ears = "tiny", eyes = "glow", ec = "FF3355", mouth = "none", acc = { "knight", "armor", "cape", "held_sword" }, hc = "6A1030" },
 	{ n = "Storm Lord", f = "7FB5FF", b = "D0E6FF", ears = "big", eyes = "glow", ec = "FFF176", mouth = "open", acc = { "viking", "held_hammer", "orbit_ring" }, ac = "FFF176", glow = { "9FC8FF", 1.8, 13 }, fx = { { "sparkle", "FFF176" } } },
 	{ n = "Ruby Queen", f = "E0446A", b = "FF9DB5", ears = "fluffy", eyes = "sparkle", ec = "FF2255", acc = { "crown", "cape_royal", "pendant" }, hc = "B01040", glow = { "FF4D7A", 1.6, 12 } },
+	{ n = "Royal Hamster", f = "B77BFF", b = "E8D4FF", ears = "fluffy", eyes = "sparkle", mouth = "grin", acc = { "tiara", "ruff", "held_gem", "medal" }, hc = "FFD54A", ac = "FFD54A", glow = { "C58BFF", 1.6, 12 } },
+	{ n = "Ancient Hamster", f = "C9A24A", b = "F0DCA0", ears = "tiny", eyes = "glow", ec = "3DE0C0", mouth = "flat", acc = { "stone_crown", "wings_golden", "floating_runes" }, ac = "3DE0C0", glow = { "E0C060", 1.8, 13 } },
+	{ n = "Dragon Lord", f = "B03030", b = "F0A080", ears = "cat", eyes = "cat", ec = "FFD54A", mouth = "fang", tail = "none", acc = { "flame_crown", "wings_dragon", "tail_dragon", "cape_royal", "held_sword" }, hc = "FFB000", glow = { "FF6A2A", 1.8, 13 }, fx = { { "embers", "FF8A3A" } } },
 	{ n = "Sunday Sunbeam", f = "FFE08A", b = "FFF5CC", ears = "round", eyes = "happy", mouth = "open", acc = { "sun_crown", "wings_angel", "ground_glow" }, ac = "FFD54A", glow = { "FFE08A", 2, 14 }, fx = { { "sparkle", "FFF0A8" } }, x = true },
 }
 

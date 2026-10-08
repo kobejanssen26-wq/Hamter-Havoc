@@ -4,6 +4,7 @@
 ]]
 
 local HamsterDatabase = require(script.Parent.HamsterDatabase)
+local IndexRewardConfig = require(script.Parent.IndexRewardConfig)
 local RarityConfig = require(script.Parent.RarityConfig)
 local RebirthConfig = require(script.Parent.RebirthConfig)
 local ShopConfig = require(script.Parent.ShopConfig)
@@ -80,6 +81,7 @@ function EconomyMath.coinMultiplier(data: any, now: number): number
 		multiplier *= 2
 	end
 	multiplier *= passEffect(data, "CoinMult") or 1
+	multiplier *= 1 + IndexRewardConfig.bonus(data, "Coins")
 	return multiplier
 end
 
@@ -98,6 +100,7 @@ function EconomyMath.luck(data: any, now: number): number
 		luck *= 2
 	end
 	luck *= passEffect(data, "Luck") or 1
+	luck *= 1 + IndexRewardConfig.bonus(data, "Luck")
 	return math.clamp(luck, 1, RarityConfig.LuckCap)
 end
 
@@ -152,6 +155,9 @@ function EconomyMath.derived(data: any, now: number)
 		AutoCollect = EconomyMath.autoCollect(data, now),
 		IncomePerSecond = EconomyMath.incomePerSecond(data, now),
 		Unique = EconomyMath.uniqueCount(data),
+		IndexCoinBonus = IndexRewardConfig.bonus(data, "Coins"),
+		IndexLuckBonus = IndexRewardConfig.bonus(data, "Luck"),
+		Title = IndexRewardConfig.title(data) or "",
 	}
 end
 

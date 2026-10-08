@@ -30,6 +30,21 @@ AudioConfig.Sfx = {
 	Footstep = { Id = "rbxasset://sounds/action_footsteps_plastic.mp3", Volume = 0.08, Pitch = 2.4 },
 	Reward = { Id = "rbxasset://sounds/victory.wav", Volume = 0.5, Pitch = 1.3 },
 	Splash = { Id = "rbxasset://sounds/impact_water.mp3", Volume = 0.2, Pitch = 1.4 },
+
+	-- claim / steal loop
+	Claim = { Id = "rbxasset://sounds/electronicpingshort.wav", Volume = 0.6, Pitch = 1.3 },
+	Steal = { Id = "rbxasset://sounds/bass.wav", Volume = 0.7, Pitch = 1.5 },
+	Alarm = { Id = "rbxasset://sounds/electronicpingshort.wav", Volume = 0.55, Pitch = 0.6 },
+	Drop = { Id = "rbxasset://sounds/action_jump_land.mp3", Volume = 0.7, Pitch = 0.8 },
+	Recover = { Id = "rbxasset://sounds/victory.wav", Volume = 0.5, Pitch = 1.6 },
+	Secure = { Id = "rbxasset://sounds/victory.wav", Volume = 0.65, Pitch = 1.15 },
+	Channel = { Id = "rbxasset://sounds/clickfast.wav", Volume = 0.25, Pitch = 1.1 },
+	SecurityOn = { Id = "rbxasset://sounds/switch.wav", Volume = 0.6, Pitch = 0.8 },
+	SecurityOff = { Id = "rbxasset://sounds/bass.wav", Volume = 0.6, Pitch = 0.7 },
+	Zap = { Id = "rbxasset://sounds/electronicpingshort.wav", Volume = 0.8, Pitch = 0.5 },
+	Slap = { Id = "rbxasset://sounds/swoosh.wav", Volume = 0.5, Pitch = 1.7 },
+	Hit = { Id = "rbxasset://sounds/kickhurt.wav", Volume = 0.7, Pitch = 1.1 },
+	WheelTick = { Id = "rbxasset://sounds/clickfast.wav", Volume = 0.05, Pitch = 2.2 },
 }
 
 -- Higher tier = bigger layered fanfare. `Layers` play together with rising pitch.

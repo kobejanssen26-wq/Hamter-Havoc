@@ -73,6 +73,15 @@ function Util.weightedIndex(weights: { number }, random: Random): number?
 	return nil
 end
 
+-- In-place Fisher-Yates shuffle.
+function Util.shuffle(list: { any }, random: Random): { any }
+	for i = #list, 2, -1 do
+		local j = random:NextInteger(1, i)
+		list[i], list[j] = list[j], list[i]
+	end
+	return list
+end
+
 function Util.sortedKeys(tbl: { [string]: any }): { string }
 	local keys = {}
 	for key in tbl do

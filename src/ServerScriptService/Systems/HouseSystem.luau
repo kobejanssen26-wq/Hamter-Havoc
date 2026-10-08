@@ -4,7 +4,7 @@
 	What a house shows (all driven by the player's profile):
 	  - front sign + roof banner: name, rebirths, index progress, best hamster
 	  - rebirth stars on the gable
-	  - the 12-slot shelf: your equipped hamsters (locked slots stay dark)
+	  - up to 12 hamster wheels: every equipped hamster runs on its own wheel (locked slots stay empty)
 	  - 8 upgrade pedestals whose props grow with every upgrade level
 	  - roof colour (cosmetic)
 	More than 10 players: extra players wait in a queue; they can still play (income, collecting) and
@@ -17,20 +17,26 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Modules = ReplicatedStorage.Modules
 local EconomyMath = require(Modules.EconomyMath)
+local Format = require(Modules.Format)
 local HamsterBuilder = require(Modules.HamsterBuilder)
 local HamsterDatabase = require(Modules.HamsterDatabase)
+local IndexRewardConfig = require(Modules.IndexRewardConfig)
 local RarityConfig = require(Modules.RarityConfig)
 local ShopConfig = require(Modules.ShopConfig)
 local UpgradeConfig = require(Modules.UpgradeConfig)
 
 local DataSystem = require(script.Parent.DataSystem)
 local Events = require(script.Parent.Events)
+local Build = require(script.Parent.WorldBuilder.Build)
 local HouseBuilder = require(script.Parent.WorldBuilder.HouseBuilder)
 local Notifier = require(script.Parent.Notifier)
+local PlayerState = require(script.Parent.PlayerState)
 
 local HouseSystem = {}
 
-local DISPLAY_SCALE = 0.5
+local MAX_DISPLAY_HEIGHT = 1.9 -- a hamster has to fit inside its wheel
+local WHEEL_SPIN = 3 -- rad/s
+local RUN_SPEED = 7 -- animation speed of the running hamster
 local SLOT_COUNT = 12
 
 local houses: { HouseBuilder.House } = {}
@@ -65,7 +71,6 @@ local function refreshSign(house: HouseBuilder.House, player: Player?)
 		house.Labels.Stats.Text = "Waiting for a new neighbour"
 		house.Labels.Best.Text = ""
 		house.Labels.Roof.Text = '<font color="#ffffff">Free house</font>'
-		house.Labels.Arch.Text = "Free House"
 		house.Model:SetAttribute("OwnerUserId", 0)
 		house.Model:SetAttribute("OwnerName", "")
 		return
@@ -82,8 +87,8 @@ local function refreshSign(house: HouseBuilder.House, player: Player?)
 	else
 		house.Labels.Best.Text = "Best: —"
 	end
-	house.Labels.Roof.Text = string.format("<b>%s</b>%s", player.DisplayName, if data.Rebirths > 0 then "  •  R" .. data.Rebirths else "")
-	house.Labels.Arch.Text = player.DisplayName .. "'s Home"
+	local title = IndexRewardConfig.title(data)
+	house.Labels.Roof.Text = string.format("<b>%s</b>%s%s", player.DisplayName, if data.Rebirths > 0 then "  •  R" .. data.Rebirths else "", if title then "\n🏅 " .. title else "")
 	house.Model:SetAttribute("OwnerUserId", player.UserId)
 	house.Model:SetAttribute("OwnerName", player.DisplayName)
 	HouseBuilder.setStars(house, math.min(data.Rebirths, 10))
@@ -107,11 +112,31 @@ local function refreshRoof(house: HouseBuilder.House, data: any?)
 	HouseBuilder.setRoofColor(house, color)
 end
 
+-- Text under a running hamster: how much it earns per second.
+local function wheelIncomeText(species: any, data: any): string
+	local perSecond = HamsterDatabase.income(species) * EconomyMath.incomeMultiplier(data, os.time())
+	return string.format('<font color="#FFE08A">+%s/s</font>', Format.short(perSecond))
+end
+
+local function refreshWheelLabels(house: HouseBuilder.House, data: any?)
+	if not data then
+		return
+	end
+	for index, entry in house.DisplayModels do
+		local slot = house.Slots[index]
+		local species = HamsterDatabase.ById[entry.SpeciesId]
+		entry.Model:SetAttribute("Income", HamsterDatabase.income(species) * EconomyMath.incomeMultiplier(data, os.time()))
+		if slot and slot.Label then
+			slot.Label.Text = wheelIncomeText(species, data)
+		end
+	end
+end
+
 local function refreshDisplay(house: HouseBuilder.House, data: any?)
 	local slots = if data then math.min(EconomyMath.slots(data), SLOT_COUNT) else 0
 	local equipped = if data then data.Equipped else {}
 
-	-- pool the existing models by species so unchanged hamsters just move
+	-- pool the existing models by species so unchanged hamsters just stay where they run
 	local pool: { [string]: { Model } } = {}
 	for _, entry in house.DisplayModels do
 		pool[entry.SpeciesId] = pool[entry.SpeciesId] or {}
@@ -119,28 +144,43 @@ local function refreshDisplay(house: HouseBuilder.House, data: any?)
 	end
 	local result: { [number]: { SpeciesId: string, Model: Model } } = {}
 
-	for index, slot in house.DisplaySlots do
-		local speciesId = if index <= slots then equipped[index] else nil
+	for index, slot in house.Slots do
+		local unlocked = index <= slots
+		HouseBuilder.setWheel(house, index, unlocked)
+		local speciesId = if unlocked then equipped[index] else nil
 		local species = if speciesId then HamsterDatabase.ById[speciesId] else nil
-		if species then
+		if species and data then
 			local model = nil
 			local candidates = pool[speciesId]
 			if candidates and #candidates > 0 then
 				model = table.remove(candidates)
 			else
-				model = HamsterBuilder.build(species, { Scale = DISPLAY_SCALE, LowDetail = true, Particles = false })
-				model:AddTag("IdleHamster")
+				local scale = math.min(0.5, MAX_DISPLAY_HEIGHT / (3.4 * (species.Size or 1)))
+				model = HamsterBuilder.build(species, { Scale = scale, LowDetail = true, Particles = false })
+				model:AddTag("WheelHamster")
+				model:SetAttribute("RunSpeed", RUN_SPEED)
 				model.Parent = house.DisplayFolder
 			end
-			model:PivotTo(slot.CFrame)
+			model:SetAttribute("Income", HamsterDatabase.income(species) * EconomyMath.incomeMultiplier(data, os.time()))
+			model:PivotTo(slot.RunCFrame)
 			result[index] = { SpeciesId = speciesId, Model = model }
+			HouseBuilder.setWheelSpeed(slot, WHEEL_SPIN)
+
+			if not slot.Label then
+				slot.Label = Build.billboard(slot.LabelAnchor, "", Vector2.new(120, 26), Vector3.zero, { MaxDistance = 24, Name = "WheelIncome" })
+			end
+			slot.Label.Text = wheelIncomeText(species, data)
 
 			local definition = RarityConfig.ById[species.Rarity]
 			slot.Ring.Color = if definition.Hidden then definition.Accent else definition.Color
-			slot.Ring.Transparency = 0.15
+			slot.Ring.Transparency = 0.5
 		else
-			slot.Ring.Color = if index <= slots then Color3.fromRGB(200, 190, 170) else Color3.fromRGB(70, 60, 70)
-			slot.Ring.Transparency = if index <= slots then 0.5 else 0.8
+			HouseBuilder.setWheelSpeed(slot, 0)
+			if slot.Label then
+				slot.Label.Text = ""
+			end
+			slot.Ring.Color = if unlocked then Color3.fromRGB(200, 190, 170) else Color3.fromRGB(70, 60, 70)
+			slot.Ring.Transparency = if unlocked then 0.5 else 0.8
 		end
 	end
 
@@ -190,6 +230,7 @@ local function claim(house: HouseBuilder.House, player: Player)
 	houseByPlayer[player] = house
 	refreshAll(house, player)
 	player:SetAttribute("HouseId", house.Index)
+	Events.HouseClaimed:Fire(house, player)
 end
 
 function HouseSystem.assign(player: Player)
@@ -220,6 +261,7 @@ function HouseSystem.release(player: Player)
 	houseByPlayer[player] = nil
 	house.Owner = nil
 	refreshAll(house, nil)
+	Events.HouseFreed:Fire(house)
 
 	while #waiting > 0 do
 		local nextPlayer = table.remove(waiting, 1)
@@ -236,6 +278,10 @@ function HouseSystem.getHouse(player: Player): HouseBuilder.House?
 	return houseByPlayer[player]
 end
 
+function HouseSystem.all(): { HouseBuilder.House }
+	return houses
+end
+
 function HouseSystem.moveToHouse(player: Player)
 	local house = houseByPlayer[player]
 	local character = player.Character
@@ -245,12 +291,7 @@ function HouseSystem.moveToHouse(player: Player)
 end
 
 function HouseSystem.applyWalkSpeed(player: Player)
-	local data = DataSystem.get(player)
-	local character = player.Character
-	local humanoid = character and character:FindFirstChildOfClass("Humanoid")
-	if data and humanoid then
-		humanoid.WalkSpeed = EconomyMath.walkSpeed(data, os.time())
-	end
+	PlayerState.apply(player)
 end
 
 function HouseSystem.onCharacterAdded(player: Player, character: Model)
@@ -304,6 +345,7 @@ function HouseSystem.start(world: { Houses: { HouseBuilder.House } })
 		local house = houseByPlayer[player]
 		if house then
 			refreshSign(house, player)
+			refreshWheelLabels(house, DataSystem.get(player))
 		end
 	end)
 

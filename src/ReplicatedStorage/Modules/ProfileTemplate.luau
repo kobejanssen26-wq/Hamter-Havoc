@@ -33,6 +33,12 @@ return {
 		UpgradesBought = 0,
 		Sold = 0,
 		Found = {}, -- [rarityId] = how many found
+		Claimed = 0, -- balls paid for
+		Secured = 0, -- balls that reached a house
+		Steals = 0, -- balls stolen from other players
+		Stolen = 0, -- stolen balls that were secured (counts for the thief)
+		Recovered = 0, -- own balls taken back
+		Slaps = 0,
 	},
 
 	Quests = { Claimed = {} },
