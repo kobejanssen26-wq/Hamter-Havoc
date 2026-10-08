@@ -36,6 +36,7 @@ export type House = {
 	CFrame: CFrame,
 	SpawnCFrame: CFrame,
 	RoofParts: { BasePart },
+	DefaultRoof: Color3,
 	ShutterParts: { BasePart },
 	Stars: { BasePart },
 	Labels: { [string]: TextLabel },
@@ -43,6 +44,7 @@ export type House = {
 	DisplaySlots: { { Index: number, CFrame: CFrame, Ring: BasePart, Pedestal: BasePart } },
 	Stations: { [string]: any },
 	DisplayFolder: Folder,
+	DisplayModels: { [number]: { SpeciesId: string, Model: Model } },
 	Owner: Player?,
 }
 
@@ -238,6 +240,7 @@ function HouseBuilder.build(parent: Instance, index: number, cframe: CFrame, rng
 		CFrame = cframe,
 		SpawnCFrame = L(0, 3, -16) * CFrame.Angles(0, math.pi, 0),
 		RoofParts = {},
+		DefaultRoof = roofColor,
 		ShutterParts = {},
 		Stars = {},
 		Labels = {},
@@ -245,6 +248,7 @@ function HouseBuilder.build(parent: Instance, index: number, cframe: CFrame, rng
 		DisplaySlots = {},
 		Stations = {},
 		DisplayFolder = Build.folder(model, "Display"),
+		DisplayModels = {},
 		Owner = nil,
 	}
 

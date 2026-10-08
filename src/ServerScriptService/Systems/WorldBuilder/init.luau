@@ -10,6 +10,7 @@
 ]]
 
 local Lighting = game:GetService("Lighting")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
 local Build = require(script.Build)
@@ -17,6 +18,9 @@ local EnvironmentBuilder = require(script.EnvironmentBuilder)
 local HouseBuilder = require(script.HouseBuilder)
 local PathBuilder = require(script.PathBuilder)
 local PlazaBuilder = require(script.PlazaBuilder)
+
+local HamsterBuilder = require(ReplicatedStorage.Modules.HamsterBuilder)
+local HamsterDatabase = require(ReplicatedStorage.Modules.HamsterDatabase)
 
 local WorldBuilder = {}
 
@@ -89,6 +93,13 @@ function WorldBuilder.build(): World
 	EnvironmentBuilder.build(Workspace, rng)
 	PathBuilder.build(Workspace, rng)
 	local plaza = PlazaBuilder.build(Workspace, rng)
+
+	-- the golden king watches over the fountain
+	local statue = HamsterBuilder.build(HamsterDatabase.ById.golden_king, { Scale = 2.6, Particles = false })
+	statue.Name = "PlazaStatue"
+	statue:PivotTo(plaza.StatueCFrame)
+	statue:AddTag("IdleHamster")
+	statue.Parent = plaza.Folder
 
 	-- guest spawn lives in its own folder
 	local spawns = Build.folder(Workspace, "SpawnLocations")
