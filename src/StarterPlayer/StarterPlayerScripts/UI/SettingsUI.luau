@@ -19,7 +19,7 @@ function SettingsUI.start()
 	-----------------------------------------------------------------------
 	-- settings
 	-----------------------------------------------------------------------
-	local panel = UIKit.panel({ Name = "Settings", Title = "Settings", Icon = "gear", Design = Vector2.new(680, 660), Accent = C.BrownLight })
+	local panel = UIKit.panel({ Name = "Settings", Title = "Settings", Icon = "gear", Design = Vector2.new(620, 580), Accent = C.BrownLight })
 	local scroll = UIKit.scroll(panel.Body, { Size = UDim2.fromScale(1, 1) })
 	UIKit.list(scroll, Enum.FillDirection.Vertical, 8)
 	UIKit.padding(scroll, 4)

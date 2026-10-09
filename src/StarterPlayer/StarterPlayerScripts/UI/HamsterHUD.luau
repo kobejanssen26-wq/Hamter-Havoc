@@ -185,7 +185,7 @@ function HamsterHUD.start()
 	local pill = UIKit.frame(gui, {
 		Name = "Security",
 		Size = UDim2.fromOffset(268, 42),
-		Position = UDim2.new(1, -14, 0, 84),
+		Position = UDim2.new(1, -84, 0, UIKit.GuiService:GetGuiInset().Y + 8), -- left of the shortcut buttons
 		AnchorPoint = Vector2.new(1, 0),
 		BackgroundColor3 = C.Dim,
 		BackgroundTransparency = 0.15,

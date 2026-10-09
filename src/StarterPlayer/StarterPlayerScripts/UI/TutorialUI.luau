@@ -56,13 +56,13 @@ function TutorialUI.start()
 		local camera = Workspace.CurrentCamera
 		local viewport = if camera then camera.ViewportSize else Vector2.new(1280, 720)
 		scale.Scale = math.clamp(viewport.X / 900, 0.7, 1.05)
-		-- on narrow phones the card sits at the top so it never covers the controls
-		if viewport.X < 720 then
+		-- big screens: right side, below the shortcut buttons; small screens: top centre so it never covers the controls
+		if viewport.X < 900 or viewport.Y < 600 then
 			card.AnchorPoint = Vector2.new(0.5, 0)
 			card.Position = UDim2.new(0.5, 0, 0, inset + 96)
 		else
-			card.AnchorPoint = Vector2.new(0, 0.5)
-			card.Position = UDim2.new(0, 14, 0.5, 0)
+			card.AnchorPoint = Vector2.new(1, 0.5)
+			card.Position = UDim2.new(1, -14, 0.6, 0)
 		end
 	end
 	fit()

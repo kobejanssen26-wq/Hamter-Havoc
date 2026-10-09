@@ -138,7 +138,7 @@ function MainUI.start()
 	local center = UIKit.frame(gui, {
 		Name = "Center",
 		Size = UDim2.fromOffset(560, 36),
-		Position = UDim2.new(0.5, 0, 1, -(MainUI.HotbarClearance + 74)),
+		Position = UDim2.new(0.5, 0, 1, -(MainUI.HotbarClearance + 126)),
 		AnchorPoint = Vector2.new(0.5, 1),
 		BackgroundColor3 = C.Cream,
 		BackgroundTransparency = 0.1,
@@ -308,13 +308,13 @@ function MainUI.start()
 	-- first person: the mouse is locked, so tell the player how to reach the buttons
 	local fpHint = UIKit.label(gui, {
 		Size = UDim2.fromOffset(300, 20),
-		Position = UDim2.new(0.5, 0, 1, -(MainUI.HotbarClearance + 2)),
-		AnchorPoint = Vector2.new(0.5, 1),
+		Position = UDim2.new(0, 14, 1, -14),
+		AnchorPoint = Vector2.new(0, 1),
 		Text = "Hold ALT to use the mouse",
 		TextSize = 13,
 		TextColor3 = C.White,
 		TextTransparency = 0.15,
-		TextXAlignment = Enum.TextXAlignment.Center,
+		TextXAlignment = Enum.TextXAlignment.Left,
 		Visible = false,
 	})
 	UIKit.new("UIStroke", { Color = C.Dim, Thickness = 1.5 }, fpHint)
@@ -331,7 +331,7 @@ function MainUI.start()
 	local prompt = UIKit.frame(gui, {
 		Name = "GrabPrompt",
 		Size = UDim2.fromOffset(420, 52),
-		Position = UDim2.new(0.5, 0, 1, -(MainUI.HotbarClearance + 22)),
+		Position = UDim2.new(0.5, 0, 1, -(MainUI.HotbarClearance + 66)), -- above the hotbar's tooltip card
 		AnchorPoint = Vector2.new(0.5, 1),
 		BackgroundColor3 = C.Cream,
 		BackgroundTransparency = 0.04,

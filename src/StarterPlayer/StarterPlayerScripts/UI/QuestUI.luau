@@ -50,7 +50,7 @@ local function rewardRow(parent: Instance, reward: any, position: UDim2)
 end
 
 function QuestUI.start()
-	local panel = UIKit.panel({ Name = "Quests", Title = "Quests & Achievements", Icon = "scroll", Design = Vector2.new(860, 640), Accent = C.Purple })
+	local panel = UIKit.panel({ Name = "Quests", Title = "Quests & Achievements", Icon = "scroll", Design = Vector2.new(780, 580), Accent = C.Purple })
 	local body = panel.Body
 
 	local mode = "Quests"
