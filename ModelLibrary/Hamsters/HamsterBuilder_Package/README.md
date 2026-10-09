@@ -5,12 +5,12 @@ This is a code package, not a 3D model - the 3D example is [`Hamster_Default`](.
 
 | | |
 |---|---|
-| File | [`../HamsterBuilder_Package.rbxm`](../HamsterBuilder_Package.rbxm) (9 instances: Folder + 8 ModuleScripts) |
-| Contents | `HamsterBuilder` (+ children `Toolkit`, `Faces`, `Hats`, `Gear`, `Wings`), `HamsterDatabase`, `RarityConfig` |
+| File | [`../HamsterBuilder_Package.rbxm`](../HamsterBuilder_Package.rbxm) (10 instances: Folder + 9 ModuleScripts) |
+| Contents | `HamsterBuilder` (+ children `Toolkit`, `Faces`, `Hats`, `Gear`, `Wings`), `HamsterDatabase`, `HamsterNames` (display names), `RarityConfig` |
 | External assets | none |
 | Needs a controller? | Building does not. To animate, also use `HamsterAnimator` from `Hamster_Default` |
 
-Keep `HamsterBuilder`, `HamsterDatabase` and `RarityConfig` **in the same folder** (they find each other with `script.Parent`).
+Keep `HamsterBuilder`, `HamsterDatabase`, `HamsterNames` and `RarityConfig` **in the same folder** (they find each other with `script.Parent`).
 
 ## Use it
 

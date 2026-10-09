@@ -67,7 +67,7 @@ See `HamsterStates.luau` (all tuning numbers) and `HamsterSystem.luau`.
 Rebirth is hard to reach and every one gives permanent power (`RebirthConfig.luau`, all tuned with the progression simulation):
 
 - **Requirements:** cash ($700,000 × 4.6^(n-1)), a growing collection (n + 3 hamsters), and a hamster of a minimum rarity (Shiny → … → Unknown); the first rebirth specifically needs the Silver hamster (shown in-game as "Argent Nibbler", id `silver`).
-- **Every rebirth:** +1 hamster slot (3 at the start), +30 % permanent income, +5 % luck, gems and tokens.
+- **Every rebirth:** +1 hamster slot (3 at the start), +30 % permanent income, +5 % luck, diamonds and tokens.
 - **Milestones:** new floors (R3/6/10/15), advanced upgrade tiers (R5/R10), better security, new rarities (Mythic R2 … Unknown R12), keepsake hamsters
   (you keep your best N hamsters, N grows with rebirths), tower trim.
 - **Resets:** coins, hamsters (except keepsakes), coin upgrades. **Keeps:** Index, rebirth level and everything it unlocked, floors, token upgrades, gems, tokens, quests, achievements, cosmetics, gamepasses.
@@ -77,14 +77,29 @@ Rebirth is hard to reach and every one gives permanent power (`RebirthConfig.lua
 
 Price and income per rarity follow one formula (`RarityConfig`): `BasePrice` grows ×5 per tier roughly, `Payback` (seconds until a hamster pays for itself)
 grows 1.3× per tier, `Income = BasePrice / Payback`; inside a rarity a small value spread keeps the order consistent, so a higher rarity is never worse than a lower one.
-Spawn weights (Basic ≈ 52 %, Cute 25 %, Shiny 12 %, Rare 6.5 %, Epic 2.8 %, Ultra 1.3 %, Legendary 0.65 %, rarer tiers far below). Python/Luau progression simulation:
+Spawn weights (Basic ≈ 52 %, Cute 25 %, Shiny 12 % (Silver is weighted x4 inside Shiny because the first rebirth needs it), Rare 6.5 %, Epic 2.8 %, Ultra 1.3 %, Legendary 0.65 %, rarer tiers far below). Python/Luau progression simulation:
 first rebirth after ≈ 50 min (with active play), Epic ≈ 30 min, Legendary ≈ 2 h, Mythic ≈ 3–4 h.
 
 ## Interface
 
-Bright cartoon style (white windows with thick black outlines, a coloured title tab and a red CLOSE tab, vivid gradient tiles, chunky white text with black stroke, green price buttons), no emoji anywhere: every icon is **drawn from UI shapes** (`UI/Icons.luau`, 48 icons: coin, gem, flame, clover, hamster, book, gear …).
-Panels slide / fade / grow in 0.16–0.22 s. Left column of 8 coloured menu buttons (Hamsters, Upgrades, Rebirth, Index, Daily, Quests, Shop, Settings), currency bar top-left (coins and gems with [+] to the shop), boosts top-right.
-Ball name tags hang on a non-rotating anchor (always upright, facing the camera) with a rarity strip, coin price and a glowing border from Legendary up.
+Mature **dark graphite** style (`UI/Theme.luau` is the single place for colours, fonts, radii and motion; `UIKit.Colors` is built from it): graphite windows with a thin bronze edge,
+a header bar with a small close button, restrained gold/bronze accents, green for positive actions, purple for diamonds, high-contrast text. No emoji anywhere: every icon is
+**drawn from UI shapes** (`UI/Icons.luau`, 52 icons).
+
+- **HUD** (`MainUI`): four indicators centred under the Roblox top bar (safe-area aware) - **Cash, Cash/s, Diamonds, Rebirths** - plus four small icon buttons top-right with tooltips and
+  pressed/selected states: **Daily Quests** (quests, achievements and the daily reward), **Hamsters** (collection), **Shop**, **Settings**. There is no big side menu any more.
+- **In-world menus** (all in your own plot, `HouseBuilder/Tower.luau` + `Yard.luau`, proximity prompts, work on PC and mobile): **Upgrade Terminal** and the upgrade pedestals (Upgrades),
+  **Collection Archive** (Hamster Index), **Rebirth Altar** (Rebirth), **Mailbox** (daily gift), **Hamster Chest** (Hamsters). The central **Shop** stall in the plaza opens the Shop.
+- **Hotbar** (`HotbarUI`, `HotbarConfig`): permanent bottom bar, keys 1-6 or tap. Slot 1 = Slap (the real ability, shows its cooldown); the other slots are consumable items bought in the
+  Shop (2x Cash, 2x Luck, Speed Tonic, Auto Collector, Cash Pouch). Counts live in the server-owned `Items` table; `UseItem` is validated on the server. There is no fake weapon system.
+- **Shop** (`ShopUI`, `ShopConfig`): categories (Boosts, Equipment, Hamsters, Diamonds, Cosmetics, Limited Offers) are configuration-driven and only shown when they hold items that can
+  really be bought right now. Each item names its currency (Cash / Diamonds / Robux) and price; the server validates, charges and grants atomically and refuses double clicks.
+- **Hamster nameplates** (`WorldController.createTag`): fixed pixel size (158 x 66, BillboardGui offset sizing, max distance 120 studs), name, rarity, price and income per second
+  (your real income with all multipliers), created once per ball.
+- **Base banners** (`BannerUI`): "YOUR BASE IS NOW OPEN!" / "YOUR BASE IS NOW LOCKED!" - sent by `SecuritySystem` only on real gate transitions of an owned base.
+- **Tutorial** (`TutorialUI`, `TutorialConfig`, `TutorialSystem`): short, skippable, saved in `profile.Tutorial`; steps advance from real progress (buy a hamster, secure it);
+  profiles saved before the tutorial existed are marked done on load.
+
 The Hamster Index cards show **Working / Owned / Discovered / Missing**. In first person the mouse is freed while any menu is open (and while you hold **ALT**).
 
 ## Content
@@ -122,11 +137,11 @@ Every asset has its own folder with `README.md` (hierarchy, pivot, dependencies,
 
 Checked here (no Roblox Studio is available in this environment):
 `rojo build`, `luau-lsp` typecheck (clean), and a **mock-Roblox simulation** that runs the real server + client scripts:
-- game loop (79 checks): claim → roll home → secure → wheel runs → income; steal → carry → slap → drop → recover → secure; insurance; security expiry / re-arm / zap;
+- game loop (109 checks, incl. shop purchases, double-click protection, hotbar items, tutorial and banner transitions): claim → roll home → secure → wheel runs → income; steal → carry → slap → drop → recover → secure; insurance; security expiry / re-arm / zap;
   entering open houses; stealing inside an open house; overtaking and no-overlap on the road; anti-grief; rebirth requirements, reset and slot gain; save/load; Index UI
 - wheels (5 checks): 216 wheels in 8 five-floor towers all turn about their axle and the floor under the hamster moves **against** its run direction; 8 stations per floor, elevator + landings exist
 - economy: price/income strictly increase with rarity, spawn chances, rebirth table, floor unlocks, requirement checks
-- UI (45 checks): all 9 panels open/close, 48 icons draw, no emoji in any UI text, the first-person cursor sequence (third person → first person → Settings → close → Index → close → third person),
+- UI (72 checks): all 9 panels open/close, 52 icons draw, HUD has four indicators and no sidebar, hotbar keys select/use items through the server, shop categories, base banners, tutorial steps, nameplate size, no emoji in any UI text, the first-person cursor sequence (third person → first person → Settings → close → Index → close → third person),
   ball tag anchors never rotate.
 
 **Not verified:** how it looks and feels in real Studio (colours, camera, lighting, model quality, performance of the bigger world), real physics/character behaviour

@@ -106,10 +106,10 @@ function AnnouncementUI.reveal(speciesId: string, isNew: boolean)
 		BackgroundColor3 = C.Cream,
 	})
 	revealFrame = frame
-	UIKit.corner(frame, 26)
-	UIKit.stroke(frame, color, 6)
+	UIKit.corner(frame, 12)
+	UIKit.stroke(frame, color, 3)
 	local scale = UIKit.new("UIScale", { Scale = 0.2 }, frame)
-	UIKit.gradient(frame, color:Lerp(Color3.new(1, 1, 1), 0.35), Color3.fromRGB(255, 255, 255), 90)
+	UIKit.gradient(frame, C.Cream:Lerp(color, 0.28), C.Cream, 90)
 
 	UIKit.label(frame, {
 		Size = UDim2.new(1, 0, 0, 40),

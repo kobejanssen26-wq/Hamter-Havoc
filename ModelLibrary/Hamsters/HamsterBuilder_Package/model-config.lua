@@ -5,6 +5,6 @@ return {
 	File = "HamsterBuilder_Package.rbxm",
 	RootClass = "Folder",
 	PrimaryPart = false,
-	Dependencies = "None - 8 ModuleScripts that reference each other (keep the folder together)",
+	Dependencies = "None - 9 ModuleScripts that reference each other (keep the folder together)",
 	Reusable = "Yes",
 }

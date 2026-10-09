@@ -63,6 +63,20 @@ function QuestUI.start()
 		render()
 	end, { ButtonSize = UDim2.fromOffset(180, 38) })
 
+	-- the daily login reward lives here too (the mailbox in your yard opens the same screen)
+	local dailyButton = UIKit.button(body, {
+		Text = "",
+		Size = UDim2.fromOffset(190, 38),
+		Position = UDim2.new(1, 0, 0, 0),
+		AnchorPoint = Vector2.new(1, 0),
+		Color = C.Peach,
+		Name = "DailyReward",
+		OnClick = function()
+			require(script.Parent.MainUI).open("Daily")
+		end,
+	})
+	UIKit.setButtonContent(dailyButton, "gift", "Daily Reward", C.White)
+
 	local scroll = UIKit.scroll(body, { Size = UDim2.new(1, 0, 1, -52), Position = UDim2.fromOffset(0, 50) })
 	UIKit.list(scroll, Enum.FillDirection.Vertical, 8)
 	UIKit.padding(scroll, 4)

@@ -22,7 +22,7 @@ Open `HamsterPlaza.rbxl` in Roblox Studio → **View → Explorer**. Je ziet de 
 |---|---|
 | `Yard` | Voortuin en beveiliging: haag, oprit, **poortportaal** (`GatePylon`, `LaserBeam`, `SecurityField`), beveiligingspaneel (`SecurityPanel`, hier druk je `E`), brievenbus, naambord, wedergeboorte-altaar (`AltarPillar`), bomen, vijver |
 | `Tower/Floor1_HamsterHall … Floor5_Penthouse` | Per verdieping een model: `Shell` (vloer, glazen gevel, muren), `Interior` (inrichting, wielplekken `SlotRing`, plafondlampen, **lift** `ElevatorFrame`/`CallUp`/`CallDown`), `Balcony` (vanaf verdieping 2) en op verdieping 1 het `Entrance` (luifel met 10 wedergeboorte-sterren) |
-| `Tower/Floor1…/Interior` | Op verdieping 1: **aankomstpad** (`PadOuter`/`PadInner`/`PadGlow`), 8 upgrade-pedestals (`StationBase`…), kist (`ChestBody`), voortgangsbord (`ProgressBoard`) |
+| `Tower/Floor1…/Interior` | Op verdieping 1: **aankomstpad** (`PadOuter`/`PadInner`/`PadGlow`), 8 upgrade-pedestals (`StationBase`…), kist (`ChestBody`), voortgangsbord (`ProgressBoard`), **Upgrade Terminal** (`UpgradeTerminal`) en **Collection Archive** (`CollectionArchive`, opent de Hamster Index) |
 | `Tower/Roof` | Het dak: begin = gezellig schuin dak met schoorsteen; vanaf 2 verdiepingen plat dak met zonnepanelen, watertank, embleem; vanaf 4 dakterras; verdieping 5 heeft een lichtstraal |
 | `Wheels/Wheel1 … Wheel40` | De hamsterwielen (8 per verdieping). Leeg in de voorbeeldkopie; bij Play verschijnt een wiel (`Wheel`, getagd `HamsterWheel`) per ontgrendelde plek |
 | `Display` | De rennende hamsters op de wielen (alleen tijdens het spel) |
@@ -55,6 +55,11 @@ Open `HamsterPlaza.rbxl` in Roblox Studio → **View → Explorer**. Je ziet de 
 | verdiepingen en wat ze geven | `ReplicatedStorage/Modules/FloorConfig` |
 | wedergeboorte: eisen, beloningen, wat reset | `ReplicatedStorage/Modules/RebirthConfig` |
 | prijs/inkomen per zeldzaamheid, spawnkans | `ReplicatedStorage/Modules/RarityConfig` (`BasePrices`, `PaybackGrowth`, `Weight`) |
+| de kleuren/lettertypen van de hele UI veranderen | `StarterPlayer/StarterPlayerScripts/UI/Theme.luau` |
+| winkel-items, categorieën, prijzen (Cash/Diamonds) | `ReplicatedStorage/Modules/ShopConfig` |
+| de hotbar (slots, items) | `ReplicatedStorage/Modules/HotbarConfig` |
+| de tutorial-stappen | `ReplicatedStorage/Modules/TutorialConfig` |
+| de zichtbare namen van hamsters (ids blijven gelijk) | `ReplicatedStorage/Modules/HamsterNames` |
 | een icoon toevoegen | `StarterPlayer/StarterPlayerScripts/UI/Icons.luau` |
 | het plein aanpassen | `…/WorldBuilder/PlazaBuilder` |
 | aantal/ligging van huizen | `ReplicatedStorage/Modules/WorldLayout` (`HouseColumns`) |
