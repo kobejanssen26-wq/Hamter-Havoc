@@ -8,7 +8,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Modules = ReplicatedStorage.Modules
-local EconomyMath = require(Modules.EconomyMath)
+local HotbarConfig = require(Modules.HotbarConfig)
 local Format = require(Modules.Format)
 local HamsterDatabase = require(Modules.HamsterDatabase)
 local RarityConfig = require(Modules.RarityConfig)
@@ -44,7 +44,25 @@ local function rollCapsule(data: any, pool: { [string]: number }): any
 	return list[random:NextInteger(1, #list)]
 end
 
+local MAX_ITEM_STACK = 99
+local DOUBLE_CLICK_SECONDS = 0.4
+local lastRequest: { [Player]: { [string]: number } } = {}
+
+local function currencyName(currency: string): string
+	return if currency == "Gems" then "diamonds" elseif currency == "Coins" then "cash" else "Robux"
+end
+
+local function spend(player: Player, item: any): boolean
+	if item.Currency == "Coins" then
+		return EconomySystem.trySpendCoins(player, item.Price)
+	elseif item.Currency == "Gems" then
+		return EconomySystem.trySpendGems(player, item.Price)
+	end
+	return false
+end
+
 -- Returns (ok, message, extra) - extra is a table the UI can use (e.g. capsule result).
+-- Everything is decided here: the client only sends the item id, never a price or a reward.
 function ShopSystem.buy(player: Player, itemId: any): (boolean, string, any?)
 	local data = DataSystem.get(player)
 	local item = if type(itemId) == "string" then ShopConfig.ById[itemId] else nil
@@ -52,47 +70,70 @@ function ShopSystem.buy(player: Player, itemId: any): (boolean, string, any?)
 		return false, "Unknown item"
 	end
 
+	-- duplicate request protection (double clicks, replayed remotes)
+	local requests = lastRequest[player]
+	if not requests then
+		requests = {}
+		lastRequest[player] = requests
+	end
+	local clock = os.clock()
+	if requests[item.Id] and clock - requests[item.Id] < DOUBLE_CLICK_SECONDS then
+		return false, "Purchase already in progress"
+	end
+	requests[item.Id] = clock
+
+	if not ShopConfig.available(item) then
+		return false, "This item isn't available right now"
+	end
+
 	if item.Kind == "Pass" then
-		if item.PassId == 0 then
-			return false, "This gamepass isn't available yet"
-		end
 		if data.Passes[item.PassKey] then
 			return false, "You already own this"
 		end
 		MarketplaceService:PromptGamePassPurchase(player, item.PassId)
 		return true, "Opening purchase..."
 	elseif item.Kind == "Product" then
-		if item.ProductId == 0 then
-			return false, "Gem packs aren't available yet"
-		end
 		MarketplaceService:PromptProductPurchase(player, item.ProductId)
 		return true, "Opening purchase..."
 	end
 
-	if item.Kind == "Roof" then
-		if data.Cosmetics.Owned[item.RoofKey] then
-			data.Cosmetics.Roof = item.RoofKey
-			ReplicationSystem.mark(player, "Cosmetics")
-			Events.RoofChanged:Fire(player)
-			return true, item.Name .. " equipped"
-		end
+	if item.MinRebirth and data.Rebirths < item.MinRebirth then
+		return false, string.format("Unlocks at rebirth %d", item.MinRebirth)
 	end
 
-	if not EconomySystem.trySpendGems(player, item.Gems) then
-		return false, string.format("Not enough gems (need %s)", Format.short(item.Gems))
+	if item.Kind == "Roof" and data.Cosmetics.Owned[item.RoofKey] then
+		data.Cosmetics.Roof = item.RoofKey
+		ReplicationSystem.mark(player, "Cosmetics")
+		Events.RoofChanged:Fire(player)
+		return true, item.Name .. " equipped", { Equipped = true }
+	end
+
+	-- validate everything BEFORE taking money, so deduct + grant is all-or-nothing
+	local hotbarItem = if item.Kind == "Item" then HotbarConfig.ById[item.ItemId] else nil
+	if item.Kind == "Item" then
+		if not hotbarItem then
+			return false, "Unsupported item"
+		end
+		if (data.Items[item.ItemId] or 0) >= MAX_ITEM_STACK then
+			return false, string.format("You can hold at most %d of these", MAX_ITEM_STACK)
+		end
+	elseif item.Kind ~= "Capsule" and item.Kind ~= "Roof" then
+		return false, "Unsupported item"
+	end
+
+	if not spend(player, item) then
+		local have = if item.Currency == "Coins" then data.Coins else data.Gems
+		return false, string.format("Not enough %s (need %s, you have %s)", currencyName(item.Currency), Format.short(item.Price), Format.short(have))
 	end
 
 	if item.Kind == "Capsule" then
 		local species = rollCapsule(data, item.Pool)
 		local result = CollectionSystem.grant(player, species.Id, "Capsule")
 		return true, "You got " .. species.Name .. "!", { SpeciesId = species.Id, IsNew = result and result.IsNew or false }
-	elseif item.Kind == "Boost" then
-		EconomySystem.addBoost(player, item.BoostId, item.Seconds)
-		return true, item.Name .. " activated!"
-	elseif item.Kind == "CoinPouch" then
-		local amount = math.max(1000, EconomyMath.incomePerSecond(data, os.time()) * 60 * item.Minutes)
-		EconomySystem.addCoins(player, amount, false)
-		return true, "+" .. Format.coins(amount) .. " coins"
+	elseif item.Kind == "Item" then
+		data.Items[item.ItemId] = (data.Items[item.ItemId] or 0) + 1
+		ReplicationSystem.mark(player, "Items")
+		return true, string.format("%s added to your hotbar", hotbarItem.Name), { ItemId = item.ItemId }
 	elseif item.Kind == "Roof" then
 		data.Cosmetics.Owned[item.RoofKey] = true
 		data.Cosmetics.Roof = item.RoofKey
@@ -100,7 +141,11 @@ function ShopSystem.buy(player: Player, itemId: any): (boolean, string, any?)
 		Events.RoofChanged:Fire(player)
 		return true, item.Name .. " bought and equipped!"
 	end
-	return false, "Unsupported item"
+	return true, "Purchased"
+end
+
+function ShopSystem.forget(player: Player)
+	lastRequest[player] = nil
 end
 
 function ShopSystem.setRoof(player: Player, key: any): (boolean, string)

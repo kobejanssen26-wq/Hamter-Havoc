@@ -23,6 +23,8 @@ return {
 	-- progression
 	Upgrades = {}, -- [upgradeId] = level
 	Boosts = {}, -- [boostId] = unix time it expires
+	Items = {}, -- [itemId] = count of consumable items (hotbar); server authoritative
+	Tutorial = { Step = 1, Done = false, Skipped = false },
 	Passes = {}, -- [passKey] = true (re-verified on join)
 	Cosmetics = { Owned = {}, Roof = "default" },
 

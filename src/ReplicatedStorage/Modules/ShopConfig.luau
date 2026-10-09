@@ -8,7 +8,18 @@
 
 local ShopConfig = {}
 
-ShopConfig.Sections = { "Pets", "Boosts", "Currency", "Gamepasses", "Cosmetics" }
+-- Categories the shop can show, in order. A category only appears when it holds at least one item that can
+-- really be bought right now (nothing is faked to fill a tab). "Equipment" and "Limited Offers" stay empty until
+-- real equipment / timed offers (item.Limited = { EndsAt = unixTime }) are added to Items.
+ShopConfig.Categories = {
+	{ Id = "Boosts", Name = "Boosts", Icon = "bolt" },
+	{ Id = "Equipment", Name = "Equipment", Icon = "shield" },
+	{ Id = "Hamsters", Name = "Hamsters", Icon = "hamster" },
+	{ Id = "Diamonds", Name = "Diamonds", Icon = "gem" },
+	{ Id = "Cosmetics", Name = "Cosmetics", Icon = "paint" },
+	{ Id = "Limited", Name = "Limited Offers", Icon = "star" },
+}
+ShopConfig.SectionToCategory = { Pets = "Hamsters", Boosts = "Boosts", Currency = "Diamonds", Gamepasses = "Diamonds", Cosmetics = "Cosmetics" }
 
 ShopConfig.Boosts = {
 	Coins2x = { Name = "2x Coins", Icon = "coin", Desc = "Doubles all coins earned." },
@@ -25,13 +36,16 @@ ShopConfig.Items = {
 	{ Id = "capsule_royal", Section = "Pets", Name = "Royal Capsule", Icon = "crown", Desc = "Epic or better (needs 1+ rebirth for Mythic).", Gems = 2500, Kind = "Capsule", Pool = { Epic = 55, Ultra = 28, Legendary = 14, Mythic = 3 } },
 
 	-- Boosts
-	{ Id = "boost_coins", Section = "Boosts", Name = "2x Coins (15 min)", Icon = "coin", Desc = "Doubles all coins earned.", Gems = 120, Kind = "Boost", BoostId = "Coins2x", Seconds = 900 },
-	{ Id = "boost_luck", Section = "Boosts", Name = "2x Luck (10 min)", Icon = "clover", Desc = "Rarer hamsters appear more often.", Gems = 150, Kind = "Boost", BoostId = "Luck2x", Seconds = 600 },
-	{ Id = "boost_speed", Section = "Boosts", Name = "Speed Boost (10 min)", Icon = "bolt", Desc = "+6 walk speed.", Gems = 60, Kind = "Boost", BoostId = "Speed2x", Seconds = 600 },
-	{ Id = "boost_auto", Section = "Boosts", Name = "Auto Collect (10 min)", Icon = "bot", Desc = "Grabs hamsters in range for you.", Gems = 200, Kind = "Boost", BoostId = "AutoCollect", Seconds = 600 },
+	{ Id = "boost_coins", Section = "Boosts", Name = "2x Cash (15 min)", Icon = "coin", Desc = "Doubles all coins earned.", Gems = 120, Kind = "Item", ItemId = "item_coins" },
+	{ Id = "boost_luck", Section = "Boosts", Name = "2x Luck (10 min)", Icon = "clover", Desc = "Rarer hamsters appear more often.", Gems = 150, Kind = "Item", ItemId = "item_luck" },
+	{ Id = "boost_speed", Section = "Boosts", Name = "Speed Tonic (10 min)", Icon = "bolt", Desc = "+6 walk speed.", Gems = 60, Kind = "Item", ItemId = "item_speed" },
+	{ Id = "boost_auto", Section = "Boosts", Name = "Auto Collect (10 min)", Icon = "bot", Desc = "Grabs hamsters in range for you.", Gems = 200, Kind = "Item", ItemId = "item_auto" },
+
+	-- Cash-priced consumable (the second currency): a cheap everyday item
+	{ Id = "tonic_cash", Section = "Boosts", Name = "Speed Tonic (10 min)", Icon = "bolt", Desc = "+6 walk speed. Paid in cash.", Coins = 2500, Kind = "Item", ItemId = "item_speed" },
 
 	-- Currency
-	{ Id = "coin_pouch", Section = "Currency", Name = "Coin Pouch", Icon = "pouch", Desc = "10 minutes of your current income.", Gems = 60, Kind = "CoinPouch", Minutes = 10 },
+	{ Id = "coin_pouch", Section = "Boosts", Name = "Cash Pouch", Icon = "pouch", Desc = "10 minutes of your current income.", Gems = 60, Kind = "Item", ItemId = "item_pouch" },
 	{ Id = "gems_small", Section = "Currency", Name = "Handful of Gems", Icon = "gem", Desc = "100 gems.", Robux = 49, Kind = "Product", ProductId = 0, GemAmount = 100 },
 	{ Id = "gems_medium", Section = "Currency", Name = "Pouch of Gems", Icon = "gem", Desc = "550 gems.", Robux = 249, Kind = "Product", ProductId = 0, GemAmount = 550 },
 	{ Id = "gems_large", Section = "Currency", Name = "Chest of Gems", Icon = "gem", Desc = "1,200 gems.", Robux = 499, Kind = "Product", ProductId = 0, GemAmount = 1200 },
@@ -53,6 +67,45 @@ ShopConfig.Items = {
 }
 
 ShopConfig.ById = {} :: { [string]: any }
+-- Currency + price in one place: item.Currency is "Coins", "Gems" or "Robux"; the UI shows them as Cash / Diamonds / Robux.
+for _, item in ShopConfig.Items do
+	item.Category = item.Category or ShopConfig.SectionToCategory[item.Section] or "Boosts"
+	if item.Coins then
+		item.Currency, item.Price = "Coins", item.Coins
+	elseif item.Gems then
+		item.Currency, item.Price = "Gems", item.Gems
+	elseif item.Robux then
+		item.Currency, item.Price = "Robux", item.Robux
+	end
+end
+
+-- Can this item be bought right now? (Robux items need a real pass / product id; timed offers must be running.)
+function ShopConfig.available(item: any, now: number?): boolean
+	if (item.Kind == "Pass" and item.PassId == 0) or (item.Kind == "Product" and item.ProductId == 0) then
+		return false
+	end
+	if item.Limited and item.Limited.EndsAt and (now or os.time()) >= item.Limited.EndsAt then
+		return false
+	end
+	return true
+end
+
+-- Categories that really have something to sell, each with its items.
+function ShopConfig.categories(now: number?): { any }
+	local result = {}
+	for _, category in ShopConfig.Categories do
+		local items = {}
+		for _, item in ShopConfig.Items do
+			if (item.Limited and category.Id == "Limited" or (not item.Limited and item.Category == category.Id)) and ShopConfig.available(item, now) then
+				table.insert(items, item)
+			end
+		end
+		if #items > 0 then
+			table.insert(result, { Id = category.Id, Name = category.Name, Icon = category.Icon, Items = items })
+		end
+	end
+	return result
+end
 ShopConfig.RoofByKey = {} :: { [string]: any }
 for _, item in ShopConfig.Items do
 	ShopConfig.ById[item.Id] = item

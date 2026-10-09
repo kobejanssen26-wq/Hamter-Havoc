@@ -18,6 +18,8 @@ local RewardSystem = require(script.Parent.RewardSystem)
 local Rewards = require(script.Parent.Rewards)
 local SettingsSystem = require(script.Parent.SettingsSystem)
 local ShopSystem = require(script.Parent.ShopSystem)
+local ItemSystem = require(script.Parent.ItemSystem)
+local TutorialSystem = require(script.Parent.TutorialSystem)
 local UpgradeSystem = require(script.Parent.UpgradeSystem)
 
 local RequestRouter = {}
@@ -154,6 +156,21 @@ end
 actions.ShopBuy = function(player, payload)
 	local ok, message, extra = ShopSystem.buy(player, payload.Id)
 	return result(ok, message, extra)
+end
+
+actions.UseItem = function(player, payload)
+	local ok, message = ItemSystem.use(player, payload.Id)
+	return result(ok, message)
+end
+
+actions.TutorialAck = function(player, payload)
+	local ok, message = TutorialSystem.ack(player, payload.Step)
+	return result(ok, message)
+end
+
+actions.TutorialSkip = function(player)
+	local ok, message = TutorialSystem.skip(player)
+	return result(ok, message)
 end
 
 actions.SetRoof = function(player, payload)

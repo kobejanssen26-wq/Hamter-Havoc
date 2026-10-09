@@ -96,6 +96,9 @@ function DataSystem.load(player: Player): any
 
 	if loaded then
 		loaded._Lock = nil
+		if loaded.Tutorial == nil and (loaded.Sessions or 0) > 0 then
+			loaded.Tutorial = { Step = 99, Done = true, Skipped = false } -- existing players never see the intro
+		end
 		profile.Data = Util.reconcile(loaded, ProfileTemplate)
 	else
 		profile.Data = Util.deepCopy(ProfileTemplate)

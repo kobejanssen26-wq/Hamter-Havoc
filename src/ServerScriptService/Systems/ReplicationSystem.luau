@@ -17,7 +17,7 @@ local ReplicationSystem = {}
 -- Profile keys the client may see (Receipts/Codes stay on the server).
 local PUBLIC_KEYS = {
 	"Inventory", "Index", "Equipped", "IndexRewards", "Upgrades", "Boosts", "Passes", "Cosmetics", "Stats",
-	"Quests", "Achievements", "Daily", "Settings", "Rebirths", "FirstJoin",
+	"Quests", "Achievements", "Daily", "Settings", "Rebirths", "FirstJoin", "Items", "Tutorial",
 }
 
 local dirty: { [Player]: { [string]: boolean } } = {}
