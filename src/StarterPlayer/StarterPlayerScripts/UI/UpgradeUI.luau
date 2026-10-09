@@ -54,8 +54,8 @@ function UpgradeUI.start()
 		UIKit.corner(frame, 16)
 		local stroke = UIKit.stroke(frame, C.Line, 3)
 
-		local iconBox = UIKit.frame(frame, { Size = UDim2.fromOffset(68, 68), Position = UDim2.fromOffset(12, 12), BackgroundColor3 = C.CreamDark })
-		UIKit.corner(iconBox, 16)
+		local iconBox = UIKit.frame(frame, { Size = UDim2.fromOffset(68, 68), Position = UDim2.fromOffset(12, 12) })
+		UIKit.vivid(iconBox, if definition.Currency == "Tokens" then C.Peach else C.Sky, { Corner = 12, Outline = 3 })
 		UIKit.icon(iconBox, definition.Icon, { Size = UDim2.fromOffset(48, 48), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5) })
 
 		UIKit.label(frame, {

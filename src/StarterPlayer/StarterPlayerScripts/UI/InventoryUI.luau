@@ -159,42 +159,46 @@ function InventoryUI.start()
 			local equipped = equippedCounts[species.Id] or 0
 
 			local card = UIKit.frame(grid, { LayoutOrder = index })
-			UIKit.corner(card, 16)
-			UIKit.stroke(card, color, 3)
+			UIKit.vivid(card, color, { Corner = 12, Outline = if equipped > 0 then 5 else 3.5 })
+			if equipped > 0 then
+				card:FindFirstChildOfClass("UIStroke").Color = C.Green
+			end
 			UIKit.hamsterIcon(card, species, { Size = UDim2.new(1, -8, 0, 100), Position = UDim2.fromOffset(4, 2) })
-			UIKit.chip(card, string.upper(definition.Name), color, UDim2.fromOffset(86, 20)).Position = UDim2.fromOffset(8, 6)
+			UIKit.chip(card, string.upper(definition.Name), Color3.fromRGB(30, 24, 44), UDim2.fromOffset(86, 20)).Position = UDim2.fromOffset(8, 6)
 			if entry.Count > 1 then
-				local count = UIKit.chip(card, "x" .. entry.Count, C.BrownLight, UDim2.fromOffset(40, 20))
+				local count = UIKit.chip(card, "x" .. entry.Count, Color3.fromRGB(30, 24, 44), UDim2.fromOffset(40, 20))
 				count.Position = UDim2.new(1, -48, 0, 6)
 			end
-			UIKit.label(card, {
+			UIKit.cartoon(UIKit.label(card, {
 				Size = UDim2.new(1, -10, 0, 22),
 				Position = UDim2.fromOffset(5, 102),
 				Text = species.Name,
-				TextSize = 17,
+				TextSize = 18,
 				Font = UIKit.Fonts.Title,
+				TextColor3 = C.White,
 				TextXAlignment = Enum.TextXAlignment.Center,
 				TextTruncate = Enum.TextTruncate.AtEnd,
-			})
-			UIKit.iconText(card, {
+			}), 2.5)
+			local incomeRow = UIKit.iconText(card, {
 				Icon = "coin",
 				Text = string.format("+%s/s each", Format.short(HamsterDatabase.income(species) * multiplier)),
 				Size = UDim2.new(1, -10, 0, 18),
 				Position = UDim2.fromOffset(5, 123),
 				TextSize = 13,
-				TextColor = C.GoldDark,
+				TextColor = C.White,
 				Font = UIKit.Fonts.Body,
 				Align = Enum.HorizontalAlignment.Center,
 			})
+			UIKit.cartoon(incomeRow.Label, 2)
 			if equipped > 0 then
-				UIKit.label(card, {
+				UIKit.cartoon(UIKit.label(card, {
 					Size = UDim2.new(1, -10, 0, 16),
 					Position = UDim2.fromOffset(5, 142),
 					Text = string.format("%d working in wheels", equipped),
 					TextSize = 12,
-					TextColor3 = C.Green,
+					TextColor3 = C.White,
 					TextXAlignment = Enum.TextXAlignment.Center,
-				})
+				}), 2)
 			end
 
 			local free = entry.Count - equipped

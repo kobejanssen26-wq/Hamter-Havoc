@@ -34,8 +34,8 @@ function DailyRewardUI.start()
 	local cards: { { Frame: Frame, Stroke: UIStroke, State: TextLabel, Icon: Frame } } = {}
 	for index, day in DailyRewardConfig.Days do
 		local card = UIKit.frame(row, { Size = UDim2.fromOffset(120, 236), LayoutOrder = index })
-		UIKit.corner(card, 18)
-		local stroke = UIKit.stroke(card, C.Line, 3)
+		UIKit.vivid(card, Color3.fromRGB(255, 232, 150), { Corner = 12, Outline = 3.5 })
+		local stroke = card:FindFirstChildOfClass("UIStroke") :: UIStroke
 		UIKit.label(card, {
 			Size = UDim2.new(1, 0, 0, 34),
 			Text = "Day " .. day.Day,

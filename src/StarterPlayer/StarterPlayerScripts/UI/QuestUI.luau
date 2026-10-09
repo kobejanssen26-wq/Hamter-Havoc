@@ -102,7 +102,7 @@ function QuestUI.start()
 			UIKit.corner(row, 16)
 			UIKit.stroke(row, if item.Complete and not item.Claimed then C.Gold elseif item.Claimed then C.Green else C.Line, 3)
 
-			local icon = UIKit.frame(row, { Size = UDim2.fromOffset(58, 58), Position = UDim2.fromOffset(12, 13), BackgroundColor3 = C.CreamDark })
+			local icon = UIKit.frame(row, { Size = UDim2.fromOffset(58, 58), Position = UDim2.fromOffset(12, 13), BackgroundColor3 = C.Sky })
 			UIKit.corner(icon, 14)
 			UIKit.icon(icon, entry.Icon or (if item.Claimed then "check" elseif item.Complete then "gift" else "scroll"), { Size = UDim2.fromOffset(40, 40), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5) })
 			UIKit.label(row, {

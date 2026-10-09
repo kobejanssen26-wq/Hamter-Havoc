@@ -141,7 +141,7 @@ function SettingsUI.start()
 	local box = UIKit.new("TextBox", {
 		Size = UDim2.new(1, -40, 0, 56),
 		Position = UDim2.fromOffset(20, 66),
-		BackgroundColor3 = Color3.fromRGB(18, 13, 11),
+		BackgroundColor3 = C.White,
 		Font = UIKit.Fonts.Title,
 		TextSize = 26,
 		TextColor3 = C.Ink,

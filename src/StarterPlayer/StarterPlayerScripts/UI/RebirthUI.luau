@@ -31,7 +31,7 @@ local function card(parent: Instance, props: { Size: UDim2, Position: UDim2?, Co
 end
 
 local function heading(parent: Instance, text: string, y: number?): TextLabel
-	return UIKit.label(parent, { Size = UDim2.new(1, -24, 0, 24), Position = UDim2.fromOffset(14, y or 8), Font = UIKit.Fonts.Title, TextSize = 18, TextColor3 = C.Gold, Text = text })
+	return UIKit.label(parent, { Size = UDim2.new(1, -24, 0, 24), Position = UDim2.fromOffset(14, y or 8), Font = UIKit.Fonts.Title, TextSize = 20, TextColor3 = C.Ink, Text = text })
 end
 
 function RebirthUI.start()
@@ -88,12 +88,12 @@ function RebirthUI.start()
 	-----------------------------------------------------------------------
 	local right = UIKit.frame(body, { Size = UDim2.new(1, -456, 1, 0), Position = UDim2.new(0, 456, 0, 0), BackgroundTransparency = 1 })
 
-	local rewardsCard = card(right, { Size = UDim2.new(1, 0, 0, 290), Color = Color3.fromRGB(26, 44, 32), Stroke = C.Green })
+	local rewardsCard = card(right, { Size = UDim2.new(1, 0, 0, 290), Color = Color3.fromRGB(214, 250, 222), Stroke = C.Green })
 	heading(rewardsCard, "You get (permanent)")
 	local rewardsScroll = UIKit.scroll(rewardsCard, { Size = UDim2.new(1, -16, 1, -42), Position = UDim2.fromOffset(8, 36) })
 	UIKit.list(rewardsScroll, Enum.FillDirection.Vertical, 6)
 
-	local lossCard = card(right, { Size = UDim2.new(1, 0, 0, 178), Position = UDim2.fromOffset(0, 300), Color = Color3.fromRGB(48, 28, 26), Stroke = C.Red })
+	local lossCard = card(right, { Size = UDim2.new(1, 0, 0, 178), Position = UDim2.fromOffset(0, 300), Color = Color3.fromRGB(255, 224, 224), Stroke = C.Red })
 	local lossLabel = UIKit.label(lossCard, { Size = UDim2.new(1, -24, 1, -16), Position = UDim2.fromOffset(12, 8), TextSize = 13, TextYAlignment = Enum.TextYAlignment.Top, TextWrapped = true, Text = "" })
 	do
 		local lines = { "<b>Resets</b>" }
@@ -162,7 +162,7 @@ function RebirthUI.start()
 			local chip = UIKit.frame(slotRow, { Size = UDim2.fromOffset(24, 54), LayoutOrder = index, BackgroundTransparency = 1 })
 			local owned = index <= current
 			local isNext = index == current + 1
-			local box = UIKit.frame(chip, { Size = UDim2.fromOffset(24, 24), Position = UDim2.fromOffset(0, 14), BackgroundColor3 = if owned then C.Gold else (if isNext then Color3.fromRGB(40, 92, 56) else C.CreamDark) })
+			local box = UIKit.frame(chip, { Size = UDim2.fromOffset(24, 24), Position = UDim2.fromOffset(0, 14), BackgroundColor3 = if owned then C.Gold else (if isNext then Color3.fromRGB(150, 235, 175) else C.CreamDark) })
 			UIKit.corner(box, 8)
 			UIKit.stroke(box, if owned then C.GoldDark else (if isNext then C.Green else LINE), 2)
 			if owned then
@@ -239,7 +239,7 @@ function RebirthUI.start()
 			local cell = floorCells[index]
 			local isBuilt = index <= built
 			local isNext = following ~= nil and following.Index == index
-			cell.Frame.BackgroundColor3 = if isBuilt then Color3.fromRGB(86, 62, 28) else C.CreamDark
+			cell.Frame.BackgroundColor3 = if isBuilt then Color3.fromRGB(255, 232, 140) else C.CreamDark
 			cell.Stroke.Color = if isBuilt then C.Gold else (if isNext then C.Green else LINE)
 			for _, child in cell.Icon:GetChildren() do
 				child:Destroy()

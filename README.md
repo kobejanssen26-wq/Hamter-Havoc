@@ -82,8 +82,8 @@ first rebirth after ≈ 50 min (with active play), Epic ≈ 30 min, Legendary �
 
 ## Interface
 
-Dark premium style (near-black warm panels, gold frames, glowing green buttons, Oswald titles), no emoji anywhere: every icon is **drawn from UI shapes** (`UI/Icons.luau`, 48 icons: coin, gem, flame, clover, hamster, book, gear …).
-Panels slide / fade / grow in 0.16–0.22 s. Left sidebar with the 8 menus (Hamsters, Upgrades, Rebirth, Index, Daily, Quests, Shop, Settings), currency bar top-left (coins and gems with [+] to the shop), boosts top-right.
+Bright cartoon style (white windows with thick black outlines, a coloured title tab and a red CLOSE tab, vivid gradient tiles, chunky white text with black stroke, green price buttons), no emoji anywhere: every icon is **drawn from UI shapes** (`UI/Icons.luau`, 48 icons: coin, gem, flame, clover, hamster, book, gear …).
+Panels slide / fade / grow in 0.16–0.22 s. Left column of 8 coloured menu buttons (Hamsters, Upgrades, Rebirth, Index, Daily, Quests, Shop, Settings), currency bar top-left (coins and gems with [+] to the shop), boosts top-right.
 Ball name tags hang on a non-rotating anchor (always upright, facing the camera) with a rarity strip, coin price and a glowing border from Legendary up.
 The Hamster Index cards show **Working / Owned / Discovered / Missing**. In first person the mouse is freed while any menu is open (and while you hold **ALT**).
 

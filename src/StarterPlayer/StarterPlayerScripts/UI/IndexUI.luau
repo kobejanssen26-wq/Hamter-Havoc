@@ -464,10 +464,11 @@ function IndexUI.start()
 			local hiddenRarity = definition.Hidden
 			local ownedCount = (data.Inventory or {})[species.Id] or 0
 			local workingCount = workingBySpecies[species.Id] or 0
-			local card = UIKit.frame(grid, { LayoutOrder = order, BackgroundColor3 = if found then C.Card else C.CreamDark })
-			UIKit.corner(card, 16)
-			local cardStroke = if workingCount > 0 then C.Green elseif ownedCount > 0 then color elseif found then Color3.fromRGB(214, 170, 90) else C.Line
-			UIKit.stroke(card, cardStroke, if workingCount > 0 then 4 elseif found then 3 else 2)
+			local card = UIKit.frame(grid, { LayoutOrder = order })
+			UIKit.vivid(card, if found then color else Color3.fromRGB(128, 138, 168), { Corner = 12, Outline = if workingCount > 0 then 5 else 3.5 })
+			if workingCount > 0 then
+				card:FindFirstChildOfClass("UIStroke").Color = C.Green -- working hamsters get a green frame
+			end
 
 			if found or not hiddenRarity then
 				UIKit.hamsterIcon(card, species, { Size = UDim2.new(1, -8, 0, 116), Position = UDim2.fromOffset(4, 4), Silhouette = not found })
@@ -478,31 +479,32 @@ function IndexUI.start()
 					Text = "?",
 					TextSize = 70,
 					Font = UIKit.Fonts.Title,
-					TextColor3 = C.Muted,
+					TextColor3 = C.White,
 					TextXAlignment = Enum.TextXAlignment.Center,
 				})
 			end
 
-			UIKit.label(card, {
+			UIKit.cartoon(UIKit.label(card, {
 				Size = UDim2.new(1, -10, 0, 24),
 				Position = UDim2.fromOffset(5, 122),
 				Text = if found or not hiddenRarity then species.Name else "???",
-				TextSize = 17,
+				TextSize = 18,
 				Font = UIKit.Fonts.Title,
 				TextXAlignment = Enum.TextXAlignment.Center,
-				TextColor3 = if found then C.Ink else C.Muted,
+				TextColor3 = C.White,
 				TextTruncate = Enum.TextTruncate.AtEnd,
-			})
-			UIKit.iconText(card, {
+			}), 2.5)
+			local incomeRow = UIKit.iconText(card, {
 				Icon = "coin",
 				Text = if found or not hiddenRarity then Format.short(HamsterDatabase.income(species)) .. "/s" else "???",
 				Size = UDim2.new(1, -10, 0, 20),
 				Position = UDim2.fromOffset(5, 146),
 				TextSize = 14,
-				TextColor = C.GoldDark,
+				TextColor = C.White,
 				Font = UIKit.Fonts.Body,
 				Align = Enum.HorizontalAlignment.Center,
 			})
+			UIKit.cartoon(incomeRow.Label, 2)
 			-- state chip: Working (in a wheel) / Owned / Discovered (found before, not owned now) / Missing
 			local chipText, chipColor
 			if workingCount > 0 then
@@ -550,14 +552,14 @@ function IndexUI.start()
 			local button = UIKit.button(list, {
 				Text = "",
 				Size = UDim2.new(1, -8, 0, 44),
-				Color = if entry.Id == selected[mode] then Color3.fromRGB(110, 78, 34) else C.CreamDark,
+				Color = if entry.Id == selected[mode] then C.Gold else C.CreamDark,
 				Corner = 12,
 				LayoutOrder = order,
 				Name = "Group_" .. entry.Id,
 				OnClick = function()
 					selected[mode] = entry.Id
 					for id, tab in tabButtons do
-						UIKit.setButtonColor(tab.Button, if id == entry.Id then Color3.fromRGB(110, 78, 34) else C.CreamDark)
+						UIKit.setButtonColor(tab.Button, if id == entry.Id then C.Gold else C.CreamDark)
 					end
 					render()
 				end,

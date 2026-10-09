@@ -18,6 +18,8 @@ local ShopUI = {}
 
 local C = UIKit.Colors
 
+local TILE_COLORS = { Color3.fromRGB(255, 60, 190), Color3.fromRGB(40, 150, 255), Color3.fromRGB(60, 210, 90), Color3.fromRGB(255, 150, 20), Color3.fromRGB(150, 70, 255), Color3.fromRGB(0, 200, 210) }
+
 local SECTION_COLORS = {
 	Pets = C.Pink,
 	Boosts = C.Mint,
@@ -81,35 +83,34 @@ function ShopUI.start()
 			if item.Section == selected then
 				order += 1
 				local card = UIKit.frame(grid, { LayoutOrder = order })
-				UIKit.corner(card, 18)
-				UIKit.stroke(card, accent, 3)
+				UIKit.vivid(card, item.Color or TILE_COLORS[(order - 1) % #TILE_COLORS + 1] or accent, { Corner = 12, Outline = 3.5 })
 
-				local iconBox = UIKit.frame(card, { Size = UDim2.new(1, -16, 0, 84), Position = UDim2.fromOffset(8, 8), BackgroundColor3 = C.CreamDark })
-				UIKit.corner(iconBox, 14)
-				if item.Color then
-					iconBox.BackgroundColor3 = item.Color
-				end
-				UIKit.icon(iconBox, item.Icon, { Size = UDim2.fromOffset(62, 62), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5) })
+				UIKit.icon(card, item.Icon, { Size = UDim2.fromOffset(70, 70), Position = UDim2.new(0.5, 0, 0, 12), AnchorPoint = Vector2.new(0.5, 0), ZIndex = 3 })
 
-				UIKit.label(card, {
-					Size = UDim2.new(1, -12, 0, 24),
-					Position = UDim2.fromOffset(6, 98),
+				local nameLabel = UIKit.label(card, {
+					Size = UDim2.new(1, -12, 0, 26),
+					Position = UDim2.fromOffset(6, 90),
 					Text = item.Name,
 					Font = UIKit.Fonts.Title,
-					TextSize = 18,
+					TextColor3 = C.White,
+					TextSize = 20,
 					TextXAlignment = Enum.TextXAlignment.Center,
 					TextTruncate = Enum.TextTruncate.AtEnd,
+					ZIndex = 3,
 				})
-				UIKit.label(card, {
+				UIKit.cartoon(nameLabel, 2.5)
+				local descLabel = UIKit.label(card, {
 					Size = UDim2.new(1, -16, 0, 40),
-					Position = UDim2.fromOffset(8, 124),
+					Position = UDim2.fromOffset(8, 118),
 					Text = item.Desc,
 					TextSize = 12,
-					TextColor3 = C.Muted,
+					TextColor3 = C.White,
 					TextWrapped = true,
 					TextXAlignment = Enum.TextXAlignment.Center,
 					TextYAlignment = Enum.TextYAlignment.Top,
+					ZIndex = 3,
 				})
+				UIKit.cartoon(descLabel, 1.5)
 
 				local text
 				local priceIcon: string? = nil
@@ -135,20 +136,20 @@ function ShopUI.start()
 					elseif data.Cosmetics and data.Cosmetics.Owned[item.RoofKey] then
 						text, color = "Equip", C.Sky
 					else
-						text, color, priceIcon = Format.short(item.Gems), C.Pink, "gem"
+						text, color, priceIcon = Format.short(item.Gems), C.Green, "gem"
 					end
 				elseif item.Kind == "Boost" then
 					local remaining = (data.Boosts and data.Boosts[item.BoostId] or 0) - now
 					text = Format.short(item.Gems)
 					priceIcon = "gem"
-					color = C.Mint
+					color = C.Green
 					if remaining > 0 then
 						UIKit.chip(card, "Active " .. Format.clock(remaining), C.Green, UDim2.fromOffset(110, 20)).Position = UDim2.new(0.5, -55, 0, 12)
 					end
 				else
 					text = Format.short(item.Gems)
 					priceIcon = "gem"
-					color = C.Pink
+					color = C.Green
 				end
 
 				local button = UIKit.button(card, {
@@ -176,7 +177,7 @@ function ShopUI.start()
 				end
 				UIKit.setEnabled(button, enabled)
 				if not enabled then
-					button.BackgroundColor3 = Color3.fromRGB(78, 68, 62)
+					button.BackgroundColor3 = Color3.fromRGB(150, 156, 172)
 				end
 			end
 		end

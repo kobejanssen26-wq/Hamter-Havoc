@@ -130,12 +130,11 @@ function MainUI.start()
 		Name = "Profile",
 		Size = UDim2.fromOffset(290, 92),
 		Position = UDim2.new(0, 14, 1, -14),
-		BackgroundColor3 = Color3.fromRGB(26, 20, 16),
-		BackgroundTransparency = 0.06,
+		BackgroundColor3 = C.White,
 	})
-	UIKit.corner(profile, 14)
-	UIKit.stroke(profile, C.GoldLine, 2.5)
-	UIKit.gradient(profile, Color3.fromRGB(46, 35, 28), Color3.fromRGB(20, 15, 12), 90)
+	UIKit.corner(profile, 12)
+	UIKit.stroke(profile, C.BrownDark, 3.5)
+	UIKit.gradient(profile, Color3.fromRGB(255, 255, 255), Color3.fromRGB(214, 228, 250), 90)
 	addScale(profile).Scale = 1
 	profile.AnchorPoint = Vector2.new(0, 1)
 
@@ -145,15 +144,15 @@ function MainUI.start()
 		BackgroundColor3 = C.CreamDark,
 		Image = string.format("rbxthumb://type=AvatarHeadShot&id=%d&w=150&h=150", player.UserId),
 	}, profile)
-	UIKit.corner(avatar, 14)
-	UIKit.stroke(avatar, C.GoldLine, 2.5)
+	UIKit.corner(avatar, 12)
+	UIKit.stroke(avatar, C.BrownDark, 3)
 
 	UIKit.label(profile, {
 		Position = UDim2.fromOffset(92, 8),
 		Size = UDim2.new(1, -100, 0, 26),
 		Font = UIKit.Fonts.Title,
-		TextSize = 20,
-		TextColor3 = C.White,
+		TextSize = 22,
+		TextColor3 = C.Ink,
 		Text = player.DisplayName,
 		TextTruncate = Enum.TextTruncate.AtEnd,
 	})
@@ -166,7 +165,7 @@ function MainUI.start()
 		Size = UDim2.new(1, -170, 0, 24),
 		Font = UIKit.Fonts.Body,
 		TextSize = 14,
-		TextColor3 = C.Mint,
+		TextColor3 = Color3.fromRGB(30, 150, 60),
 		Text = "x1.0",
 	})
 	local incomeLabel = UIKit.label(profile, {
@@ -174,7 +173,7 @@ function MainUI.start()
 		Size = UDim2.new(1, -126, 0, 22),
 		Font = UIKit.Fonts.Body,
 		TextSize = 15,
-		TextColor3 = Color3.fromRGB(255, 226, 150),
+		TextColor3 = Color3.fromRGB(190, 120, 0),
 		Text = "+0/s",
 	})
 	UIKit.icon(profile, "coin", { Size = UDim2.fromOffset(20, 20), Position = UDim2.fromOffset(94, 63) })
@@ -192,18 +191,18 @@ function MainUI.start()
 		Size = UDim2.fromOffset(560, 40),
 		Position = UDim2.new(0.5, 0, 1, -14),
 		AnchorPoint = Vector2.new(0.5, 1),
-		BackgroundColor3 = C.Dim,
-		BackgroundTransparency = 0.25,
+		BackgroundColor3 = C.White,
+		BackgroundTransparency = 0.05,
 	})
-	UIKit.corner(center, 20)
-	UIKit.stroke(center, C.Line, 2)
+	UIKit.corner(center, 12)
+	UIKit.stroke(center, C.BrownDark, 3)
 	addScale(center)
 	local stripLabel = UIKit.label(center, {
 		Size = UDim2.new(1, -24, 1, 0),
 		Position = UDim2.fromOffset(12, 0),
 		TextXAlignment = Enum.TextXAlignment.Center,
-		TextSize = 15,
-		TextColor3 = C.White,
+		TextSize = 14,
+		TextColor3 = C.Ink,
 		Font = UIKit.Fonts.Body,
 		Text = TIPS[1],
 		TextWrapped = true,
@@ -307,65 +306,57 @@ function MainUI.start()
 	-----------------------------------------------------------------------
 	local sidebar = UIKit.frame(gui, {
 		Name = "Sidebar",
-		Size = UDim2.fromOffset(152, 8 * 42 + 7 * 4 + 18),
+		Size = UDim2.fromOffset(150, 8 * 46 + 7 * 6),
 		Position = UDim2.new(0, 14, 0.5, 8),
 		AnchorPoint = Vector2.new(0, 0.5),
-		BackgroundColor3 = Color3.fromRGB(24, 18, 15),
-		BackgroundTransparency = 0.06,
+		BackgroundTransparency = 1,
 	})
-	UIKit.corner(sidebar, 14)
-	local sidebarStroke = UIKit.stroke(sidebar, C.GoldLine, 2.5)
-	UIKit.new("UIGradient", { Color = ColorSequence.new({ ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 214, 120)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(150, 104, 48)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 190, 90)) }), Rotation = 70 }, sidebarStroke)
-	UIKit.gradient(sidebar, Color3.fromRGB(46, 35, 28), Color3.fromRGB(20, 15, 12), 90)
-	UIKit.padding(sidebar, 9)
-	UIKit.list(sidebar, Enum.FillDirection.Vertical, 4)
+	UIKit.list(sidebar, Enum.FillDirection.Vertical, 6)
 	addScale(sidebar)
 
 	local menuBase: { [string]: Color3 } = {}
 	local function menuButton(icon: string, text: string, color: Color3, panelName: string, order: number)
-		local base = Color3.fromRGB(52, 40, 32)
-		menuBase[panelName] = base
+		menuBase[panelName] = color
 		local button = UIKit.button(sidebar, {
 			Text = "",
-			Size = UDim2.new(1, 0, 0, 42),
-			Color = base,
-			Corner = 9,
+			Size = UDim2.new(1, 0, 0, 46),
+			Color = color,
+			Corner = 10,
 			LayoutOrder = order,
 			Name = panelName .. "Button",
 			OnClick = function()
 				openPanel(panelName)
 			end,
 		})
-		local accent = UIKit.frame(button, { Size = UDim2.new(0, 4, 1, -14), Position = UDim2.fromOffset(5, 7), BackgroundColor3 = color, ZIndex = 3 })
-		UIKit.corner(accent, 2)
-		UIKit.icon(button, icon, { Size = UDim2.fromOffset(28, 28), Position = UDim2.fromOffset(16, 7), ZIndex = 3 })
-		UIKit.label(button, {
-			Size = UDim2.new(1, -54, 1, 0),
-			Position = UDim2.fromOffset(52, 0),
+		UIKit.icon(button, icon, { Size = UDim2.fromOffset(32, 32), Position = UDim2.fromOffset(8, 7), ZIndex = 3 })
+		local label = UIKit.label(button, {
+			Size = UDim2.new(1, -48, 1, 0),
+			Position = UDim2.fromOffset(46, 0),
 			Text = text,
-			TextSize = 20,
-			TextColor3 = C.Ink,
+			TextSize = 19,
+			TextColor3 = C.White,
 			Font = UIKit.Fonts.Title,
 			ZIndex = 3,
 		})
+		UIKit.cartoon(label, 2.5)
 		dots[panelName] = UIKit.notifyDot(button)
 		openButtons[panelName] = button
 	end
 	menuButton("hamster", "Hamsters", C.Peach, "Inventory", 1)
 	menuButton("arrowup", "Upgrades", C.Green, "Upgrades", 2)
-	menuButton("flame", "Rebirth", Color3.fromRGB(240, 120, 70), "Rebirth", 3)
+	menuButton("flame", "Rebirth", C.Red, "Rebirth", 3)
 	menuButton("book", "Index", C.Sky, "Index", 4)
 	menuButton("gift", "Daily", C.Pink, "Daily", 5)
 	menuButton("scroll", "Quests", C.Purple, "Quests", 6)
-	menuButton("bag", "Shop", C.Gold, "Shop", 7)
-	menuButton("gear", "Settings", C.BrownLight, "Settings", 8)
+	menuButton("bag", "Shop", Color3.fromRGB(255, 190, 0), "Shop", 7)
+	menuButton("gear", "Settings", Color3.fromRGB(120, 132, 168), "Settings", 8)
 
-	-- the button of the open menu lights up gold
+	-- the button of the open menu turns white
 	task.spawn(function()
 		while true do
 			for name, button in openButtons do
 				local panel = UIKit.getPanel(name)
-				UIKit.setButtonColor(button, if panel and panel.IsOpen then Color3.fromRGB(150, 104, 34) else menuBase[name])
+				UIKit.setButtonColor(button, if panel and panel.IsOpen then Color3.fromRGB(255, 255, 255) else menuBase[name])
 			end
 			task.wait(0.25)
 		end
