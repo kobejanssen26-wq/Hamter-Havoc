@@ -8,6 +8,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
 
 local Modules = ReplicatedStorage:WaitForChild("Modules")
+local RebirthConfig = require(Modules:WaitForChild("RebirthConfig"))
 local SettingsConfig = require(Modules:WaitForChild("SettingsConfig"))
 local Remotes = require(ReplicatedStorage:WaitForChild("Remotes"))
 
@@ -63,6 +64,11 @@ end
 
 function DataController.tokens(): number
 	return game.Players.LocalPlayer:GetAttribute("Tokens") or 0
+end
+
+-- Requirements of rebirth number `n` against what this player has right now: (allMet, list).
+function DataController.rebirthCheck(n: number)
+	return RebirthConfig.check({ Inventory = DataController.Data.Inventory or {}, Coins = DataController.coins() }, n)
 end
 
 -- Asks the server to do something. Returns { ok, msg, extra }. Never throws.

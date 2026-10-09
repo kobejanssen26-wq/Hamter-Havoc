@@ -4,9 +4,11 @@
 	What a house shows (all driven by the player's profile):
 	  - front sign + roof banner: name, rebirths, index progress, best hamster
 	  - rebirth stars on the gable
-	  - up to 12 hamster wheels: every equipped hamster runs on its own wheel (locked slots stay empty)
-	  - 8 upgrade pedestals whose props grow with every upgrade level
-	  - roof colour (cosmetic)
+	  - the apartment tower: 1-5 floors depending on rebirths (FloorConfig), 8 wheel stations per floor,
+	    every equipped hamster runs on its own wheel (locked slots stay empty)
+	  - 8 upgrade pedestals on the ground floor whose props grow with every upgrade level
+	  - rebirth stars, trim material (rebirth cosmetic), accent colour (cosmetic)
+	  - elevator between floors (prompts handled at the bottom of this file)
 	More than 10 players: extra players wait in a queue; they can still play (income, collecting) and
 	get a house as soon as one frees up.
 ]]
@@ -17,11 +19,13 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Modules = ReplicatedStorage.Modules
 local EconomyMath = require(Modules.EconomyMath)
+local FloorConfig = require(Modules.FloorConfig)
 local Format = require(Modules.Format)
 local HamsterBuilder = require(Modules.HamsterBuilder)
 local HamsterDatabase = require(Modules.HamsterDatabase)
 local IndexRewardConfig = require(Modules.IndexRewardConfig)
 local RarityConfig = require(Modules.RarityConfig)
+local RebirthConfig = require(Modules.RebirthConfig)
 local ShopConfig = require(Modules.ShopConfig)
 local UpgradeConfig = require(Modules.UpgradeConfig)
 
@@ -37,7 +41,7 @@ local HouseSystem = {}
 local MAX_DISPLAY_HEIGHT = 1.9 -- a hamster has to fit inside its wheel
 local WHEEL_SPIN = 3 -- rad/s
 local RUN_SPEED = 7 -- animation speed of the running hamster
-local SLOT_COUNT = 12
+local towerRng = Random.new(77)
 
 local houses: { HouseBuilder.House } = {}
 local houseByPlayer: { [Player]: HouseBuilder.House } = {}
@@ -79,7 +83,7 @@ local function refreshSign(house: HouseBuilder.House, player: Player?)
 	local best = bestHamster(data)
 	local rebirthText = if data.Rebirths > 0 then string.format("Rebirth %d", data.Rebirths) else "New home"
 	house.Labels.Name.Text = string.format("%s's House", player.DisplayName)
-	house.Labels.Stats.Text = string.format("%s  •  %d/%d hamsters", rebirthText, EconomyMath.uniqueCount(data), HamsterDatabase.Total)
+	house.Labels.Stats.Text = string.format("%s  -  %d/%d hamsters", rebirthText, EconomyMath.uniqueCount(data), HamsterDatabase.Total)
 	if best then
 		local definition = RarityConfig.ById[best.Rarity]
 		local name = if definition.Hidden then "???" else best.Name
@@ -88,7 +92,7 @@ local function refreshSign(house: HouseBuilder.House, player: Player?)
 		house.Labels.Best.Text = "Best: —"
 	end
 	local title = IndexRewardConfig.title(data)
-	house.Labels.Roof.Text = string.format("<b>%s</b>%s%s", player.DisplayName, if data.Rebirths > 0 then "  •  R" .. data.Rebirths else "", if title then "\n🏅 " .. title else "")
+	house.Labels.Roof.Text = string.format("<b>%s</b>%s%s", player.DisplayName, if data.Rebirths > 0 then "  -  R" .. data.Rebirths else "", if title then "\n" .. title else "")
 	house.Model:SetAttribute("OwnerUserId", player.UserId)
 	house.Model:SetAttribute("OwnerName", player.DisplayName)
 	HouseBuilder.setStars(house, math.min(data.Rebirths, 10))
@@ -97,7 +101,24 @@ end
 local function refreshStations(house: HouseBuilder.House, data: any?)
 	for _, upgradeId in UpgradeConfig.Order do
 		local level = if data then (data.Upgrades[upgradeId] or 0) else 0
-		HouseBuilder.setStation(house, upgradeId, level)
+		HouseBuilder.setStation(house, upgradeId, level, if data then data.Rebirths else 0)
+	end
+end
+
+-- Floors follow rebirths; trim material is the rebirth cosmetic. Also fills the board in the lobby.
+local function refreshTower(house: HouseBuilder.House, data: any?)
+	local rebirths = if data then data.Rebirths else 0
+	HouseBuilder.setFloors(house, FloorConfig.count(rebirths), towerRng)
+	HouseBuilder.setTrim(house, RebirthConfig.trim(rebirths))
+	local nextFloor = FloorConfig.nextFloor(rebirths)
+	local lines = { string.format("<b>%s</b>", "TOWER") }
+	for _, floor in FloorConfig.Floors do
+		local built = floor.Index <= FloorConfig.count(rebirths)
+		table.insert(lines, string.format('<font color="#%s">%d  %s</font>', if built then "FFE08A" else "8A8294", floor.Index, floor.Name))
+	end
+	table.insert(lines, if nextFloor then string.format('<font color="#9DE0FF">Next: Rebirth %d</font>', nextFloor.MinRebirth) else '<font color="#9DE0FF">Tower complete</font>')
+	if house.Labels.Progress then
+		house.Labels.Progress.Text = table.concat(lines, "\n")
 	end
 end
 
@@ -133,7 +154,7 @@ local function refreshWheelLabels(house: HouseBuilder.House, data: any?)
 end
 
 local function refreshDisplay(house: HouseBuilder.House, data: any?)
-	local slots = if data then math.min(EconomyMath.slots(data), SLOT_COUNT) else 0
+	local slots = if data then EconomyMath.slots(data) else 0
 	local equipped = if data then data.Equipped else {}
 
 	-- pool the existing models by species so unchanged hamsters just stay where they run
@@ -194,6 +215,7 @@ end
 
 local function refreshAll(house: HouseBuilder.House, player: Player?)
 	local data = if player then DataSystem.get(player) else nil
+	refreshTower(house, data)
 	refreshSign(house, player)
 	refreshStations(house, data)
 	refreshRoof(house, data)
@@ -290,6 +312,28 @@ function HouseSystem.moveToHouse(player: Player)
 	end
 end
 
+-- Elevator buttons: moves the owner to the landing of the next floor up/down.
+function HouseSystem.useElevator(player: Player, houseIndex: any, floor: any, direction: string)
+	local house = houses[houseIndex]
+	local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart") :: BasePart?
+	if not house or type(floor) ~= "number" or not root then
+		return
+	end
+	if house.Owner ~= player then
+		Notifier.send(player, "That elevator belongs to another player's house.", "error")
+		return
+	end
+	local target = floor + (if direction == "Up" then 1 else -1)
+	local landing = house.Landing[target]
+	if not landing or not house.Landing[floor] then
+		return
+	end
+	if (root.Position - house.Landing[floor].Position).Magnitude > 24 then
+		return
+	end
+	(player.Character :: Model):PivotTo(landing)
+end
+
 function HouseSystem.applyWalkSpeed(player: Player)
 	PlayerState.apply(player)
 end
@@ -323,7 +367,7 @@ function HouseSystem.start(world: { Houses: { HouseBuilder.House } })
 		local house = houseByPlayer[player]
 		local data = DataSystem.get(player)
 		if house and data then
-			HouseBuilder.setStation(house, upgradeId, data.Upgrades[upgradeId] or 0)
+			HouseBuilder.setStation(house, upgradeId, data.Upgrades[upgradeId] or 0, data.Rebirths)
 			refreshDisplay(house, data) -- ExtraStorage unlocks shelf slots
 		end
 		HouseSystem.applyWalkSpeed(player)
@@ -361,6 +405,11 @@ function HouseSystem.start(world: { Houses: { HouseBuilder.House } })
 
 	-- world prompts (houses + plaza buildings) open menus on the owner's screen
 	ProximityPromptService.PromptTriggered:Connect(function(prompt, player)
+		local direction = prompt:GetAttribute("Elevator")
+		if type(direction) == "string" then
+			HouseSystem.useElevator(player, prompt:GetAttribute("HouseIndex"), prompt:GetAttribute("Floor"), direction)
+			return
+		end
 		local menu = prompt:GetAttribute("OpenUI")
 		if type(menu) ~= "string" then
 			return

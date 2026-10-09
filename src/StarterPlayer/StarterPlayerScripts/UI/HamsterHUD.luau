@@ -1,9 +1,9 @@
 --[[
 	HamsterHUD: everything about hamsters that are on their way home.
 	  - transport tracker (left): every ball you paid for or carry, with its status
-	      "🐹 LEGENDARY HAMSTER  Transporting to: Kobe" / "STOLEN by Alex!" / "Dropped - grab it!"
+	      "LEGENDARY HAMSTER  Transporting to: Kobe" / "STOLEN by Alex!" / "Dropped - grab it!"
 	  - progress bar while you steal / pick up
-	  - security pill (top right): your gate timer "🛡️ SECURITY 00:47", then "🔴 SECURITY OFF" + what to do
+	  - security pill (top right): your gate timer "SECURITY 00:47", then "SECURITY OFF" + what to do
 	Clear but small: nothing here is shown when it does not apply.
 ]]
 
@@ -38,7 +38,7 @@ local function ballStatus(ball: WorldController.Ball): (string, Color3)
 	elseif ball.State == S.InTransit then
 		return "Transporting to: " .. player.DisplayName, C.Mint
 	elseif ball.State == S.Carried then
-		return string.format("🚨 STOLEN by %s!", ball.HolderName), C.Red
+		return string.format("STOLEN by %s!", ball.HolderName), C.Red
 	elseif ball.State == S.Dropped or ball.State == S.Recoverable then
 		return "Dropped - grab it!", Color3.fromRGB(255, 168, 96)
 	end
@@ -121,7 +121,7 @@ function HamsterHUD.start()
 				local definition = RarityConfig.ById[ball.Species.Rarity]
 				local color = UIKit.rarityColor(definition)
 				local text, statusColor = ballStatus(ball)
-				row.Rarity.Text = string.format('🐹 <font color="#%s">%s HAMSTER</font>  %s', color:ToHex(), string.upper(definition.Name), ball.Species.Name)
+				row.Rarity.Text = string.format('<font color="#%s">%s HAMSTER</font>  %s', color:ToHex(), string.upper(definition.Name), ball.Species.Name)
 				row.Status.Text = text
 				row.Status.TextColor3 = statusColor
 				row.Stroke.Color = statusColor
@@ -219,17 +219,17 @@ function HamsterHUD.start()
 		pillStroke.Color = color
 		pillText.TextColor3 = color
 		if status.State == "Active" then
-			pillText.Text = "🛡️ SECURITY  " .. Format.clock(math.ceil(status.Seconds))
+			pillText.Text = "SECURITY  " .. Format.clock(math.ceil(status.Seconds))
 			local whole = math.ceil(status.Seconds)
 			if whole <= 5 and whole ~= lastBeep then
 				lastBeep = whole
 				AudioController.play("Alarm", { Pitch = 1 + (5 - whole) * 0.12 })
 			end
 		elseif status.State == "Recharging" then
-			pillText.Text = string.format("🔴 SECURITY OFF  (%ds)", math.ceil(status.Seconds))
+			pillText.Text = string.format("SECURITY OFF  (%ds)", math.ceil(status.Seconds))
 			lastBeep = -1
 		else
-			pillText.Text = "🔴 OFF - press E at the gate panel"
+			pillText.Text = "OFF - press E at the gate panel"
 			lastBeep = -1
 		end
 	end
@@ -256,10 +256,10 @@ function HamsterHUD.start()
 			return
 		end
 		local hints = {
-			"🐹 Hamster balls roll down the road in the middle. Walk close and press [E] to CLAIM one.",
-			"🏠 It rolls to YOUR house and lands on the glowing pad. Only then is it really yours!",
-			"🥷 Other players can steal it on the way - and you can steal theirs. Slap thieves with [Q].",
-			"🛡️ Your gate protects the house for a while. Press [E] at the gate panel when it switches off.",
+			"Hamster balls roll down the road in the middle. Walk close and press [E] to CLAIM one.",
+			"It rolls to YOUR house and lands on the glowing pad. Only then is it really yours!",
+			"Other players can steal it on the way - and you can steal theirs. Slap thieves with [Q].",
+			"Your gate protects the house for a while. Press [E] at the gate panel when it switches off.",
 		}
 		task.spawn(function()
 			task.wait(4)

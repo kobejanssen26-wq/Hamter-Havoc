@@ -72,7 +72,7 @@ function AnnounceSystem.stolen(thief: Player, victim: Player, species: any)
 		RarityId = species.Rarity,
 		UserId = thief.UserId,
 		PlayerName = thief.DisplayName,
-		Text = string.format("🚨 %s stole a %s hamster from %s!", thief.DisplayName, string.upper(definition.Name), victim.DisplayName),
+		Text = string.format("%s stole a %s hamster from %s!", thief.DisplayName, string.upper(definition.Name), victim.DisplayName),
 	})
 end
 

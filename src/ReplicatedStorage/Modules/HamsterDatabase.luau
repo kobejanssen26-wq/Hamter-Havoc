@@ -9,8 +9,8 @@
 	  size  ec eyeColor  hc hatColor  ei earInner  pc pawColor  tc tailColor  tt tailTip  nb noBlush
 	  x = true  -> exclusive reward (never spawns, only given by dailies / codes / quests)
 
-	Value: every species has a ValueMult (1.0 for the first of its rarity, +0.07 per entry) so even
-	hamsters of the same rarity differ in price and income.
+	Value: every species has a ValueMult (1.0 for the first of its rarity, +0.035 per entry) so even
+	hamsters of the same rarity differ a little in price and income - but never more than a rarity step.
 ]]
 
 local RarityConfig = require(script.Parent.RarityConfig)
@@ -314,12 +314,12 @@ for _, rarityId in RarityConfig.Order do
 			species.Glow = { Color3.fromHex(entry.glow[1]), entry.glow[2], entry.glow[3] }
 		end
 
-		-- value: 1.0 for the first entry, +0.07 per entry; exclusives are worth 1.5x
+		-- value: 1.0 for the first entry, +ValueSpread per entry (see RarityConfig); exclusives are worth 1.5x
 		if species.Exclusive then
 			species.ValueMult = 1.5
 		else
 			ordinal += 1
-			species.ValueMult = 1 + 0.07 * (ordinal - 1)
+			species.ValueMult = 1 + RarityConfig.ValueSpread * (ordinal - 1)
 			table.insert(HamsterDatabase.Spawnable[rarityId], species)
 		end
 
@@ -336,14 +336,14 @@ function HamsterDatabase.get(id: string)
 	return HamsterDatabase.ById[id]
 end
 
--- Income per second of one hamster (before player multipliers).
-function HamsterDatabase.income(species: any): number
-	return RarityConfig.ById[species.Rarity].Income * species.ValueMult
+-- What it costs to claim the hamster when it rolls by.
+function HamsterDatabase.price(species: any): number
+	return math.floor(RarityConfig.ById[species.Rarity].BasePrice * species.ValueMult + 0.5)
 end
 
--- What it costs to collect the hamster when it runs by.
-function HamsterDatabase.price(species: any): number
-	return math.floor(HamsterDatabase.income(species) * RarityConfig.PriceFactor + 0.5)
+-- Income per second of one hamster (before player multipliers) = price / payback time of its rarity.
+function HamsterDatabase.income(species: any): number
+	return HamsterDatabase.price(species) / RarityConfig.ById[species.Rarity].Payback
 end
 
 function HamsterDatabase.sellValue(species: any): number

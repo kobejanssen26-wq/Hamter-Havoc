@@ -22,22 +22,22 @@ SettingsConfig.Defaults = {
 
 -- Type: toggle | slider | choice
 SettingsConfig.List = {
-	{ Key = "Music", Label = "Music", Type = "toggle", Icon = "🎵" },
-	{ Key = "MusicVolume", Label = "Music volume", Type = "slider", Min = 0, Max = 1, Icon = "🔉" },
-	{ Key = "SFX", Label = "Sound effects", Type = "toggle", Icon = "🔊" },
-	{ Key = "SFXVolume", Label = "Effects volume", Type = "slider", Min = 0, Max = 1, Icon = "🔉" },
-	{ Key = "Particles", Label = "Particle effects", Type = "toggle", Icon = "✨" },
-	{ Key = "LowGraphics", Label = "Low graphics mode", Type = "toggle", Icon = "🖥️" },
-	{ Key = "ShowOtherPlayers", Label = "Show other players", Type = "toggle", Icon = "👥" },
-	{ Key = "ShowValues", Label = "Show hamster values", Type = "toggle", Icon = "💰" },
-	{ Key = "Notifications", Label = "Notifications", Type = "toggle", Icon = "🔔" },
-	{ Key = "CameraShake", Label = "Camera shake", Type = "toggle", Icon = "📳" },
-	{ Key = "AutoEquip", Label = "Auto-equip best hamsters", Type = "toggle", Icon = "⭐" },
+	{ Key = "Music", Label = "Music", Type = "toggle", Icon = "music" },
+	{ Key = "MusicVolume", Label = "Music volume", Type = "slider", Min = 0, Max = 1, Icon = "speaker" },
+	{ Key = "SFX", Label = "Sound effects", Type = "toggle", Icon = "speaker" },
+	{ Key = "SFXVolume", Label = "Effects volume", Type = "slider", Min = 0, Max = 1, Icon = "speaker" },
+	{ Key = "Particles", Label = "Particle effects", Type = "toggle", Icon = "sparkle" },
+	{ Key = "LowGraphics", Label = "Low graphics mode", Type = "toggle", Icon = "monitor" },
+	{ Key = "ShowOtherPlayers", Label = "Show other players", Type = "toggle", Icon = "people" },
+	{ Key = "ShowValues", Label = "Show hamster values", Type = "toggle", Icon = "pouch" },
+	{ Key = "Notifications", Label = "Notifications", Type = "toggle", Icon = "bell" },
+	{ Key = "CameraShake", Label = "Camera shake", Type = "toggle", Icon = "bolt" },
+	{ Key = "AutoEquip", Label = "Auto-equip best hamsters", Type = "toggle", Icon = "star" },
 	{
 		Key = "AutoDelete",
 		Label = "Auto-delete duplicates",
 		Type = "choice",
-		Icon = "🗑️",
+		Icon = "trash",
 		-- value = highest rarity rank that is auto-sold when you already own the hamster
 		Options = {
 			{ Value = 0, Text = "Off" },

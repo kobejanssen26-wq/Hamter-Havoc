@@ -15,6 +15,8 @@ local Workspace = game:GetService("Workspace")
 local HamsterBuilder = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("HamsterBuilder"))
 
 local AudioController = require(script.Parent.Parent.Controllers.AudioController)
+local CursorController = require(script.Parent.Parent.Controllers.CursorController)
+local Icons = require(script.Parent.Icons)
 
 local UIKit = {}
 
@@ -109,6 +111,66 @@ function UIKit.tween(instance: Instance, duration: number, props: { [string]: an
 	return tween
 end
 
+-- Drawn icon (no emoji): UIKit.icon(parent, "coin", { Size = UDim2.fromOffset(28, 28) })
+function UIKit.icon(parent: Instance?, id: string, props: { Size: UDim2?, Position: UDim2?, AnchorPoint: Vector2?, Color: Color3?, ZIndex: number?, LayoutOrder: number?, Name: string? }?): Frame
+	return Icons.create(parent, id, props)
+end
+
+-- A drawn icon followed by text on one line (replaces "coin 12K" emoji strings).
+export type IconText = { Frame: Frame, Label: TextLabel, Icon: Frame?, Set: (text: string, iconId: string?) -> () }
+
+function UIKit.iconText(parent: Instance?, props: { Icon: string?, Text: string?, Size: UDim2?, Position: UDim2?, AnchorPoint: Vector2?, TextSize: number?, TextColor: Color3?, Font: Enum.Font?, Align: Enum.HorizontalAlignment?, LayoutOrder: number?, ZIndex: number? }): IconText
+	local textSize = props.TextSize or 16
+	local frame = UIKit.frame(parent, {
+		Size = props.Size or UDim2.fromOffset(120, textSize + 8),
+		Position = props.Position or UDim2.new(),
+		AnchorPoint = props.AnchorPoint or Vector2.zero,
+		BackgroundTransparency = 1,
+		LayoutOrder = props.LayoutOrder or 0,
+		ZIndex = props.ZIndex or 1,
+	})
+	UIKit.list(frame, Enum.FillDirection.Horizontal, 5, props.Align or Enum.HorizontalAlignment.Left, Enum.VerticalAlignment.Center)
+	local label = UIKit.label(frame, {
+		Size = UDim2.fromOffset(0, textSize + 6),
+		AutomaticSize = Enum.AutomaticSize.X,
+		Text = props.Text or "",
+		TextSize = textSize,
+		TextColor3 = props.TextColor or C.Ink,
+		Font = props.Font or UIKit.Fonts.Title,
+		LayoutOrder = 2,
+		ZIndex = props.ZIndex or 1,
+	})
+	local result: IconText = { Frame = frame, Label = label, Icon = nil, Set = nil :: any }
+	local function setIcon(id: string?)
+		if result.Icon then
+			result.Icon:Destroy()
+			result.Icon = nil
+		end
+		if id then
+			result.Icon = UIKit.icon(frame, id, { Size = UDim2.fromOffset(textSize + 6, textSize + 6), LayoutOrder = 1, ZIndex = props.ZIndex })
+		end
+	end
+	setIcon(props.Icon)
+	result.Set = function(text: string, iconId: string?)
+		label.Text = text
+		if iconId then
+			setIcon(iconId)
+		end
+	end
+	return result
+end
+
+-- Puts "icon + text" in the middle of a button (the button's own Text stays empty).
+function UIKit.setButtonContent(button: TextButton, iconId: string?, text: string, textColor: Color3?)
+	button.Text = ""
+	local content = button:FindFirstChild("Content") :: Frame?
+	if content then
+		content:Destroy()
+	end
+	local row = UIKit.iconText(button, { Icon = iconId, Text = text, Size = UDim2.fromScale(1, 1), TextSize = (button.TextSize or 18), TextColor = textColor or button.TextColor3, Align = Enum.HorizontalAlignment.Center, ZIndex = 3 })
+	row.Frame.Name = "Content"
+end
+
 function UIKit.frame(parent: Instance?, props: { [string]: any }?): Frame
 	local defaults: { [string]: any } = { BackgroundColor3 = C.Card, BorderSizePixel = 0 }
 	if props then
@@ -194,6 +256,8 @@ function UIKit.button(parent: Instance?, props: ButtonProps): TextButton
 	}, parent)
 	UIKit.corner(button, props.Corner or 12)
 	local stroke = UIKit.stroke(button, darker(color, 0.7), 2)
+	-- soft top light: the gradient multiplies the button colour
+	UIKit.new("UIGradient", { Color = ColorSequence.new(Color3.new(1, 1, 1), Color3.fromRGB(214, 214, 214)), Rotation = 90 }, button)
 	local scale = UIKit.new("UIScale", { Scale = 1 }, button)
 	button:SetAttribute("BaseColor", color)
 
@@ -511,7 +575,7 @@ end
 export type Panel = {
 	Name: string,
 	Gui: ScreenGui,
-	Window: Frame,
+	Window: GuiObject,
 	Body: Frame,
 	Title: TextLabel,
 	IsOpen: boolean,
@@ -525,6 +589,9 @@ export type Panel = {
 
 local panels: { [string]: Panel } = {}
 
+local OPEN_SECONDS = 0.22
+local CLOSE_SECONDS = 0.16
+
 function UIKit.getPanel(name: string): Panel?
 	return panels[name]
 end
@@ -537,6 +604,7 @@ function UIKit.closeAll(except: string?)
 	end
 end
 
+-- `Icon` is an Icons id ("book", "gear", ...), never an emoji.
 function UIKit.panel(options: { Name: string, Title: string, Icon: string?, Design: Vector2?, Accent: Color3? }): Panel
 	local design = options.Design or Vector2.new(860, 560)
 	local accent = options.Accent or C.Brown
@@ -551,16 +619,18 @@ function UIKit.panel(options: { Name: string, Title: string, Icon: string?, Desi
 		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
 	}, playerGui)
 
+	-- Modal = true frees the mouse in first person so the buttons can be clicked
 	local dim = UIKit.new("TextButton", {
 		Text = "",
 		AutoButtonColor = false,
+		Modal = true,
 		BackgroundColor3 = C.Dim,
 		BackgroundTransparency = 1,
 		Size = UDim2.fromScale(1, 1),
 		BorderSizePixel = 0,
 	}, gui)
 
-	-- outer frame: design size + fit scale; inner frame: open/close animation scale
+	-- outer frame: design size + fit scale; inner parts: shadow + window (open/close animation)
 	local outer = UIKit.frame(gui, {
 		Size = UDim2.fromOffset(design.X, design.Y),
 		Position = UDim2.fromScale(0.5, 0.5),
@@ -568,30 +638,49 @@ function UIKit.panel(options: { Name: string, Title: string, Icon: string?, Desi
 		BackgroundTransparency = 1,
 	})
 	local fit = UIKit.new("UIScale", { Scale = UIKit.fitScale(design) }, outer)
-	local window = UIKit.frame(outer, { Size = UDim2.fromScale(1, 1), BackgroundColor3 = C.Cream })
-	local anim = UIKit.new("UIScale", { Scale = 0.85 }, window)
-	UIKit.corner(window, 22)
-	UIKit.stroke(window, C.BrownDark, 4)
+	local motion = UIKit.frame(outer, { Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1 })
+	local anim = UIKit.new("UIScale", { Scale = 0.9 }, motion)
 
-	local header = UIKit.frame(window, { Size = UDim2.new(1, 0, 0, 62), BackgroundColor3 = accent })
-	UIKit.corner(header, 22)
-	-- square off the bottom corners of the header
-	UIKit.frame(header, { Size = UDim2.new(1, 0, 0, 22), Position = UDim2.new(0, 0, 1, -22), BackgroundColor3 = accent })
-	UIKit.gradient(header, UIKit.Colors.BrownLight, accent, 90)
+	local shadow = UIKit.frame(motion, { Size = UDim2.new(1, 10, 1, 10), Position = UDim2.fromOffset(-5, 7), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.72 })
+	UIKit.corner(shadow, 28)
+	local window = UIKit.new("CanvasGroup", {
+		Size = UDim2.fromScale(1, 1),
+		BackgroundColor3 = C.Cream,
+		BorderSizePixel = 0,
+		GroupTransparency = 1,
+	}, motion)
+	UIKit.corner(window, 22)
+	UIKit.gradient(window, Color3.fromRGB(255, 251, 241), Color3.fromRGB(250, 238, 216), 90)
+	local outline = UIKit.frame(motion, { Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1, ZIndex = 20 })
+	UIKit.corner(outline, 22)
+	UIKit.stroke(outline, C.BrownDark, 3.5)
+
+	local header = UIKit.frame(window, { Size = UDim2.new(1, 0, 0, 64), BackgroundColor3 = accent })
+	UIKit.gradient(header, Color3.new(math.min(1, accent.R + 0.22), math.min(1, accent.G + 0.2), math.min(1, accent.B + 0.18)), accent, 90)
+	-- thin light line under the header
+	UIKit.frame(header, { Size = UDim2.new(1, 0, 0, 3), Position = UDim2.new(0, 0, 1, -3), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.82 })
+	local titleOffset = 24
+	if options.Icon then
+		local badge = UIKit.frame(header, { Size = UDim2.fromOffset(46, 46), Position = UDim2.fromOffset(16, 9), BackgroundColor3 = C.Cream })
+		UIKit.corner(badge, 15)
+		UIKit.stroke(badge, C.BrownDark, 2)
+		UIKit.icon(badge, options.Icon, { Size = UDim2.fromOffset(32, 32), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5) })
+		titleOffset = 72
+	end
 	local title = UIKit.label(header, {
-		Size = UDim2.new(1, -100, 1, 0),
-		Position = UDim2.fromOffset(24, 0),
+		Size = UDim2.new(1, -titleOffset - 76, 1, 0),
+		Position = UDim2.fromOffset(titleOffset, 0),
 		Font = UIKit.Fonts.Title,
-		TextSize = 32,
+		TextSize = 31,
 		TextColor3 = C.White,
-		Text = (if options.Icon then options.Icon .. "  " else "") .. options.Title,
+		Text = options.Title,
 		ZIndex = 3,
 	})
 	UIKit.new("UIStroke", { Color = C.BrownDark, Thickness = 2 }, title)
 
 	local body = UIKit.frame(window, {
-		Size = UDim2.new(1, -28, 1, -78),
-		Position = UDim2.fromOffset(14, 70),
+		Size = UDim2.new(1, -28, 1, -80),
+		Position = UDim2.fromOffset(14, 72),
 		BackgroundTransparency = 1,
 	})
 
@@ -618,12 +707,18 @@ function UIKit.panel(options: { Name: string, Title: string, Icon: string?, Desi
 		UIKit.closeAll(self.Name)
 		self.IsOpen = true
 		closing = false
+		CursorController.hold("Panel_" .. self.Name, true)
 		fit.Scale = UIKit.fitScale(design)
 		gui.Enabled = true
-		anim.Scale = 0.85
+		-- slide up + fade + grow
+		anim.Scale = 0.9
+		motion.Position = UDim2.fromOffset(0, 22)
+		window.GroupTransparency = 1
 		dim.BackgroundTransparency = 1
-		UIKit.tween(anim, 0.22, { Scale = 1 }, Enum.EasingStyle.Back)
-		UIKit.tween(dim, 0.2, { BackgroundTransparency = 0.55 })
+		UIKit.tween(anim, OPEN_SECONDS, { Scale = 1 }, Enum.EasingStyle.Back)
+		UIKit.tween(motion, OPEN_SECONDS, { Position = UDim2.fromOffset(0, 0) }, Enum.EasingStyle.Quad)
+		UIKit.tween(window, OPEN_SECONDS * 0.8, { GroupTransparency = 0 })
+		UIKit.tween(dim, OPEN_SECONDS, { BackgroundTransparency = 0.55 })
 		AudioController.play("Open")
 		for _, callback in self.OnOpen do
 			task.spawn(callback)
@@ -635,10 +730,13 @@ function UIKit.panel(options: { Name: string, Title: string, Icon: string?, Desi
 		end
 		self.IsOpen = false
 		closing = true
-		UIKit.tween(anim, 0.14, { Scale = 0.88 })
-		UIKit.tween(dim, 0.14, { BackgroundTransparency = 1 })
+		CursorController.hold("Panel_" .. self.Name, false)
+		UIKit.tween(anim, CLOSE_SECONDS, { Scale = 0.92 })
+		UIKit.tween(motion, CLOSE_SECONDS, { Position = UDim2.fromOffset(0, 14) })
+		UIKit.tween(window, CLOSE_SECONDS, { GroupTransparency = 1 })
+		UIKit.tween(dim, CLOSE_SECONDS, { BackgroundTransparency = 1 })
 		AudioController.play("Close")
-		task.delay(0.15, function()
+		task.delay(CLOSE_SECONDS + 0.02, function()
 			if closing and not self.IsOpen then
 				gui.Enabled = false
 			end
@@ -656,19 +754,23 @@ function UIKit.panel(options: { Name: string, Title: string, Icon: string?, Desi
 	end
 
 	local closeButton = UIKit.button(header, {
-		Text = "✕",
+		Text = "",
 		Size = UDim2.fromOffset(44, 44),
 		Position = UDim2.new(1, -14, 0.5, 0),
 		AnchorPoint = Vector2.new(1, 0.5),
 		Color = C.Red,
-		TextSize = 22,
 		Name = "Close",
 		Silent = true,
+		Corner = 14,
 		OnClick = function()
 			panel:Close()
 		end,
 	})
 	closeButton.ZIndex = 4
+	for _, sign in { -1, 1 } do
+		local bar = UIKit.frame(closeButton, { Size = UDim2.fromOffset(22, 5), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5), Rotation = 45 * sign, BackgroundColor3 = C.White, ZIndex = 5 })
+		UIKit.corner(bar, 3)
+	end
 	dim.Activated:Connect(function()
 		panel:Close()
 	end)
@@ -688,23 +790,21 @@ end
 -- misc widgets
 ---------------------------------------------------------------------------
 
--- A rounded stat pill: "🪙  1.2K"
+-- A rounded stat pill with a drawn icon: coin / gem / flame ...
 function UIKit.pill(parent: Instance, props: { Icon: string, Color: Color3?, Size: UDim2?, LayoutOrder: number? }): { Frame: Frame, Value: TextLabel }
+	local accent = props.Color or C.Gold
 	local frame = UIKit.frame(parent, {
 		Size = props.Size or UDim2.fromOffset(170, 40),
 		BackgroundColor3 = C.Dim,
-		BackgroundTransparency = 0.15,
+		BackgroundTransparency = 0.1,
 		LayoutOrder = props.LayoutOrder or 0,
 	})
-	UIKit.corner(frame, 20)
-	UIKit.stroke(frame, props.Color or C.Gold, 2.5)
-	UIKit.label(frame, {
-		Size = UDim2.fromOffset(40, 40),
-		Position = UDim2.fromOffset(4, 0),
-		Text = props.Icon,
-		TextSize = 24,
-		TextXAlignment = Enum.TextXAlignment.Center,
-	})
+	UIKit.corner(frame, 21)
+	UIKit.stroke(frame, accent, 2.5)
+	UIKit.gradient(frame, Color3.fromRGB(70, 52, 66), Color3.fromRGB(34, 24, 34), 90)
+	local badge = UIKit.frame(frame, { Size = UDim2.fromOffset(34, 34), Position = UDim2.fromOffset(4, 4), BackgroundColor3 = accent, BackgroundTransparency = 0.78 })
+	UIKit.corner(badge, 99)
+	UIKit.icon(badge, props.Icon, { Size = UDim2.fromOffset(26, 26), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5) })
 	local value = UIKit.label(frame, {
 		Size = UDim2.new(1, -52, 1, 0),
 		Position = UDim2.fromOffset(46, 0),

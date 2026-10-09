@@ -41,6 +41,8 @@ type Decor = { Instance: Instance, Home: CFrame, Phase: number, Active: boolean,
 local bobs: { [Instance]: Decor } = {}
 local sways: { [Instance]: Decor } = {}
 local spins: { [Instance]: Decor } = {}
+-- hamster wheels: turn about the axle so the floor under the runner moves backwards
+local wheels: { [Model]: { Home: CFrame, Axis: Vector3, Angle: number, Position: Vector3, Active: boolean } } = {}
 local ripples: { [BasePart]: { Phase: number, Active: boolean, Base: number } } = {}
 
 local emitterParents: { [BasePart]: boolean } = {}
@@ -128,6 +130,9 @@ local function cull()
 		for _, decor in registry do
 			decor.Active = (decor.Position - cameraPosition).Magnitude < DECOR_DISTANCE
 		end
+	end
+	for _, wheel in wheels do
+		wheel.Active = (wheel.Position - cameraPosition).Magnitude < IDLE_DISTANCE
 	end
 	for part, info in ripples do
 		info.Active = (part.Position - cameraPosition).Magnitude < DECOR_DISTANCE
@@ -239,6 +244,15 @@ local function step(dt: number)
 			end
 		end
 	end
+	for wheelModel, wheel in wheels do
+		if wheel.Active and wheelModel.Parent then
+			local speed = (wheelModel:GetAttribute("Speed") :: number?) or 0
+			if speed > 0 then
+				wheel.Angle += speed * dt
+				wheelModel:PivotTo(wheel.Home * CFrame.fromAxisAngle(wheel.Axis, wheel.Angle))
+			end
+		end
+	end
 	for instance, decor in spins do
 		if decor.Active and instance:IsA("Model") and instance.PrimaryPart then
 			local speed = instance:GetAttribute("Speed") or 1
@@ -285,6 +299,19 @@ function AmbientController.start()
 		registerDecor(sways, instance)
 	end, function(instance)
 		sways[instance] = nil
+	end)
+	track("HamsterWheel", function(instance)
+		if instance:IsA("Model") and instance.PrimaryPart then
+			local home = instance:GetPivot()
+			local runDirection = instance:GetAttribute("RunDirection")
+			if typeof(runDirection) == "Vector3" and runDirection.Magnitude > 0.01 then
+				-- axis (in the wheel's own frame) that moves the bottom of the wheel against the run direction
+				local worldAxis = Vector3.yAxis:Cross(runDirection.Unit)
+				wheels[instance] = { Home = home, Axis = home:VectorToObjectSpace(worldAxis), Angle = 0, Position = home.Position, Active = false }
+			end
+		end
+	end, function(instance)
+		wheels[instance :: Model] = nil
 	end)
 	track("SpinModel", function(instance)
 		registerDecor(spins, instance)

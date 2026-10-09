@@ -18,20 +18,18 @@ local UpgradeUI = {}
 local C = UIKit.Colors
 
 function UpgradeUI.start()
-	local panel = UIKit.panel({ Name = "Upgrades", Title = "Upgrades", Icon = "⬆️", Design = Vector2.new(860, 640), Accent = C.Green })
+	local panel = UIKit.panel({ Name = "Upgrades", Title = "Upgrades", Icon = "arrowup", Design = Vector2.new(860, 640), Accent = C.Green })
 	local body = panel.Body
 
 	-- stat summary
 	local summary = UIKit.frame(body, { Size = UDim2.new(1, 0, 0, 52), BackgroundColor3 = C.Card })
 	UIKit.corner(summary, 14)
 	UIKit.stroke(summary, Color3.fromRGB(226, 208, 180), 2)
-	local summaryLabel = UIKit.label(summary, {
-		Size = UDim2.new(1, -24, 1, 0),
-		Position = UDim2.fromOffset(12, 0),
-		TextSize = 15,
-		TextXAlignment = Enum.TextXAlignment.Center,
-		Text = "",
-	})
+	UIKit.list(summary, Enum.FillDirection.Horizontal, 14, Enum.HorizontalAlignment.Center, Enum.VerticalAlignment.Center)
+	local stats: { [string]: UIKit.IconText } = {}
+	for _, entry in { { "Luck", "clover" }, { "Range", "magnet" }, { "Speed", "shoe" }, { "Slots", "hamster" }, { "Income", "coin" } } do
+		stats[entry[1]] = UIKit.iconText(summary, { Icon = entry[2], Text = "", Size = UDim2.fromOffset(150, 28), TextSize = 15, TextColor = C.Ink, Align = Enum.HorizontalAlignment.Center })
+	end
 
 	local scroll = UIKit.scroll(body, { Size = UDim2.new(1, 0, 1, -62), Position = UDim2.fromOffset(0, 60) })
 	UIKit.list(scroll, Enum.FillDirection.Vertical, 8)
@@ -58,7 +56,7 @@ function UpgradeUI.start()
 
 		local iconBox = UIKit.frame(frame, { Size = UDim2.fromOffset(68, 68), Position = UDim2.fromOffset(12, 12), BackgroundColor3 = C.CreamDark })
 		UIKit.corner(iconBox, 16)
-		UIKit.label(iconBox, { Size = UDim2.fromScale(1, 1), Text = definition.Icon, TextSize = 38, TextXAlignment = Enum.TextXAlignment.Center })
+		UIKit.icon(iconBox, definition.Icon, { Size = UDim2.fromOffset(48, 48), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5) })
 
 		UIKit.label(frame, {
 			Position = UDim2.fromOffset(92, 8),
@@ -117,7 +115,7 @@ function UpgradeUI.start()
 	end
 
 	local order = 0
-	sectionHeader("🪙 Coin upgrades  (reset when you rebirth)", order)
+	sectionHeader("Coin upgrades  (reset when you rebirth)", order)
 	for _, id in UpgradeConfig.Order do
 		if UpgradeConfig.Definitions[id].Currency == "Coins" then
 			order += 1
@@ -125,7 +123,7 @@ function UpgradeUI.start()
 		end
 	end
 	order += 1
-	sectionHeader("🔥 Token upgrades  (permanent)", order)
+	sectionHeader("Token upgrades  (permanent)", order)
 	for _, id in UpgradeConfig.Order do
 		if UpgradeConfig.Definitions[id].Currency == "Tokens" then
 			order += 1
@@ -139,30 +137,28 @@ function UpgradeUI.start()
 			return
 		end
 		local derived = DataController.derived()
-		summaryLabel.Text = string.format(
-			"🍀 Luck x%.2f   🧲 Range %.1f   👟 Speed %.1f   🏠 Shelf %d   🪙 Income x%.2f",
-			derived.Luck or 1,
-			derived.CollectRange or 16,
-			derived.WalkSpeed or 16,
-			derived.Slots or 3,
-			derived.IncomeMultiplier or 1
-		)
+		stats.Luck.Set(string.format("Luck x%.2f", derived.Luck or 1))
+		stats.Range.Set(string.format("Range %.1f", derived.CollectRange or 16))
+		stats.Speed.Set(string.format("Speed %.1f", derived.WalkSpeed or 16))
+		stats.Slots.Set(string.format("Slots %d", derived.Slots or 3))
+		stats.Income.Set(string.format("Income x%.2f", derived.IncomeMultiplier or 1))
+		local rebirths = data.Rebirths or 0
 		for id, row in rows do
 			local definition = UpgradeConfig.Definitions[id]
 			local level = data.Upgrades[id] or 0
-			local cost = UpgradeConfig.cost(id, level)
-			row.Level.Text = if cost then string.format("Lv %d / %d", level, definition.MaxLevel) else "MAX"
-			row.Bar.Set(level / definition.MaxLevel)
+			local cost = UpgradeConfig.cost(id, level, rebirths)
+			local maxLevel = UpgradeConfig.maxLevel(id, rebirths)
+			row.Level.Text = if cost then string.format("Lv %d / %d", level, maxLevel) else "MAX"
+			row.Bar.Set(level / maxLevel)
 			local current = UpgradeConfig.effectText(id, level)
 			if cost then
-				row.Effect.Text = string.format("%s  →  %s", if level == 0 then "none" else current, UpgradeConfig.effectText(id, level + 1))
+				row.Effect.Text = string.format("%s  >  %s", if level == 0 then "none" else current, UpgradeConfig.effectText(id, level + 1))
 				local balance = if definition.Currency == "Tokens" then DataController.tokens() else DataController.coins()
-				local icon = if definition.Currency == "Tokens" then "🔥" else "🪙"
-				row.Button.Text = string.format("%s %s", icon, Format.short(cost))
+				UIKit.setButtonContent(row.Button, if definition.Currency == "Tokens" then "flame" else "coin", Format.short(cost), C.White)
 				UIKit.setEnabled(row.Button, balance >= cost)
 			else
 				row.Effect.Text = current
-				row.Button.Text = "MAXED ✓"
+				UIKit.setButtonContent(row.Button, "check", "MAXED", C.White)
 				UIKit.setEnabled(row.Button, false)
 			end
 		end

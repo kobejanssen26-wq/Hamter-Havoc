@@ -27,19 +27,20 @@ local SECTION_COLORS = {
 }
 
 function ShopUI.start()
-	local panel = UIKit.panel({ Name = "Shop", Title = "Shop", Icon = "🛍️", Design = Vector2.new(980, 660), Accent = C.Pink })
+	local panel = UIKit.panel({ Name = "Shop", Title = "Shop", Icon = "bag", Design = Vector2.new(980, 660), Accent = C.Pink })
 	local body = panel.Body
 
-	local gemsLabel = UIKit.label(body, {
+	local gemsRow = UIKit.iconText(body, {
+		Icon = "gem",
+		Text = "0",
 		Size = UDim2.fromOffset(200, 40),
 		Position = UDim2.new(1, 0, 0, 0),
 		AnchorPoint = Vector2.new(1, 0),
-		TextXAlignment = Enum.TextXAlignment.Right,
-		Font = UIKit.Fonts.Title,
 		TextSize = 24,
-		TextColor3 = Color3.fromRGB(70, 140, 220),
-		Text = "💎 0",
+		TextColor = Color3.fromRGB(70, 140, 220),
+		Align = Enum.HorizontalAlignment.Right,
 	})
+	local gemsLabel = gemsRow.Label
 
 	local defs = {}
 	for _, section in ShopConfig.Sections do
@@ -63,7 +64,7 @@ function ShopUI.start()
 		if not data.Passes then
 			return
 		end
-		gemsLabel.Text = "💎 " .. Format.short(DataController.gems())
+		gemsLabel.Text = Format.short(DataController.gems())
 		local now = DataController.now()
 
 		grid:ClearAllChildren()
@@ -88,7 +89,7 @@ function ShopUI.start()
 				if item.Color then
 					iconBox.BackgroundColor3 = item.Color
 				end
-				UIKit.label(iconBox, { Size = UDim2.fromScale(1, 1), Text = item.Icon, TextSize = 52, TextXAlignment = Enum.TextXAlignment.Center })
+				UIKit.icon(iconBox, item.Icon, { Size = UDim2.fromOffset(62, 62), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5) })
 
 				UIKit.label(card, {
 					Size = UDim2.new(1, -12, 0, 24),
@@ -111,11 +112,12 @@ function ShopUI.start()
 				})
 
 				local text
+				local priceIcon: string? = nil
 				local enabled = true
 				local color = C.Green
 				if item.Kind == "Pass" then
 					if data.Passes[item.PassKey] then
-						text, enabled = "Owned ✓", false
+						text, enabled = "Owned", false
 					elseif item.PassId == 0 then
 						text, enabled = "Coming soon", false
 					else
@@ -129,21 +131,23 @@ function ShopUI.start()
 					end
 				elseif item.Kind == "Roof" then
 					if data.Cosmetics and data.Cosmetics.Roof == item.RoofKey then
-						text, enabled = "Equipped ✓", false
+						text, enabled = "Equipped", false
 					elseif data.Cosmetics and data.Cosmetics.Owned[item.RoofKey] then
 						text, color = "Equip", C.Sky
 					else
-						text, color = "💎 " .. Format.short(item.Gems), C.Pink
+						text, color, priceIcon = Format.short(item.Gems), C.Pink, "gem"
 					end
 				elseif item.Kind == "Boost" then
 					local remaining = (data.Boosts and data.Boosts[item.BoostId] or 0) - now
-					text = "💎 " .. Format.short(item.Gems)
+					text = Format.short(item.Gems)
+					priceIcon = "gem"
 					color = C.Mint
 					if remaining > 0 then
 						UIKit.chip(card, "Active " .. Format.clock(remaining), C.Green, UDim2.fromOffset(110, 20)).Position = UDim2.new(0.5, -55, 0, 12)
 					end
 				else
-					text = "💎 " .. Format.short(item.Gems)
+					text = Format.short(item.Gems)
+					priceIcon = "gem"
 					color = C.Pink
 				end
 
@@ -167,6 +171,9 @@ function ShopUI.start()
 						end
 					end,
 				})
+				if priceIcon then
+					UIKit.setButtonContent(button, priceIcon, text, C.White)
+				end
 				UIKit.setEnabled(button, enabled)
 				if not enabled then
 					button.BackgroundColor3 = Color3.fromRGB(200, 188, 176)
@@ -188,7 +195,7 @@ function ShopUI.start()
 	end)
 	game.Players.LocalPlayer:GetAttributeChangedSignal("Gems"):Connect(function()
 		if panel.IsOpen then
-			gemsLabel.Text = "💎 " .. Format.short(DataController.gems())
+			gemsLabel.Text = Format.short(DataController.gems())
 		end
 	end)
 	-- boost countdown labels

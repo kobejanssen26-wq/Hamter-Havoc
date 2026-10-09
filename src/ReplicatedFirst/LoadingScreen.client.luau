@@ -35,14 +35,36 @@ gradient.Color = ColorSequence.new(Color3.fromRGB(255, 236, 206), Color3.fromRGB
 gradient.Rotation = 90
 gradient.Parent = background
 
-local hamster = Instance.new("TextLabel")
+-- a hamster face drawn from frames (emoji can render as empty squares)
+local hamster = Instance.new("Frame")
 hamster.BackgroundTransparency = 1
 hamster.Size = UDim2.fromOffset(160, 160)
 hamster.Position = UDim2.fromScale(0.5, 0.36)
 hamster.AnchorPoint = Vector2.new(0.5, 0.5)
-hamster.Text = "🐹"
-hamster.TextSize = 120
 hamster.Parent = background
+local function dot(x: number, y: number, w: number, h: number, color: Color3, z: number)
+	local part = Instance.new("Frame")
+	part.BorderSizePixel = 0
+	part.BackgroundColor3 = color
+	part.Position = UDim2.fromScale(x, y)
+	part.Size = UDim2.fromScale(w, h)
+	part.ZIndex = z
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0.5, 0)
+	corner.Parent = part
+	part.Parent = hamster
+end
+local fur = Color3.fromRGB(255, 200, 140)
+dot(0.06, 0.04, 0.3, 0.3, fur, 1)
+dot(0.64, 0.04, 0.3, 0.3, fur, 1)
+dot(0.12, 0.1, 0.18, 0.18, Color3.fromRGB(255, 160, 180), 2)
+dot(0.7, 0.1, 0.18, 0.18, Color3.fromRGB(255, 160, 180), 2)
+dot(0.04, 0.2, 0.92, 0.76, fur, 2)
+dot(0.28, 0.46, 0.11, 0.13, Color3.fromRGB(74, 52, 44), 3)
+dot(0.61, 0.46, 0.11, 0.13, Color3.fromRGB(74, 52, 44), 3)
+dot(0.43, 0.62, 0.14, 0.1, Color3.fromRGB(240, 120, 150), 3)
+dot(0.12, 0.62, 0.16, 0.11, Color3.fromRGB(255, 150, 170), 3)
+dot(0.72, 0.62, 0.16, 0.11, Color3.fromRGB(255, 150, 170), 3)
 
 local title = Instance.new("TextLabel")
 title.BackgroundTransparency = 1

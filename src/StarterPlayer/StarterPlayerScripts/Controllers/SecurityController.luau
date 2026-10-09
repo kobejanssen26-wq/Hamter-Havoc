@@ -1,5 +1,5 @@
 --[[
-	SecurityController: the countdown above every gate ("🛡️ 00:47" while the gate is on, "🔴 OPEN" when it is off),
+	SecurityController: the countdown above every gate ("SECURE 00:47" while the gate is on, "OPEN" when it is off),
 	so thieves can watch the timers and owners know when they are exposed.
 	The server only publishes SecUntil / SecReady (server clock) and the owner on each house model;
 	everything shown here is computed from those, so the numbers stay exact without any network traffic.
@@ -81,9 +81,9 @@ local function refresh()
 		local gui = label.Parent :: BillboardGui
 		gui.Enabled = status.Owned
 		if status.State == "Active" then
-			label.Text = "🛡️ " .. Format.clock(math.ceil(status.Seconds))
+			label.Text = "SECURE " .. Format.clock(math.ceil(status.Seconds))
 		elseif status.Owned then
-			label.Text = "🔴 OPEN"
+			label.Text = "OPEN"
 		end
 		label.TextColor3 = SecurityController.color(status)
 	end

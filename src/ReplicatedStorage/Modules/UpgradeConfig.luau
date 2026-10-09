@@ -1,7 +1,12 @@
 --[[
 	Upgrades. Coin upgrades reset on rebirth; token upgrades are permanent.
 	Each upgrade also appears as a pedestal inside the player's house (see HouseBuilder).
+	ADVANCED TIERS: rebirths 5 and 10 (RebirthConfig.AdvancedUpgradeRebirths) each add `TierLevels` more levels
+	to the upgrades that have them, so the same upgrades keep mattering in the late game.
+	Costs were tuned with the progression simulation: they stay a meaningful share of income from minute 5 to hour 10.
 ]]
+
+local RebirthConfig = require(script.Parent.RebirthConfig)
 
 local UpgradeConfig = {}
 
@@ -18,53 +23,53 @@ UpgradeConfig.Order = {
 
 UpgradeConfig.Definitions = {
 	HamsterTraining = {
-		Id = "HamsterTraining", Name = "Hamster Training", Icon = "🏃", Currency = "Coins",
+		Id = "HamsterTraining", Name = "Hamster Training", Icon = "bolt", Currency = "Coins",
 		Description = "Your hamsters run faster in their wheels: more coins every second.",
-		MaxLevel = 20, ResetOnRebirth = true,
-		BaseCost = 120, Growth = 1.55, PerLevel = 0.08, Format = "+%d%% income",
+		MaxLevel = 20, ResetOnRebirth = true, TierLevels = 5,
+		BaseCost = 500, Growth = 1.9, PerLevel = 0.08, Format = "+%d%% income",
 		Percent = true,
 	},
 	CollectionRange = {
-		Id = "CollectionRange", Name = "Collection Range", Icon = "🧲", Currency = "Coins",
+		Id = "CollectionRange", Name = "Collection Range", Icon = "magnet", Currency = "Coins",
 		Description = "Reach hamsters from further away - essential for the fast ones.",
 		MaxLevel = 10, ResetOnRebirth = true,
-		BaseCost = 150, Growth = 2, PerLevel = 2.5, Format = "+%.1f studs",
+		BaseCost = 300, Growth = 2, PerLevel = 2.5, Format = "+%.1f studs",
 	},
 	CoinMultiplier = {
-		Id = "CoinMultiplier", Name = "Coin Multiplier", Icon = "🪙", Currency = "Coins",
+		Id = "CoinMultiplier", Name = "Coin Multiplier", Icon = "coin", Currency = "Coins",
 		Description = "Every coin you earn is worth more.",
-		MaxLevel = 15, ResetOnRebirth = true,
-		BaseCost = 400, Growth = 2.2, PerLevel = 0.15, Format = "+%d%% coins",
+		MaxLevel = 15, ResetOnRebirth = true, TierLevels = 5,
+		BaseCost = 2000, Growth = 2.5, PerLevel = 0.15, Format = "+%d%% coins",
 		Percent = true,
 	},
 	SpawnLuck = {
-		Id = "SpawnLuck", Name = "Spawn Luck", Icon = "🍀", Currency = "Coins",
+		Id = "SpawnLuck", Name = "Spawn Luck", Icon = "clover", Currency = "Coins",
 		Description = "Rarer hamsters show up more often. Strong, but capped.",
-		MaxLevel = 5, ResetOnRebirth = true,
-		Costs = { 2500, 40000, 800000, 15000000, 400000000 },
-		Multipliers = { 1.25, 1.5, 2, 3, 5 }, Format = "Luck x%.2f",
+		MaxLevel = 5, ResetOnRebirth = true, TierLevels = 1,
+		Costs = { 25000, 500000, 12000000, 300000000, 8000000000, 200000000000, 5000000000000 },
+		Multipliers = { 1.25, 1.5, 2, 3, 5, 7, 10 }, Format = "Luck x%.2f",
 	},
 	WalkSpeed = {
-		Id = "WalkSpeed", Name = "Walk Speed", Icon = "👟", Currency = "Coins",
+		Id = "WalkSpeed", Name = "Walk Speed", Icon = "shoe", Currency = "Coins",
 		Description = "Run faster to chase down speedy hamsters.",
 		MaxLevel = 8, ResetOnRebirth = true,
-		BaseCost = 60, Growth = 1.9, PerLevel = 1.5, Format = "+%.1f speed",
+		BaseCost = 100, Growth = 2, PerLevel = 1.5, Format = "+%.1f speed",
 	},
 	ExtraStorage = {
-		Id = "ExtraStorage", Name = "Extra Storage", Icon = "🏠", Currency = "Coins",
-		Description = "Display more hamsters in your house (each one earns coins).",
+		Id = "ExtraStorage", Name = "Extra Storage", Icon = "home", Currency = "Coins",
+		Description = "More hamster slots (each one earns coins). Limited by the wheel stations of your floors.",
 		MaxLevel = 9, ResetOnRebirth = true,
-		BaseCost = 300, Growth = 3.2, PerLevel = 1, Format = "+%d slot",
+		BaseCost = 1000, Growth = 4.5, PerLevel = 1, Format = "+%d slot",
 	},
 	RebirthBoost = {
-		Id = "RebirthBoost", Name = "Rebirth Boost", Icon = "🔥", Currency = "Tokens",
+		Id = "RebirthBoost", Name = "Rebirth Boost", Icon = "flame", Currency = "Tokens",
 		Description = "Makes every Rebirth multiplier step stronger. Permanent.",
 		MaxLevel = 10, ResetOnRebirth = false,
 		BaseCost = 1, Growth = 1, Linear = true, PerLevel = 0.10, Format = "+%d%% rebirth bonus",
 		Percent = true,
 	},
 	GemBoost = {
-		Id = "GemBoost", Name = "Gem Boost", Icon = "💎", Currency = "Tokens",
+		Id = "GemBoost", Name = "Gem Boost", Icon = "gem", Currency = "Tokens",
 		Description = "More gems from quests, index rewards and rebirths. Permanent.",
 		MaxLevel = 10, ResetOnRebirth = false,
 		BaseCost = 1, Growth = 1, Linear = true, PerLevel = 0.10, Format = "+%d%% gems",
@@ -72,10 +77,19 @@ UpgradeConfig.Definitions = {
 	},
 }
 
--- Cost of the NEXT level (nil if maxed). `level` = current level.
-function UpgradeConfig.cost(id: string, level: number): number?
+-- Highest level you can buy right now (advanced tiers come with rebirths).
+function UpgradeConfig.maxLevel(id: string, rebirths: number?): number
 	local definition = UpgradeConfig.Definitions[id]
-	if not definition or level >= definition.MaxLevel then
+	if not definition then
+		return 0
+	end
+	return definition.MaxLevel + (definition.TierLevels or 0) * RebirthConfig.upgradeTier(rebirths or 0)
+end
+
+-- Cost of the NEXT level (nil if maxed). `level` = current level.
+function UpgradeConfig.cost(id: string, level: number, rebirths: number?): number?
+	local definition = UpgradeConfig.Definitions[id]
+	if not definition or level >= UpgradeConfig.maxLevel(id, rebirths) then
 		return nil
 	end
 	if definition.Costs then

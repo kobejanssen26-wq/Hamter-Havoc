@@ -1,6 +1,6 @@
 --[[
 	NavController: subtle guidance, only when it is needed.
-	While you carry a hamster ball a thin golden beam and a "🏠 Home 42 studs" marker lead to your arrival pad.
+	While you carry a hamster ball a thin golden beam and a "Home 42 studs" marker lead to your arrival pad.
 	Nothing is shown otherwise.
 ]]
 
@@ -71,7 +71,7 @@ function NavController.start()
 			if show and type(houseId) == "number" and root and root:IsA("BasePart") then
 				local pad = WorldLayout.padPosition(WorldLayout.houseCFrame(houseId))
 				target.Position = pad + Vector3.new(0, 1, 0)
-				label.Text = string.format("🏠 Home  %d studs", math.floor((root.Position - pad).Magnitude + 0.5))
+				label.Text = string.format("Home  %d studs", math.floor((root.Position - pad).Magnitude + 0.5))
 				if not playerAttachment or playerAttachment.Parent ~= root then
 					if playerAttachment then
 						playerAttachment:Destroy()

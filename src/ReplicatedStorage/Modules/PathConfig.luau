@@ -3,18 +3,18 @@
 	Spawn burrow in the west, exit tunnel in the east, Hamster Plaza exactly in the middle.
 	Both house rows (north and south) are the same distance from the road, so neither side has an advantage.
 
-	Two lanes (z = -4 and z = +4) let a fast hamster go around a slow one; see HamsterSystem.
+	Two lanes (z = -6.5 and z = +6.5) let a fast hamster go around a slow one; see HamsterSystem.
 	Shared by the world builder (to lay the road) and the server simulation.
 ]]
 
 local PathConfig = {}
 
-PathConfig.Width = 16 -- road width in studs
+PathConfig.Width = 26 -- road width in studs
 PathConfig.HalfWidth = PathConfig.Width / 2
 PathConfig.RoadHeight = 0.28 -- top surface of the road
-PathConfig.LaneOffsets = { -4, 4 }
+PathConfig.LaneOffsets = { -6.5, 6.5 }
 
-local HALF_LENGTH = 155
+local HALF_LENGTH = 225
 
 local points: { Vector3 } = { Vector3.new(-HALF_LENGTH, 0, 0), Vector3.new(HALF_LENGTH, 0, 0) }
 

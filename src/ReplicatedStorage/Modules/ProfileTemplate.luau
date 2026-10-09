@@ -9,7 +9,7 @@ return {
 	Version = 1,
 
 	-- currencies
-	Coins = 60,
+	Coins = 250, -- enough for the first Basic hamster (100) and a spare
 	Gems = 25,
 	Tokens = 0,
 	Rebirths = 0,

@@ -31,7 +31,7 @@ HamsterStates.Config = {
 	ClaimRange = 4, -- extra studs added to the Collection Range upgrade
 	InteractRange = 6, -- studs from the ball's surface to steal / pick up
 	TransitSpeedFactor = 0.5, -- rolling-home speed = road speed * this ...
-	TransitSpeedMin = 7.5,
+	TransitSpeedMin = 9,
 	TransitSpeedMax = 14.5, -- ... clamped, so a player can keep up with (or chase) any hamster
 	StealSeconds = { Min = 0.7, Max = 1.5 }, -- hold time to steal; rarer = longer
 	PickupSeconds = 0.35,

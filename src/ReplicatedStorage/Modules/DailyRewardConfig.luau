@@ -6,13 +6,13 @@
 local DailyRewardConfig = {}
 
 DailyRewardConfig.Days = {
-	{ Day = 1, Label = "Coins", Icon = "🪙", Coins = 500 },
-	{ Day = 2, Label = "Gems", Icon = "💎", Gems = 50 },
-	{ Day = 3, Label = "Luck Boost", Icon = "🍀", Boost = { Id = "Luck2x", Seconds = 900 } },
-	{ Day = 4, Label = "More Coins", Icon = "💰", Coins = 2500 },
-	{ Day = 5, Label = "Exclusive Hamster", Icon = "🎀", Hamster = "calendar_cutie" },
-	{ Day = 6, Label = "Gems", Icon = "💎", Gems = 120 },
-	{ Day = 7, Label = "Legendary Reward", Icon = "👑", Hamster = "sunday_sunbeam", Gems = 150 },
+	{ Day = 1, Label = "Coins", Icon = "coin", Coins = 500 },
+	{ Day = 2, Label = "Gems", Icon = "gem", Gems = 50 },
+	{ Day = 3, Label = "Luck Boost", Icon = "clover", Boost = { Id = "Luck2x", Seconds = 900 } },
+	{ Day = 4, Label = "More Coins", Icon = "pouch", Coins = 2500 },
+	{ Day = 5, Label = "Exclusive Hamster", Icon = "gift", Hamster = "calendar_cutie" },
+	{ Day = 6, Label = "Gems", Icon = "gem", Gems = 120 },
+	{ Day = 7, Label = "Legendary Reward", Icon = "crown", Hamster = "sunday_sunbeam", Gems = 150 },
 }
 
 local SECONDS_PER_DAY = 86400

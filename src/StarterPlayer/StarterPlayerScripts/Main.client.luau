@@ -15,11 +15,13 @@ local order = {
 	"FxController",
 	"WorldController",
 	"InputController",
+	"CursorController",
 	"CombatController",
 	"SecurityController",
 	"NavController",
 	"SettingsController",
 	"AmbientController",
+	"NatureController",
 }
 for _, name in order do
 	local ok, err = pcall(function()

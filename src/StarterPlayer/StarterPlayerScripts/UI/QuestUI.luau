@@ -20,37 +20,44 @@ local QuestUI = {}
 
 local C = UIKit.Colors
 
-local function rewardText(reward: any): string
-	local parts = {}
+-- Reward chips with drawn icons: coin 500  gem 20  flame 2  bolt 15m  hamster Name
+local function rewardRow(parent: Instance, reward: any, position: UDim2)
+	local row = UIKit.frame(parent, { Size = UDim2.fromOffset(190, 22), Position = position, BackgroundTransparency = 1 })
+	UIKit.list(row, Enum.FillDirection.Horizontal, 8, Enum.HorizontalAlignment.Right, Enum.VerticalAlignment.Center)
+	local order = 0
+	local function add(icon: string, text: string)
+		order += 1
+		UIKit.iconText(row, { Icon = icon, Text = text, Size = UDim2.fromOffset(0, 22), TextSize = 13, TextColor = C.GoldDark, Font = UIKit.Fonts.Body, LayoutOrder = order }).Frame.AutomaticSize = Enum.AutomaticSize.X
+	end
 	if reward.Coins then
-		table.insert(parts, "🪙 " .. Format.short(reward.Coins))
+		add("coin", Format.short(reward.Coins))
 	end
 	if reward.Gems then
-		table.insert(parts, "💎 " .. Format.short(reward.Gems))
+		add("gem", Format.short(reward.Gems))
 	end
 	if reward.Tokens then
-		table.insert(parts, "🔥 " .. reward.Tokens)
+		add("flame", tostring(reward.Tokens))
 	end
 	if reward.Boost then
 		local info = ShopConfig.Boosts[reward.Boost.Id]
-		table.insert(parts, string.format("%s %dm", if info then info.Icon else "⚡", math.floor(reward.Boost.Seconds / 60)))
+		add(if info then info.Icon else "bolt", string.format("%dm", math.floor(reward.Boost.Seconds / 60)))
 	end
 	if reward.Hamster then
 		local species = HamsterDatabase.ById[reward.Hamster]
-		table.insert(parts, "🐹 " .. (if species then species.Name else "Hamster"))
+		add("hamster", if species then species.Name else "Hamster")
 	end
-	return table.concat(parts, "   ")
+	return row
 end
 
 function QuestUI.start()
-	local panel = UIKit.panel({ Name = "Quests", Title = "Quests & Achievements", Icon = "📜", Design = Vector2.new(860, 640), Accent = C.Purple })
+	local panel = UIKit.panel({ Name = "Quests", Title = "Quests & Achievements", Icon = "scroll", Design = Vector2.new(860, 640), Accent = C.Purple })
 	local body = panel.Body
 
 	local mode = "Quests"
 	local render
 	local tabs = UIKit.tabs(body, {
-		{ Id = "Quests", Text = "📜 Quests", Color = C.Purple },
-		{ Id = "Achievements", Text = "🏆 Achievements", Color = C.Gold },
+		{ Id = "Quests", Text = "Quests", Color = C.Purple },
+		{ Id = "Achievements", Text = "Achievements", Color = C.Gold },
 	}, function(id)
 		mode = id
 		render()
@@ -97,12 +104,7 @@ function QuestUI.start()
 
 			local icon = UIKit.frame(row, { Size = UDim2.fromOffset(58, 58), Position = UDim2.fromOffset(12, 13), BackgroundColor3 = C.CreamDark })
 			UIKit.corner(icon, 14)
-			UIKit.label(icon, {
-				Size = UDim2.fromScale(1, 1),
-				Text = entry.Icon or (if item.Claimed then "✅" elseif item.Complete then "🎉" else "📜"),
-				TextSize = 32,
-				TextXAlignment = Enum.TextXAlignment.Center,
-			})
+			UIKit.icon(icon, entry.Icon or (if item.Claimed then "check" elseif item.Complete then "gift" else "scroll"), { Size = UDim2.fromOffset(40, 40), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5) })
 			UIKit.label(row, {
 				Position = UDim2.fromOffset(82, 6),
 				Size = UDim2.new(1, -290, 0, 24),
@@ -123,16 +125,9 @@ function QuestUI.start()
 				Color = if item.Claimed then C.Green else C.Purple,
 			})
 			bar.Set(item.Fraction, string.format("%s / %s", Format.short(math.min(item.Value, entry.Target)), Format.short(entry.Target)))
-			UIKit.label(row, {
-				Position = UDim2.new(1, -196, 0, 8),
-				Size = UDim2.fromOffset(184, 20),
-				Text = rewardText(entry.Reward),
-				TextSize = 13,
-				TextColor3 = C.GoldDark,
-				TextXAlignment = Enum.TextXAlignment.Right,
-			})
+			rewardRow(row, entry.Reward, UDim2.new(1, -202, 0, 8))
 			local button = UIKit.button(row, {
-				Text = if item.Claimed then "Claimed ✓" elseif item.Complete then "Claim!" else "Locked",
+				Text = if item.Claimed then "Claimed" elseif item.Complete then "Claim!" else "Locked",
 				Size = UDim2.fromOffset(120, 40),
 				Position = UDim2.new(1, -12, 1, -10),
 				AnchorPoint = Vector2.new(1, 1),

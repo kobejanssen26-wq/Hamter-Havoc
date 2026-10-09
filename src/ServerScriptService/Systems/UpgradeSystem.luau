@@ -25,7 +25,7 @@ function UpgradeSystem.buy(player: Player, upgradeId: any): (boolean, string, nu
 	end
 
 	local level = data.Upgrades[definition.Id] or 0
-	local cost = UpgradeConfig.cost(definition.Id, level)
+	local cost = UpgradeConfig.cost(definition.Id, level, data.Rebirths)
 	if not cost then
 		return false, definition.Name .. " is already maxed"
 	end

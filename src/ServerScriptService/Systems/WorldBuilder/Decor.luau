@@ -57,6 +57,8 @@ function Decor.tree(parent: Instance, pos: Vector3, kind: string, scale: number,
 		end
 	end
 
+	model:AddTag("TreeSway") -- the client sways trees that are close to the camera
+
 	-- Only the trunk blocks the player.
 	local trunk = model:FindFirstChild("Trunk") :: Part?
 	if trunk then

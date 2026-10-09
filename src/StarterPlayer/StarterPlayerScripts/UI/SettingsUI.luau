@@ -19,7 +19,7 @@ function SettingsUI.start()
 	-----------------------------------------------------------------------
 	-- settings
 	-----------------------------------------------------------------------
-	local panel = UIKit.panel({ Name = "Settings", Title = "Settings", Icon = "⚙️", Design = Vector2.new(680, 660), Accent = C.BrownLight })
+	local panel = UIKit.panel({ Name = "Settings", Title = "Settings", Icon = "gear", Design = Vector2.new(680, 660), Accent = C.BrownLight })
 	local scroll = UIKit.scroll(panel.Body, { Size = UDim2.fromScale(1, 1) })
 	UIKit.list(scroll, Enum.FillDirection.Vertical, 8)
 	UIKit.padding(scroll, 4)
@@ -30,10 +30,11 @@ function SettingsUI.start()
 		local row = UIKit.frame(scroll, { Size = UDim2.new(1, -10, 0, 54), LayoutOrder = order })
 		UIKit.corner(row, 14)
 		UIKit.stroke(row, Color3.fromRGB(226, 208, 180), 2)
+		UIKit.icon(row, entry.Icon, { Size = UDim2.fromOffset(34, 34), Position = UDim2.fromOffset(12, 10) })
 		UIKit.label(row, {
-			Position = UDim2.fromOffset(14, 0),
-			Size = UDim2.new(0.55, 0, 1, 0),
-			Text = entry.Icon .. "  " .. entry.Label,
+			Position = UDim2.fromOffset(56, 0),
+			Size = UDim2.new(0.55, -42, 1, 0),
+			Text = entry.Label,
 			TextSize = 17,
 			Font = UIKit.Fonts.Title,
 		})
@@ -96,6 +97,29 @@ function SettingsUI.start()
 		end
 	end
 
+	-- promo codes live here (they used to be a separate HUD button)
+	do
+		local row = UIKit.frame(scroll, { Size = UDim2.new(1, -10, 0, 54), LayoutOrder = #SettingsConfig.List + 1 })
+		UIKit.corner(row, 14)
+		UIKit.stroke(row, Color3.fromRGB(226, 208, 180), 2)
+		UIKit.icon(row, "gift", { Size = UDim2.fromOffset(34, 34), Position = UDim2.fromOffset(12, 10) })
+		UIKit.label(row, { Position = UDim2.fromOffset(56, 0), Size = UDim2.new(0.55, -42, 1, 0), Text = "Promo codes", TextSize = 17, Font = UIKit.Fonts.Title })
+		UIKit.button(row, {
+			Text = "Enter code",
+			Size = UDim2.fromOffset(170, 38),
+			Position = UDim2.new(1, -12, 0.5, 0),
+			AnchorPoint = Vector2.new(1, 0.5),
+			Color = C.Purple,
+			TextSize = 15,
+			OnClick = function()
+				local codesPanel = UIKit.getPanel("Codes")
+				if codesPanel then
+					codesPanel:Open()
+				end
+			end,
+		})
+	end
+
 	local function sync()
 		for key, control in controls do
 			control.Set(DataController.setting(key))
@@ -106,7 +130,7 @@ function SettingsUI.start()
 	-----------------------------------------------------------------------
 	-- codes
 	-----------------------------------------------------------------------
-	local codes = UIKit.panel({ Name = "Codes", Title = "Promo Codes", Icon = "🎟️", Design = Vector2.new(560, 330), Accent = C.Purple })
+	local codes = UIKit.panel({ Name = "Codes", Title = "Promo Codes", Icon = "gift", Design = Vector2.new(560, 330), Accent = C.Purple })
 	UIKit.label(codes.Body, {
 		Size = UDim2.new(1, 0, 0, 50),
 		Text = "Enter a code to get free rewards!\nNew codes appear during updates and events.",
@@ -143,7 +167,7 @@ function SettingsUI.start()
 		end
 		local result = DataController.request("RedeemCode", { Code = text })
 		if result.ok then
-			status.Text = '<font color="#60c47e">✓ ' .. result.msg .. "</font>"
+			status.Text = '<font color="#60c47e">' .. result.msg .. "</font>"
 			box.Text = ""
 		else
 			status.Text = '<font color="#f06262">' .. result.msg .. "</font>"

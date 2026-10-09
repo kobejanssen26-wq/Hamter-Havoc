@@ -3,6 +3,7 @@
 	client (which only displays) always agree. Pure functions of the profile table.
 ]]
 
+local FloorConfig = require(script.Parent.FloorConfig)
 local HamsterDatabase = require(script.Parent.HamsterDatabase)
 local IndexRewardConfig = require(script.Parent.IndexRewardConfig)
 local RarityConfig = require(script.Parent.RarityConfig)
@@ -75,7 +76,7 @@ end
 
 -- Multiplier applied to every coin gain.
 function EconomyMath.coinMultiplier(data: any, now: number): number
-	local multiplier = EconomyMath.rebirthMultiplier(data) * EconomyMath.indexBonus(data)
+	local multiplier = EconomyMath.rebirthMultiplier(data) * EconomyMath.indexBonus(data) * (1 + FloorConfig.incomeBonus(data.Rebirths))
 	multiplier *= 1 + UpgradeConfig.effect("CoinMultiplier", EconomyMath.level(data, "CoinMultiplier"))
 	if EconomyMath.boostActive(data, "Coins2x", now) then
 		multiplier *= 2
@@ -101,6 +102,7 @@ function EconomyMath.luck(data: any, now: number): number
 	end
 	luck *= passEffect(data, "Luck") or 1
 	luck *= 1 + IndexRewardConfig.bonus(data, "Luck")
+	luck *= RebirthConfig.luckMultiplier(data.Rebirths) * (1 + FloorConfig.luckBonus(data.Rebirths))
 	return math.clamp(luck, 1, RarityConfig.LuckCap)
 end
 
@@ -117,11 +119,16 @@ function EconomyMath.walkSpeed(data: any, now: number): number
 	return speed
 end
 
-function EconomyMath.slots(data: any): number
+-- Hamster slots you own: base + one per rebirth + storage upgrades + passes, but never more than your floors have wheel stations for.
+function EconomyMath.slotsEarned(data: any): number
 	return RebirthConfig.BaseSlots
 		+ UpgradeConfig.effect("ExtraStorage", EconomyMath.level(data, "ExtraStorage"))
 		+ RebirthConfig.bonusSlots(data.Rebirths)
 		+ (passEffect(data, "Slots") or 0)
+end
+
+function EconomyMath.slots(data: any): number
+	return math.min(EconomyMath.slotsEarned(data), FloorConfig.capacity(data.Rebirths))
 end
 
 function EconomyMath.autoCollect(data: any, now: number): boolean
@@ -152,6 +159,10 @@ function EconomyMath.derived(data: any, now: number)
 		CollectRange = EconomyMath.collectRange(data),
 		WalkSpeed = EconomyMath.walkSpeed(data, now),
 		Slots = EconomyMath.slots(data),
+		SlotsEarned = EconomyMath.slotsEarned(data),
+		SlotCapacity = FloorConfig.capacity(data.Rebirths),
+		Floors = FloorConfig.count(data.Rebirths),
+		FloorIncomeBonus = FloorConfig.incomeBonus(data.Rebirths),
 		AutoCollect = EconomyMath.autoCollect(data, now),
 		IncomePerSecond = EconomyMath.incomePerSecond(data, now),
 		Unique = EconomyMath.uniqueCount(data),

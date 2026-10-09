@@ -1,5 +1,5 @@
 --[[
-	All 14 rarities. This is the single source of truth for colours, spawn weights, speed, value,
+	All 14 rarities. This is the single source of truth for colours, spawn weights, speed, price, income,
 	announcements and visual effects. Nothing else hard-codes rarity values.
 
 	Fx (read by the client FxController):
@@ -15,8 +15,16 @@
 
 local RarityConfig = {}
 
--- Price of collecting a hamster = Income * PriceFactor * species value multiplier.
-RarityConfig.PriceFactor = 18
+-- ECONOMY. One formula for every hamster, so a "lower" rarity can never out-earn a higher one:
+--   price  = BasePrice[rarity] * species ValueMult          (ValueMult spans 1.00 .. ~1.6 inside a rarity)
+--   income = price / Payback[rarity]                        (coins per second, before multipliers)
+-- BasePrice grows 4-5x per rarity and Payback (seconds a hamster needs to earn its own price back) grows 30% per
+-- rarity, so every step up is a much bigger investment but also earns more per coin spent over time.
+-- The cheapest hamster of a rarity is always worth more than the dearest of the one below (checked by the tests).
+RarityConfig.BasePrices = { 100, 500, 2500, 10000, 50000, 250000, 1000000, 5000000, 25000000, 100000000, 400000000, 2000000000, 10000000000, 50000000000 }
+RarityConfig.PaybackBase = 90
+RarityConfig.PaybackGrowth = 1.3
+RarityConfig.ValueSpread = 0.035 -- ValueMult = 1 + ValueSpread * (n - 1) for the n-th hamster of a rarity
 RarityConfig.SellRatio = 0.5
 RarityConfig.LuckCap = 15
 
@@ -27,7 +35,7 @@ end
 local list = {
 	{
 		Id = "Basic", Name = "Basic", Color = c("C8BEAF"), Accent = c("8F8575"),
-		Weight = 520, MinRebirth = 0, Speed = 9, Income = 1, Announce = 0,
+		Weight = 520, MinRebirth = 0, Speed = 9, Income = 0, Announce = 0,
 		Style = "Plain fur, simple and sweet",
 		Difficulty = "Very easy",
 		IndexReward = { Gems = 25 },
@@ -35,7 +43,7 @@ local list = {
 	},
 	{
 		Id = "Cute", Name = "Cute", Color = c("FF9FC8"), Accent = c("FF6FAE"),
-		Weight = 250, MinRebirth = 0, Speed = 10.5, Income = 3, Announce = 0,
+		Weight = 250, MinRebirth = 0, Speed = 10.5, Income = 0, Announce = 0,
 		Style = "Soft pink hearts float up",
 		Difficulty = "Easy",
 		IndexReward = { Gems = 40 },
@@ -45,7 +53,7 @@ local list = {
 	},
 	{
 		Id = "Shiny", Name = "Shiny", Color = c("6FE3C1"), Accent = c("35C9A0"),
-		Weight = 120, MinRebirth = 0, Speed = 12, Income = 8, Announce = 0,
+		Weight = 125, MinRebirth = 0, Speed = 12, Income = 0, Announce = 0,
 		Style = "Sparkling mint glitter",
 		Difficulty = "Easy",
 		IndexReward = { Gems = 60 },
@@ -56,7 +64,7 @@ local list = {
 	},
 	{
 		Id = "Rare", Name = "Rare", Color = c("5AA0FF"), Accent = c("2F78E8"),
-		Weight = 60, MinRebirth = 0, Speed = 14, Income = 20, Announce = 0,
+		Weight = 65, MinRebirth = 0, Speed = 14, Income = 0, Announce = 0,
 		Style = "Cool blue glow with a road ring",
 		Difficulty = "Medium",
 		IndexReward = { Gems = 90 },
@@ -69,7 +77,7 @@ local list = {
 	},
 	{
 		Id = "Epic", Name = "Epic", Color = c("B070FF"), Accent = c("8A3DFF"),
-		Weight = 25, MinRebirth = 0, Speed = 16.5, Income = 55, Announce = 1,
+		Weight = 28, MinRebirth = 0, Speed = 16.5, Income = 0, Announce = 1,
 		Style = "Purple orbs swirl around",
 		Difficulty = "Medium",
 		IndexReward = { Gems = 140 },
@@ -83,7 +91,7 @@ local list = {
 	},
 	{
 		Id = "Ultra", Name = "Ultra", Color = c("FF5FD2"), Accent = c("E0239F"),
-		Weight = 12, MinRebirth = 0, Speed = 19, Income = 150, Announce = 1,
+		Weight = 13, MinRebirth = 0, Speed = 19, Income = 0, Announce = 1,
 		Style = "Magenta neon with a streaking trail",
 		Difficulty = "Hard",
 		IndexReward = { Gems = 200 },
@@ -97,7 +105,7 @@ local list = {
 	},
 	{
 		Id = "Legendary", Name = "Legendary", Color = c("FFC83D"), Accent = c("FF9F0A"),
-		Weight = 6, MinRebirth = 0, Speed = 22, Income = 450, Announce = 2,
+		Weight = 6.5, MinRebirth = 0, Speed = 22, Income = 0, Announce = 2,
 		Style = "Golden light pillar and coin sparkles",
 		Difficulty = "Hard",
 		IndexReward = { Gems = 300 },
@@ -112,7 +120,7 @@ local list = {
 	},
 	{
 		Id = "Mythic", Name = "Mythic", Color = c("FF4B4B"), Accent = c("C41818"),
-		Weight = 2.5, MinRebirth = 1, Speed = 26, Income = 1400, Announce = 2,
+		Weight = 2.5, MinRebirth = 2, Speed = 26, Income = 0, Announce = 2,
 		Style = "Burning embers and a crimson beam",
 		Difficulty = "Very hard",
 		IndexReward = { Gems = 450 },
@@ -127,7 +135,7 @@ local list = {
 	},
 	{
 		Id = "Divine", Name = "Divine", Color = c("FFF4B8"), Accent = c("FFD866"),
-		Weight = 1.2, MinRebirth = 2, Speed = 30, Income = 4500, Announce = 2,
+		Weight = 1.2, MinRebirth = 4, Speed = 30, Income = 0, Announce = 2,
 		Style = "Holy rays, a halo ring and soft light",
 		Difficulty = "Very hard",
 		IndexReward = { Gems = 650 },
@@ -143,7 +151,7 @@ local list = {
 	},
 	{
 		Id = "Cosmic", Name = "Cosmic", Color = c("4A5CFF"), Accent = c("A0B0FF"),
-		Weight = 0.5, MinRebirth = 3, Speed = 34, Income = 15000, Announce = 2,
+		Weight = 0.5, MinRebirth = 5, Speed = 34, Income = 0, Announce = 2,
 		Style = "A tiny galaxy of stars follows it",
 		Difficulty = "Extreme",
 		IndexReward = { Gems = 900 },
@@ -159,7 +167,7 @@ local list = {
 	},
 	{
 		Id = "Celestial", Name = "Celestial", Color = c("9FFCFF"), Accent = c("FFFFFF"),
-		Weight = 0.25, MinRebirth = 4, Speed = 38, Income = 50000, Announce = 2,
+		Weight = 0.25, MinRebirth = 7, Speed = 38, Income = 0, Announce = 2,
 		Style = "Shimmering aurora ribbons",
 		Difficulty = "Extreme",
 		IndexReward = { Gems = 1200 },
@@ -176,7 +184,7 @@ local list = {
 	},
 	{
 		Id = "Secret", Name = "Secret", Color = c("2B0A4D"), Accent = c("B84DFF"),
-		Weight = 0.08, MinRebirth = 3, Speed = 42, Income = 200000, Announce = 2,
+		Weight = 0.08, MinRebirth = 6, Speed = 42, Income = 0, Announce = 2,
 		Style = "Black-purple with glitching shadows",
 		Difficulty = "Insane",
 		Hidden = true,
@@ -194,7 +202,7 @@ local list = {
 	},
 	{
 		Id = "Ancient", Name = "Ancient", Color = c("B8864B"), Accent = c("3DE0C0"),
-		Weight = 0.03, MinRebirth = 6, Speed = 48, Income = 800000, Announce = 2,
+		Weight = 0.03, MinRebirth = 9, Speed = 48, Income = 0, Announce = 2,
 		Style = "Glowing runes drift over bronze fur",
 		Difficulty = "Insane",
 		IndexReward = { Gems = 2200 },
@@ -210,7 +218,7 @@ local list = {
 	},
 	{
 		Id = "Unknown", Name = "???", Color = c("111111"), Accent = c("FF00E5"),
-		Weight = 0.005, MinRebirth = 10, Speed = 56, Income = 4000000, Announce = 2,
+		Weight = 0.005, MinRebirth = 12, Speed = 56, Income = 0, Announce = 2,
 		Style = "Nobody knows what it is",
 		Difficulty = "Impossible?",
 		Hidden = true,
@@ -234,6 +242,9 @@ RarityConfig.Ranks = {} :: { [string]: number }
 
 for rank, definition in list do
 	definition.Rank = rank
+	definition.BasePrice = RarityConfig.BasePrices[rank]
+	definition.Payback = math.floor(RarityConfig.PaybackBase * RarityConfig.PaybackGrowth ^ (rank - 1) + 0.5)
+	definition.Income = definition.BasePrice / definition.Payback
 	table.insert(RarityConfig.Order, definition.Id)
 	RarityConfig.ById[definition.Id] = definition
 	RarityConfig.Ranks[definition.Id] = rank

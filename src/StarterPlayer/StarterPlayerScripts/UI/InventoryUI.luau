@@ -19,7 +19,7 @@ local C = UIKit.Colors
 local PAGE_SIZE = 8
 
 function InventoryUI.start()
-	local panel = UIKit.panel({ Name = "Inventory", Title = "My Hamsters", Icon = "🧺", Design = Vector2.new(940, 640), Accent = C.Peach })
+	local panel = UIKit.panel({ Name = "Inventory", Title = "My Hamsters", Icon = "hamster", Design = Vector2.new(940, 640), Accent = C.Peach })
 	local body = panel.Body
 
 	local top = UIKit.frame(body, { Size = UDim2.new(1, 0, 0, 52), BackgroundColor3 = C.Card })
@@ -36,7 +36,7 @@ function InventoryUI.start()
 		require(script.Parent.MainUI).toast(text, kind)
 	end
 	UIKit.button(top, {
-		Text = "⭐ Equip Best",
+		Text = "Equip Best",
 		Size = UDim2.fromOffset(160, 38),
 		Position = UDim2.new(1, -184, 0.5, 0),
 		AnchorPoint = Vector2.new(1, 0.5),
@@ -48,7 +48,7 @@ function InventoryUI.start()
 		end,
 	})
 	UIKit.button(top, {
-		Text = "💰 Sell Duplicates",
+		Text = "Sell Duplicates",
 		Size = UDim2.fromOffset(170, 38),
 		Position = UDim2.new(1, -8, 0.5, 0),
 		AnchorPoint = Vector2.new(1, 0.5),
@@ -57,7 +57,7 @@ function InventoryUI.start()
 		OnClick = function()
 			local result = DataController.request("SellDuplicates", {})
 			if result.ok then
-				notify(string.format("%s for 🪙 %s", result.msg, Format.short(result.extra or 0)), "success")
+				notify(string.format("%s for %s coins", result.msg, Format.short(result.extra or 0)), "success")
 			else
 				notify(result.msg, "error")
 			end
@@ -120,7 +120,7 @@ function InventoryUI.start()
 		for _, id in data.Equipped do
 			equippedCounts[id] = (equippedCounts[id] or 0) + 1
 		end
-		slotsLabel.Text = string.format("🏠 Shelf: %d / %d slots", #data.Equipped, math.floor(slots))
+		slotsLabel.Text = string.format("Working in wheels: %d / %d slots", #data.Equipped, math.floor(slots))
 
 		local entries = {}
 		for speciesId, count in data.Inventory do
@@ -176,19 +176,21 @@ function InventoryUI.start()
 				TextXAlignment = Enum.TextXAlignment.Center,
 				TextTruncate = Enum.TextTruncate.AtEnd,
 			})
-			UIKit.label(card, {
+			UIKit.iconText(card, {
+				Icon = "coin",
+				Text = string.format("+%s/s each", Format.short(HamsterDatabase.income(species) * multiplier)),
 				Size = UDim2.new(1, -10, 0, 18),
-				Position = UDim2.fromOffset(5, 124),
-				Text = string.format("🪙 +%s/s each", Format.short(HamsterDatabase.income(species) * multiplier)),
+				Position = UDim2.fromOffset(5, 123),
 				TextSize = 13,
-				TextColor3 = C.GoldDark,
-				TextXAlignment = Enum.TextXAlignment.Center,
+				TextColor = C.GoldDark,
+				Font = UIKit.Fonts.Body,
+				Align = Enum.HorizontalAlignment.Center,
 			})
 			if equipped > 0 then
 				UIKit.label(card, {
 					Size = UDim2.new(1, -10, 0, 16),
 					Position = UDim2.fromOffset(5, 142),
-					Text = string.format("🏠 %d on shelf", equipped),
+					Text = string.format("%d working in wheels", equipped),
 					TextSize = 12,
 					TextColor3 = C.Green,
 					TextXAlignment = Enum.TextXAlignment.Center,
@@ -222,7 +224,7 @@ function InventoryUI.start()
 					else
 						local result = DataController.request("Sell", { Id = species.Id, Count = 1 })
 						if result.ok then
-							notify(string.format("Sold %s for 🪙 %s", species.Name, Format.short(result.extra or 0)), "success")
+							notify(string.format("Sold %s for %s coins", species.Name, Format.short(result.extra or 0)), "success")
 						else
 							notify(result.msg, "error")
 						end

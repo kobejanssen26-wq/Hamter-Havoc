@@ -55,7 +55,7 @@ local Config = HamsterStates.Config
 
 local STEP = 1 / 20
 local SNAP_EVERY = 2 -- steps between position snapshots (10 Hz)
-local MAX_ON_ROAD = 9
+local MAX_ON_ROAD = 10
 local LATERAL_SPEED = 5.5
 local PLAYER_RADIUS = 1.6 -- balls steer around people standing on the road / promenade
 
@@ -738,7 +738,7 @@ local function secure(e: Entity, player: Player)
 		end
 	end
 	Remotes.event("CollectResult"):FireClient(player, true, e.Id, e.SpeciesId, result.IsNew, if result.AutoSold then "AutoSold" else "")
-	Notifier.send(player, "🏠 HAMSTER SECURED! " .. e.Species.Name .. " is yours for good.", "success")
+	Notifier.send(player, "HAMSTER SECURED! " .. e.Species.Name .. " is yours for good.", "success")
 	if stolen then
 		AnnounceSystem.stolenSecured(player, payer, e.Species)
 	end
@@ -765,7 +765,7 @@ local function takePossession(e: Entity, player: Player, kind: string)
 		e.StolenFrom = payer
 		fx("Steal", e)
 		Notifier.send(player, "You stole " .. e.Species.Name .. "! Run it to YOUR house!", "success")
-		Notifier.send(payer, string.format("🚨 HAMSTER STOLEN! %s took your %s! Slap them or take it back - if they get it home you only get %d%% back.", player.DisplayName, e.Species.Name, math.floor(Config.StolenInsurance * 100)), "error")
+		Notifier.send(payer, string.format("HAMSTER STOLEN! %s took your %s! Slap them or take it back - if they get it home you only get %d%% back.", player.DisplayName, e.Species.Name, math.floor(Config.StolenInsurance * 100)), "error")
 		Remotes.event("Fx"):FireClient(payer, "Alarm", e.Rarity, e.Position, nil)
 		AnnounceSystem.stolen(player, payer, e.Species)
 		local data = DataSystem.get(player)
@@ -775,7 +775,7 @@ local function takePossession(e: Entity, player: Player, kind: string)
 		end
 	elseif payer == player and not wasInTransit then
 		fx("Recover", e)
-		Notifier.send(player, "✅ HAMSTER RECOVERED! Get it home!", "success")
+		Notifier.send(player, "HAMSTER RECOVERED! Get it home!", "success")
 		local data = DataSystem.get(player)
 		if data then
 			data.Stats.Recovered = (data.Stats.Recovered or 0) + 1
@@ -806,7 +806,7 @@ local function startChannel(player: Player, e: Entity, kind: string, seconds: nu
 	channels[player] = { Id = e.Id, Start = os.clock(), Duration = seconds, Kind = kind }
 	Remotes.event("Channel"):FireClient(player, e.Id, seconds, kind)
 	if kind == "steal" and e.Payer and e.Payer ~= player and e.Payer.Parent == Players then
-		Notifier.send(e.Payer, string.format("⚠️ %s is trying to steal your %s!", player.DisplayName, e.Species.Name), "error")
+		Notifier.send(e.Payer, string.format("%s is trying to steal your %s!", player.DisplayName, e.Species.Name), "error")
 		Remotes.event("Fx"):FireClient(e.Payer, "Alarm", e.Rarity, e.Position, nil)
 	end
 end

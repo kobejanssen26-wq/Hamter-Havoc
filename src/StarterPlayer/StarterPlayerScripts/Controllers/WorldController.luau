@@ -22,6 +22,7 @@ local HamsterDatabase = require(Modules:WaitForChild("HamsterDatabase"))
 local HamsterStates = require(Modules:WaitForChild("HamsterStates"))
 local RarityConfig = require(Modules:WaitForChild("RarityConfig"))
 local Remotes = require(ReplicatedStorage:WaitForChild("Remotes"))
+local Icons = require(script.Parent.Parent:WaitForChild("UI"):WaitForChild("Icons"))
 
 local AudioController = require(script.Parent.AudioController)
 local DataController = require(script.Parent.DataController)
@@ -49,6 +50,9 @@ export type Ball = {
 	Animator: HamsterAnimator.Animator,
 	BaseScale: number,
 	Gui: BillboardGui,
+	Anchor: BasePart, -- the tag hangs on this non-rotating part, never on the rolling shell
+	PriceRow: any,
+	Glow: UIGradient?,
 	Frame: Frame,
 	Stroke: UIStroke,
 	RarityLabel: TextLabel,
@@ -146,15 +150,19 @@ local function makeShell(radius: number, color: Color3, rank: number): Model
 	return model
 end
 
-local function createTag(species: any, ball: Model, id: string, radius: number): (BillboardGui, Frame, UIStroke, TextLabel, TextLabel, TextLabel)
+-- The name tag. It hangs on its own `Anchor` part (identity rotation, moved every frame) so it can never turn
+-- with the rolling glass ball. A BillboardGui always faces the camera, so the text stays upright.
+local function createTag(species: any, anchor: BasePart, id: string): (BillboardGui, Frame, UIStroke, TextLabel, TextLabel, TextLabel, any, UIGradient?)
 	local color = rarityColor(species)
 	local definition = RarityConfig.ById[species.Rarity]
+	local rank = definition.Rank
+	local fancy = rank >= 7 -- Legendary and above get a glowing border
 
 	local gui = Instance.new("BillboardGui")
 	gui.Name = "BallTag_" .. id
-	gui.Adornee = ball.PrimaryPart
-	gui.Size = UDim2.fromOffset(190, 78)
-	gui.StudsOffsetWorldSpace = Vector3.new(0, radius + 1.8, 0)
+	gui.Adornee = anchor
+	gui.Size = UDim2.fromOffset(200, 84)
+	gui.StudsOffsetWorldSpace = Vector3.new(0, 2.2, 0)
 	gui.MaxDistance = 170
 	gui.LightInfluence = 0
 	gui.Active = true
@@ -163,17 +171,59 @@ local function createTag(species: any, ball: Model, id: string, radius: number):
 	local frame = Instance.new("Frame")
 	frame.Size = UDim2.fromScale(1, 1)
 	frame.BackgroundColor3 = Color3.fromRGB(38, 28, 40)
-	frame.BackgroundTransparency = 0.2
+	frame.BackgroundTransparency = 0.12
 	frame.Parent = gui
 	local corner = Instance.new("UICorner")
-	corner.CornerRadius = UDim.new(0, 14)
+	corner.CornerRadius = UDim.new(0, 16)
 	corner.Parent = frame
+	local body = Instance.new("UIGradient")
+	body.Color = ColorSequence.new(Color3.fromRGB(70, 54, 72), Color3.fromRGB(30, 22, 32))
+	body.Rotation = 90
+	body.Parent = frame
 	local stroke = Instance.new("UIStroke")
 	stroke.Color = color
-	stroke.Thickness = 2
+	stroke.Thickness = if fancy then 3 else 2
 	stroke.Parent = frame
+	local glow: UIGradient? = nil
+	if fancy then
+		local spin = Instance.new("UIGradient")
+		spin.Color = ColorSequence.new({ ColorSequenceKeypoint.new(0, color), ColorSequenceKeypoint.new(0.5, Color3.new(1, 1, 1)), ColorSequenceKeypoint.new(1, color) })
+		spin.Parent = stroke
+		glow = spin
+		-- soft halo behind the tag
+		local halo = Instance.new("Frame")
+		halo.Name = "Halo"
+		halo.AnchorPoint = Vector2.new(0.5, 0.5)
+		halo.Position = UDim2.fromScale(0.5, 0.5)
+		halo.Size = UDim2.new(1, 18, 1, 18)
+		halo.BackgroundColor3 = color
+		halo.BackgroundTransparency = 0.82
+		halo.ZIndex = 0
+		local haloCorner = Instance.new("UICorner")
+		haloCorner.CornerRadius = UDim.new(0, 24)
+		haloCorner.Parent = halo
+		halo.Parent = frame
+	end
 
-	local function label(y: number, height: number, font: Enum.Font, size: number, textColor: Color3, text: string): TextLabel
+	-- rarity strip on top
+	local strip = Instance.new("Frame")
+	strip.Size = UDim2.new(1, 0, 0, 22)
+	strip.BackgroundColor3 = color
+	strip.BackgroundTransparency = 0.2
+	strip.BorderSizePixel = 0
+	strip.Parent = frame
+	local stripCorner = Instance.new("UICorner")
+	stripCorner.CornerRadius = UDim.new(0, 16)
+	stripCorner.Parent = strip
+	local stripFill = Instance.new("Frame") -- squares off the lower corners of the strip
+	stripFill.Size = UDim2.new(1, 0, 0, 10)
+	stripFill.Position = UDim2.new(0, 0, 1, -10)
+	stripFill.BackgroundColor3 = color
+	stripFill.BackgroundTransparency = 0.2
+	stripFill.BorderSizePixel = 0
+	stripFill.Parent = strip
+
+	local function label(parent: Instance, y: number, height: number, font: Enum.Font, size: number, textColor: Color3, text: string): TextLabel
 		local textLabel = Instance.new("TextLabel")
 		textLabel.BackgroundTransparency = 1
 		textLabel.Position = UDim2.fromOffset(0, y)
@@ -183,24 +233,50 @@ local function createTag(species: any, ball: Model, id: string, radius: number):
 		textLabel.TextColor3 = textColor
 		textLabel.RichText = true
 		textLabel.Text = text
-		textLabel.Parent = frame
+		textLabel.Parent = parent
 		return textLabel
 	end
-	local rarityLabel = label(5, 16, Enum.Font.GothamBold, 13, color, string.upper(definition.Name))
-	local nameLabel = label(21, 24, Enum.Font.FredokaOne, 20, Color3.new(1, 1, 1), displayName(species))
-	local infoLabel = label(47, 22, Enum.Font.GothamBold, 15, Color3.fromRGB(255, 220, 110), "")
+	local rarityLabel = label(strip, 0, 22, Enum.Font.GothamBold, 13, Color3.new(1, 1, 1), string.upper(definition.Name))
+	local nameLabel = label(frame, 25, 28, Enum.Font.FredokaOne, 21, Color3.new(1, 1, 1), displayName(species))
+	local infoLabel = label(frame, 54, 24, Enum.Font.GothamBold, 15, Color3.fromRGB(255, 220, 110), "")
+
+	-- price row (coin icon + price) shown while a hamster is still for sale
+	local priceRow = Instance.new("Frame")
+	priceRow.BackgroundTransparency = 1
+	priceRow.Position = UDim2.fromOffset(0, 54)
+	priceRow.Size = UDim2.new(1, 0, 0, 24)
+	priceRow.Parent = frame
+	local layout = Instance.new("UIListLayout")
+	layout.FillDirection = Enum.FillDirection.Horizontal
+	layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+	layout.VerticalAlignment = Enum.VerticalAlignment.Center
+	layout.Padding = UDim.new(0, 5)
+	layout.SortOrder = Enum.SortOrder.LayoutOrder
+	layout.Parent = priceRow
+	local coin = Icons.create(priceRow, "coin", { Size = UDim2.fromOffset(20, 20), LayoutOrder = 1 })
+	local priceLabel = Instance.new("TextLabel")
+	priceLabel.BackgroundTransparency = 1
+	priceLabel.Size = UDim2.fromOffset(0, 24)
+	priceLabel.AutomaticSize = Enum.AutomaticSize.X
+	priceLabel.Font = Enum.Font.FredokaOne
+	priceLabel.TextSize = 18
+	priceLabel.TextColor3 = Color3.fromRGB(255, 220, 110)
+	priceLabel.Text = ""
+	priceLabel.LayoutOrder = 2
+	priceLabel.Parent = priceRow
 
 	local button = Instance.new("TextButton")
 	button.BackgroundTransparency = 1
 	button.Size = UDim2.fromScale(1, 1)
 	button.Text = ""
+	button.ZIndex = 5
 	button.Parent = frame
 	button.Activated:Connect(function()
 		WorldController.interact(id)
 	end)
 
 	gui.Parent = player:WaitForChild("PlayerGui")
-	return gui, frame, stroke, rarityLabel, nameLabel, infoLabel
+	return gui, frame, stroke, rarityLabel, nameLabel, infoLabel, { Frame = priceRow, Coin = coin, Label = priceLabel }, glow
 end
 
 local function destroyBall(id: string)
@@ -210,6 +286,7 @@ local function destroyBall(id: string)
 	end
 	balls[id] = nil
 	ball.Gui:Destroy()
+	ball.Anchor:Destroy()
 	ball.Shell:Destroy()
 	ball.Hamster:Destroy()
 	if currentTarget == id then
@@ -246,7 +323,18 @@ local function addBall(data: { [string]: any })
 	hamster.Parent = container
 	FxController.attach(hamster, species.Rarity)
 
-	local gui, frame, stroke, rarityLabel, nameLabel, infoLabel = createTag(species, shell, id, radius)
+	local anchor = Instance.new("Part")
+	anchor.Name = "LabelAnchor_" .. id
+	anchor.Size = Vector3.one * 0.2
+	anchor.Transparency = 1
+	anchor.Anchored = true
+	anchor.CanCollide = false
+	anchor.CanQuery = false
+	anchor.CanTouch = false
+	anchor.CastShadow = false
+	anchor.CFrame = CFrame.new(data.X, data.Y + radius * 2, data.Z)
+	anchor.Parent = container
+	local gui, frame, stroke, rarityLabel, nameLabel, infoLabel, priceRow, glow = createTag(species, anchor, id)
 	local animator = HamsterAnimator.new(hamster)
 	animator.OnStep = function()
 		local now = os.clock()
@@ -276,6 +364,9 @@ local function addBall(data: { [string]: any })
 		Animator = animator,
 		BaseScale = hamsterScale,
 		Gui = gui,
+		Anchor = anchor,
+		PriceRow = priceRow,
+		Glow = glow,
 		Frame = frame,
 		Stroke = stroke,
 		RarityLabel = rarityLabel,
@@ -437,23 +528,21 @@ local function actionFor(ball: Ball): string?
 	return nil
 end
 
-local function infoText(ball: Ball, coins: number): string
+-- Text under the name once the hamster is claimed (while it is for sale the price row shows instead).
+local function infoText(ball: Ball): string
 	local me = player.UserId
-	if ball.State == S.Travelling or ball.State == S.Spawning then
-		local color = if coins >= ball.Price then "#FFDC6E" else "#FF7878"
-		return string.format('<font color="%s">🪙 %s</font>', color, Format.short(ball.Price))
-	elseif ball.State == S.InTransit then
+	if ball.State == S.InTransit then
 		if ball.PayerUserId == me then
 			return '<font color="#8CFFAA">Yours - rolling home</font>'
 		end
 		return string.format('<font color="#FF8C8C">%s\'s - STEAL IT!</font>', ball.PayerName)
 	elseif ball.State == S.Carried then
 		if ball.PayerUserId == me and ball.HolderUserId ~= me then
-			return string.format('<font color="#FF6060">🚨 STOLEN by %s!</font>', ball.HolderName)
+			return string.format('<font color="#FF6060">STOLEN by %s!</font>', ball.HolderName)
 		end
-		return string.format('<font color="#FFDC6E">🏃 %s</font>', ball.HolderName)
+		return string.format('<font color="#FFDC6E">Carried by %s</font>', ball.HolderName)
 	elseif ball.State == S.Dropped or ball.State == S.Recoverable then
-		return '<font color="#FFA860">💥 DROPPED!</font>'
+		return '<font color="#FFA860">DROPPED - grab it!</font>'
 	end
 	return ""
 end
@@ -523,6 +612,11 @@ local function step(dt: number)
 		end
 		local radius = ball.Radius * ball.Scale
 		local center = Vector3.new(ball.Pos.X, ball.Pos.Y + radius, ball.Pos.Z)
+		-- the tag's anchor: always upright, straight above the ball, never rotated
+		ball.Anchor.CFrame = CFrame.new(center.X, ball.Pos.Y + radius * 2, center.Z)
+		if ball.Glow then
+			ball.Glow.Rotation = (clock * 80) % 360
+		end
 		ball.Shell:PivotTo(CFrame.new(center + Vector3.new(0, if ball.Hop > 0 and ball.Speed > 1 then math.abs(math.sin(clock * 5 + ball.Id:len())) * ball.Hop * ball.Scale else 0, 0)) * ball.Roll)
 
 		-- Divine and above bounce along (visual only: the server position is untouched)
@@ -564,11 +658,15 @@ local function step(dt: number)
 						stroke = Color3.fromRGB(255, 110, 110)
 					end
 				end
-				ball.Stroke.Thickness = if isTarget then 4 else 2
+				ball.Stroke.Thickness = if isTarget then 4 else (if ball.Glow then 3 else 2)
 				ball.Stroke.Color = if isTarget then Color3.new(1, 1, 1) else stroke
 				ball.NameLabel.Text = displayName(ball.Species)
-				ball.InfoLabel.Text = infoText(ball, coins)
-				ball.InfoLabel.Visible = ball.State ~= S.Travelling or DataController.setting("ShowValues") == true
+				local forSale = ball.State == S.Travelling or ball.State == S.Spawning
+				ball.InfoLabel.Text = infoText(ball)
+				ball.InfoLabel.Visible = not forSale
+				ball.PriceRow.Frame.Visible = forSale and DataController.setting("ShowValues") == true
+				ball.PriceRow.Label.Text = Format.short(ball.Price)
+				ball.PriceRow.Label.TextColor3 = if coins >= ball.Price then Color3.fromRGB(255, 220, 110) else Color3.fromRGB(255, 120, 120)
 				ball.Frame.BackgroundTransparency = if isTarget then 0.05 else 0.25
 				-- my own stolen / dropped hamsters stay visible from far away
 				ball.Gui.AlwaysOnTop = ball.PayerUserId == player.UserId and (ball.State == S.Carried or ball.State == S.Dropped or ball.State == S.Recoverable) and ball.HolderUserId ~= player.UserId
