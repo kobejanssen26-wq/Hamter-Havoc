@@ -825,7 +825,7 @@ local function claim(player: Player, e: Entity, data: any, root: BasePart)
 		return false
 	end
 	if data.Coins < e.Price then
-		Notifier.send(player, "Not enough coins! You need " .. Format.coins(e.Price), "error")
+		Notifier.send(player, "Not enough cash! You need " .. Format.coins(e.Price), "error")
 		return false
 	end
 	if not HouseSystem.getHouse(player) then

@@ -1,8 +1,9 @@
 --[[
 	UIKit: the building blocks of the Hamster Plaza interface.
-	Art direction: bright CARTOON look - white windows with thick black outlines, vivid gradient tiles, chunky white text with a black
-	stroke, a coloured title tab on top of each window, a red CLOSE tab, green price buttons, drawn icons (no emoji).
+	Art direction: mature dark graphite (see Theme.luau) - flat graphite windows with a thin bronze edge, a header bar with
+	a small close button, restrained rarity-coloured accents, high-contrast text, drawn icons (no emoji).
 	Windows are designed at a fixed pixel size and scaled to fit any screen (phone to 4K).
+	Function names such as `cartoon` / `vivid` are historical: they still exist so every panel keeps working, but they now draw the dark style.
 ]]
 
 local GuiService = game:GetService("GuiService")
@@ -18,45 +19,46 @@ local HamsterBuilder = require(ReplicatedStorage:WaitForChild("Modules"):WaitFor
 local AudioController = require(script.Parent.Parent.Controllers.AudioController)
 local CursorController = require(script.Parent.Parent.Controllers.CursorController)
 local Icons = require(script.Parent.Icons)
+local Theme = require(script.Parent.Theme)
 
 local UIKit = {}
 
 local player = Players.LocalPlayer
 
+local T = Theme.Colors
 UIKit.Colors = {
-	-- surfaces: white windows, pale cards, everything outlined in black (cartoon look)
-	Cream = Color3.fromRGB(255, 255, 255), -- window background
-	CreamDark = Color3.fromRGB(205, 220, 242), -- inset / inactive
-	Card = Color3.fromRGB(238, 245, 255), -- cards and rows
-	Brown = Color3.fromRGB(70, 200, 70), -- header base (green by default)
-	BrownDark = Color3.fromRGB(24, 18, 34), -- outlines, text on bright colours
-	BrownLight = Color3.fromRGB(120, 132, 168),
+	-- surfaces (names kept from the first UI generation; the values come from Theme)
+	Cream = T.Window, -- window background
+	CreamDark = T.Inset, -- inset / inactive
+	Card = T.Card, -- cards and rows
+	CardHover = T.CardHover,
+	Brown = T.Bronze, -- header / primary accent
+	BrownDark = T.TextDark, -- outlines, text on bright colours
+	BrownLight = T.Line,
 	-- text
-	Ink = Color3.fromRGB(34, 26, 48),
-	Muted = Color3.fromRGB(100, 110, 140),
+	Ink = T.Text,
+	Muted = T.TextMuted,
 	-- borders
-	Line = Color3.fromRGB(24, 18, 34),
-	GoldLine = Color3.fromRGB(24, 18, 34),
-	-- vivid accents
-	Peach = Color3.fromRGB(255, 150, 30),
-	Pink = Color3.fromRGB(255, 60, 190),
-	Mint = Color3.fromRGB(40, 226, 170),
-	Sky = Color3.fromRGB(40, 170, 255),
-	Gold = Color3.fromRGB(255, 214, 30),
-	GoldDark = Color3.fromRGB(214, 140, 0),
-	Green = Color3.fromRGB(60, 214, 60),
-	Red = Color3.fromRGB(240, 40, 70),
-	Purple = Color3.fromRGB(150, 70, 255),
+	Line = T.Line,
+	GoldLine = T.GoldDark,
+	-- accents
+	Peach = T.Bronze,
+	Pink = T.Rose,
+	Mint = T.Teal,
+	Sky = T.Blue,
+	Blue = T.Blue,
+	Teal = T.Teal,
+	Gold = T.Gold,
+	GoldDark = T.GoldDark,
+	Green = T.Green,
+	Red = T.Red,
+	Purple = T.Purple,
+	Cash = T.Cash,
 	White = Color3.new(1, 1, 1),
-	Dim = Color3.fromRGB(14, 10, 24),
+	Dim = T.Scrim,
 }
 
-UIKit.Fonts = {
-	Title = Enum.Font.FredokaOne,
-	Big = Enum.Font.LuckiestGuy, -- panel titles and big buttons
-	Body = Enum.Font.GothamBold,
-	Soft = Enum.Font.GothamMedium,
-}
+UIKit.Fonts = Theme.Fonts
 
 local C = UIKit.Colors
 
@@ -179,14 +181,15 @@ function UIKit.setButtonContent(button: TextButton, iconId: string?, text: strin
 	row.Frame.Name = "Content"
 end
 
--- Chunky cartoon text: bold colour with a thick black outline.
+-- Text legibility: a thin, soft dark outline (no chunky cartoon stroke).
 function UIKit.cartoon(label: TextLabel | TextButton, thickness: number?, color: Color3?)
 	local stroke = label:FindFirstChild("TextOutline") :: UIStroke?
 	if not stroke then
 		stroke = UIKit.new("UIStroke", { Name = "TextOutline", ApplyStrokeMode = Enum.ApplyStrokeMode.Contextual }, label) :: UIStroke
 	end
 	stroke.Color = color or C.BrownDark
-	stroke.Thickness = thickness or 2
+	stroke.Thickness = math.min(thickness or 1, 1.2)
+	stroke.Transparency = 0.55
 	stroke.LineJoinMode = Enum.LineJoinMode.Round
 end
 
@@ -194,39 +197,25 @@ local function mix(a: Color3, b: Color3, t: number): Color3
 	return a:Lerp(b, t)
 end
 
--- Vivid game-tile look: bright diagonal gradient, soft shine stripes, black outline. Call it right after creating the frame
--- (before adding content) so the stripes stay behind the content.
+-- Accent tile: dark graphite card with a thin accent-coloured edge and a faint accent wash on top. Call it right after
+-- creating the frame (before adding content).
 function UIKit.vivid(frame: GuiObject, color: Color3, options: { Outline: number?, Corner: number? }?)
 	local opts = options or {}
-	frame.BackgroundColor3 = color
+	frame.BackgroundColor3 = mix(C.Card, color, 0.14)
 	frame.BackgroundTransparency = 0
 	frame.ClipsDescendants = true
 	UIKit.new("UIGradient", {
 		Color = ColorSequence.new({
-			ColorSequenceKeypoint.new(0, mix(color, Color3.new(1, 1, 1), 0.55)),
-			ColorSequenceKeypoint.new(0.55, color),
-			ColorSequenceKeypoint.new(1, mix(color, Color3.new(0, 0, 0), 0.4)),
+			ColorSequenceKeypoint.new(0, Color3.new(1, 1, 1)),
+			ColorSequenceKeypoint.new(1, Color3.fromRGB(190, 190, 190)),
 		}),
-		Rotation = 70,
+		Rotation = 90,
 	}, frame)
-	for index = 0, 2 do
-		local stripe = UIKit.new("Frame", {
-			Name = "Shine",
-			BorderSizePixel = 0,
-			BackgroundColor3 = Color3.new(1, 1, 1),
-			BackgroundTransparency = 0.86,
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			Position = UDim2.fromScale(0.22 + index * 0.3, 0.5),
-			Size = UDim2.fromScale(0.1 + index * 0.02, 1.8),
-			Rotation = 24,
-			ZIndex = frame.ZIndex,
-		}, frame)
-		stripe.Active = false
-	end
 	if not frame:FindFirstChildOfClass("UICorner") then
-		UIKit.corner(frame, opts.Corner or 10)
+		UIKit.corner(frame, math.min(opts.Corner or 8, 10))
 	end
-	UIKit.stroke(frame, C.BrownDark, opts.Outline or 3)
+	local edge = UIKit.stroke(frame, mix(color, C.Line, 0.35), math.min(opts.Outline or 1.5, 2))
+	edge.Name = "AccentEdge"
 end
 
 function UIKit.frame(parent: Instance?, props: { [string]: any }?): Frame
@@ -290,7 +279,7 @@ export type ButtonProps = {
 	Silent: boolean?,
 }
 
--- Rounded button with hover (grow) and press (squash) animations and sounds.
+-- Flat button with a subtle gradient, hover (brighten) and press (squash) states and sounds.
 function UIKit.button(parent: Instance?, props: ButtonProps): TextButton
 	local color = props.Color or C.Peach
 	local button = UIKit.new("TextButton", {
@@ -299,27 +288,19 @@ function UIKit.button(parent: Instance?, props: ButtonProps): TextButton
 		Text = props.Text or "",
 		RichText = true,
 		Font = props.Font or UIKit.Fonts.Title,
-		TextSize = props.TextSize or 18,
+		TextSize = props.TextSize or 16,
 		TextColor3 = props.TextColor or C.White,
 		BackgroundColor3 = color,
-		Size = props.Size or UDim2.fromOffset(120, 44),
+		Size = props.Size or UDim2.fromOffset(120, 40),
 		Position = props.Position or UDim2.new(),
 		AnchorPoint = props.AnchorPoint or Vector2.zero,
 		LayoutOrder = props.LayoutOrder or 0,
 		BorderSizePixel = 0,
 	}, parent)
-	UIKit.corner(button, props.Corner or 10)
-	local stroke = UIKit.stroke(button, C.BrownDark, 3)
-	UIKit.cartoon(button, 2)
-	-- soft top light: the gradient multiplies the button colour
-	UIKit.new("UIGradient", { Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(150, 150, 150)), Rotation = 90 }, button)
-	-- cartoon depth: a darker band along the bottom edge and a glossy highlight on top
-	button.ClipsDescendants = true
-	local band = UIKit.new("Frame", { Name = "Band", BorderSizePixel = 0, BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.72, AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromScale(0, 1), Size = UDim2.new(1, 0, 0, 7), ZIndex = 0 }, button)
-	band.Active = false
-	local shine = UIKit.new("Frame", { Name = "Shine", BorderSizePixel = 0, BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = 0.62, Position = UDim2.new(0, 6, 0, 4), Size = UDim2.new(0.6, 0, 0, 4), ZIndex = 0 }, button)
-	shine.Active = false
-	UIKit.corner(shine, 2)
+	UIKit.corner(button, props.Corner or Theme.Radius.Button)
+	local stroke = UIKit.stroke(button, mix(color, Color3.new(0, 0, 0), 0.55), 1.5)
+	UIKit.cartoon(button, 1)
+	UIKit.new("UIGradient", { Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(176, 176, 176)), Rotation = 90 }, button)
 	local scale = UIKit.new("UIScale", { Scale = 1 }, button)
 	button:SetAttribute("BaseColor", color)
 
@@ -329,22 +310,26 @@ function UIKit.button(parent: Instance?, props: ButtonProps): TextButton
 			return
 		end
 		hovering = true
-		UIKit.tween(scale, 0.12, { Scale = 1.06 })
+		UIKit.tween(scale, Theme.Motion.Hover, { Scale = 1.03 })
+		UIKit.tween(button, Theme.Motion.Hover, { BackgroundColor3 = mix(button:GetAttribute("BaseColor") or color, Color3.new(1, 1, 1), 0.12) })
 		if not props.Silent then
 			AudioController.play("Hover")
 		end
 	end)
 	button.MouseLeave:Connect(function()
 		hovering = false
-		UIKit.tween(scale, 0.12, { Scale = 1 })
+		UIKit.tween(scale, Theme.Motion.Hover, { Scale = 1 })
+		if not button:GetAttribute("Disabled") then
+			UIKit.tween(button, Theme.Motion.Hover, { BackgroundColor3 = button:GetAttribute("BaseColor") or color })
+		end
 	end)
 	button.MouseButton1Down:Connect(function()
 		if not button:GetAttribute("Disabled") then
-			UIKit.tween(scale, 0.07, { Scale = 0.93 })
+			UIKit.tween(scale, 0.06, { Scale = 0.95 })
 		end
 	end)
 	button.MouseButton1Up:Connect(function()
-		UIKit.tween(scale, 0.1, { Scale = if hovering then 1.06 else 1 }, Enum.EasingStyle.Back)
+		UIKit.tween(scale, 0.1, { Scale = if hovering then 1.03 else 1 })
 	end)
 	button.Activated:Connect(function()
 		if button:GetAttribute("Disabled") then
@@ -365,11 +350,11 @@ end
 function UIKit.setEnabled(button: TextButton, enabled: boolean)
 	button:SetAttribute("Disabled", not enabled)
 	local base = button:GetAttribute("BaseColor") or C.Peach
-	button.BackgroundColor3 = if enabled then base else Color3.fromRGB(150, 156, 172)
-	button.TextTransparency = if enabled then 0 else 0.2
+	button.BackgroundColor3 = if enabled then base else Color3.fromRGB(64, 67, 77)
+	button.TextTransparency = if enabled then 0 else 0.35
 	local edge = button:FindFirstChild("Edge") :: UIStroke?
 	if edge then
-		edge.Color = if enabled then C.BrownDark else Color3.fromRGB(70, 74, 92)
+		edge.Color = if enabled then mix(base, Color3.new(0, 0, 0), 0.55) else Color3.fromRGB(44, 46, 54)
 	end
 end
 
@@ -379,7 +364,7 @@ function UIKit.setButtonColor(button: TextButton, color: Color3)
 		button.BackgroundColor3 = color
 		local edge = button:FindFirstChild("Edge") :: UIStroke?
 		if edge then
-			edge.Color = C.BrownDark
+			edge.Color = mix(color, Color3.new(0, 0, 0), 0.55)
 		end
 	end
 end
@@ -393,14 +378,14 @@ function UIKit.progress(parent: Instance, props: { Size: UDim2?, Position: UDim2
 		Size = props.Size or UDim2.new(1, 0, 0, 16),
 		Position = props.Position or UDim2.new(),
 		AnchorPoint = props.AnchorPoint or Vector2.zero,
-		BackgroundColor3 = props.Back or Color3.fromRGB(150, 160, 190),
+		BackgroundColor3 = props.Back or C.CreamDark,
 		LayoutOrder = props.LayoutOrder or 0,
 	})
 	UIKit.corner(frame, 99)
-	UIKit.stroke(frame, C.BrownDark, 2.5)
+	UIKit.stroke(frame, C.Line, 1.5)
 	local fill = UIKit.frame(frame, { Size = UDim2.fromScale(0, 1), BackgroundColor3 = props.Color or C.Mint })
 	UIKit.corner(fill, 99)
-	UIKit.new("UIGradient", { Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(170, 170, 170)), Rotation = 90 }, fill)
+	UIKit.new("UIGradient", { Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(190, 190, 190)), Rotation = 90 }, fill)
 	local label = UIKit.label(frame, {
 		Size = UDim2.fromScale(1, 1),
 		TextXAlignment = Enum.TextXAlignment.Center,
@@ -409,7 +394,7 @@ function UIKit.progress(parent: Instance, props: { Size: UDim2?, Position: UDim2
 		Font = UIKit.Fonts.Body,
 		ZIndex = 3,
 	})
-	UIKit.cartoon(label, 1.5)
+	UIKit.cartoon(label, 1)
 	local function set(fraction: number, text: string?)
 		UIKit.tween(fill, 0.25, { Size = UDim2.fromScale(math.clamp(fraction, 0, 1), 1) })
 		label.Text = text or ""
@@ -426,16 +411,16 @@ function UIKit.toggle(parent: Instance, props: { Value: boolean, OnChanged: (boo
 		Position = props.Position or UDim2.new(),
 		AnchorPoint = props.AnchorPoint or Vector2.zero,
 		LayoutOrder = props.LayoutOrder or 0,
-		BackgroundColor3 = Color3.fromRGB(150, 160, 190),
+		BackgroundColor3 = C.CreamDark,
 		BorderSizePixel = 0,
 	}, parent)
 	UIKit.corner(track, 99)
-	UIKit.stroke(track, C.BrownDark, 3)
+	UIKit.stroke(track, C.Line, 1.5)
 	local knob = UIKit.frame(track, { Size = UDim2.fromOffset(22, 22), Position = UDim2.fromOffset(4, 4), BackgroundColor3 = C.White })
 	UIKit.corner(knob, 99)
 	local function render(animate: boolean)
 		local target = if value then UDim2.fromOffset(36, 4) else UDim2.fromOffset(4, 4)
-		local color = if value then C.Green else Color3.fromRGB(150, 160, 190)
+		local color = if value then C.Green else C.CreamDark
 		if animate then
 			UIKit.tween(knob, 0.14, { Position = target }, Enum.EasingStyle.Back)
 			UIKit.tween(track, 0.14, { BackgroundColor3 = color })
@@ -466,15 +451,15 @@ function UIKit.slider(parent: Instance, props: { Min: number, Max: number, Value
 		Position = props.Position or UDim2.new(),
 		AnchorPoint = props.AnchorPoint or Vector2.zero,
 		LayoutOrder = props.LayoutOrder or 0,
-		BackgroundColor3 = Color3.fromRGB(150, 160, 190),
+		BackgroundColor3 = C.CreamDark,
 	})
 	UIKit.corner(frame, 99)
-	UIKit.stroke(frame, C.BrownDark, 2.5)
+	UIKit.stroke(frame, C.Line, 1.5)
 	local fill = UIKit.frame(frame, { BackgroundColor3 = C.Gold, Size = UDim2.fromScale(0, 1) })
 	UIKit.corner(fill, 99)
 	local knob = UIKit.frame(frame, { Size = UDim2.fromOffset(24, 24), AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0, 0.5), BackgroundColor3 = C.White, ZIndex = 3 })
 	UIKit.corner(knob, 99)
-	UIKit.stroke(knob, C.BrownDark, 3)
+	UIKit.stroke(knob, C.GoldDark, 2)
 	local hit = UIKit.new("TextButton", { Text = "", BackgroundTransparency = 1, Size = UDim2.new(1, 20, 0, 40), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5) }, frame)
 
 	local value = props.Value
@@ -532,9 +517,9 @@ function UIKit.tabs(parent: Instance, defs: { TabDef }, onSelect: (string) -> ()
 	local function select(id: string, silent: boolean?)
 		for tabId, button in buttons do
 			if tabId == id then
-				UIKit.setButtonColor(button, C.Gold)
+				UIKit.setButtonColor(button, C.Peach)
 			else
-				UIKit.setButtonColor(button, Color3.fromRGB(110, 128, 190))
+				UIKit.setButtonColor(button, C.Card)
 			end
 			button.TextColor3 = C.White
 		end
@@ -547,9 +532,9 @@ function UIKit.tabs(parent: Instance, defs: { TabDef }, onSelect: (string) -> ()
 		local button = UIKit.button(frame, {
 			Text = def.Text,
 			Size = opts.ButtonSize or UDim2.fromOffset(110, 36),
-			Color = Color3.fromRGB(110, 128, 190),
+			Color = C.Card,
 			TextColor = C.White,
-			TextSize = 16,
+			TextSize = 14,
 			LayoutOrder = index,
 			Name = "Tab_" .. def.Id,
 			OnClick = function()
@@ -580,8 +565,8 @@ function UIKit.scroll(parent: Instance, props: { Size: UDim2?, Position: UDim2?,
 		Position = opts.Position or UDim2.new(),
 		CanvasSize = UDim2.new(),
 		AutomaticCanvasSize = Enum.AutomaticSize.Y,
-		ScrollBarThickness = 6,
-		ScrollBarImageColor3 = C.GoldDark,
+		ScrollBarThickness = 5,
+		ScrollBarImageColor3 = C.Line,
 		ScrollingDirection = Enum.ScrollingDirection.Y,
 	}, parent)
 	return scroll
@@ -651,8 +636,8 @@ export type Panel = {
 
 local panels: { [string]: Panel } = {}
 
-local OPEN_SECONDS = 0.22
-local CLOSE_SECONDS = 0.16
+local OPEN_SECONDS = Theme.Motion.Open
+local CLOSE_SECONDS = Theme.Motion.Close
 
 function UIKit.getPanel(name: string): Panel?
 	return panels[name]
@@ -680,9 +665,8 @@ local SUBTITLES = {
 }
 
 function UIKit.panel(options: { Name: string, Title: string, Subtitle: string?, Icon: string?, Design: Vector2?, Accent: Color3? }): Panel
-	local requested = options.Design or Vector2.new(860, 560)
-	local design = Vector2.new(requested.X + 16, requested.Y + 14) -- room for the outline and the title tab
-	local accent = options.Accent or C.Brown
+	local design = options.Design or Vector2.new(860, 560)
+	local accent = options.Accent or C.Peach
 	local playerGui = player:WaitForChild("PlayerGui")
 
 	local gui = UIKit.new("ScreenGui", {
@@ -708,71 +692,61 @@ function UIKit.panel(options: { Name: string, Title: string, Subtitle: string?, 
 	-- outer frame: design size + fit scale; inner parts: shadow + window (open/close animation)
 	local outer = UIKit.frame(gui, {
 		Size = UDim2.fromOffset(design.X, design.Y),
-		Position = UDim2.new(0.5, 0, 0.5, 20),
+		Position = UDim2.new(0.5, 0, 0.5, 0),
 		AnchorPoint = Vector2.new(0.5, 0.5),
 		BackgroundTransparency = 1,
 	})
 	local fit = UIKit.new("UIScale", { Scale = UIKit.fitScale(design) }, outer)
 	local motion = UIKit.frame(outer, { Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1 })
-	local anim = UIKit.new("UIScale", { Scale = 0.9 }, motion)
+	local anim = UIKit.new("UIScale", { Scale = 0.94 }, motion)
 
-	-- window: white, thick black outline, pale inner border (like a sticker)
-	local shadow = UIKit.frame(motion, { Size = UDim2.new(1, 0, 1, 0), Position = UDim2.fromOffset(0, 9), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.6 })
-	UIKit.corner(shadow, 14)
+	local shadow = UIKit.frame(motion, { Size = UDim2.new(1, 8, 1, 8), Position = UDim2.fromOffset(-4, 2), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.55 })
+	UIKit.corner(shadow, Theme.Radius.Window + 2)
 	local window = UIKit.new("CanvasGroup", {
 		Size = UDim2.fromScale(1, 1),
 		BackgroundColor3 = C.Cream,
 		BorderSizePixel = 0,
 		GroupTransparency = 1,
 	}, motion)
-	UIKit.corner(window, 12)
-	local inner = UIKit.frame(window, { Size = UDim2.new(1, -20, 1, -20), Position = UDim2.fromOffset(10, 10), BackgroundTransparency = 1 })
-	UIKit.corner(inner, 8)
-	UIKit.stroke(inner, Color3.fromRGB(214, 206, 214), 3)
+	UIKit.corner(window, Theme.Radius.Window)
+	UIKit.new("UIGradient", { Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(214, 214, 214)), Rotation = 90 }, window)
 	local outline = UIKit.frame(motion, { Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1, ZIndex = 20 })
-	UIKit.corner(outline, 12)
-	UIKit.stroke(outline, C.BrownDark, 4)
+	UIKit.corner(outline, Theme.Radius.Window)
+	UIKit.stroke(outline, C.GoldLine, 1.5, 0.15)
 
-	-- coloured title tab sitting on the top-left edge of the window
-	local tab = UIKit.frame(motion, { Name = "TitleTab", Size = UDim2.fromOffset(300, 74), Position = UDim2.fromOffset(-14, -38), ZIndex = 30 })
-	UIKit.vivid(tab, accent, { Outline = 4, Corner = 6 })
-	tab.ClipsDescendants = true
-	UIKit.frame(tab, { Size = UDim2.new(1, 0, 0, 14), Position = UDim2.new(0, 0, 1, -14), BackgroundColor3 = mix(accent, Color3.new(0, 0, 0), 0.45), ZIndex = 31 })
+	-- header bar: icon, title, subtitle, close button
+	local header = UIKit.frame(window, { Name = "Header", Size = UDim2.new(1, 0, 0, 52), BackgroundColor3 = Theme.Colors.Header, ZIndex = 5 })
+	UIKit.frame(header, { Size = UDim2.new(1, 0, 0, 2), Position = UDim2.new(0, 0, 1, -2), BackgroundColor3 = accent, ZIndex = 6 })
 	local titleOffset = 18
 	if options.Icon then
-		UIKit.icon(tab, options.Icon, { Size = UDim2.fromOffset(48, 48), Position = UDim2.fromOffset(12, 6), ZIndex = 33 })
-		titleOffset = 70
+		UIKit.icon(header, options.Icon, { Size = UDim2.fromOffset(30, 30), Position = UDim2.fromOffset(16, 10), ZIndex = 7 })
+		titleOffset = 56
 	end
-	local title = UIKit.label(tab, {
-		Size = UDim2.new(1, -titleOffset - 10, 0, 44),
-		Position = UDim2.fromOffset(titleOffset, 2),
-		Font = UIKit.Fonts.Big,
-		TextSize = 34,
-		TextColor3 = C.White,
+	local title = UIKit.label(header, {
+		Size = UDim2.new(0.55, -titleOffset, 0, 26),
+		Position = UDim2.fromOffset(titleOffset, 6),
+		Font = UIKit.Fonts.Title,
+		TextSize = 22,
+		TextColor3 = C.Ink,
 		Text = string.upper(options.Title),
 		TextXAlignment = Enum.TextXAlignment.Left,
 		TextTruncate = Enum.TextTruncate.AtEnd,
-		ZIndex = 33,
+		ZIndex = 7,
 	})
-	UIKit.cartoon(title, 3.5)
-	local subtitle = UIKit.label(tab, {
-		Size = UDim2.new(1, -titleOffset - 10, 0, 18),
-		Position = UDim2.fromOffset(titleOffset, 44),
-		Font = UIKit.Fonts.Body,
+	UIKit.label(header, {
+		Size = UDim2.new(0.7, -titleOffset, 0, 16),
+		Position = UDim2.fromOffset(titleOffset, 30),
+		Font = UIKit.Fonts.Soft,
 		TextSize = 12,
-		TextColor3 = C.White,
+		TextColor3 = C.Muted,
 		Text = options.Subtitle or SUBTITLES[options.Name] or "",
 		TextTruncate = Enum.TextTruncate.AtEnd,
-		ZIndex = 33,
+		ZIndex = 7,
 	})
-	UIKit.cartoon(subtitle, 1.5)
-	-- the tab is as wide as its title needs
-	local wanted = titleOffset + math.clamp(#options.Title * 22, 90, 420) + 34
-	tab.Size = UDim2.fromOffset(math.max(240, wanted), 74)
 
 	local body = UIKit.frame(window, {
 		Size = UDim2.new(1, -44, 1, -76),
-		Position = UDim2.fromOffset(22, 56),
+		Position = UDim2.fromOffset(22, 64),
 		BackgroundTransparency = 1,
 	})
 
@@ -803,14 +777,14 @@ function UIKit.panel(options: { Name: string, Title: string, Subtitle: string?, 
 		fit.Scale = UIKit.fitScale(design)
 		gui.Enabled = true
 		-- slide up + fade + grow
-		anim.Scale = 0.9
-		motion.Position = UDim2.fromOffset(0, 22)
+		anim.Scale = 0.94
+		motion.Position = UDim2.fromOffset(0, 14)
 		window.GroupTransparency = 1
 		dim.BackgroundTransparency = 1
-		UIKit.tween(anim, OPEN_SECONDS, { Scale = 1 }, Enum.EasingStyle.Back)
+		UIKit.tween(anim, OPEN_SECONDS, { Scale = 1 }, Enum.EasingStyle.Quad)
 		UIKit.tween(motion, OPEN_SECONDS, { Position = UDim2.fromOffset(0, 0) }, Enum.EasingStyle.Quad)
 		UIKit.tween(window, OPEN_SECONDS * 0.8, { GroupTransparency = 0 })
-		UIKit.tween(dim, OPEN_SECONDS, { BackgroundTransparency = 0.55 })
+		UIKit.tween(dim, OPEN_SECONDS, { BackgroundTransparency = 0.45 })
 		AudioController.play("Open")
 		for _, callback in self.OnOpen do
 			task.spawn(callback)
@@ -845,23 +819,21 @@ function UIKit.panel(options: { Name: string, Title: string, Subtitle: string?, 
 		end
 	end
 
-	local closeButton = UIKit.button(motion, {
-		Text = "CLOSE",
-		Size = UDim2.fromOffset(150, 56),
-		Position = UDim2.new(1, 14, 0, -30),
+	local closeButton = UIKit.button(header, {
+		Text = "",
+		Size = UDim2.fromOffset(34, 34),
+		Position = UDim2.new(1, -12, 0, 9),
 		AnchorPoint = Vector2.new(1, 0),
-		Color = C.Red,
-		Font = UIKit.Fonts.Big,
-		TextSize = 28,
+		Color = C.Card,
 		Name = "Close",
 		Silent = true,
-		Corner = 6,
+		Corner = 8,
 		OnClick = function()
 			panel:Close()
 		end,
 	})
-	closeButton.ZIndex = 30
-	UIKit.cartoon(closeButton, 3)
+	closeButton.ZIndex = 8
+	UIKit.icon(closeButton, "x", { Size = UDim2.fromOffset(16, 16), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5), ZIndex = 9 })
 	dim.Activated:Connect(function()
 		panel:Close()
 	end)
@@ -881,58 +853,101 @@ end
 -- misc widgets
 ---------------------------------------------------------------------------
 
--- A rounded stat pill with a drawn icon: coin / gem / flame ...
-function UIKit.pill(parent: Instance, props: { Icon: string, Color: Color3?, Size: UDim2?, LayoutOrder: number?, OnPlus: (() -> ())? }): { Frame: Frame, Value: TextLabel }
+-- A compact HUD indicator: dark capsule, drawn icon, value text. `Color` tints the value and the thin edge.
+function UIKit.pill(parent: Instance, props: { Icon: string, Color: Color3?, Size: UDim2?, LayoutOrder: number?, OnPlus: (() -> ())?, Label: string? }): { Frame: Frame, Value: TextLabel }
 	local accent = props.Color or C.Gold
 	local frame = UIKit.frame(parent, {
-		Size = props.Size or UDim2.fromOffset(170, 40),
+		Size = props.Size or UDim2.fromOffset(130, 34),
 		LayoutOrder = props.LayoutOrder or 0,
+		BackgroundColor3 = C.Cream,
+		BackgroundTransparency = 0.08,
 	})
-	UIKit.vivid(frame, accent, { Outline = 3.5, Corner = 12 })
-	UIKit.icon(frame, props.Icon, { Size = UDim2.fromOffset(38, 38), Position = UDim2.fromOffset(8, 7), ZIndex = 3 })
+	UIKit.corner(frame, 99)
+	UIKit.stroke(frame, mix(accent, C.Line, 0.55), 1.5)
+	UIKit.icon(frame, props.Icon, { Size = UDim2.fromOffset(24, 24), Position = UDim2.new(0, 8, 0.5, 0), AnchorPoint = Vector2.new(0, 0.5), ZIndex = 3 })
 	local value = UIKit.label(frame, {
-		Size = UDim2.new(1, if props.OnPlus then -100 else -58, 1, 0),
-		Position = UDim2.fromOffset(52, 0),
+		Size = UDim2.new(1, if props.OnPlus then -76 else -40, 1, 0),
+		Position = UDim2.fromOffset(38, 0),
 		Font = UIKit.Fonts.Title,
-		TextSize = 30,
-		TextColor3 = C.White,
+		TextSize = 18,
+		TextColor3 = accent,
 		TextXAlignment = Enum.TextXAlignment.Left,
+		TextTruncate = Enum.TextTruncate.AtEnd,
 		ZIndex = 3,
 	})
-	UIKit.cartoon(value, 3)
 	if props.OnPlus then
 		local plus = UIKit.button(frame, {
 			Text = "",
-			Size = UDim2.fromOffset(36, 36),
-			Position = UDim2.new(1, -8, 0.5, 0),
+			Size = UDim2.fromOffset(24, 24),
+			Position = UDim2.new(1, -6, 0.5, 0),
 			AnchorPoint = Vector2.new(1, 0.5),
 			Color = C.Green,
-			Corner = 8,
+			Corner = 99,
 			Name = "Plus",
 			OnClick = props.OnPlus,
 		})
 		plus.ZIndex = 4
 		for _, rotation in { 0, 90 } do
-			local bar = UIKit.frame(plus, { Size = UDim2.fromOffset(16, 5), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5), Rotation = rotation, BackgroundColor3 = C.White, ZIndex = 5 })
+			local bar = UIKit.frame(plus, { Size = UDim2.fromOffset(12, 3), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5), Rotation = rotation, BackgroundColor3 = C.White, ZIndex = 5 })
 			UIKit.corner(bar, 2)
 		end
 	end
 	return { Frame = frame, Value = value }
 end
 
+-- Hover tooltip for any GuiObject (PC). `side` is where the tip appears relative to the target: "Left", "Above" or "Below".
+local tipGui: ScreenGui? = nil
+local tipFrame: Frame? = nil
+local tipLabel: TextLabel? = nil
+function UIKit.tooltip(target: GuiObject, text: string | (() -> string), side: string?)
+	if not tipGui then
+		local gui = UIKit.new("ScreenGui", { Name = "Tooltips", DisplayOrder = 60, ResetOnSpawn = false, IgnoreGuiInset = true, ZIndexBehavior = Enum.ZIndexBehavior.Sibling }, player:WaitForChild("PlayerGui"))
+		local frame = UIKit.frame(gui, { Name = "Tip", AutomaticSize = Enum.AutomaticSize.XY, Size = UDim2.fromOffset(0, 28), Visible = false, BackgroundColor3 = C.CreamDark })
+		UIKit.corner(frame, 6)
+		UIKit.stroke(frame, C.GoldLine, 1)
+		UIKit.padding(frame, 10, 0)
+		local label = UIKit.label(frame, { AutomaticSize = Enum.AutomaticSize.X, Size = UDim2.fromOffset(0, 28), TextSize = 13, TextColor3 = C.Ink, Font = UIKit.Fonts.Body, TextXAlignment = Enum.TextXAlignment.Center })
+		tipGui, tipFrame, tipLabel = gui, frame, label
+	end
+	target.MouseEnter:Connect(function()
+		if UserInputService.TouchEnabled and not UserInputService.MouseEnabled then
+			return
+		end
+		local frame, label = tipFrame :: Frame, tipLabel :: TextLabel
+		label.Text = if type(text) == "function" then text() else text
+		local position, size = target.AbsolutePosition, target.AbsoluteSize
+		if side == "Left" then
+			frame.AnchorPoint = Vector2.new(1, 0.5)
+			frame.Position = UDim2.fromOffset(position.X - 8, position.Y + size.Y / 2)
+		elseif side == "Below" then
+			frame.AnchorPoint = Vector2.new(0.5, 0)
+			frame.Position = UDim2.fromOffset(position.X + size.X / 2, position.Y + size.Y + 8)
+		else
+			frame.AnchorPoint = Vector2.new(0.5, 1)
+			frame.Position = UDim2.fromOffset(position.X + size.X / 2, position.Y - 8)
+		end
+		frame.Visible = true
+	end)
+	target.MouseLeave:Connect(function()
+		if tipFrame then
+			tipFrame.Visible = false
+		end
+	end)
+end
+
 -- Small red dot used to show "something to claim".
 function UIKit.notifyDot(parent: GuiObject): Frame
 	local dot = UIKit.frame(parent, {
 		Name = "NotifyDot",
-		Size = UDim2.fromOffset(18, 18),
-		Position = UDim2.new(1, -2, 0, 2),
+		Size = UDim2.fromOffset(14, 14),
+		Position = UDim2.new(1, -1, 0, 1),
 		AnchorPoint = Vector2.new(1, 0),
 		BackgroundColor3 = C.Red,
 		Visible = false,
 		ZIndex = 10,
 	})
 	UIKit.corner(dot, 99)
-	UIKit.stroke(dot, C.White, 2)
+	UIKit.stroke(dot, C.Cream, 2)
 	return dot
 end
 
@@ -975,9 +990,9 @@ function UIKit.chip(parent: Instance, text: string, color: Color3, size: UDim2?)
 		Font = UIKit.Fonts.Body,
 		TextSize = 12,
 	})
+	label.BackgroundColor3 = mix(C.Card, color, 0.55)
 	UIKit.corner(label, 99)
-	UIKit.stroke(label, C.BrownDark, 2)
-	UIKit.cartoon(label, 1.5)
+	UIKit.stroke(label, mix(color, C.Line, 0.3), 1)
 	return label
 end
 

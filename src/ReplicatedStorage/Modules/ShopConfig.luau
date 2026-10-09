@@ -22,7 +22,7 @@ ShopConfig.Categories = {
 ShopConfig.SectionToCategory = { Pets = "Hamsters", Boosts = "Boosts", Currency = "Diamonds", Gamepasses = "Diamonds", Cosmetics = "Cosmetics" }
 
 ShopConfig.Boosts = {
-	Coins2x = { Name = "2x Coins", Icon = "coin", Desc = "Doubles all coins earned." },
+	Coins2x = { Name = "2x Cash", Icon = "coin", Desc = "Doubles all cash earned." },
 	Luck2x = { Name = "2x Luck", Icon = "clover", Desc = "Doubles your luck (still capped)." },
 	Speed2x = { Name = "Speed Boost", Icon = "bolt", Desc = "+6 walk speed." },
 	AutoCollect = { Name = "Auto Collect", Icon = "bot", Desc = "Automatically grabs hamsters you can afford within range." },
@@ -36,7 +36,7 @@ ShopConfig.Items = {
 	{ Id = "capsule_royal", Section = "Pets", Name = "Royal Capsule", Icon = "crown", Desc = "Epic or better (needs 1+ rebirth for Mythic).", Gems = 2500, Kind = "Capsule", Pool = { Epic = 55, Ultra = 28, Legendary = 14, Mythic = 3 } },
 
 	-- Boosts
-	{ Id = "boost_coins", Section = "Boosts", Name = "2x Cash (15 min)", Icon = "coin", Desc = "Doubles all coins earned.", Gems = 120, Kind = "Item", ItemId = "item_coins" },
+	{ Id = "boost_coins", Section = "Boosts", Name = "2x Cash (15 min)", Icon = "coin", Desc = "Doubles all cash earned.", Gems = 120, Kind = "Item", ItemId = "item_coins" },
 	{ Id = "boost_luck", Section = "Boosts", Name = "2x Luck (10 min)", Icon = "clover", Desc = "Rarer hamsters appear more often.", Gems = 150, Kind = "Item", ItemId = "item_luck" },
 	{ Id = "boost_speed", Section = "Boosts", Name = "Speed Tonic (10 min)", Icon = "bolt", Desc = "+6 walk speed.", Gems = 60, Kind = "Item", ItemId = "item_speed" },
 	{ Id = "boost_auto", Section = "Boosts", Name = "Auto Collect (10 min)", Icon = "bot", Desc = "Grabs hamsters in range for you.", Gems = 200, Kind = "Item", ItemId = "item_auto" },
@@ -46,12 +46,12 @@ ShopConfig.Items = {
 
 	-- Currency
 	{ Id = "coin_pouch", Section = "Boosts", Name = "Cash Pouch", Icon = "pouch", Desc = "10 minutes of your current income.", Gems = 60, Kind = "Item", ItemId = "item_pouch" },
-	{ Id = "gems_small", Section = "Currency", Name = "Handful of Gems", Icon = "gem", Desc = "100 gems.", Robux = 49, Kind = "Product", ProductId = 0, GemAmount = 100 },
-	{ Id = "gems_medium", Section = "Currency", Name = "Pouch of Gems", Icon = "gem", Desc = "550 gems.", Robux = 249, Kind = "Product", ProductId = 0, GemAmount = 550 },
-	{ Id = "gems_large", Section = "Currency", Name = "Chest of Gems", Icon = "gem", Desc = "1,200 gems.", Robux = 499, Kind = "Product", ProductId = 0, GemAmount = 1200 },
+	{ Id = "gems_small", Section = "Currency", Name = "Handful of Diamonds", Icon = "gem", Desc = "100 diamonds.", Robux = 49, Kind = "Product", ProductId = 0, GemAmount = 100 },
+	{ Id = "gems_medium", Section = "Currency", Name = "Pouch of Diamonds", Icon = "gem", Desc = "550 diamonds.", Robux = 249, Kind = "Product", ProductId = 0, GemAmount = 550 },
+	{ Id = "gems_large", Section = "Currency", Name = "Chest of Diamonds", Icon = "gem", Desc = "1,200 diamonds.", Robux = 499, Kind = "Product", ProductId = 0, GemAmount = 1200 },
 
 	-- Gamepasses
-	{ Id = "pass_coins", Section = "Gamepasses", Name = "2x Coins", Icon = "coin", Desc = "Permanent x2 coins.", Robux = 299, Kind = "Pass", PassKey = "DoubleCoins", PassId = 0 },
+	{ Id = "pass_coins", Section = "Gamepasses", Name = "2x Cash", Icon = "coin", Desc = "Permanent x2 cash.", Robux = 299, Kind = "Pass", PassKey = "DoubleCoins", PassId = 0 },
 	{ Id = "pass_auto", Section = "Gamepasses", Name = "Auto Collect", Icon = "bot", Desc = "Permanent auto collect.", Robux = 399, Kind = "Pass", PassKey = "AutoCollect", PassId = 0 },
 	{ Id = "pass_storage", Section = "Gamepasses", Name = "Extra Storage", Icon = "home", Desc = "+3 house display slots.", Robux = 199, Kind = "Pass", PassKey = "ExtraStorage", PassId = 0 },
 	{ Id = "pass_luck", Section = "Gamepasses", Name = "Lucky Charm", Icon = "clover", Desc = "Permanent x1.25 luck.", Robux = 249, Kind = "Pass", PassKey = "LuckyCharm", PassId = 0 },

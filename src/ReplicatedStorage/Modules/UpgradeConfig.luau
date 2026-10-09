@@ -24,7 +24,7 @@ UpgradeConfig.Order = {
 UpgradeConfig.Definitions = {
 	HamsterTraining = {
 		Id = "HamsterTraining", Name = "Hamster Training", Icon = "bolt", Currency = "Coins",
-		Description = "Your hamsters run faster in their wheels: more coins every second.",
+		Description = "Your hamsters run faster in their wheels: more cash every second.",
 		MaxLevel = 20, ResetOnRebirth = true, TierLevels = 5,
 		BaseCost = 500, Growth = 1.9, PerLevel = 0.08, Format = "+%d%% income",
 		Percent = true,
@@ -39,7 +39,7 @@ UpgradeConfig.Definitions = {
 		Id = "CoinMultiplier", Name = "Coin Multiplier", Icon = "coin", Currency = "Coins",
 		Description = "Every coin you earn is worth more.",
 		MaxLevel = 15, ResetOnRebirth = true, TierLevels = 5,
-		BaseCost = 2000, Growth = 2.5, PerLevel = 0.15, Format = "+%d%% coins",
+		BaseCost = 2000, Growth = 2.5, PerLevel = 0.15, Format = "+%d%% cash",
 		Percent = true,
 	},
 	SpawnLuck = {
@@ -57,7 +57,7 @@ UpgradeConfig.Definitions = {
 	},
 	ExtraStorage = {
 		Id = "ExtraStorage", Name = "Extra Storage", Icon = "home", Currency = "Coins",
-		Description = "More hamster slots (each one earns coins). Limited by the wheel stations of your floors.",
+		Description = "More hamster slots (each one earns cash). Limited by the wheel stations of your floors.",
 		MaxLevel = 9, ResetOnRebirth = true,
 		BaseCost = 1000, Growth = 4.5, PerLevel = 1, Format = "+%d slot",
 	},
@@ -69,10 +69,10 @@ UpgradeConfig.Definitions = {
 		Percent = true,
 	},
 	GemBoost = {
-		Id = "GemBoost", Name = "Gem Boost", Icon = "gem", Currency = "Tokens",
-		Description = "More gems from quests, index rewards and rebirths. Permanent.",
+		Id = "GemBoost", Name = "Diamond Boost", Icon = "gem", Currency = "Tokens",
+		Description = "More diamonds from quests, index rewards and rebirths. Permanent.",
 		MaxLevel = 10, ResetOnRebirth = false,
-		BaseCost = 1, Growth = 1, Linear = true, PerLevel = 0.10, Format = "+%d%% gems",
+		BaseCost = 1, Growth = 1, Linear = true, PerLevel = 0.10, Format = "+%d%% diamonds",
 		Percent = true,
 	},
 }

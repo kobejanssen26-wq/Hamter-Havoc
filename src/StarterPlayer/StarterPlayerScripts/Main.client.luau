@@ -44,6 +44,9 @@ local screens = {
 	"DailyRewardUI",
 	"HamsterHUD",
 	"AnnouncementUI",
+	"HotbarUI",
+	"BannerUI",
+	"TutorialUI",
 }
 for _, name in screens do
 	local ok, err = pcall(function()

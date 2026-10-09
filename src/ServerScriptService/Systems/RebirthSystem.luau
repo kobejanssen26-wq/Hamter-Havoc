@@ -108,7 +108,7 @@ function RebirthSystem.perform(player: Player): (boolean, string)
 	Events.Rebirthed:Fire(player, nextRebirth)
 	AnnounceSystem.rebirth(player, nextRebirth)
 	Remotes.event("Fx"):FireClient(player, "Rebirth", nextRebirth)
-	Notifier.send(player, string.format("REBIRTH %d! +%s gems, +%d tokens, +1 hamster slot", nextRebirth, Format.short(gems), tokens), "reward")
+	Notifier.send(player, string.format("REBIRTH %d! +%s diamonds, +%d tokens, +1 hamster slot", nextRebirth, Format.short(gems), tokens), "reward")
 	local floorsAfter = FloorConfig.count(nextRebirth)
 	if floorsAfter > floorsBefore then
 		local floor = FloorConfig.Floors[floorsAfter]

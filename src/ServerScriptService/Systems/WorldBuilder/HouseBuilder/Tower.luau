@@ -301,6 +301,17 @@ local function furnishHall(house: any, interior: Model, rng: Random)
 	Build.deco(interior, "ChestLock", Vector3.new(0.5, 0.7, 0.2), L(house, -12.5, y0 + 1.7, 29.2), Palette.Gold, METAL)
 	house.Prompts.Chest = makePrompt(chest, "Hamster Chest", "Open", "Inventory", nil)
 
+	-- upgrade terminal (opens Upgrades) and collection archive (opens the Hamster Index): both live in your own plot
+	local terminal = Build.part(interior, "UpgradeTerminal", Vector3.new(2.8, 3, 1.6), L(house, -7.8, y0 + 1.5, 30.3), Color3.fromRGB(58, 62, 76), PLASTIC)
+	Build.deco(interior, "TerminalScreen", Vector3.new(2.2, 1.4, 0.15), L(house, -7.8, y0 + 2.2, 29.45), Color3.fromRGB(226, 184, 84), NEON)
+	Build.deco(interior, "TerminalKeys", Vector3.new(2.2, 0.2, 0.7), L(house, -7.8, y0 + 3.05, 29.9), Color3.fromRGB(110, 118, 140), PLASTIC)
+	house.Prompts.Terminal = makePrompt(terminal, "Upgrade Terminal", "Open upgrades", "Upgrades", nil)
+	local archive = Build.part(interior, "CollectionArchive", Vector3.new(3, 1.4, 2.2), L(house, 6.6, y0 + 0.7, 30.3), Palette.WoodDark, WOOD)
+	Build.part(interior, "ArchiveGlass", Vector3.new(2.7, 2.2, 1.9), L(house, 6.6, y0 + 2.5, 30.3), Color3.fromRGB(190, 220, 240), Enum.Material.Glass, { Transparency = 0.55, CanCollide = false })
+	Build.blob(interior, "ArchiveHamster", Vector3.new(1.1, 1, 1.2), L(house, 6.6, y0 + 2.1, 30.3), Palette.Gold, METAL, { CanCollide = false })
+	Build.deco(interior, "ArchiveGlow", Vector3.new(2.7, 0.15, 1.9), L(house, 6.6, y0 + 1.45, 30.3), Color3.fromRGB(226, 184, 84), NEON)
+	house.Prompts.Archive = makePrompt(archive, "Hamster Archive", "Open collection", "Index", nil)
+
 	-- lobby seating and plants
 	Props.sofa(interior, L(house, 13, y0, 30.8) * CFrame.Angles(0, math.pi, 0), Palette.RoofColors[(house.Index % #Palette.RoofColors) + 1], 7)
 	Props.rug(interior, L(house, 13, y0, 33), 9, Palette.Pink, Palette.Cream)

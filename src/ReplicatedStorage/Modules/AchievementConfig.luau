@@ -12,7 +12,7 @@ AchievementConfig.List = {
 	{ Id = "collector", Title = "Collector", Desc = "Collect 50 different hamsters", Icon = "book", Stat = "Unique", Target = 50, Reward = { Gems = 300 } },
 	{ Id = "rare_hunter", Title = "Rare Hunter", Desc = "Find 25 Rare hamsters", Icon = "gem", Stat = "Found:Rare", Target = 25, Reward = { Gems = 200 } },
 	{ Id = "legendary_hunter", Title = "Legendary Hunter", Desc = "Find 5 Legendary hamsters", Icon = "crown", Stat = "Found:Legendary", Target = 5, Reward = { Gems = 500 } },
-	{ Id = "millionaire", Title = "Millionaire", Desc = "Earn 1,000,000 coins", Icon = "pouch", Stat = "CoinsEarned", Target = 1000000, Reward = { Gems = 300 } },
+	{ Id = "millionaire", Title = "Millionaire", Desc = "Earn 1,000,000 cash", Icon = "pouch", Stat = "CoinsEarned", Target = 1000000, Reward = { Gems = 300 } },
 	{ Id = "rebirth_master", Title = "Rebirth Master", Desc = "Reach 10 rebirths", Icon = "flame", Stat = "Rebirths", Target = 10, Reward = { Gems = 1000, Tokens = 5 } },
 	{ Id = "mythic_master", Title = "Mythic Master", Desc = "Find 3 Mythic hamsters", Icon = "flame", Stat = "Found:Mythic", Target = 3, Reward = { Gems = 800 } },
 	{ Id = "secret_finder", Title = "Secret Finder", Desc = "Find a Secret hamster", Icon = "sparkle", Stat = "Found:Secret", Target = 1, Reward = { Gems = 1500, Tokens = 3 } },

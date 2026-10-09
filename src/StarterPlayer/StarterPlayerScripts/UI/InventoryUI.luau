@@ -57,7 +57,7 @@ function InventoryUI.start()
 		OnClick = function()
 			local result = DataController.request("SellDuplicates", {})
 			if result.ok then
-				notify(string.format("%s for %s coins", result.msg, Format.short(result.extra or 0)), "success")
+				notify(string.format("%s for %s cash", result.msg, Format.short(result.extra or 0)), "success")
 			else
 				notify(result.msg, "error")
 			end
@@ -228,7 +228,7 @@ function InventoryUI.start()
 					else
 						local result = DataController.request("Sell", { Id = species.Id, Count = 1 })
 						if result.ok then
-							notify(string.format("Sold %s for %s coins", species.Name, Format.short(result.extra or 0)), "success")
+							notify(string.format("Sold %s for %s cash", species.Name, Format.short(result.extra or 0)), "success")
 						else
 							notify(result.msg, "error")
 						end

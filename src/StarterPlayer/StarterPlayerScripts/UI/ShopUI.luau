@@ -1,9 +1,12 @@
 --[[
-	ShopUI: Pets (capsules), Boosts, Currency, Gamepasses, Cosmetics.
-	Gem items are bought instantly; Robux items open Roblox's own purchase prompt.
-	Items whose pass/product id is still 0 show "Coming soon" instead of a broken button.
+	ShopUI: the large central shop (opened at the shop stall in the plaza, or from the small HUD shortcut).
+	Everything shown comes from ShopConfig: categories only appear when they hold items that can really be bought,
+	and every item names its currency (Cash / Diamonds / Robux) and price. The client only sends the item id;
+	the server validates, charges and grants atomically (ShopSystem.buy).
+	States: Available, Not enough <currency>, Locked (rebirth), Owned, Equipped, Limited (timer).
 ]]
 
+local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Modules = ReplicatedStorage:WaitForChild("Modules")
@@ -17,48 +20,197 @@ local UIKit = require(script.Parent.UIKit)
 local ShopUI = {}
 
 local C = UIKit.Colors
+local player = Players.LocalPlayer
 
-local TILE_COLORS = { Color3.fromRGB(255, 60, 190), Color3.fromRGB(40, 150, 255), Color3.fromRGB(60, 210, 90), Color3.fromRGB(255, 150, 20), Color3.fromRGB(150, 70, 255), Color3.fromRGB(0, 200, 210) }
-
-local SECTION_COLORS = {
-	Pets = C.Pink,
-	Boosts = C.Mint,
-	Currency = C.Sky,
-	Gamepasses = C.Gold,
-	Cosmetics = C.Purple,
+local CURRENCY = {
+	Coins = { Icon = "coin", Name = "Cash", Color = C.Cash },
+	Gems = { Icon = "gem", Name = "Diamonds", Color = C.Purple },
+	Robux = { Icon = "gift", Name = "Robux", Color = C.Gold },
 }
 
+local function balanceOf(currency: string): number
+	if currency == "Coins" then
+		return DataController.coins()
+	elseif currency == "Gems" then
+		return DataController.gems()
+	end
+	return math.huge
+end
+
 function ShopUI.start()
-	local panel = UIKit.panel({ Name = "Shop", Title = "Shop", Icon = "bag", Design = Vector2.new(980, 660), Accent = C.Pink })
+	local panel = UIKit.panel({ Name = "Shop", Title = "Shop", Icon = "bag", Design = Vector2.new(1000, 640), Accent = C.Gold, Subtitle = "Boosts, hamsters and cosmetics" })
 	local body = panel.Body
 
-	local gemsRow = UIKit.iconText(body, {
-		Icon = "gem",
-		Text = "0",
-		Size = UDim2.fromOffset(200, 40),
-		Position = UDim2.new(1, 0, 0, 0),
-		AnchorPoint = Vector2.new(1, 0),
-		TextSize = 24,
-		TextColor = Color3.fromRGB(70, 140, 220),
-		Align = Enum.HorizontalAlignment.Right,
-	})
-	local gemsLabel = gemsRow.Label
+	-- balances (top right of the body)
+	local balances = UIKit.frame(body, { Size = UDim2.fromOffset(420, 34), Position = UDim2.new(1, 0, 0, 0), AnchorPoint = Vector2.new(1, 0), BackgroundTransparency = 1 })
+	UIKit.list(balances, Enum.FillDirection.Horizontal, 8, Enum.HorizontalAlignment.Right, Enum.VerticalAlignment.Center)
+	local cashPill = UIKit.pill(balances, { Icon = "coin", Color = C.Cash, Size = UDim2.fromOffset(190, 32), LayoutOrder = 1 })
+	local gemPill = UIKit.pill(balances, { Icon = "gem", Color = C.Purple, Size = UDim2.fromOffset(150, 32), LayoutOrder = 2 })
 
-	local defs = {}
-	for _, section in ShopConfig.Sections do
-		table.insert(defs, { Id = section, Text = section, Color = SECTION_COLORS[section] })
-	end
-	local selected = "Pets"
+	-- category list (left)
+	local categoryColumn = UIKit.frame(body, { Name = "Categories", Size = UDim2.new(0, 190, 1, -48), Position = UDim2.fromOffset(0, 46), BackgroundColor3 = C.CreamDark })
+	UIKit.corner(categoryColumn, 8)
+	UIKit.padding(categoryColumn, 8)
+	UIKit.list(categoryColumn, Enum.FillDirection.Vertical, 6)
+
+	local grid = UIKit.scroll(body, { Size = UDim2.new(1, -204, 1, -48), Position = UDim2.fromOffset(204, 46) })
+
+	local selected = "Boosts"
+	local inFlight: { [string]: boolean } = {}
 	local render
-	local tabs = UIKit.tabs(body, defs, function(id)
-		selected = id
-		render()
-	end, { Size = UDim2.new(1, -210, 0, 40), ButtonSize = UDim2.fromOffset(120, 38) })
-
-	local grid = UIKit.scroll(body, { Size = UDim2.new(1, 0, 1, -54), Position = UDim2.fromOffset(0, 52) })
 
 	local function toast(text: string, kind: string)
 		require(script.Parent.MainUI).toast(text, kind)
+	end
+
+	local function buy(item: any, card: GuiObject)
+		if inFlight[item.Id] then
+			return
+		end
+		inFlight[item.Id] = true
+		local result = DataController.request("ShopBuy", { Id = item.Id })
+		task.delay(0.5, function()
+			inFlight[item.Id] = nil
+		end)
+		if not result.ok then
+			toast(result.msg, "error")
+			AudioController.play("Error")
+			-- small shake: the purchase did not happen
+			local origin = card.Position
+			for _, offset in { 6, -6, 4, 0 } do
+				UIKit.tween(card, 0.04, { Position = origin + UDim2.fromOffset(offset, 0) })
+				task.wait(0.04)
+			end
+			return
+		end
+		AudioController.play("Reward")
+		toast(result.msg, "success")
+		if item.Currency ~= "Robux" and not (result.extra and result.extra.Equipped) then
+			UIKit.floatText(body, string.format("-%s %s", Format.short(item.Price), string.lower(CURRENCY[item.Currency].Name)), CURRENCY[item.Currency].Color, UDim2.fromScale(0.6, 0.5))
+		end
+		-- purchase animation: the card pops
+		local pop = UIKit.new("UIScale", { Scale = 1 }, card)
+		UIKit.tween(pop, 0.1, { Scale = 1.06 })
+		task.delay(0.1, function()
+			UIKit.tween(pop, 0.2, { Scale = 1 }, Enum.EasingStyle.Back)
+			task.delay(0.25, function()
+				pop:Destroy()
+			end)
+		end)
+		if result.extra and result.extra.SpeciesId then
+			require(script.Parent.AnnouncementUI).reveal(result.extra.SpeciesId, result.extra.IsNew == true)
+		end
+	end
+
+	-- state of one item for this player: text on the button, colour, and whether it can be pressed
+	local function stateOf(item: any, data: any)
+		local currency = CURRENCY[item.Currency] or CURRENCY.Gems
+		if item.Kind == "Pass" and data.Passes and data.Passes[item.PassKey] then
+			return "Owned", false, C.Card, nil
+		end
+		if item.Kind == "Roof" and data.Cosmetics then
+			if data.Cosmetics.Roof == item.RoofKey then
+				return "Equipped", false, C.Card, nil
+			elseif data.Cosmetics.Owned[item.RoofKey] then
+				return "Equip", true, C.Blue, nil
+			end
+		end
+		if item.MinRebirth and (data.Rebirths or 0) < item.MinRebirth then
+			return string.format("Locked - rebirth %d", item.MinRebirth), false, C.Card, "lock"
+		end
+		if item.Currency == "Robux" then
+			return "R$ " .. Format.short(item.Price), true, C.Gold, nil
+		end
+		if balanceOf(item.Currency) < item.Price then
+			return Format.short(item.Price), false, Color3.fromRGB(110, 62, 62), currency.Icon
+		end
+		return Format.short(item.Price), true, C.Green, currency.Icon
+	end
+
+	local function buildCard(item: any, order: number, data: any)
+		local card = UIKit.frame(grid, { LayoutOrder = order })
+		UIKit.vivid(card, (CURRENCY[item.Currency] or CURRENCY.Gems).Color, { Corner = 8, Outline = 1.5 })
+		UIKit.icon(card, item.Icon, { Size = UDim2.fromOffset(60, 60), Position = UDim2.new(0.5, 0, 0, 14), AnchorPoint = Vector2.new(0.5, 0), ZIndex = 3 })
+		UIKit.label(card, {
+			Size = UDim2.new(1, -16, 0, 22),
+			Position = UDim2.fromOffset(8, 80),
+			Text = item.Name,
+			Font = UIKit.Fonts.Title,
+			TextColor3 = C.Ink,
+			TextSize = 15,
+			TextXAlignment = Enum.TextXAlignment.Center,
+			TextTruncate = Enum.TextTruncate.AtEnd,
+			ZIndex = 3,
+		})
+		UIKit.label(card, {
+			Size = UDim2.new(1, -20, 0, 44),
+			Position = UDim2.fromOffset(10, 104),
+			Text = item.Desc,
+			Font = UIKit.Fonts.Soft,
+			TextSize = 12,
+			TextColor3 = C.Muted,
+			TextWrapped = true,
+			TextXAlignment = Enum.TextXAlignment.Center,
+			TextYAlignment = Enum.TextYAlignment.Top,
+			ZIndex = 3,
+		})
+		-- how many of this consumable you already hold
+		if item.Kind == "Item" then
+			local owned = (data.Items and data.Items[item.ItemId]) or 0
+			if owned > 0 then
+				UIKit.chip(card, "Owned x" .. owned, C.Blue, UDim2.fromOffset(78, 18)).Position = UDim2.fromOffset(8, 8)
+			end
+		end
+		-- active boost countdown / limited offer timer
+		if item.Limited and item.Limited.EndsAt then
+			UIKit.chip(card, "Ends " .. Format.clock(math.max(0, item.Limited.EndsAt - os.time())), C.Red, UDim2.fromOffset(96, 18)).Position = UDim2.new(1, -104, 0, 8)
+		end
+
+		local text, enabled, color, priceIcon = stateOf(item, data)
+		local button = UIKit.button(card, {
+			Text = text,
+			Size = UDim2.new(1, -20, 0, 36),
+			Position = UDim2.new(0, 10, 1, -46),
+			Color = color,
+			TextSize = 15,
+			Name = "Buy_" .. item.Id,
+			OnClick = function()
+				buy(item, card)
+			end,
+		})
+		if priceIcon then
+			UIKit.setButtonContent(button, priceIcon, text, if enabled then C.White else Color3.fromRGB(236, 150, 146))
+		end
+		UIKit.setEnabled(button, enabled)
+		if not enabled then
+			button.BackgroundColor3 = color
+		end
+	end
+
+	local categoryButtons: { [string]: TextButton } = {}
+	local function buildCategories(categories: { any })
+		for _, child in categoryColumn:GetChildren() do
+			if child:IsA("GuiObject") then
+				child:Destroy()
+			end
+		end
+		categoryButtons = {}
+		for index, category in categories do
+			local button = UIKit.button(categoryColumn, {
+				Text = "",
+				Size = UDim2.new(1, 0, 0, 44),
+				Color = if category.Id == selected then C.Peach else C.Card,
+				LayoutOrder = index,
+				Name = "Category_" .. category.Id,
+				OnClick = function()
+					selected = category.Id
+					render()
+				end,
+			})
+			UIKit.icon(button, category.Icon, { Size = UDim2.fromOffset(24, 24), Position = UDim2.new(0, 10, 0.5, 0), AnchorPoint = Vector2.new(0, 0.5), ZIndex = 3 })
+			UIKit.label(button, { Size = UDim2.new(1, -46, 1, 0), Position = UDim2.fromOffset(42, 0), Text = category.Name, Font = UIKit.Fonts.Title, TextSize = 15, TextColor3 = C.White, ZIndex = 3 })
+			categoryButtons[category.Id] = button
+		end
 	end
 
 	render = function()
@@ -66,148 +218,55 @@ function ShopUI.start()
 		if not data.Passes then
 			return
 		end
-		gemsLabel.Text = Format.short(DataController.gems())
-		local now = DataController.now()
+		cashPill.Value.Text = Format.short(DataController.coins())
+		gemPill.Value.Text = Format.short(DataController.gems())
+
+		local categories = ShopConfig.categories()
+		local found = false
+		for _, category in categories do
+			found = found or category.Id == selected
+		end
+		if not found and categories[1] then
+			selected = categories[1].Id
+		end
+		buildCategories(categories)
 
 		grid:ClearAllChildren()
 		UIKit.new("UIGridLayout", {
-			CellSize = UDim2.fromOffset(218, 236),
+			CellSize = UDim2.fromOffset(176, 232),
 			CellPadding = UDim2.fromOffset(10, 10),
 			SortOrder = Enum.SortOrder.LayoutOrder,
 		}, grid)
 		UIKit.padding(grid, 4)
-
-		local accent = SECTION_COLORS[selected] or C.Brown
-		local order = 0
-		for _, item in ShopConfig.Items do
-			if item.Section == selected then
-				order += 1
-				local card = UIKit.frame(grid, { LayoutOrder = order })
-				UIKit.vivid(card, item.Color or TILE_COLORS[(order - 1) % #TILE_COLORS + 1] or accent, { Corner = 12, Outline = 3.5 })
-
-				UIKit.icon(card, item.Icon, { Size = UDim2.fromOffset(70, 70), Position = UDim2.new(0.5, 0, 0, 12), AnchorPoint = Vector2.new(0.5, 0), ZIndex = 3 })
-
-				local nameLabel = UIKit.label(card, {
-					Size = UDim2.new(1, -12, 0, 26),
-					Position = UDim2.fromOffset(6, 90),
-					Text = item.Name,
-					Font = UIKit.Fonts.Title,
-					TextColor3 = C.White,
-					TextSize = 20,
-					TextXAlignment = Enum.TextXAlignment.Center,
-					TextTruncate = Enum.TextTruncate.AtEnd,
-					ZIndex = 3,
-				})
-				UIKit.cartoon(nameLabel, 2.5)
-				local descLabel = UIKit.label(card, {
-					Size = UDim2.new(1, -16, 0, 40),
-					Position = UDim2.fromOffset(8, 118),
-					Text = item.Desc,
-					TextSize = 12,
-					TextColor3 = C.White,
-					TextWrapped = true,
-					TextXAlignment = Enum.TextXAlignment.Center,
-					TextYAlignment = Enum.TextYAlignment.Top,
-					ZIndex = 3,
-				})
-				UIKit.cartoon(descLabel, 1.5)
-
-				local text
-				local priceIcon: string? = nil
-				local enabled = true
-				local color = C.Green
-				if item.Kind == "Pass" then
-					if data.Passes[item.PassKey] then
-						text, enabled = "Owned", false
-					elseif item.PassId == 0 then
-						text, enabled = "Coming soon", false
-					else
-						text, color = "R$ " .. item.Robux, C.Gold
-					end
-				elseif item.Kind == "Product" then
-					if item.ProductId == 0 then
-						text, enabled = "Coming soon", false
-					else
-						text, color = "R$ " .. item.Robux, C.Gold
-					end
-				elseif item.Kind == "Roof" then
-					if data.Cosmetics and data.Cosmetics.Roof == item.RoofKey then
-						text, enabled = "Equipped", false
-					elseif data.Cosmetics and data.Cosmetics.Owned[item.RoofKey] then
-						text, color = "Equip", C.Sky
-					else
-						text, color, priceIcon = Format.short(item.Gems), C.Green, "gem"
-					end
-				elseif item.Kind == "Boost" then
-					local remaining = (data.Boosts and data.Boosts[item.BoostId] or 0) - now
-					text = Format.short(item.Gems)
-					priceIcon = "gem"
-					color = C.Green
-					if remaining > 0 then
-						UIKit.chip(card, "Active " .. Format.clock(remaining), C.Green, UDim2.fromOffset(110, 20)).Position = UDim2.new(0.5, -55, 0, 12)
-					end
-				else
-					text = Format.short(item.Gems)
-					priceIcon = "gem"
-					color = C.Green
-				end
-
-				local button = UIKit.button(card, {
-					Text = text,
-					Size = UDim2.new(1, -24, 0, 42),
-					Position = UDim2.new(0, 12, 1, -52),
-					Color = color,
-					TextSize = 18,
-					Name = "Buy_" .. item.Id,
-					OnClick = function()
-						local result = DataController.request("ShopBuy", { Id = item.Id })
-						if not result.ok then
-							toast(result.msg, "error")
-							return
-						end
-						AudioController.play("Reward")
-						toast(result.msg, "success")
-						if result.extra and result.extra.SpeciesId then
-							require(script.Parent.AnnouncementUI).reveal(result.extra.SpeciesId, result.extra.IsNew == true)
-						end
-					end,
-				})
-				if priceIcon then
-					UIKit.setButtonContent(button, priceIcon, text, C.White)
-				end
-				UIKit.setEnabled(button, enabled)
-				if not enabled then
-					button.BackgroundColor3 = Color3.fromRGB(150, 156, 172)
+		for _, category in categories do
+			if category.Id == selected then
+				for order, item in category.Items do
+					buildCard(item, order, data)
 				end
 			end
 		end
 	end
 
 	panel.OnOpen[1] = function()
-		tabs.Select(selected, true)
+		if panel.Focus then
+			selected = panel.Focus
+			panel.Focus = nil
+		end
 		render()
 	end
-	tabs.Select("Pets", true)
 
 	DataController.onChanged(function(keys)
-		if panel.IsOpen and (keys.Passes or keys.Cosmetics or keys.Boosts) then
+		if panel.IsOpen and (keys.Passes or keys.Cosmetics or keys.Items or keys.Rebirths) then
 			render()
 		end
 	end)
-	game.Players.LocalPlayer:GetAttributeChangedSignal("Gems"):Connect(function()
-		if panel.IsOpen then
-			gemsLabel.Text = Format.short(DataController.gems())
-		end
-	end)
-	-- boost countdown labels
-	task.spawn(function()
-		while true do
-			task.wait(1)
-			if panel.IsOpen and selected == "Boosts" then
+	for _, name in { "Coins", "Gems" } do
+		player:GetAttributeChangedSignal(name):Connect(function()
+			if panel.IsOpen then
 				render()
 			end
-		end
-	end)
+		end)
+	end
 end
 
 return ShopUI

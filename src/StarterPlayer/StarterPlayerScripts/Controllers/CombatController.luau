@@ -18,16 +18,28 @@ local CombatController = {}
 local ACTION = "HamsterSlap"
 local lastSlap = 0
 
-local function handle(_name: string, state: Enum.UserInputState)
-	if state ~= Enum.UserInputState.Begin then
-		return Enum.ContextActionResult.Pass
-	end
+-- Also used by the hotbar's Slap slot. The server still decides target, range and cooldown.
+function CombatController.slap(): boolean
 	local now = os.clock()
 	if now - lastSlap >= HamsterStates.Config.SlapCooldown * 0.9 then
 		lastSlap = now
 		Remotes.event("Attack"):FireServer()
 		AudioController.play("Slap")
+		return true
 	end
+	return false
+end
+
+-- 0..1: how far the slap cooldown has recovered (for the hotbar).
+function CombatController.ready(): number
+	return math.clamp((os.clock() - lastSlap) / (HamsterStates.Config.SlapCooldown * 0.9), 0, 1)
+end
+
+local function handle(_name: string, state: Enum.UserInputState)
+	if state ~= Enum.UserInputState.Begin then
+		return Enum.ContextActionResult.Pass
+	end
+	CombatController.slap()
 	return Enum.ContextActionResult.Sink
 end
 

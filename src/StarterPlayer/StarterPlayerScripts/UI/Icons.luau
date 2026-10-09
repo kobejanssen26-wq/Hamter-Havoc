@@ -80,8 +80,8 @@ draw.coin = function(c)
 end
 
 draw.gem = function(c)
-	local blue = tint(c, rgb(90, 190, 255))
-	shape(c, 0.5, 0.5, 0.62, 0.62, blue, { Rot = 45, Radius = 0.14, Center = true, Top = rgb(190, 238, 255), Stroke = rgb(40, 120, 210) })
+	local blue = tint(c, rgb(152, 104, 232)) -- diamonds are purple
+	shape(c, 0.5, 0.5, 0.62, 0.62, blue, { Rot = 45, Radius = 0.14, Center = true, Top = rgb(206, 182, 255), Stroke = rgb(94, 60, 170) })
 	shape(c, 0.5, 0.36, 0.22, 0.22, WHITE, { Rot = 45, Radius = 0.2, Center = true, Alpha = 0.55, Z = 2 })
 end
 
@@ -445,6 +445,39 @@ draw.hourglass = function(c)
 	shape(c, 0.5, 0.7, 0.46, 0.46, color, { Rot = 45, Radius = 0.1, Center = true, Z = 2 })
 end
 
+-- Plain white X for close buttons (no badge).
+draw.x = function(c)
+	shape(c, 0.5, 0.5, 0.9, 0.16, tint(c, WHITE), { Rot = 45, Radius = 0.5, Center = true })
+	shape(c, 0.5, 0.5, 0.9, 0.16, tint(c, WHITE), { Rot = -45, Radius = 0.5, Center = true })
+end
+
+-- Rebirth: a ring with an arrow head and a spark in the middle (distinct from the star/flame icons).
+draw.rebirth = function(c)
+	local color = tint(c, rgb(236, 168, 70))
+	shape(c, 0.1, 0.1, 0.8, 0.8, color, { Circle = true, Hollow = true, Stroke = color, StrokeScale = 0.12 })
+	shape(c, 0.5, 0.1, 0.26, 0.26, rgb(27, 29, 35), { Rot = 45, Center = true, Z = 2 })
+	shape(c, 0.62, 0.1, 0.24, 0.24, color, { Rot = 45, Radius = 0.15, Center = true, Z = 3 })
+	shape(c, 0.5, 0.52, 0.2, 0.2, WHITE, { Rot = 45, Radius = 0.12, Center = true, Z = 2 })
+end
+
+-- Slap: a flat open hand.
+draw.fist = function(c)
+	local color = tint(c, rgb(240, 196, 120))
+	shape(c, 0.22, 0.42, 0.5, 0.46, color, { Radius = 0.25, Stroke = rgb(150, 104, 60) })
+	for index = 0, 3 do
+		shape(c, 0.22 + index * 0.13, 0.1 + (if index == 1 or index == 2 then 0 else 0.07), 0.11, 0.42, color, { Radius = 0.5, Stroke = rgb(150, 104, 60), Z = 0 })
+	end
+	shape(c, 0.64, 0.5, 0.26, 0.12, color, { Rot = -35, Radius = 0.5, Stroke = rgb(150, 104, 60), Z = 3 })
+end
+
+-- Cosmetics: a paint drop on a swatch.
+draw.paint = function(c)
+	local color = tint(c, rgb(98, 160, 232))
+	shape(c, 0.14, 0.16, 0.72, 0.6, color, { Radius = 0.2, Top = rgb(150, 196, 250), Stroke = rgb(52, 100, 168) })
+	shape(c, 0.5, 0.86, 0.3, 0.3, rgb(236, 168, 70), { Circle = true, Center = true, Z = 2 })
+	shape(c, 0.3, 0.34, 0.16, 0.16, WHITE, { Circle = true, Alpha = 0.4, Z = 3 })
+end
+
 -- Fallback for ids that don't have an icon (and the old emoji ids): a neutral rounded badge.
 draw.dot = function(c)
 	shape(c, 0.2, 0.2, 0.6, 0.6, tint(c, rgb(190, 176, 168)), { Circle = true, Top = rgb(224, 214, 208) })
@@ -464,8 +497,11 @@ local alias: { [string]: string } = {
 	security = "shield",
 	trim = "crown",
 	gems = "gem",
-	rebirth = "flame",
 	tokens = "flame",
+	slap = "fist",
+	cosmetics = "paint",
+	diamonds = "gem",
+	cash = "coin",
 	settings = "gear",
 	codes = "gift",
 	shop = "bag",

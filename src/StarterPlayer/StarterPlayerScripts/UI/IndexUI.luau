@@ -239,7 +239,7 @@ function IndexUI.start()
 			end
 		end
 		inspectFacts.Text = string.format(
-			"Status: %s\nIncome: %s coins / second\nPrice when rolling past: %s coins\nOwned now: %d   Working in wheels: %d\nBest rarity you found so far: %s",
+			"Status: %s\nIncome: %s cash / second\nPrice when rolling past: %s cash\nOwned now: %d   Working in wheels: %d\nBest rarity you found so far: %s",
 			if working > 0 then "Working in a wheel" elseif owned > 0 then "Owned" elseif found then "Discovered (not owned right now)" else "Missing - not found yet",
 			if hidden then "???" else Format.short(HamsterDatabase.income(species)),
 			if hidden then "???" else Format.short(HamsterDatabase.price(species)),
@@ -273,7 +273,7 @@ function IndexUI.start()
 		local derived = DataController.derived()
 		local title = derived.Title
 		bonusLabel.Text = string.format(
-			"Index bonus +%.1f%% coins  -  Milestones +%d%% coins, +%d%% luck%s",
+			"Index bonus +%.1f%% cash  -  Milestones +%d%% cash, +%d%% luck%s",
 			unique * EconomyMath.IndexBonusPerHamster * 100,
 			math.floor((derived.IndexCoinBonus or 0) * 100 + 0.5),
 			math.floor((derived.IndexLuckBonus or 0) * 100 + 0.5),
@@ -369,7 +369,7 @@ function IndexUI.start()
 			end
 		end
 		local unique = EconomyMath.uniqueCount(data)
-		row("trophy", "Title: " .. final.Title, string.format("Complete the Index: +%d%% coins forever, %s gems, %d tokens", math.floor(final.CoinPercent * 100), Format.short(final.Gems), final.Tokens), unique / HamsterDatabase.Total, complete, C.Gold)
+		row("trophy", "Title: " .. final.Title, string.format("Complete the Index: +%d%% cash forever, %s diamonds, %d tokens", math.floor(final.CoinPercent * 100), Format.short(final.Gems), final.Tokens), unique / HamsterDatabase.Total, complete, C.Gold)
 	end
 
 	local function renderGroup()

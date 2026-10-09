@@ -188,7 +188,7 @@ function RebirthConfig.rewards(n: number, boostLevel: number?): { Reward }
 	if RebirthConfig.trim(n) ~= RebirthConfig.trim(n - 1) then
 		table.insert(list, { Icon = "trim", Text = string.format("%s trim on your tower", RebirthConfig.trim(n)) })
 	end
-	table.insert(list, { Icon = "gems", Text = string.format("+%d gems, +%d rebirth token%s", RebirthConfig.gemReward(n), RebirthConfig.tokenReward(n), if RebirthConfig.tokenReward(n) > 1 then "s" else "") })
+	table.insert(list, { Icon = "gems", Text = string.format("+%d diamonds, +%d rebirth token%s", RebirthConfig.gemReward(n), RebirthConfig.tokenReward(n), if RebirthConfig.tokenReward(n) > 1 then "s" else "") })
 	return list
 end
 
@@ -201,7 +201,7 @@ RebirthConfig.ResetList = {
 RebirthConfig.KeepList = {
 	"Hamster Index, discoveries and collection bonuses",
 	"Rebirth level, income multiplier, luck, floors and tower trim",
-	"Token upgrades, gems and tokens",
+	"Token upgrades, diamonds and tokens",
 	"Quests, achievements, daily streak, codes",
 	"Cosmetics and gamepasses",
 }

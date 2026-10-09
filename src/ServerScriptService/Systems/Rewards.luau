@@ -22,11 +22,11 @@ function Rewards.grant(player: Player, reward: any): { string }
 	local lines = {}
 	if reward.Coins then
 		EconomySystem.addCoins(player, reward.Coins, false)
-		table.insert(lines, "+" .. Format.short(reward.Coins) .. " coins")
+		table.insert(lines, "+" .. Format.short(reward.Coins) .. " cash")
 	end
 	if reward.Gems then
 		local gained = EconomySystem.addGems(player, reward.Gems, true)
-		table.insert(lines, "+" .. Format.short(gained) .. " gems")
+		table.insert(lines, "+" .. Format.short(gained) .. " diamonds")
 	end
 	if reward.Tokens then
 		EconomySystem.addTokens(player, reward.Tokens)
