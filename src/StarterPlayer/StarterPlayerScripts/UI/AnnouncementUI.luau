@@ -109,7 +109,7 @@ function AnnouncementUI.reveal(speciesId: string, isNew: boolean)
 	UIKit.corner(frame, 26)
 	UIKit.stroke(frame, color, 6)
 	local scale = UIKit.new("UIScale", { Scale = 0.2 }, frame)
-	UIKit.gradient(frame, Color3.new(1, 1, 1), color:Lerp(C.Cream, 0.7), 90)
+	UIKit.gradient(frame, color:Lerp(Color3.fromRGB(52, 40, 32), 0.65), Color3.fromRGB(20, 15, 12), 90)
 
 	UIKit.label(frame, {
 		Size = UDim2.new(1, 0, 0, 40),

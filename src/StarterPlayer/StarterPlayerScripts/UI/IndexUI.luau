@@ -58,7 +58,7 @@ function IndexUI.start()
 	-- summary row
 	local summary = UIKit.frame(body, { Size = UDim2.new(1, 0, 0, 58), BackgroundColor3 = C.Card })
 	UIKit.corner(summary, 14)
-	UIKit.stroke(summary, Color3.fromRGB(226, 208, 180), 2)
+	UIKit.stroke(summary, C.Line, 2)
 	local collectedLabel = UIKit.label(summary, {
 		Position = UDim2.fromOffset(16, 4),
 		Size = UDim2.fromOffset(360, 26),
@@ -226,7 +226,7 @@ function IndexUI.start()
 		if not hidden then
 			UIKit.hamsterIcon(inspectIconHolder, species, { Size = UDim2.fromScale(1, 1), Silhouette = not found, Spin = found })
 		else
-			UIKit.label(inspectIconHolder, { Size = UDim2.fromScale(1, 1), Text = "?", TextSize = 140, Font = UIKit.Fonts.Title, TextColor3 = Color3.fromRGB(190, 170, 150), TextXAlignment = Enum.TextXAlignment.Center, ZIndex = 23 })
+			UIKit.label(inspectIconHolder, { Size = UDim2.fromScale(1, 1), Text = "?", TextSize = 140, Font = UIKit.Fonts.Title, TextColor3 = C.Muted, TextXAlignment = Enum.TextXAlignment.Center, ZIndex = 23 })
 		end
 		inspectStroke.Color = color
 		inspectName.Text = if hidden then "???" else species.Name
@@ -334,7 +334,7 @@ function IndexUI.start()
 			order += 1
 			local frame = UIKit.frame(grid, { Size = UDim2.new(1, -12, 0, 54), BackgroundColor3 = if done then C.Card else C.CreamDark, LayoutOrder = order })
 			UIKit.corner(frame, 14)
-			UIKit.stroke(frame, if done then color else Color3.fromRGB(214, 194, 164), if done then 3 else 2)
+			UIKit.stroke(frame, if done then color else C.Line, if done then 3 else 2)
 			UIKit.icon(frame, icon, { Size = UDim2.fromOffset(34, 34), Position = UDim2.fromOffset(12, 10) })
 			UIKit.label(frame, { Position = UDim2.fromOffset(58, 5), Size = UDim2.new(1, -240, 0, 22), Text = title, TextSize = 17, Font = UIKit.Fonts.Title, TextColor3 = C.Ink })
 			UIKit.label(frame, { Position = UDim2.fromOffset(58, 28), Size = UDim2.new(1, -240, 0, 20), Text = subtitle, TextSize = 13, TextColor3 = C.Muted })
@@ -466,7 +466,7 @@ function IndexUI.start()
 			local workingCount = workingBySpecies[species.Id] or 0
 			local card = UIKit.frame(grid, { LayoutOrder = order, BackgroundColor3 = if found then C.Card else C.CreamDark })
 			UIKit.corner(card, 16)
-			local cardStroke = if workingCount > 0 then C.Green elseif ownedCount > 0 then color elseif found then Color3.fromRGB(214, 170, 90) else Color3.fromRGB(214, 194, 164)
+			local cardStroke = if workingCount > 0 then C.Green elseif ownedCount > 0 then color elseif found then Color3.fromRGB(214, 170, 90) else C.Line
 			UIKit.stroke(card, cardStroke, if workingCount > 0 then 4 elseif found then 3 else 2)
 
 			if found or not hiddenRarity then
@@ -478,7 +478,7 @@ function IndexUI.start()
 					Text = "?",
 					TextSize = 70,
 					Font = UIKit.Fonts.Title,
-					TextColor3 = Color3.fromRGB(190, 170, 150),
+					TextColor3 = C.Muted,
 					TextXAlignment = Enum.TextXAlignment.Center,
 				})
 			end
@@ -550,14 +550,14 @@ function IndexUI.start()
 			local button = UIKit.button(list, {
 				Text = "",
 				Size = UDim2.new(1, -8, 0, 44),
-				Color = if entry.Id == selected[mode] then C.White else C.CreamDark,
+				Color = if entry.Id == selected[mode] then Color3.fromRGB(110, 78, 34) else C.CreamDark,
 				Corner = 12,
 				LayoutOrder = order,
 				Name = "Group_" .. entry.Id,
 				OnClick = function()
 					selected[mode] = entry.Id
 					for id, tab in tabButtons do
-						UIKit.setButtonColor(tab.Button, if id == entry.Id then C.White else C.CreamDark)
+						UIKit.setButtonColor(tab.Button, if id == entry.Id then Color3.fromRGB(110, 78, 34) else C.CreamDark)
 					end
 					render()
 				end,

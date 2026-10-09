@@ -24,7 +24,7 @@ function InventoryUI.start()
 
 	local top = UIKit.frame(body, { Size = UDim2.new(1, 0, 0, 52), BackgroundColor3 = C.Card })
 	UIKit.corner(top, 14)
-	UIKit.stroke(top, Color3.fromRGB(226, 208, 180), 2)
+	UIKit.stroke(top, C.Line, 2)
 	local slotsLabel = UIKit.label(top, {
 		Position = UDim2.fromOffset(16, 0),
 		Size = UDim2.fromOffset(330, 52),

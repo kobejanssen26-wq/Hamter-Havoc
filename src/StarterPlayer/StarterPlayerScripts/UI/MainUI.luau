@@ -1,9 +1,11 @@
 --[[
 	MainUI: the always-visible HUD.
-	  top-left   profile card (avatar, name, rebirth badge, income) + active boosts
-	  top-centre event strip (tips / countdowns) and toast messages
-	  top-right  Settings, Codes, Shop
-	  bottom     Coins / Gems / Tokens + Rebirth, Index, Hamsters, Upgrades, Quests, Daily
+	  top-left      currency bar: Coins [+], income per second, Gems [+], Tokens
+	  left          sidebar with the 8 menus (Hamsters, Upgrades, Rebirth, Index, Daily, Quests, Shop, Settings); the open one lights up
+	  top-right     active boosts
+	  top-centre    toast messages
+	  bottom-left   profile card (avatar, name, rebirth badge, income)
+	  bottom-centre event strip (tips / countdowns)
 	  centre     the "grab this hamster" prompt
 ]]
 
@@ -62,10 +64,6 @@ local TIPS = {
 	"Spawn Luck makes rare hamsters appear more often.",
 	"Use the elevator in your tower to reach upper floors.",
 }
-
-local function darkOf(color: Color3): Color3
-	return Color3.new(color.R * 0.55, color.G * 0.55, color.B * 0.55)
-end
 
 local openButtons: { [string]: TextButton } = {}
 local dots: { [string]: Frame } = {}
@@ -130,15 +128,16 @@ function MainUI.start()
 	-----------------------------------------------------------------------
 	local profile = UIKit.frame(gui, {
 		Name = "Profile",
-		Size = UDim2.fromOffset(300, 92),
-		Position = UDim2.fromOffset(14, 12),
-		BackgroundColor3 = C.Dim,
-		BackgroundTransparency = 0.18,
+		Size = UDim2.fromOffset(290, 92),
+		Position = UDim2.new(0, 14, 1, -14),
+		BackgroundColor3 = Color3.fromRGB(26, 20, 16),
+		BackgroundTransparency = 0.06,
 	})
-	UIKit.corner(profile, 20)
-	UIKit.stroke(profile, C.BrownLight, 3)
+	UIKit.corner(profile, 14)
+	UIKit.stroke(profile, C.GoldLine, 2.5)
+	UIKit.gradient(profile, Color3.fromRGB(46, 35, 28), Color3.fromRGB(20, 15, 12), 90)
 	addScale(profile).Scale = 1
-	profile.AnchorPoint = Vector2.zero
+	profile.AnchorPoint = Vector2.new(0, 1)
 
 	local avatar = UIKit.new("ImageLabel", {
 		Size = UDim2.fromOffset(72, 72),
@@ -146,8 +145,8 @@ function MainUI.start()
 		BackgroundColor3 = C.CreamDark,
 		Image = string.format("rbxthumb://type=AvatarHeadShot&id=%d&w=150&h=150", player.UserId),
 	}, profile)
-	UIKit.corner(avatar, 99)
-	UIKit.stroke(avatar, C.Gold, 3)
+	UIKit.corner(avatar, 14)
+	UIKit.stroke(avatar, C.GoldLine, 2.5)
 
 	UIKit.label(profile, {
 		Position = UDim2.fromOffset(92, 8),
@@ -181,23 +180,23 @@ function MainUI.start()
 	UIKit.icon(profile, "coin", { Size = UDim2.fromOffset(20, 20), Position = UDim2.fromOffset(94, 63) })
 
 	-- active boosts under the profile
-	local boostRow = UIKit.frame(gui, { Name = "Boosts", Size = UDim2.fromOffset(300, 34), Position = UDim2.fromOffset(14, 110), BackgroundTransparency = 1 })
+	local boostRow = UIKit.frame(gui, { Name = "Boosts", Size = UDim2.fromOffset(400, 40), Position = UDim2.new(1, -14, 0, 12), AnchorPoint = Vector2.new(1, 0), BackgroundTransparency = 1 })
 	addScale(boostRow)
-	UIKit.list(boostRow, Enum.FillDirection.Horizontal, 6)
+	UIKit.list(boostRow, Enum.FillDirection.Horizontal, 6, Enum.HorizontalAlignment.Right)
 
 	-----------------------------------------------------------------------
 	-- top centre: event strip + toasts
 	-----------------------------------------------------------------------
 	local center = UIKit.frame(gui, {
 		Name = "Center",
-		Size = UDim2.fromOffset(520, 44),
-		Position = UDim2.new(0.5, 0, 0, 12),
-		AnchorPoint = Vector2.new(0.5, 0),
+		Size = UDim2.fromOffset(560, 40),
+		Position = UDim2.new(0.5, 0, 1, -14),
+		AnchorPoint = Vector2.new(0.5, 1),
 		BackgroundColor3 = C.Dim,
-		BackgroundTransparency = 0.2,
+		BackgroundTransparency = 0.25,
 	})
-	UIKit.corner(center, 22)
-	UIKit.stroke(center, C.Peach, 2.5)
+	UIKit.corner(center, 20)
+	UIKit.stroke(center, C.Line, 2)
 	addScale(center)
 	local stripLabel = UIKit.label(center, {
 		Size = UDim2.new(1, -24, 1, 0),
@@ -213,7 +212,7 @@ function MainUI.start()
 	local toastHolder = UIKit.frame(gui, {
 		Name = "Toasts",
 		Size = UDim2.fromOffset(520, 220),
-		Position = UDim2.new(0.5, 0, 0, 64),
+		Position = UDim2.new(0.5, 0, 0, 70),
 		AnchorPoint = Vector2.new(0.5, 0),
 		BackgroundTransparency = 1,
 	})
@@ -288,67 +287,95 @@ function MainUI.start()
 	end)
 
 	-----------------------------------------------------------------------
-	-- bottom: currencies + the eight main menu buttons
+	-- top-left: currency bar (coins / income / gems / tokens)
 	-----------------------------------------------------------------------
-	local bottom = UIKit.frame(gui, {
-		Name = "Bottom",
-		Size = UDim2.fromOffset(780, 164),
-		Position = UDim2.new(0.5, 0, 1, -10),
-		AnchorPoint = Vector2.new(0.5, 1),
+	local topBar = UIKit.frame(gui, {
+		Name = "TopBar",
+		Size = UDim2.fromOffset(700, 46),
+		Position = UDim2.fromOffset(14, 12),
 		BackgroundTransparency = 1,
 	})
-	addScale(bottom)
+	addScale(topBar)
+	UIKit.list(topBar, Enum.FillDirection.Horizontal, 8, Enum.HorizontalAlignment.Left, Enum.VerticalAlignment.Center)
+	local coinsPill = UIKit.pill(topBar, { Icon = "coin", Color = C.Green, Size = UDim2.fromOffset(206, 44), LayoutOrder = 1, OnPlus = function() openPanel("Shop") end })
+	local incomePill = UIKit.pill(topBar, { Icon = "bolt", Color = C.Gold, Size = UDim2.fromOffset(150, 44), LayoutOrder = 2 })
+	local gemsPill = UIKit.pill(topBar, { Icon = "gem", Color = C.Purple, Size = UDim2.fromOffset(170, 44), LayoutOrder = 3, OnPlus = function() openPanel("Shop") end })
+	local tokensPill = UIKit.pill(topBar, { Icon = "flame", Color = C.Peach, Size = UDim2.fromOffset(110, 44), LayoutOrder = 4 })
 
-	local pillRow = UIKit.frame(bottom, { Size = UDim2.new(1, 0, 0, 44), Position = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 1 })
-	UIKit.list(pillRow, Enum.FillDirection.Horizontal, 10, Enum.HorizontalAlignment.Center, Enum.VerticalAlignment.Center)
-	local coinsPill = UIKit.pill(pillRow, { Icon = "coin", Color = C.Gold, Size = UDim2.fromOffset(210, 42), LayoutOrder = 1 })
-	local gemsPill = UIKit.pill(pillRow, { Icon = "gem", Color = C.Sky, Size = UDim2.fromOffset(160, 42), LayoutOrder = 2 })
-	local tokensPill = UIKit.pill(pillRow, { Icon = "flame", Color = C.Peach, Size = UDim2.fromOffset(120, 42), LayoutOrder = 3 })
+	-----------------------------------------------------------------------
+	-- left sidebar: the eight main menu buttons
+	-----------------------------------------------------------------------
+	local sidebar = UIKit.frame(gui, {
+		Name = "Sidebar",
+		Size = UDim2.fromOffset(152, 8 * 42 + 7 * 4 + 18),
+		Position = UDim2.new(0, 14, 0.5, 8),
+		AnchorPoint = Vector2.new(0, 0.5),
+		BackgroundColor3 = Color3.fromRGB(24, 18, 15),
+		BackgroundTransparency = 0.06,
+	})
+	UIKit.corner(sidebar, 14)
+	local sidebarStroke = UIKit.stroke(sidebar, C.GoldLine, 2.5)
+	UIKit.new("UIGradient", { Color = ColorSequence.new({ ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 214, 120)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(150, 104, 48)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 190, 90)) }), Rotation = 70 }, sidebarStroke)
+	UIKit.gradient(sidebar, Color3.fromRGB(46, 35, 28), Color3.fromRGB(20, 15, 12), 90)
+	UIKit.padding(sidebar, 9)
+	UIKit.list(sidebar, Enum.FillDirection.Vertical, 4)
+	addScale(sidebar)
 
-	local buttonRow = UIKit.frame(bottom, { Size = UDim2.new(1, 0, 0, 96), Position = UDim2.new(0, 0, 0, 56), BackgroundTransparency = 1 })
-	UIKit.list(buttonRow, Enum.FillDirection.Horizontal, 8, Enum.HorizontalAlignment.Center, Enum.VerticalAlignment.Center)
-
+	local menuBase: { [string]: Color3 } = {}
 	local function menuButton(icon: string, text: string, color: Color3, panelName: string, order: number)
-		local button = UIKit.button(buttonRow, {
+		local base = Color3.fromRGB(52, 40, 32)
+		menuBase[panelName] = base
+		local button = UIKit.button(sidebar, {
 			Text = "",
-			Size = UDim2.fromOffset(86, 90),
-			Color = color,
-			Corner = 20,
+			Size = UDim2.new(1, 0, 0, 42),
+			Color = base,
+			Corner = 9,
 			LayoutOrder = order,
 			Name = panelName .. "Button",
 			OnClick = function()
 				openPanel(panelName)
 			end,
 		})
-		local badge = UIKit.frame(button, { Size = UDim2.fromOffset(50, 50), Position = UDim2.new(0.5, 0, 0, 8), AnchorPoint = Vector2.new(0.5, 0), BackgroundColor3 = C.Cream, BackgroundTransparency = 0.08 })
-		UIKit.corner(badge, 16)
-		UIKit.icon(badge, icon, { Size = UDim2.fromOffset(36, 36), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5) })
-		local caption = UIKit.label(button, {
-			Size = UDim2.new(1, 0, 0, 22),
-			Position = UDim2.new(0, 0, 1, -28),
+		local accent = UIKit.frame(button, { Size = UDim2.new(0, 4, 1, -14), Position = UDim2.fromOffset(5, 7), BackgroundColor3 = color, ZIndex = 3 })
+		UIKit.corner(accent, 2)
+		UIKit.icon(button, icon, { Size = UDim2.fromOffset(28, 28), Position = UDim2.fromOffset(16, 7), ZIndex = 3 })
+		UIKit.label(button, {
+			Size = UDim2.new(1, -54, 1, 0),
+			Position = UDim2.fromOffset(52, 0),
 			Text = text,
-			TextSize = 14,
-			TextColor3 = C.White,
-			TextXAlignment = Enum.TextXAlignment.Center,
+			TextSize = 20,
+			TextColor3 = C.Ink,
 			Font = UIKit.Fonts.Title,
+			ZIndex = 3,
 		})
-		UIKit.new("UIStroke", { Color = darkOf(color), Thickness = 1.5 }, caption)
 		dots[panelName] = UIKit.notifyDot(button)
 		openButtons[panelName] = button
 	end
 	menuButton("hamster", "Hamsters", C.Peach, "Inventory", 1)
-	menuButton("book", "Index", C.Sky, "Index", 2)
+	menuButton("arrowup", "Upgrades", C.Green, "Upgrades", 2)
 	menuButton("flame", "Rebirth", Color3.fromRGB(240, 120, 70), "Rebirth", 3)
-	menuButton("arrowup", "Upgrades", C.Green, "Upgrades", 4)
+	menuButton("book", "Index", C.Sky, "Index", 4)
 	menuButton("gift", "Daily", C.Pink, "Daily", 5)
 	menuButton("scroll", "Quests", C.Purple, "Quests", 6)
-	menuButton("bag", "Shop", Color3.fromRGB(255, 120, 160), "Shop", 7)
+	menuButton("bag", "Shop", C.Gold, "Shop", 7)
 	menuButton("gear", "Settings", C.BrownLight, "Settings", 8)
 
+	-- the button of the open menu lights up gold
+	task.spawn(function()
+		while true do
+			for name, button in openButtons do
+				local panel = UIKit.getPanel(name)
+				UIKit.setButtonColor(button, if panel and panel.IsOpen then Color3.fromRGB(150, 104, 34) else menuBase[name])
+			end
+			task.wait(0.25)
+		end
+	end)
+
 	-- first person: the mouse is locked, so tell the player how to reach the buttons
-	local fpHint = UIKit.label(bottom, {
-		Size = UDim2.new(1, 0, 0, 20),
-		Position = UDim2.new(0, 0, 0, -24),
+	local fpHint = UIKit.label(gui, {
+		Size = UDim2.fromOffset(300, 20),
+		Position = UDim2.new(0.5, 0, 1, -62),
+		AnchorPoint = Vector2.new(0.5, 1),
 		Text = "Hold ALT to use the mouse",
 		TextSize = 13,
 		TextColor3 = C.White,
@@ -370,7 +397,7 @@ function MainUI.start()
 	local prompt = UIKit.frame(gui, {
 		Name = "GrabPrompt",
 		Size = UDim2.fromOffset(440, 60),
-		Position = UDim2.new(0.5, 0, 1, -178),
+		Position = UDim2.new(0.5, 0, 1, -66),
 		AnchorPoint = Vector2.new(0.5, 1),
 		BackgroundColor3 = C.Dim,
 		BackgroundTransparency = 0.1,
@@ -492,6 +519,7 @@ function MainUI.start()
 		rebirthBadge.Text = "R" .. rebirths
 		multiplierLabel.Text = "Rebirth " .. Format.multiplier(derived.RebirthMultiplier or 1)
 		incomeLabel.Text = "+" .. Format.short(derived.IncomePerSecond or 0) .. "/s"
+		incomePill.Value.Text = Format.short(derived.IncomePerSecond or 0) .. "/s"
 	end
 
 	-- boosts + strip + notification dots (once per second)

@@ -176,7 +176,7 @@ function ShopUI.start()
 				end
 				UIKit.setEnabled(button, enabled)
 				if not enabled then
-					button.BackgroundColor3 = Color3.fromRGB(200, 188, 176)
+					button.BackgroundColor3 = Color3.fromRGB(78, 68, 62)
 				end
 			end
 		end

@@ -100,7 +100,7 @@ function QuestUI.start()
 			local entry = item.Entry
 			local row = UIKit.frame(scroll, { Size = UDim2.new(1, -8, 0, 84), LayoutOrder = order })
 			UIKit.corner(row, 16)
-			UIKit.stroke(row, if item.Complete and not item.Claimed then C.Gold elseif item.Claimed then C.Green else Color3.fromRGB(226, 208, 180), 3)
+			UIKit.stroke(row, if item.Complete and not item.Claimed then C.Gold elseif item.Claimed then C.Green else C.Line, 3)
 
 			local icon = UIKit.frame(row, { Size = UDim2.fromOffset(58, 58), Position = UDim2.fromOffset(12, 13), BackgroundColor3 = C.CreamDark })
 			UIKit.corner(icon, 14)

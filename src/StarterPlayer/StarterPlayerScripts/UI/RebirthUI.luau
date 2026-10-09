@@ -21,7 +21,7 @@ local RebirthUI = {}
 
 local C = UIKit.Colors
 local ORANGE = Color3.fromRGB(226, 110, 60)
-local LINE = Color3.fromRGB(226, 208, 180)
+local LINE = C.Line
 
 local function card(parent: Instance, props: { Size: UDim2, Position: UDim2?, Color: Color3?, Stroke: Color3?, LayoutOrder: number? }): Frame
 	local frame = UIKit.frame(parent, { Size = props.Size, Position = props.Position or UDim2.new(), BackgroundColor3 = props.Color or C.Card, LayoutOrder = props.LayoutOrder or 0 })
@@ -31,7 +31,7 @@ local function card(parent: Instance, props: { Size: UDim2, Position: UDim2?, Co
 end
 
 local function heading(parent: Instance, text: string, y: number?): TextLabel
-	return UIKit.label(parent, { Size = UDim2.new(1, -24, 0, 24), Position = UDim2.fromOffset(14, y or 8), Font = UIKit.Fonts.Title, TextSize = 17, TextColor3 = C.BrownDark, Text = text })
+	return UIKit.label(parent, { Size = UDim2.new(1, -24, 0, 24), Position = UDim2.fromOffset(14, y or 8), Font = UIKit.Fonts.Title, TextSize = 18, TextColor3 = C.Gold, Text = text })
 end
 
 function RebirthUI.start()
@@ -88,12 +88,12 @@ function RebirthUI.start()
 	-----------------------------------------------------------------------
 	local right = UIKit.frame(body, { Size = UDim2.new(1, -456, 1, 0), Position = UDim2.new(0, 456, 0, 0), BackgroundTransparency = 1 })
 
-	local rewardsCard = card(right, { Size = UDim2.new(1, 0, 0, 290), Color = Color3.fromRGB(240, 250, 242), Stroke = C.Green })
+	local rewardsCard = card(right, { Size = UDim2.new(1, 0, 0, 290), Color = Color3.fromRGB(26, 44, 32), Stroke = C.Green })
 	heading(rewardsCard, "You get (permanent)")
 	local rewardsScroll = UIKit.scroll(rewardsCard, { Size = UDim2.new(1, -16, 1, -42), Position = UDim2.fromOffset(8, 36) })
 	UIKit.list(rewardsScroll, Enum.FillDirection.Vertical, 6)
 
-	local lossCard = card(right, { Size = UDim2.new(1, 0, 0, 178), Position = UDim2.fromOffset(0, 300), Color = Color3.fromRGB(254, 244, 240), Stroke = C.Red })
+	local lossCard = card(right, { Size = UDim2.new(1, 0, 0, 178), Position = UDim2.fromOffset(0, 300), Color = Color3.fromRGB(48, 28, 26), Stroke = C.Red })
 	local lossLabel = UIKit.label(lossCard, { Size = UDim2.new(1, -24, 1, -16), Position = UDim2.fromOffset(12, 8), TextSize = 13, TextYAlignment = Enum.TextYAlignment.Top, TextWrapped = true, Text = "" })
 	do
 		local lines = { "<b>Resets</b>" }
@@ -162,7 +162,7 @@ function RebirthUI.start()
 			local chip = UIKit.frame(slotRow, { Size = UDim2.fromOffset(24, 54), LayoutOrder = index, BackgroundTransparency = 1 })
 			local owned = index <= current
 			local isNext = index == current + 1
-			local box = UIKit.frame(chip, { Size = UDim2.fromOffset(24, 24), Position = UDim2.fromOffset(0, 14), BackgroundColor3 = if owned then C.Gold else (if isNext then Color3.fromRGB(190, 240, 205) else C.CreamDark) })
+			local box = UIKit.frame(chip, { Size = UDim2.fromOffset(24, 24), Position = UDim2.fromOffset(0, 14), BackgroundColor3 = if owned then C.Gold else (if isNext then Color3.fromRGB(40, 92, 56) else C.CreamDark) })
 			UIKit.corner(box, 8)
 			UIKit.stroke(box, if owned then C.GoldDark else (if isNext then C.Green else LINE), 2)
 			if owned then
@@ -239,7 +239,7 @@ function RebirthUI.start()
 			local cell = floorCells[index]
 			local isBuilt = index <= built
 			local isNext = following ~= nil and following.Index == index
-			cell.Frame.BackgroundColor3 = if isBuilt then Color3.fromRGB(255, 240, 200) else C.CreamDark
+			cell.Frame.BackgroundColor3 = if isBuilt then Color3.fromRGB(86, 62, 28) else C.CreamDark
 			cell.Stroke.Color = if isBuilt then C.Gold else (if isNext then C.Green else LINE)
 			for _, child in cell.Icon:GetChildren() do
 				child:Destroy()

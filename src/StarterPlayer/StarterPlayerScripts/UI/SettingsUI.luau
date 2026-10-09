@@ -29,7 +29,7 @@ function SettingsUI.start()
 	for order, entry in SettingsConfig.List do
 		local row = UIKit.frame(scroll, { Size = UDim2.new(1, -10, 0, 54), LayoutOrder = order })
 		UIKit.corner(row, 14)
-		UIKit.stroke(row, Color3.fromRGB(226, 208, 180), 2)
+		UIKit.stroke(row, C.Line, 2)
 		UIKit.icon(row, entry.Icon, { Size = UDim2.fromOffset(34, 34), Position = UDim2.fromOffset(12, 10) })
 		UIKit.label(row, {
 			Position = UDim2.fromOffset(56, 0),
@@ -101,7 +101,7 @@ function SettingsUI.start()
 	do
 		local row = UIKit.frame(scroll, { Size = UDim2.new(1, -10, 0, 54), LayoutOrder = #SettingsConfig.List + 1 })
 		UIKit.corner(row, 14)
-		UIKit.stroke(row, Color3.fromRGB(226, 208, 180), 2)
+		UIKit.stroke(row, C.Line, 2)
 		UIKit.icon(row, "gift", { Size = UDim2.fromOffset(34, 34), Position = UDim2.fromOffset(12, 10) })
 		UIKit.label(row, { Position = UDim2.fromOffset(56, 0), Size = UDim2.new(0.55, -42, 1, 0), Text = "Promo codes", TextSize = 17, Font = UIKit.Fonts.Title })
 		UIKit.button(row, {
@@ -141,12 +141,12 @@ function SettingsUI.start()
 	local box = UIKit.new("TextBox", {
 		Size = UDim2.new(1, -40, 0, 56),
 		Position = UDim2.fromOffset(20, 66),
-		BackgroundColor3 = C.White,
+		BackgroundColor3 = Color3.fromRGB(18, 13, 11),
 		Font = UIKit.Fonts.Title,
 		TextSize = 26,
 		TextColor3 = C.Ink,
 		PlaceholderText = "ENTER CODE",
-		PlaceholderColor3 = Color3.fromRGB(190, 170, 150),
+		PlaceholderColor3 = C.Muted,
 		Text = "",
 		ClearTextOnFocus = false,
 		BorderSizePixel = 0,

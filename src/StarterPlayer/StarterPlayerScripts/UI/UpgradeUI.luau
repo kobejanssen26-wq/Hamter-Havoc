@@ -24,7 +24,7 @@ function UpgradeUI.start()
 	-- stat summary
 	local summary = UIKit.frame(body, { Size = UDim2.new(1, 0, 0, 52), BackgroundColor3 = C.Card })
 	UIKit.corner(summary, 14)
-	UIKit.stroke(summary, Color3.fromRGB(226, 208, 180), 2)
+	UIKit.stroke(summary, C.Line, 2)
 	UIKit.list(summary, Enum.FillDirection.Horizontal, 14, Enum.HorizontalAlignment.Center, Enum.VerticalAlignment.Center)
 	local stats: { [string]: UIKit.IconText } = {}
 	for _, entry in { { "Luck", "clover" }, { "Range", "magnet" }, { "Speed", "shoe" }, { "Slots", "hamster" }, { "Income", "coin" } } do
@@ -43,7 +43,7 @@ function UpgradeUI.start()
 			Text = text,
 			Font = UIKit.Fonts.Title,
 			TextSize = 18,
-			TextColor3 = C.BrownLight,
+			TextColor3 = C.GoldDark,
 			LayoutOrder = order,
 		})
 	end
@@ -52,7 +52,7 @@ function UpgradeUI.start()
 		local definition = UpgradeConfig.Definitions[id]
 		local frame = UIKit.frame(scroll, { Size = UDim2.new(1, -8, 0, 92), LayoutOrder = order })
 		UIKit.corner(frame, 16)
-		local stroke = UIKit.stroke(frame, Color3.fromRGB(226, 208, 180), 3)
+		local stroke = UIKit.stroke(frame, C.Line, 3)
 
 		local iconBox = UIKit.frame(frame, { Size = UDim2.fromOffset(68, 68), Position = UDim2.fromOffset(12, 12), BackgroundColor3 = C.CreamDark })
 		UIKit.corner(iconBox, 16)
@@ -166,7 +166,7 @@ function UpgradeUI.start()
 
 	local function focusRow(id: string?)
 		for rowId, row in rows do
-			row.Stroke.Color = if rowId == id then C.Gold else Color3.fromRGB(226, 208, 180)
+			row.Stroke.Color = if rowId == id then C.Gold else C.Line
 		end
 		if id and rows[id] then
 			task.defer(function()

@@ -35,7 +35,7 @@ function DailyRewardUI.start()
 	for index, day in DailyRewardConfig.Days do
 		local card = UIKit.frame(row, { Size = UDim2.fromOffset(120, 236), LayoutOrder = index })
 		UIKit.corner(card, 18)
-		local stroke = UIKit.stroke(card, Color3.fromRGB(226, 208, 180), 3)
+		local stroke = UIKit.stroke(card, C.Line, 3)
 		UIKit.label(card, {
 			Size = UDim2.new(1, 0, 0, 34),
 			Text = "Day " .. day.Day,
@@ -119,7 +119,7 @@ function DailyRewardUI.start()
 			else
 				card.State.Text = "Locked"
 				card.State.TextColor3 = C.Muted
-				card.Stroke.Color = Color3.fromRGB(226, 208, 180)
+				card.Stroke.Color = C.Line
 				card.Stroke.Thickness = 3
 			end
 		end

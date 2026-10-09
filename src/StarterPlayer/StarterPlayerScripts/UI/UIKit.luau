@@ -1,6 +1,7 @@
 --[[
 	UIKit: the building blocks of the Hamster Plaza interface.
-	Art direction: cozy cream panels, warm brown headers, rounded everything, playful FredokaOne titles.
+	Art direction: dark premium "workshop" look - near-black warm panels, gold borders and highlights, glowing green action buttons,
+	red close buttons, condensed bold titles (Oswald), drawn icons. Everything is rounded and has a soft shadow.
 	Windows are designed at a fixed pixel size and scaled to fit any screen (phone to 4K).
 ]]
 
@@ -23,29 +24,35 @@ local UIKit = {}
 local player = Players.LocalPlayer
 
 UIKit.Colors = {
-	Cream = Color3.fromRGB(255, 247, 233),
-	CreamDark = Color3.fromRGB(246, 232, 208),
-	Card = Color3.fromRGB(255, 252, 244),
-	Brown = Color3.fromRGB(126, 84, 58),
-	BrownDark = Color3.fromRGB(92, 60, 42),
-	BrownLight = Color3.fromRGB(170, 120, 86),
-	Ink = Color3.fromRGB(74, 52, 44),
-	Muted = Color3.fromRGB(150, 124, 108),
-	Peach = Color3.fromRGB(255, 176, 122),
-	Pink = Color3.fromRGB(255, 142, 178),
-	Mint = Color3.fromRGB(122, 214, 170),
-	Sky = Color3.fromRGB(122, 190, 255),
+	-- surfaces (dark, warm)
+	Cream = Color3.fromRGB(26, 20, 17), -- window background
+	CreamDark = Color3.fromRGB(44, 34, 28), -- inset / inactive
+	Card = Color3.fromRGB(56, 43, 34), -- cards and rows
+	Brown = Color3.fromRGB(78, 56, 36), -- header base
+	BrownDark = Color3.fromRGB(22, 14, 8), -- outlines, text on gold
+	BrownLight = Color3.fromRGB(128, 94, 56),
+	-- text
+	Ink = Color3.fromRGB(248, 239, 224),
+	Muted = Color3.fromRGB(178, 160, 140),
+	-- borders
+	Line = Color3.fromRGB(112, 82, 46),
+	GoldLine = Color3.fromRGB(226, 170, 68),
+	-- accents
+	Peach = Color3.fromRGB(255, 152, 66),
+	Pink = Color3.fromRGB(255, 108, 156),
+	Mint = Color3.fromRGB(96, 222, 160),
+	Sky = Color3.fromRGB(88, 168, 255),
 	Gold = Color3.fromRGB(255, 205, 86),
-	GoldDark = Color3.fromRGB(214, 160, 40),
-	Green = Color3.fromRGB(96, 196, 126),
-	Red = Color3.fromRGB(240, 98, 98),
-	Purple = Color3.fromRGB(176, 124, 255),
+	GoldDark = Color3.fromRGB(226, 166, 52),
+	Green = Color3.fromRGB(74, 202, 96),
+	Red = Color3.fromRGB(228, 66, 62),
+	Purple = Color3.fromRGB(162, 112, 255),
 	White = Color3.new(1, 1, 1),
-	Dim = Color3.fromRGB(30, 20, 28),
+	Dim = Color3.fromRGB(10, 7, 6),
 }
 
 UIKit.Fonts = {
-	Title = Enum.Font.FredokaOne,
+	Title = Enum.Font.Oswald,
 	Body = Enum.Font.GothamBold,
 	Soft = Enum.Font.GothamMedium,
 }
@@ -254,10 +261,10 @@ function UIKit.button(parent: Instance?, props: ButtonProps): TextButton
 		LayoutOrder = props.LayoutOrder or 0,
 		BorderSizePixel = 0,
 	}, parent)
-	UIKit.corner(button, props.Corner or 12)
-	local stroke = UIKit.stroke(button, darker(color, 0.7), 2)
+	UIKit.corner(button, props.Corner or 10)
+	local stroke = UIKit.stroke(button, darker(color, 0.45), 2.5)
 	-- soft top light: the gradient multiplies the button colour
-	UIKit.new("UIGradient", { Color = ColorSequence.new(Color3.new(1, 1, 1), Color3.fromRGB(214, 214, 214)), Rotation = 90 }, button)
+	UIKit.new("UIGradient", { Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(176, 176, 176)), Rotation = 90 }, button)
 	local scale = UIKit.new("UIScale", { Scale = 1 }, button)
 	button:SetAttribute("BaseColor", color)
 
@@ -303,11 +310,11 @@ end
 function UIKit.setEnabled(button: TextButton, enabled: boolean)
 	button:SetAttribute("Disabled", not enabled)
 	local base = button:GetAttribute("BaseColor") or C.Peach
-	button.BackgroundColor3 = if enabled then base else Color3.fromRGB(190, 176, 168)
-	button.TextTransparency = if enabled then 0 else 0.25
+	button.BackgroundColor3 = if enabled then base else Color3.fromRGB(78, 68, 62)
+	button.TextTransparency = if enabled then 0 else 0.35
 	local edge = button:FindFirstChild("Edge") :: UIStroke?
 	if edge then
-		edge.Color = if enabled then darker(base, 0.7) else Color3.fromRGB(150, 136, 128)
+		edge.Color = if enabled then darker(base, 0.45) else Color3.fromRGB(44, 36, 32)
 	end
 end
 
@@ -317,7 +324,7 @@ function UIKit.setButtonColor(button: TextButton, color: Color3)
 		button.BackgroundColor3 = color
 		local edge = button:FindFirstChild("Edge") :: UIStroke?
 		if edge then
-			edge.Color = darker(color, 0.7)
+			edge.Color = darker(color, 0.45)
 		end
 	end
 end
@@ -331,18 +338,19 @@ function UIKit.progress(parent: Instance, props: { Size: UDim2?, Position: UDim2
 		Size = props.Size or UDim2.new(1, 0, 0, 16),
 		Position = props.Position or UDim2.new(),
 		AnchorPoint = props.AnchorPoint or Vector2.zero,
-		BackgroundColor3 = props.Back or C.CreamDark,
+		BackgroundColor3 = props.Back or Color3.fromRGB(20, 15, 12),
 		LayoutOrder = props.LayoutOrder or 0,
 	})
 	UIKit.corner(frame, 99)
-	UIKit.stroke(frame, Color3.fromRGB(214, 194, 164), 1.5)
+	UIKit.stroke(frame, C.Line, 1.5)
 	local fill = UIKit.frame(frame, { Size = UDim2.fromScale(0, 1), BackgroundColor3 = props.Color or C.Mint })
 	UIKit.corner(fill, 99)
+	UIKit.new("UIGradient", { Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(170, 170, 170)), Rotation = 90 }, fill)
 	local label = UIKit.label(frame, {
 		Size = UDim2.fromScale(1, 1),
 		TextXAlignment = Enum.TextXAlignment.Center,
 		TextSize = 12,
-		TextColor3 = C.Ink,
+		TextColor3 = C.White,
 		Font = UIKit.Fonts.Body,
 		ZIndex = 3,
 	})
@@ -362,16 +370,16 @@ function UIKit.toggle(parent: Instance, props: { Value: boolean, OnChanged: (boo
 		Position = props.Position or UDim2.new(),
 		AnchorPoint = props.AnchorPoint or Vector2.zero,
 		LayoutOrder = props.LayoutOrder or 0,
-		BackgroundColor3 = C.Muted,
+		BackgroundColor3 = Color3.fromRGB(72, 62, 54),
 		BorderSizePixel = 0,
 	}, parent)
 	UIKit.corner(track, 99)
-	UIKit.stroke(track, Color3.fromRGB(110, 90, 76), 2)
+	UIKit.stroke(track, C.Line, 2)
 	local knob = UIKit.frame(track, { Size = UDim2.fromOffset(22, 22), Position = UDim2.fromOffset(4, 4), BackgroundColor3 = C.White })
 	UIKit.corner(knob, 99)
 	local function render(animate: boolean)
 		local target = if value then UDim2.fromOffset(36, 4) else UDim2.fromOffset(4, 4)
-		local color = if value then C.Green else C.Muted
+		local color = if value then C.Green else Color3.fromRGB(72, 62, 54)
 		if animate then
 			UIKit.tween(knob, 0.14, { Position = target }, Enum.EasingStyle.Back)
 			UIKit.tween(track, 0.14, { BackgroundColor3 = color })
@@ -402,15 +410,15 @@ function UIKit.slider(parent: Instance, props: { Min: number, Max: number, Value
 		Position = props.Position or UDim2.new(),
 		AnchorPoint = props.AnchorPoint or Vector2.zero,
 		LayoutOrder = props.LayoutOrder or 0,
-		BackgroundColor3 = C.CreamDark,
+		BackgroundColor3 = Color3.fromRGB(20, 15, 12),
 	})
 	UIKit.corner(frame, 99)
-	UIKit.stroke(frame, Color3.fromRGB(214, 194, 164), 1.5)
-	local fill = UIKit.frame(frame, { BackgroundColor3 = C.Peach, Size = UDim2.fromScale(0, 1) })
+	UIKit.stroke(frame, C.Line, 1.5)
+	local fill = UIKit.frame(frame, { BackgroundColor3 = C.Gold, Size = UDim2.fromScale(0, 1) })
 	UIKit.corner(fill, 99)
 	local knob = UIKit.frame(frame, { Size = UDim2.fromOffset(24, 24), AnchorPoint = Vector2.new(0.5, 0.5), Position = UDim2.fromScale(0, 0.5), BackgroundColor3 = C.White, ZIndex = 3 })
 	UIKit.corner(knob, 99)
-	UIKit.stroke(knob, C.BrownLight, 2)
+	UIKit.stroke(knob, C.GoldDark, 2.5)
 	local hit = UIKit.new("TextButton", { Text = "", BackgroundTransparency = 1, Size = UDim2.new(1, 20, 0, 40), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5) }, frame)
 
 	local value = props.Value
@@ -467,10 +475,9 @@ function UIKit.tabs(parent: Instance, defs: { TabDef }, onSelect: (string) -> ()
 	local buttons: { [string]: TextButton } = {}
 	local function select(id: string, silent: boolean?)
 		for tabId, button in buttons do
-			local base = button:GetAttribute("TabColor") or C.Brown
 			if tabId == id then
-				UIKit.setButtonColor(button, base)
-				button.TextColor3 = C.White
+				UIKit.setButtonColor(button, C.Gold)
+				button.TextColor3 = C.BrownDark
 			else
 				UIKit.setButtonColor(button, C.CreamDark)
 				button.TextColor3 = C.Ink
@@ -519,7 +526,7 @@ function UIKit.scroll(parent: Instance, props: { Size: UDim2?, Position: UDim2?,
 		CanvasSize = UDim2.new(),
 		AutomaticCanvasSize = Enum.AutomaticSize.Y,
 		ScrollBarThickness = 6,
-		ScrollBarImageColor3 = C.BrownLight,
+		ScrollBarImageColor3 = C.GoldDark,
 		ScrollingDirection = Enum.ScrollingDirection.Y,
 	}, parent)
 	return scroll
@@ -605,8 +612,21 @@ function UIKit.closeAll(except: string?)
 end
 
 -- `Icon` is an Icons id ("book", "gear", ...), never an emoji.
-function UIKit.panel(options: { Name: string, Title: string, Icon: string?, Design: Vector2?, Accent: Color3? }): Panel
-	local design = options.Design or Vector2.new(860, 560)
+local SUBTITLES = {
+	Inventory = "Collect, equip and sell your hamsters",
+	Index = "Discover every hamster and earn permanent bonuses",
+	Rebirth = "Start over stronger - and grow your tower",
+	Upgrades = "Make your hamsters and production stronger",
+	Daily = "Come back every day for bigger rewards",
+	Quests = "Complete goals to earn rewards",
+	Shop = "Boosts, hamsters and exclusive items",
+	Settings = "Sound, graphics and gameplay options",
+	Codes = "Redeem a code for free rewards",
+}
+
+function UIKit.panel(options: { Name: string, Title: string, Subtitle: string?, Icon: string?, Design: Vector2?, Accent: Color3? }): Panel
+	local requested = options.Design or Vector2.new(860, 560)
+	local design = Vector2.new(requested.X, requested.Y + 14) -- the taller header needs a little more room
 	local accent = options.Accent or C.Brown
 	local playerGui = player:WaitForChild("PlayerGui")
 
@@ -649,38 +669,51 @@ function UIKit.panel(options: { Name: string, Title: string, Icon: string?, Desi
 		BorderSizePixel = 0,
 		GroupTransparency = 1,
 	}, motion)
-	UIKit.corner(window, 22)
-	UIKit.gradient(window, Color3.fromRGB(255, 251, 241), Color3.fromRGB(250, 238, 216), 90)
+	UIKit.corner(window, 16)
+	UIKit.gradient(window, Color3.fromRGB(38, 29, 24), Color3.fromRGB(18, 13, 11), 90)
+	-- warm glow in the top corner (like light from a lamp)
+	local glow = UIKit.frame(window, { Size = UDim2.fromOffset(520, 260), Position = UDim2.fromOffset(-120, -140), BackgroundColor3 = accent, BackgroundTransparency = 0.88 })
+	UIKit.corner(glow, 260)
+	-- gold frame
 	local outline = UIKit.frame(motion, { Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1, ZIndex = 20 })
-	UIKit.corner(outline, 22)
-	UIKit.stroke(outline, C.BrownDark, 3.5)
+	UIKit.corner(outline, 16)
+	local outlineStroke = UIKit.stroke(outline, C.GoldLine, 3)
+	UIKit.new("UIGradient", { Color = ColorSequence.new({ ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 214, 120)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(150, 104, 48)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 190, 90)) }), Rotation = 60 }, outlineStroke)
 
-	local header = UIKit.frame(window, { Size = UDim2.new(1, 0, 0, 64), BackgroundColor3 = accent })
-	UIKit.gradient(header, Color3.new(math.min(1, accent.R + 0.22), math.min(1, accent.G + 0.2), math.min(1, accent.B + 0.18)), accent, 90)
-	-- thin light line under the header
-	UIKit.frame(header, { Size = UDim2.new(1, 0, 0, 3), Position = UDim2.new(0, 0, 1, -3), BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.82 })
+	local header = UIKit.frame(window, { Size = UDim2.new(1, 0, 0, 78), BackgroundColor3 = C.Brown })
+	UIKit.gradient(header, Color3.fromRGB(62, 46, 34), Color3.fromRGB(34, 25, 20), 90)
+	UIKit.frame(header, { Size = UDim2.new(1, 0, 0, 2), Position = UDim2.new(0, 0, 1, -2), BackgroundColor3 = accent })
 	local titleOffset = 24
 	if options.Icon then
-		local badge = UIKit.frame(header, { Size = UDim2.fromOffset(46, 46), Position = UDim2.fromOffset(16, 9), BackgroundColor3 = C.Cream })
-		UIKit.corner(badge, 15)
-		UIKit.stroke(badge, C.BrownDark, 2)
-		UIKit.icon(badge, options.Icon, { Size = UDim2.fromOffset(32, 32), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5) })
-		titleOffset = 72
+		local badge = UIKit.frame(header, { Size = UDim2.fromOffset(54, 54), Position = UDim2.fromOffset(14, 12), BackgroundColor3 = Color3.fromRGB(24, 18, 14) })
+		UIKit.corner(badge, 12)
+		UIKit.stroke(badge, C.GoldLine, 2)
+		UIKit.icon(badge, options.Icon, { Size = UDim2.fromOffset(36, 36), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5) })
+		titleOffset = 80
 	end
 	local title = UIKit.label(header, {
-		Size = UDim2.new(1, -titleOffset - 76, 1, 0),
-		Position = UDim2.fromOffset(titleOffset, 0),
+		Size = UDim2.new(1, -titleOffset - 80, 0, 42),
+		Position = UDim2.fromOffset(titleOffset, 8),
 		Font = UIKit.Fonts.Title,
-		TextSize = 31,
-		TextColor3 = C.White,
-		Text = options.Title,
+		TextSize = 36,
+		TextColor3 = Color3.fromRGB(255, 244, 222),
+		Text = string.upper(options.Title),
 		ZIndex = 3,
 	})
-	UIKit.new("UIStroke", { Color = C.BrownDark, Thickness = 2 }, title)
+	UIKit.new("UIStroke", { Color = C.BrownDark, Thickness = 1.5 }, title)
+	UIKit.label(header, {
+		Size = UDim2.new(1, -titleOffset - 80, 0, 22),
+		Position = UDim2.fromOffset(titleOffset, 48),
+		Font = UIKit.Fonts.Soft,
+		TextSize = 15,
+		TextColor3 = C.Muted,
+		Text = options.Subtitle or SUBTITLES[options.Name] or "",
+		ZIndex = 3,
+	})
 
 	local body = UIKit.frame(window, {
-		Size = UDim2.new(1, -28, 1, -80),
-		Position = UDim2.fromOffset(14, 72),
+		Size = UDim2.new(1, -28, 1, -94),
+		Position = UDim2.fromOffset(14, 86),
 		BackgroundTransparency = 1,
 	})
 
@@ -755,13 +788,13 @@ function UIKit.panel(options: { Name: string, Title: string, Icon: string?, Desi
 
 	local closeButton = UIKit.button(header, {
 		Text = "",
-		Size = UDim2.fromOffset(44, 44),
-		Position = UDim2.new(1, -14, 0.5, 0),
+		Size = UDim2.fromOffset(46, 46),
+		Position = UDim2.new(1, -16, 0.5, 0),
 		AnchorPoint = Vector2.new(1, 0.5),
 		Color = C.Red,
 		Name = "Close",
 		Silent = true,
-		Corner = 14,
+		Corner = 10,
 		OnClick = function()
 			panel:Close()
 		end,
@@ -791,7 +824,7 @@ end
 ---------------------------------------------------------------------------
 
 -- A rounded stat pill with a drawn icon: coin / gem / flame ...
-function UIKit.pill(parent: Instance, props: { Icon: string, Color: Color3?, Size: UDim2?, LayoutOrder: number? }): { Frame: Frame, Value: TextLabel }
+function UIKit.pill(parent: Instance, props: { Icon: string, Color: Color3?, Size: UDim2?, LayoutOrder: number?, OnPlus: (() -> ())? }): { Frame: Frame, Value: TextLabel }
 	local accent = props.Color or C.Gold
 	local frame = UIKit.frame(parent, {
 		Size = props.Size or UDim2.fromOffset(170, 40),
@@ -800,19 +833,35 @@ function UIKit.pill(parent: Instance, props: { Icon: string, Color: Color3?, Siz
 		LayoutOrder = props.LayoutOrder or 0,
 	})
 	UIKit.corner(frame, 21)
-	UIKit.stroke(frame, accent, 2.5)
-	UIKit.gradient(frame, Color3.fromRGB(70, 52, 66), Color3.fromRGB(34, 24, 34), 90)
+	UIKit.stroke(frame, C.GoldLine, 2)
+	UIKit.gradient(frame, Color3.fromRGB(66, 50, 38), Color3.fromRGB(24, 18, 14), 90)
 	local badge = UIKit.frame(frame, { Size = UDim2.fromOffset(34, 34), Position = UDim2.fromOffset(4, 4), BackgroundColor3 = accent, BackgroundTransparency = 0.78 })
 	UIKit.corner(badge, 99)
 	UIKit.icon(badge, props.Icon, { Size = UDim2.fromOffset(26, 26), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5) })
 	local value = UIKit.label(frame, {
-		Size = UDim2.new(1, -52, 1, 0),
+		Size = UDim2.new(1, if props.OnPlus then -88 else -52, 1, 0),
 		Position = UDim2.fromOffset(46, 0),
 		Font = UIKit.Fonts.Title,
-		TextSize = 22,
+		TextSize = 24,
 		TextColor3 = C.White,
 		TextXAlignment = Enum.TextXAlignment.Left,
 	})
+	if props.OnPlus then
+		local plus = UIKit.button(frame, {
+			Text = "",
+			Size = UDim2.fromOffset(30, 30),
+			Position = UDim2.new(1, -7, 0.5, 0),
+			AnchorPoint = Vector2.new(1, 0.5),
+			Color = C.Green,
+			Corner = 8,
+			Name = "Plus",
+			OnClick = props.OnPlus,
+		})
+		for _, rotation in { 0, 90 } do
+			local bar = UIKit.frame(plus, { Size = UDim2.fromOffset(16, 4), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5), Rotation = rotation, BackgroundColor3 = C.White, ZIndex = 4 })
+			UIKit.corner(bar, 2)
+		end
+	end
 	return { Frame = frame, Value = value }
 end
 
