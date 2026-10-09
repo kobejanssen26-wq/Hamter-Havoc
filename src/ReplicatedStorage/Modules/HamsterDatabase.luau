@@ -258,6 +258,11 @@ raw.Unknown = {
 -- expansion
 ---------------------------------------------------------------------------
 
+local HamsterNames = require(script.Parent.HamsterNames)
+
+-- Species the progression depends on spawn a little more often (the first rebirth needs Silver).
+local SpawnWeights = { silver = 4 }
+
 local function makeId(name: string): string
 	local id = string.lower(name)
 	id = string.gsub(id, "[^%w]+", "_")
@@ -279,7 +284,9 @@ for _, rarityId in RarityConfig.Order do
 	for _, entry in entries do
 		local species = {
 			Id = makeId(entry.n),
-			Name = entry.n,
+			Name = HamsterNames[entry.n] or entry.n,
+			OriginalName = entry.n,
+			SpawnWeight = SpawnWeights[makeId(entry.n)],
 			Rarity = rarityId,
 			Fur = hex(entry.f),
 			Belly = hex(entry.b),

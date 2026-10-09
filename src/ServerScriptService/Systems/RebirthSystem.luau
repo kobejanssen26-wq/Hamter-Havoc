@@ -74,6 +74,8 @@ function RebirthSystem.perform(player: Player): (boolean, string)
 					return false, "You need " .. Format.coins(requirement.Need) .. " to rebirth"
 				elseif requirement.Kind == "Hamsters" then
 					return false, string.format("You need %d hamsters in your collection (you have %d)", requirement.Need, requirement.Have)
+				elseif requirement.Kind == "Species" then
+					return false, "You need to own " .. requirement.Label
 				end
 				return false, string.format("You need at least one %s hamster (or better)", requirement.Rarity or "rare")
 			end

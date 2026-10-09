@@ -78,7 +78,7 @@ for _, world in WORLDS do
 end
 
 function HamsterGroups.themeOf(species: any): string
-	return themeByName[species.Name] or "cuddly"
+	return themeByName[species.OriginalName or species.Name] or "cuddly"
 end
 
 function HamsterGroups.worldOf(species: any): string

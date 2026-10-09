@@ -327,7 +327,11 @@ function HamsterSystem.roll(data: any, now: number): any
 	local index = Util.weightedIndex(values, random)
 	local rarityId = if index then ids[index] else "Basic"
 	local pool = HamsterDatabase.Spawnable[rarityId]
-	return pool[random:NextInteger(1, #pool)]
+	local poolWeights = table.create(#pool, 1)
+	for i, species in pool do
+		poolWeights[i] = species.SpawnWeight or 1
+	end
+	return pool[Util.weightedIndex(poolWeights, random) or random:NextInteger(1, #pool)]
 end
 
 local function countOnRoad(): number

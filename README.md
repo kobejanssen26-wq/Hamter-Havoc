@@ -66,7 +66,7 @@ See `HamsterStates.luau` (all tuning numbers) and `HamsterSystem.luau`.
 
 Rebirth is hard to reach and every one gives permanent power (`RebirthConfig.luau`, all tuned with the progression simulation):
 
-- **Requirements:** coins (1M × 4.6^(n-1)), a growing collection (n + 3 hamsters), and a hamster of a minimum rarity (Shiny → … → Unknown).
+- **Requirements:** cash ($700,000 × 4.6^(n-1)), a growing collection (n + 3 hamsters), and a hamster of a minimum rarity (Shiny → … → Unknown); the first rebirth specifically needs the Silver hamster (shown in-game as "Argent Nibbler", id `silver`).
 - **Every rebirth:** +1 hamster slot (3 at the start), +30 % permanent income, +5 % luck, gems and tokens.
 - **Milestones:** new floors (R3/6/10/15), advanced upgrade tiers (R5/R10), better security, new rarities (Mythic R2 … Unknown R12), keepsake hamsters
   (you keep your best N hamsters, N grows with rebirths), tower trim.

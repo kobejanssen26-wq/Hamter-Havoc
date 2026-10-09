@@ -24,14 +24,17 @@ RebirthConfig.GemReward = 500
 RebirthConfig.BaseSlots = 3
 RebirthConfig.IncomeStep = 0.30 -- +30% permanent income per rebirth (the Rebirth Boost token upgrade makes this bigger)
 RebirthConfig.LuckStep = 0.05
-RebirthConfig.CostBase = 1000000
+RebirthConfig.CostBase = 700000 -- first rebirth: $700,000
 RebirthConfig.CostGrowth = 4.6
 RebirthConfig.AdvancedUpgradeRebirths = { 5, 10 } -- each of these adds a tier of upgrade levels
 
 -- The rarity (by name) you must own at least one hamster of, per rebirth number.
 local REQUIRED_RARITY = { "Shiny", "Rare", "Rare", "Epic", "Ultra", "Legendary", "Legendary", "Mythic", "Mythic", "Divine", "Divine", "Cosmic", "Cosmic", "Celestial", "Celestial", "Secret", "Secret", "Ancient", "Ancient", "Unknown" }
 
-export type Requirement = { Kind: string, Label: string, Need: number, Rarity: string? }
+-- Specific hamsters (stable species ids) that a rebirth demands instead of a generic rarity.
+RebirthConfig.RequiredSpecies = { [1] = "silver" }
+
+export type Requirement = { Kind: string, Label: string, Need: number, Rarity: string?, SpeciesId: string? }
 
 -- Coins needed to perform rebirth number `n` (n = current rebirths + 1).
 function RebirthConfig.cost(n: number): number
@@ -111,15 +114,21 @@ end
 -- The three requirements of rebirth `n`, in the order the UI shows them.
 function RebirthConfig.requirements(n: number): { Requirement }
 	local rarityId = RebirthConfig.requiredRarity(n)
+	local speciesId = RebirthConfig.RequiredSpecies[n]
+	local third = { Kind = "Rarity", Label = rarityId .. " hamster", Need = 1, Rarity = rarityId }
+	if speciesId then
+		local species = HamsterDatabase.ById[speciesId]
+		third = { Kind = "Species", Label = (if species then species.Name else speciesId) .. " hamster", Need = 1, SpeciesId = speciesId }
+	end
 	return {
-		{ Kind = "Coins", Label = "Coins", Need = RebirthConfig.cost(n) },
+		{ Kind = "Coins", Label = "Cash", Need = RebirthConfig.cost(n) },
 		{ Kind = "Hamsters", Label = "Hamsters in your collection", Need = RebirthConfig.requiredHamsters(n) },
-		{ Kind = "Rarity", Label = rarityId .. " hamster", Need = 1, Rarity = rarityId },
+		third,
 	}
 end
 
 -- How far a profile is from rebirth `n`. Returns allMet and one entry per requirement with Have / Met.
-function RebirthConfig.check(data: any, n: number): (boolean, { { Kind: string, Label: string, Need: number, Have: number, Met: boolean, Rarity: string? } })
+function RebirthConfig.check(data: any, n: number): (boolean, { { Kind: string, Label: string, Need: number, Have: number, Met: boolean, Rarity: string?, SpeciesId: string? } })
 	local needRank = RarityConfig.rank(RebirthConfig.requiredRarity(n))
 	local owned, ofRarity = 0, 0
 	for speciesId, count in data.Inventory do
@@ -134,10 +143,13 @@ function RebirthConfig.check(data: any, n: number): (boolean, { { Kind: string, 
 	local allMet = true
 	local list = {}
 	for _, requirement in RebirthConfig.requirements(n) do
-		local have = if requirement.Kind == "Coins" then data.Coins elseif requirement.Kind == "Hamsters" then owned else ofRarity
+		local have = if requirement.Kind == "Coins" then data.Coins
+			elseif requirement.Kind == "Hamsters" then owned
+			elseif requirement.Kind == "Species" then (data.Inventory[requirement.SpeciesId] or 0)
+			else ofRarity
 		local met = have >= requirement.Need
 		allMet = allMet and met
-		table.insert(list, { Kind = requirement.Kind, Label = requirement.Label, Need = requirement.Need, Have = have, Met = met, Rarity = requirement.Rarity })
+		table.insert(list, { Kind = requirement.Kind, Label = requirement.Label, Need = requirement.Need, Have = have, Met = met, Rarity = requirement.Rarity, SpeciesId = requirement.SpeciesId })
 	end
 	return allMet, list
 end
