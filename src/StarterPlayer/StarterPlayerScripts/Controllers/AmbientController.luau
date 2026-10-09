@@ -42,10 +42,21 @@ local bobs: { [Instance]: Decor } = {}
 local sways: { [Instance]: Decor } = {}
 local spins: { [Instance]: Decor } = {}
 -- hamster wheels: turn about the axle so the floor under the runner moves backwards
-local wheels: { [Model]: { Home: CFrame, Axis: Vector3, Angle: number, Position: Vector3, Active: boolean } } = {}
+-- Registered the moment the tag appears; the pivot / axis are resolved lazily (the model may still be replicating).
+local wheels: { [Model]: { Ready: boolean, Home: CFrame, Axis: Vector3, Angle: number, Position: Vector3 } } = {}
 local ripples: { [BasePart]: { Phase: number, Active: boolean, Base: number } } = {}
 
 local emitterParents: { [BasePart]: boolean } = {}
+
+-- One failing section must never stop the others (an error inside a RenderStepped / loop thread would silently end it).
+local reported: { [string]: boolean } = {}
+local function guard(name: string, fn: () -> ())
+	local ok, err = pcall(fn)
+	if not ok and not reported[name] then
+		reported[name] = true
+		warn(string.format("[AmbientController] %s failed: %s", name, tostring(err)))
+	end
+end
 
 local function pivotOf(instance: Instance): CFrame?
 	if instance:IsA("Model") then
@@ -91,6 +102,7 @@ local function cull()
 	local cameraPosition = camera.CFrame.Position
 	local particlesOn = DataController.setting("Particles") == true and DataController.setting("LowGraphics") ~= true
 
+	guard("cull/workers", function()
 	for model in workerModels do
 		local root = model.PrimaryPart
 		if root then
@@ -111,6 +123,9 @@ local function cull()
 		end
 	end
 
+	end)
+
+	guard("cull/idle", function()
 	for model in idleModels do
 		local root = model.PrimaryPart
 		if not root then
@@ -125,14 +140,12 @@ local function cull()
 		-- aura particles on shelf hamsters only when close
 		updateEmitters(model, near and particlesOn and (root.Position - cameraPosition).Magnitude < 45)
 	end
+	end)
 
 	for _, registry in { bobs, sways, spins } do
 		for _, decor in registry do
 			decor.Active = (decor.Position - cameraPosition).Magnitude < DECOR_DISTANCE
 		end
-	end
-	for _, wheel in wheels do
-		wheel.Active = (wheel.Position - cameraPosition).Magnitude < IDLE_DISTANCE
 	end
 	for part, info in ripples do
 		info.Active = (part.Position - cameraPosition).Magnitude < DECOR_DISTANCE
@@ -201,6 +214,34 @@ local function step(dt: number)
 	local camera = Workspace.CurrentCamera
 	local cameraPosition = if camera then camera.CFrame.Position else nil
 	local clock = os.clock()
+	guard("wheels", function()
+		local cameraNow = Workspace.CurrentCamera
+		local eye = if cameraNow then cameraNow.CFrame.Position else nil
+		for wheelModel, wheel in wheels do
+			if not wheelModel.Parent then
+				wheels[wheelModel] = nil
+				continue
+			end
+			if not wheel.Ready then
+				local hub = wheelModel.PrimaryPart
+				local runDirection = wheelModel:GetAttribute("RunDirection")
+				if hub and typeof(runDirection) == "Vector3" and runDirection.Magnitude > 0.01 then
+					-- axis (in the wheel's own frame) that moves the bottom of the wheel against the run direction
+					local home = wheelModel:GetPivot()
+					wheel.Home = home
+					wheel.Axis = home:VectorToObjectSpace(Vector3.yAxis:Cross(runDirection.Unit))
+					wheel.Position = home.Position
+					wheel.Ready = true
+				end
+				continue
+			end
+			local speed = (wheelModel:GetAttribute("Speed") :: number?) or 0
+			if speed ~= 0 and eye and (wheel.Position - eye).Magnitude < IDLE_DISTANCE then
+				wheel.Angle += speed * dt
+				wheelModel:PivotTo(wheel.Home * CFrame.fromAxisAngle(wheel.Axis, wheel.Angle))
+			end
+		end
+	end)
 	for model, animator in idleAnimators do
 		if model.Parent then
 			local worker = workerModels[model]
@@ -241,15 +282,6 @@ local function step(dt: number)
 				instance:PivotTo(cframe)
 			elseif instance:IsA("BasePart") then
 				instance.CFrame = cframe
-			end
-		end
-	end
-	for wheelModel, wheel in wheels do
-		if wheel.Active and wheelModel.Parent then
-			local speed = (wheelModel:GetAttribute("Speed") :: number?) or 0
-			if speed > 0 then
-				wheel.Angle += speed * dt
-				wheelModel:PivotTo(wheel.Home * CFrame.fromAxisAngle(wheel.Axis, wheel.Angle))
 			end
 		end
 	end
@@ -301,14 +333,8 @@ function AmbientController.start()
 		sways[instance] = nil
 	end)
 	track("HamsterWheel", function(instance)
-		if instance:IsA("Model") and instance.PrimaryPart then
-			local home = instance:GetPivot()
-			local runDirection = instance:GetAttribute("RunDirection")
-			if typeof(runDirection) == "Vector3" and runDirection.Magnitude > 0.01 then
-				-- axis (in the wheel's own frame) that moves the bottom of the wheel against the run direction
-				local worldAxis = Vector3.yAxis:Cross(runDirection.Unit)
-				wheels[instance] = { Home = home, Axis = home:VectorToObjectSpace(worldAxis), Angle = 0, Position = home.Position, Active = false }
-			end
+		if instance:IsA("Model") then
+			wheels[instance] = { Ready = false, Home = CFrame.identity, Axis = Vector3.yAxis, Angle = 0, Position = Vector3.zero }
 		end
 	end, function(instance)
 		wheels[instance :: Model] = nil
@@ -346,11 +372,15 @@ function AmbientController.start()
 
 	task.spawn(function()
 		while true do
-			cull()
+			guard("cull", cull)
 			task.wait(0.4)
 		end
 	end)
-	RunService.RenderStepped:Connect(step)
+	RunService.RenderStepped:Connect(function(dt)
+		guard("step", function()
+			step(dt)
+		end)
+	end)
 end
 
 return AmbientController
