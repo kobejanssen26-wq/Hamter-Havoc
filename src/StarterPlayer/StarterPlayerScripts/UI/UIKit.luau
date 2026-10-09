@@ -313,6 +313,13 @@ function UIKit.button(parent: Instance?, props: ButtonProps): TextButton
 	UIKit.cartoon(button, 2)
 	-- soft top light: the gradient multiplies the button colour
 	UIKit.new("UIGradient", { Color = ColorSequence.new(Color3.fromRGB(255, 255, 255), Color3.fromRGB(150, 150, 150)), Rotation = 90 }, button)
+	-- cartoon depth: a darker band along the bottom edge and a glossy highlight on top
+	button.ClipsDescendants = true
+	local band = UIKit.new("Frame", { Name = "Band", BorderSizePixel = 0, BackgroundColor3 = Color3.new(0, 0, 0), BackgroundTransparency = 0.72, AnchorPoint = Vector2.new(0, 1), Position = UDim2.fromScale(0, 1), Size = UDim2.new(1, 0, 0, 7), ZIndex = 0 }, button)
+	band.Active = false
+	local shine = UIKit.new("Frame", { Name = "Shine", BorderSizePixel = 0, BackgroundColor3 = Color3.new(1, 1, 1), BackgroundTransparency = 0.62, Position = UDim2.new(0, 6, 0, 4), Size = UDim2.new(0.6, 0, 0, 4), ZIndex = 0 }, button)
+	shine.Active = false
+	UIKit.corner(shine, 2)
 	local scale = UIKit.new("UIScale", { Scale = 1 }, button)
 	button:SetAttribute("BaseColor", color)
 
@@ -882,22 +889,22 @@ function UIKit.pill(parent: Instance, props: { Icon: string, Color: Color3?, Siz
 		LayoutOrder = props.LayoutOrder or 0,
 	})
 	UIKit.vivid(frame, accent, { Outline = 3.5, Corner = 12 })
-	UIKit.icon(frame, props.Icon, { Size = UDim2.fromOffset(30, 30), Position = UDim2.fromOffset(7, 7), ZIndex = 3 })
+	UIKit.icon(frame, props.Icon, { Size = UDim2.fromOffset(38, 38), Position = UDim2.fromOffset(8, 7), ZIndex = 3 })
 	local value = UIKit.label(frame, {
-		Size = UDim2.new(1, if props.OnPlus then -90 else -52, 1, 0),
-		Position = UDim2.fromOffset(44, 0),
+		Size = UDim2.new(1, if props.OnPlus then -100 else -58, 1, 0),
+		Position = UDim2.fromOffset(52, 0),
 		Font = UIKit.Fonts.Title,
-		TextSize = 24,
+		TextSize = 30,
 		TextColor3 = C.White,
 		TextXAlignment = Enum.TextXAlignment.Left,
 		ZIndex = 3,
 	})
-	UIKit.cartoon(value, 2.5)
+	UIKit.cartoon(value, 3)
 	if props.OnPlus then
 		local plus = UIKit.button(frame, {
 			Text = "",
-			Size = UDim2.fromOffset(30, 30),
-			Position = UDim2.new(1, -7, 0.5, 0),
+			Size = UDim2.fromOffset(36, 36),
+			Position = UDim2.new(1, -8, 0.5, 0),
 			AnchorPoint = Vector2.new(1, 0.5),
 			Color = C.Green,
 			Corner = 8,
