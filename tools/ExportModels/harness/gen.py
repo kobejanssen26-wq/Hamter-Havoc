@@ -158,6 +158,11 @@ if os.path.isdir(shared):
 for k,v in files.items():
     out.append("FILES[%r] = %s\n"%(k,long(v)))
 for scene in sys.argv[1:]:
-    out.append(open(scene).read())
+    text=open(scene).read()
+    for m in re.findall(r'"(src/[^"]+\.luau)"',text):   # game files a scene packages into models
+        if m not in files:
+            files[m]=open(os.path.join(ROOT,m)).read()
+            out.append("FILES[%r] = %s\n"%(m,long(files[m])))
+    out.append(text)
 open(os.path.join(HERE,"run.lua"),"w").write("\n".join(out))
 print("generated run.lua with", counter[0], "nodes")

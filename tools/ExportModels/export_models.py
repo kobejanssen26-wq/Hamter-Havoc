@@ -9,7 +9,7 @@ Exports every asset in ModelLibrary/ to a genuine Roblox model file (.rbxm).
 
 How it works (see tools/ExportModels/README.md):
   1. harness/gen.py wraps the game's real scripts + the library's build-model.lua files for a mock Roblox runtime
-  2. `luau` runs exporter/export_scene.lua, which builds each asset with the game's own builder code and prints it as JSON
+  2. `luau` runs exporter/run_assets.lua, which builds each asset with the game's own builder code and prints it as JSON
   3. this script turns that JSON into a Rojo project, lets `rojo build` create an .rbxmx (Rojo knows every property type and enum value),
      patches in what Rojo's project format cannot express (duplicate sibling names, Part0/Part1/PrimaryPart references),
      and lets Rojo write the final binary .rbxm
@@ -41,8 +41,9 @@ def run(cmd, **kw):
 
 
 # ------------------------------------------------------------------------------------------------ scene run
-def run_scene(luau, scene="export_scene.lua", folder="exporter"):
-    run([sys.executable, os.path.join(HARNESS, "gen.py"), os.path.join(HERE, "exporter", "context.lua"), os.path.join(HERE, folder, scene)])
+def run_scene(luau, scene="run_assets.lua", folder="exporter"):
+    ex = os.path.join(HERE, "exporter")
+    run([sys.executable, os.path.join(HARNESS, "gen.py"), os.path.join(ex, "context.lua"), os.path.join(ex, "serialize.lua"), os.path.join(HERE, folder, scene)])
     result = subprocess.run([luau, "run.lua"], cwd=HARNESS, capture_output=True, text=True)
     metas, exports, warns, fails = {}, {}, [], {}
     done = None
@@ -65,6 +66,33 @@ def run_scene(luau, scene="export_scene.lua", folder="exporter"):
     if done is None:
         sys.exit("exporter did not finish:\n" + result.stdout[-2000:] + result.stderr[-2000:])
     return metas, exports, warns, fails
+
+
+def export_hamsters_zip(rojo, luau, zip_path):
+    import zipfile
+    metas, exports, warns, fails = run_scene(luau, "hamsters_run.lua")
+    for name, why in fails.items():
+        sys.exit(f"FAILED {name}: {why}")
+    used = {}
+    with tempfile.TemporaryDirectory() as workdir, zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
+        for index, species_id in enumerate(sorted(exports, key=lambda i: (metas[i]["category"], metas[i]["title"]))):
+            meta = metas[species_id]
+            path, order = build_rbxm(rojo, species_id, exports[species_id], workdir)
+            verify_rbxm(rojo, path, species_id, order, exports[species_id]["refs"], workdir)
+            safe = re.sub(r"[^A-Za-z0-9 _.-]", "", meta["title"]).strip() or species_id
+            folder = re.sub(r'[<>:"/\\|?*]', "", meta["category"].replace("???", "Unknown")).strip()  # '???' is not a legal Windows folder name
+            arc = f"{folder}/{safe}.rbxm"
+            if arc in used:
+                arc = f"{folder}/{safe} ({species_id}).rbxm"
+            used[arc] = True
+            z.write(path, arc)
+            if (index + 1) % 20 == 0:
+                print(f"  {index + 1}/{len(exports)} hamsters exported")
+        z.writestr("LEES_MIJ.txt", "Elke hamster is een apart .rbxm bestand (map = zeldzaamheid).\n"
+            "Roblox Studio: View > Explorer > rechtsklik Workspace > Insert from File... > kies een .rbxm\n"
+            "Elk model heeft: PrimaryPart 'Root' (voeten), kijkt naar -Z, 9 Motor6D gewrichten, en de scripts HamsterAnimator + HamsterAutoAnimate (zet attribuut MoveSpeed > 0 om te laten lopen).\n"
+            "Gemaakt met tools/ExportModels/export_models.py --hamsters-zip\n")
+    print(f"wrote {zip_path}: {len(exports)} hamsters")
 
 
 def run_scene_tests(luau):
@@ -230,6 +258,7 @@ def write_catalog(entries, rojo):
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument("--hamsters-zip", metavar="FILE.zip", help="export EVERY hamster species as its own .rbxm and zip them (folders per rarity); nothing is written into ModelLibrary")
     parser.add_argument("--only", help="export one asset by name")
     parser.add_argument("--update", action="store_true", help="overwrite existing exports whose content changed")
     parser.add_argument("--test", action="store_true", help="run the behaviour tests (wheel spin direction/axis/pivot, hamster animation) against the library assets")
@@ -238,6 +267,9 @@ def main():
     rojo, luau = find_tool("rojo", "ROJO"), find_tool("luau", "LUAU")
     if args.test:
         run_scene_tests(luau)
+        return
+    if args.hamsters_zip:
+        export_hamsters_zip(rojo, luau, args.hamsters_zip)
         return
 
     metas, exports, warns, fails = run_scene(luau)

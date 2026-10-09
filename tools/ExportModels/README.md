@@ -7,6 +7,7 @@ python3 tools/ExportModels/export_models.py            # build everything; new f
 python3 tools/ExportModels/export_models.py --update   # also replace files whose content changed (git keeps the old version)
 python3 tools/ExportModels/export_models.py --check    # CI / pre-commit: exit 1 if any export is missing or out of date
 python3 tools/ExportModels/export_models.py --only Hamster_Wheel
+python3 tools/ExportModels/export_models.py --hamsters-zip Hamster_Models.zip   # all 172 species as separate .rbxm files (one folder per rarity); not stored in the repo
 python3 tools/ExportModels/export_models.py --test     # behaviour tests (wheel direction / axle / pivot, hamster joints, packages, no asset ids)
 python3 tools/ExportModels/inspect_model.py ModelLibrary/Hamsters/Hamster_Default.rbxm --depth 2 [--props]   # look inside any .rbxm
 ```
@@ -20,7 +21,7 @@ Roblox Studio is **not** available in the cloud environment this project is deve
 
 1. `harness/` is a small mock of the Roblox runtime (`mock.lua`, API names validated against Roblox's official type definitions in `classes.lua`) that can *execute the game's real
    Luau modules* (`harness/gen.py` wraps `src/` according to `default.project.json`).
-2. `exporter/export_scene.lua` runs every `ModelLibrary/**/build-model.lua` there. Those files call the game's own builders (`HamsterBuilder`, `Wheels`, `Decor`, `HouseBuilder`, ...),
+2. `exporter/run_assets.lua` (with `context.lua` + `serialize.lua`) runs every `ModelLibrary/**/build-model.lua` there. Those files call the game's own builders (`HamsterBuilder`, `Wheels`, `Decor`, `HouseBuilder`, ...),
    so an exported asset is, by construction, the asset the game builds. The result is validated (root class/name, pivot, Motor6D parts, sizes) and printed as JSON.
 3. `export_models.py` turns that JSON into a Rojo project and lets **Rojo** write the model: Rojo knows the type of every property and the numeric value of every enum, and writes the
    binary `.rbxm` format. Two things Rojo's project format cannot express are patched in between: *duplicate sibling names* and *instance references* (`PrimaryPart`, `Motor6D.Part0/Part1`,
