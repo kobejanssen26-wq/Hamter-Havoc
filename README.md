@@ -9,6 +9,9 @@ A cozy multiplayer hamster game for Roblox (Luau + [Rojo](https://rojo.space)).
 
 > **Waar staat wat?** Zie [`WAAR_STAAT_WAT.md`](WAAR_STAAT_WAT.md) (Explorer-kaart, Nederlands). De wereld en alle 172 hamsters staan als voorbeeldkopie in `world/` en zijn in Studio direct zichtbaar zonder Play.
 
+> **Model library:** reusable Roblox models (hamster, wheel, combined assembly, apartment tower, nature/decor packs, upgrade machines, icons) are in [`ModelLibrary/`](ModelLibrary/README.md)
+> as genuine `.rbxm` files you can download one by one and insert into any other Roblox experience.
+
 ## Run it
 
 1. `rokit install` (installs Rojo 7.4.4 from `rokit.toml`).
@@ -103,6 +106,11 @@ src/
   ServerScriptService/Systems/ HamsterSystem, SecuritySystem, CombatSystem, PlayerState, HouseSystem, Economy, Collection, Rebirth, ... WorldBuilder/
   StarterPlayer/StarterPlayerScripts/Controllers + UI/   WorldController (rolling balls), Input, Combat, Security, Nav, Ambient (wheels), Fx, Audio ...
 ```
+
+## Model library
+
+`ModelLibrary/` (catalog: [`ModelLibrary/README.md`](ModelLibrary/README.md)) is generated from the game's own builders by `tools/ExportModels/` (`export_models.py --update`, `--check`, `--test`).
+Every asset has its own folder with `README.md` (hierarchy, pivot, dependencies, attributes), `model-config.lua`, `build-model.lua` and optional `scripts/`.
 
 ## What you still have to fill in
 
