@@ -1,0 +1,16 @@
+{
+  "Category": "Environment",
+  "Files": [
+    "Windmill.rbxm",
+    "Windmill.glb"
+  ],
+  "Hash": "52c3c8a882ed16c1",
+  "Name": "Windmill",
+  "Parts": 13,
+  "SizeStuds": [
+    15,
+    16,
+    6.9
+  ],
+  "Source": "Decor.windmill"
+}

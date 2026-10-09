@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Ancient",
+  "CollectionValue": 13737,
+  "DisplayName": "Primal",
+  "Files": [
+    "AncientHamsterPrimal.rbxm",
+    "AncientHamsterPrimal.glb"
+  ],
+  "HamsterId": "primal",
+  "Hash": "6401f04323dea6ea",
+  "IncomePerSecond": 5928571.428571428,
+  "MinRebirth": 12,
+  "MovementSpeed": 48,
+  "Name": "AncientHamsterPrimal",
+  "Parts": 53,
+  "PurchasePrice": 8300000000,
+  "Rarity": "Ancient",
+  "Signature": "big|angry|fang|none|nub|antlers+dino_spikes+spiked_collar||1.00",
+  "SizeStuds": [
+    4.06,
+    4.9,
+    4.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.primal)",
+  "SpawnChance": 2.243209692101524e-6
+}

@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Cute",
+  "CollectionValue": 21,
+  "DisplayName": "Flower",
+  "Files": [
+    "CuteHamsterFlower.rbxm",
+    "CuteHamsterFlower.glb"
+  ],
+  "HamsterId": "flower",
+  "Hash": "1475973e6dcea1e2",
+  "IncomePerSecond": 6.5,
+  "MinRebirth": 0,
+  "MovementSpeed": 10.5,
+  "Name": "CuteHamsterFlower",
+  "Parts": 46,
+  "PurchasePrice": 520,
+  "Rarity": "Cute",
+  "Signature": "round|happy|open|none|nub|flowers||1.00",
+  "SizeStuds": [
+    3.89,
+    3.66,
+    4.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.flower)",
+  "SpawnChance": 0.01802579216867296
+}

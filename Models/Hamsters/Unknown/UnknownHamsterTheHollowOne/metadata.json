@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Unknown",
+  "CollectionValue": 20823,
+  "DisplayName": "The Hollow One",
+  "Files": [
+    "UnknownHamsterTheHollowOne.rbxm",
+    "UnknownHamsterTheHollowOne.glb"
+  ],
+  "HamsterId": "the_hollow_one",
+  "Hash": "18a063174070882d",
+  "IncomePerSecond": 19444444.444444444,
+  "MinRebirth": 15,
+  "MovementSpeed": 56,
+  "Name": "UnknownHamsterTheHollowOne",
+  "Parts": 47,
+  "PurchasePrice": 35000000000,
+  "Rarity": "???",
+  "Signature": "none|void|none|none|nub|floating_runes+hood+orbit_ring+wings_void|glitch|1.00",
+  "SizeStuds": [
+    7.81,
+    4.97,
+    5.28
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.the_hollow_one)",
+  "SpawnChance": 6.729629076304572e-7
+}

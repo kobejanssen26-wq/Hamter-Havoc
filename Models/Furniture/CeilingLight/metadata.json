@@ -1,0 +1,16 @@
+{
+  "Category": "Furniture",
+  "Files": [
+    "CeilingLight.rbxm",
+    "CeilingLight.glb"
+  ],
+  "Hash": "874e3137f2ea4ac1",
+  "Name": "CeilingLight",
+  "Parts": 1,
+  "SizeStuds": [
+    4,
+    0.25,
+    4
+  ],
+  "Source": "HouseBuilder.Furniture.CeilingLight"
+}

@@ -1,0 +1,16 @@
+{
+  "Category": "Decorations",
+  "Files": [
+    "Balloon.rbxm",
+    "Balloon.glb"
+  ],
+  "Hash": "159128b215f9d57a",
+  "Name": "Balloon",
+  "Parts": 3,
+  "SizeStuds": [
+    2.6,
+    8,
+    2.6
+  ],
+  "Source": "Decor.balloon"
+}

@@ -1,0 +1,16 @@
+{
+  "Category": "Props",
+  "Files": [
+    "Crate.rbxm",
+    "Crate.glb"
+  ],
+  "Hash": "3a5011b6c3e1287e",
+  "Name": "Crate",
+  "Parts": 2,
+  "SizeStuds": [
+    2.5,
+    2.4,
+    2.5
+  ],
+  "Source": "Decor.crate"
+}

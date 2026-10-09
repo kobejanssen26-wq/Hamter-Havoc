@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Divine",
+  "CollectionValue": 1212,
+  "DisplayName": "Athena",
+  "Files": [
+    "DivineHamsterAthena.rbxm",
+    "DivineHamsterAthena.glb"
+  ],
+  "HamsterId": "athena",
+  "Hash": "11d0443665bc6246",
+  "IncomePerSecond": 32142.85714285714,
+  "MinRebirth": 3,
+  "MovementSpeed": 30,
+  "Name": "DivineHamsterAthena",
+  "Parts": 42,
+  "PurchasePrice": 18000000,
+  "Rarity": "Divine",
+  "Signature": "tiny|glow|flat|none|nub|golden_helm+held_book+held_shield||1.00",
+  "SizeStuds": [
+    3.92,
+    4.15,
+    4.1
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.athena)",
+  "SpawnChance": 0.000055060601533401044
+}

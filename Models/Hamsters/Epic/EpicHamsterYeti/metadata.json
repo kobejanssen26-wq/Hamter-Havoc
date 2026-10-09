@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Epic",
+  "CollectionValue": 131,
+  "DisplayName": "Yeti",
+  "Files": [
+    "EpicHamsterYeti.rbxm",
+    "EpicHamsterYeti.glb"
+  ],
+  "HamsterId": "yeti",
+  "Hash": "3ebfc64c5878c583",
+  "IncomePerSecond": 250,
+  "MinRebirth": 0,
+  "MovementSpeed": 16.5,
+  "Name": "EpicHamsterYeti",
+  "Parts": 37,
+  "PurchasePrice": 50000,
+  "Rarity": "Epic",
+  "Signature": "tiny|angry|fang|none|nub|hood||1.30",
+  "SizeStuds": [
+    5.06,
+    5.4,
+    5.85
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.yeti)",
+  "SpawnChance": 0.0014250979220409683
+}

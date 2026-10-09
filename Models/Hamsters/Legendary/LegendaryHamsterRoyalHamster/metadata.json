@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Legendary",
+  "CollectionValue": 486,
+  "DisplayName": "Royal Hamster",
+  "Files": [
+    "LegendaryHamsterRoyalHamster.rbxm",
+    "LegendaryHamsterRoyalHamster.glb"
+  ],
+  "HamsterId": "royal_hamster",
+  "Hash": "9178df36030e5cdf",
+  "IncomePerSecond": 3235.294117647059,
+  "MinRebirth": 0,
+  "MovementSpeed": 22,
+  "Name": "LegendaryHamsterRoyalHamster",
+  "Parts": 59,
+  "PurchasePrice": 1100000,
+  "Rarity": "Legendary",
+  "Signature": "fluffy|sparkle|grin|none|nub|held_gem+medal+ruff+tiara||1.00",
+  "SizeStuds": [
+    3.89,
+    4.53,
+    4.45
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.royal_hamster)",
+  "SpawnChance": 0.0002691851630521829
+}

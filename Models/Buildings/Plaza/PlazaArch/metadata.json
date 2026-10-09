@@ -1,0 +1,16 @@
+{
+  "Category": "Buildings/Plaza",
+  "Files": [
+    "PlazaArch.rbxm",
+    "PlazaArch.glb"
+  ],
+  "Hash": "276eabb75a863bf9",
+  "Name": "PlazaArch",
+  "Parts": 14,
+  "SizeStuds": [
+    7,
+    23,
+    35.6
+  ],
+  "Source": "PlazaBuilder (PlazaArch)"
+}

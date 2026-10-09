@@ -1,0 +1,17 @@
+{
+  "Category": "Props/Stations",
+  "Files": [
+    "RebirthBoostProp.rbxm",
+    "RebirthBoostProp.glb"
+  ],
+  "Hash": "22d0c7bfd01a9a21",
+  "Name": "RebirthBoostProp",
+  "Notes": "Shown on the upgrade pedestal, grows with the upgrade level.",
+  "Parts": 2,
+  "SizeStuds": [
+    2.1,
+    3.57,
+    2.1
+  ],
+  "Source": "HouseBuilder.StationProps.RebirthBoost"
+}

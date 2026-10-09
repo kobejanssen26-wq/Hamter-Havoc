@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Ancient",
+  "CollectionValue": 13014,
+  "DisplayName": "Rune Keeper",
+  "Files": [
+    "AncientHamsterRuneKeeper.rbxm",
+    "AncientHamsterRuneKeeper.glb"
+  ],
+  "HamsterId": "rune_keeper",
+  "Hash": "f0b4727930424eae",
+  "IncomePerSecond": 5642857.142857143,
+  "MinRebirth": 12,
+  "MovementSpeed": 48,
+  "Name": "AncientHamsterRuneKeeper",
+  "Parts": 43,
+  "PurchasePrice": 7900000000,
+  "Rarity": "Ancient",
+  "Signature": "elf|glow|smile|none|nub|floating_runes+held_staff+rune_circlet||1.00",
+  "SizeStuds": [
+    5.36,
+    4.6,
+    4.72
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.rune_keeper)",
+  "SpawnChance": 2.243209692101524e-6
+}

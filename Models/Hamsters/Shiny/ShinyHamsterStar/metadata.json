@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Shiny",
+  "CollectionValue": 37,
+  "DisplayName": "Star",
+  "Files": [
+    "ShinyHamsterStar.rbxm",
+    "ShinyHamsterStar.glb"
+  ],
+  "HamsterId": "star",
+  "Hash": "7361c56cc4f1bdda",
+  "IncomePerSecond": 20.90909090909091,
+  "MinRebirth": 0,
+  "MovementSpeed": 12,
+  "Name": "ShinyHamsterStar",
+  "Parts": 73,
+  "PurchasePrice": 2300,
+  "Rarity": "Shiny",
+  "Signature": "tiny|star|open|none|nub|orbit_stars+star_crown|stars|1.00",
+  "SizeStuds": [
+    4.94,
+    4.4,
+    4.94
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.star)",
+  "SpawnChance": 0.008652380240963022
+}

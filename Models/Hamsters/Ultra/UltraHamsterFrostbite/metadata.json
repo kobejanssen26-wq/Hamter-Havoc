@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Ultra",
+  "CollectionValue": 198,
+  "DisplayName": "Frostbite",
+  "Files": [
+    "UltraHamsterFrostbite.rbxm",
+    "UltraHamsterFrostbite.glb"
+  ],
+  "HamsterId": "frostbite",
+  "Hash": "520732f8c8590702",
+  "IncomePerSecond": 730.7692307692307,
+  "MinRebirth": 0,
+  "MovementSpeed": 19,
+  "Name": "UltraHamsterFrostbite",
+  "Parts": 53,
+  "PurchasePrice": 190000,
+  "Rarity": "Ultra",
+  "Signature": "round|glow|smile|none|nub|ice_crown+scarf+wings_ice|snow|1.00",
+  "SizeStuds": [
+    8.35,
+    5.2,
+    4.96
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.frostbite)",
+  "SpawnChance": 0.0008412036345380715
+}

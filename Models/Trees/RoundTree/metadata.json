@@ -1,0 +1,16 @@
+{
+  "Category": "Trees",
+  "Files": [
+    "RoundTree.rbxm",
+    "RoundTree.glb"
+  ],
+  "Hash": "f6b562eea8dad011",
+  "Name": "RoundTree",
+  "Parts": 4,
+  "SizeStuds": [
+    10,
+    12,
+    8.5
+  ],
+  "Source": "Decor.tree(round)"
+}

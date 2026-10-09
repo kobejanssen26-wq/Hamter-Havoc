@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Shiny",
+  "CollectionValue": 39,
+  "DisplayName": "Bubble",
+  "Files": [
+    "ShinyHamsterBubble.rbxm",
+    "ShinyHamsterBubble.glb"
+  ],
+  "HamsterId": "bubble",
+  "Hash": "07ae2bcc0a92903f",
+  "IncomePerSecond": 21.818181818181817,
+  "MinRebirth": 0,
+  "MovementSpeed": 12,
+  "Name": "ShinyHamsterBubble",
+  "Parts": 38,
+  "PurchasePrice": 2400,
+  "Rarity": "Shiny",
+  "Signature": "tiny|big|smile|none|nub|astro|bubbles|1.00",
+  "SizeStuds": [
+    3.89,
+    4.75,
+    4.35
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.bubble)",
+  "SpawnChance": 0.008652380240963022
+}

@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Celestial",
+  "CollectionValue": 3570,
+  "DisplayName": "Dawn Bringer",
+  "Files": [
+    "CelestialHamsterDawnBringer.rbxm",
+    "CelestialHamsterDawnBringer.glb"
+  ],
+  "HamsterId": "dawn_bringer",
+  "Hash": "cb2d4b7fece7956e",
+  "IncomePerSecond": 386363.63636363635,
+  "MinRebirth": 7,
+  "MovementSpeed": 38,
+  "Name": "CelestialHamsterDawnBringer",
+  "Parts": 54,
+  "PurchasePrice": 340000000,
+  "Rarity": "Celestial",
+  "Signature": "round|happy|smile|none|nub|cape+sun_crown+wings_aurora|sparkle|1.00",
+  "SizeStuds": [
+    7.67,
+    4.79,
+    4.66
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.dawn_bringer)",
+  "SpawnChance": 0.00001211333233734823
+}

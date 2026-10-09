@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Ultra",
+  "CollectionValue": 249,
+  "DisplayName": "Cyberpunk",
+  "Files": [
+    "UltraHamsterCyberpunk.rbxm",
+    "UltraHamsterCyberpunk.glb"
+  ],
+  "HamsterId": "cyberpunk",
+  "Hash": "77963784f23146ec",
+  "IncomePerSecond": 923.0769230769231,
+  "MinRebirth": 0,
+  "MovementSpeed": 19,
+  "Name": "UltraHamsterCyberpunk",
+  "Parts": 50,
+  "PurchasePrice": 240000,
+  "Rarity": "Ultra",
+  "Signature": "big|glow|smile|stripes|nub|headphones+jetpack+visor||1.00",
+  "SizeStuds": [
+    4.06,
+    5.35,
+    4.42
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.cyberpunk)",
+  "SpawnChance": 0.0008412036345380715
+}

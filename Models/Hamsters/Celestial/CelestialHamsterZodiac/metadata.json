@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Celestial",
+  "CollectionValue": 4959,
+  "DisplayName": "Zodiac",
+  "Files": [
+    "CelestialHamsterZodiac.rbxm",
+    "CelestialHamsterZodiac.glb"
+  ],
+  "HamsterId": "zodiac",
+  "Hash": "beac8ade1d21a802",
+  "IncomePerSecond": 534090.9090909091,
+  "MinRebirth": 7,
+  "MovementSpeed": 38,
+  "Name": "CelestialHamsterZodiac",
+  "Parts": 42,
+  "PurchasePrice": 470000000,
+  "Rarity": "Celestial",
+  "Signature": "fluffy|crystal|smile|none|nub|galaxy_crown+held_gem+orbit_ring||1.00",
+  "SizeStuds": [
+    4.96,
+    5,
+    5.23
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.zodiac)",
+  "SpawnChance": 0.00001211333233734823
+}

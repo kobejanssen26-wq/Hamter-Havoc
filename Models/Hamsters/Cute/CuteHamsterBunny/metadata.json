@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Cute",
+  "CollectionValue": 19,
+  "DisplayName": "Bunny",
+  "Files": [
+    "CuteHamsterBunny.rbxm",
+    "CuteHamsterBunny.glb"
+  ],
+  "HamsterId": "bunny",
+  "Hash": "1e9ad8bb670faf34",
+  "IncomePerSecond": 5.875,
+  "MinRebirth": 0,
+  "MovementSpeed": 10.5,
+  "Name": "CuteHamsterBunny",
+  "Parts": 38,
+  "PurchasePrice": 470,
+  "Rarity": "Cute",
+  "Signature": "bunny|big|cat|none|fluffy|bow||1.00",
+  "SizeStuds": [
+    3.89,
+    5.8,
+    4.61
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.bunny)",
+  "SpawnChance": 0.01802579216867296
+}

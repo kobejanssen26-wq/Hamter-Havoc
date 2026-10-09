@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Mythic",
+  "CollectionValue": 918,
+  "DisplayName": "Lich King",
+  "Files": [
+    "MythicHamsterLichKing.rbxm",
+    "MythicHamsterLichKing.glb"
+  ],
+  "HamsterId": "lich_king",
+  "Hash": "40652d6bd0990973",
+  "IncomePerSecond": 12272.727272727272,
+  "MinRebirth": 1,
+  "MovementSpeed": 26,
+  "Name": "MythicHamsterLichKing",
+  "Parts": 47,
+  "PurchasePrice": 5400000,
+  "Rarity": "Mythic",
+  "Signature": "tiny|glow|flat|none|nub|cape_royal+held_staff+ice_crown|snow|1.00",
+  "SizeStuds": [
+    3.89,
+    5.45,
+    4.13
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.lich_king)",
+  "SpawnChance": 0.00013459258152609144
+}

@@ -1,0 +1,16 @@
+{
+  "Category": "Buildings/Plaza",
+  "Files": [
+    "HamsterLibrary.rbxm",
+    "HamsterLibrary.glb"
+  ],
+  "Hash": "008845e6498b5e49",
+  "Name": "HamsterLibrary",
+  "Parts": 56,
+  "SizeStuds": [
+    15.6,
+    13.7,
+    11.56
+  ],
+  "Source": "PlazaBuilder (HamsterLibrary)"
+}

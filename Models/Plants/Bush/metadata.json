@@ -1,0 +1,16 @@
+{
+  "Category": "Plants",
+  "Files": [
+    "Bush.rbxm",
+    "Bush.glb"
+  ],
+  "Hash": "15ccaa564871b259",
+  "Name": "Bush",
+  "Parts": 3,
+  "SizeStuds": [
+    5.76,
+    2.77,
+    3.85
+  ],
+  "Source": "Decor.bush"
+}

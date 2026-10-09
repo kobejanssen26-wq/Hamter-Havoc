@@ -151,6 +151,20 @@ for _, id in RarityConfig.Order do
 	check(minIncome > prevMaxIncome, id .. " always earns more than every lower rarity")
 	prevMaxPrice, prevMaxIncome = maxPrice, maxIncome
 end
+-- every hamster looks different (the /Models library stores each look once)
+do
+	local HamsterBuilder = Runtime.require(Runtime.modules().HamsterBuilder)
+	local seen: { [string]: string } = {}
+	local clashes = {}
+	for _, species in HamsterDatabase.Species do
+		local signature = HamsterBuilder.signature(species)
+		if seen[signature] then
+			table.insert(clashes, seen[signature] .. " = " .. species.Id)
+		end
+		seen[signature] = species.Id
+	end
+	check(#clashes == 0, "no two hamsters share a look", table.concat(clashes, ", "))
+end
 local previousWeight = math.huge
 for _, id in RarityConfig.Order do
 	check(RarityConfig.ById[id].Weight < previousWeight, id .. " is rarer than the rarity below")

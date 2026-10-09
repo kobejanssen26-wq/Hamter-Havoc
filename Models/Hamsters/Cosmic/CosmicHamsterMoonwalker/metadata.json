@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Cosmic",
+  "CollectionValue": 2777,
+  "DisplayName": "Moonwalker",
+  "Files": [
+    "CosmicHamsterMoonwalker.rbxm",
+    "CosmicHamsterMoonwalker.glb"
+  ],
+  "HamsterId": "moonwalker",
+  "Hash": "e54a6f3614bdf3ca",
+  "IncomePerSecond": 157142.85714285713,
+  "MinRebirth": 5,
+  "MovementSpeed": 34,
+  "Name": "CosmicHamsterMoonwalker",
+  "Parts": 38,
+  "PurchasePrice": 110000000,
+  "Rarity": "Cosmic",
+  "Signature": "none|dot|smile|none|nub|astro+backpack+orbit_orbs||1.00",
+  "SizeStuds": [
+    4.5,
+    4.75,
+    4.86
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.moonwalker)",
+  "SpawnChance": 0.00002294191730558377
+}

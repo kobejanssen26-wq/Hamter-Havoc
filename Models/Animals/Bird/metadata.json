@@ -1,0 +1,16 @@
+{
+  "Category": "Animals",
+  "Files": [
+    "Bird.rbxm",
+    "Bird.glb"
+  ],
+  "Hash": "02e7266d9df5e366",
+  "Name": "Bird",
+  "Parts": 3,
+  "SizeStuds": [
+    4.8,
+    0.7,
+    1.6
+  ],
+  "Source": "Decor.bird"
+}

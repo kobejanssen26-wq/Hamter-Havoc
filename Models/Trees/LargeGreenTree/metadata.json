@@ -1,0 +1,16 @@
+{
+  "Category": "Trees",
+  "Files": [
+    "LargeGreenTree.rbxm",
+    "LargeGreenTree.glb"
+  ],
+  "Hash": "24dffe1bdfafb427",
+  "Name": "LargeGreenTree",
+  "Parts": 9,
+  "SizeStuds": [
+    22.04,
+    19.03,
+    19.49
+  ],
+  "Source": "Decor.largeTree"
+}

@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Celestial",
+  "CollectionValue": 5356,
+  "DisplayName": "Harmonic",
+  "Files": [
+    "CelestialHamsterHarmonic.rbxm",
+    "CelestialHamsterHarmonic.glb"
+  ],
+  "HamsterId": "harmonic",
+  "Hash": "5f61425fa1278caf",
+  "IncomePerSecond": 579545.4545454546,
+  "MinRebirth": 7,
+  "MovementSpeed": 38,
+  "Name": "CelestialHamsterHarmonic",
+  "Parts": 71,
+  "PurchasePrice": 510000000,
+  "Rarity": "Celestial",
+  "Signature": "big|happy|open|none|nub|headphones+orbit_stars+wings_seraph|hearts|1.00",
+  "SizeStuds": [
+    9.57,
+    4.9,
+    5.58
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.harmonic)",
+  "SpawnChance": 0.00001211333233734823
+}

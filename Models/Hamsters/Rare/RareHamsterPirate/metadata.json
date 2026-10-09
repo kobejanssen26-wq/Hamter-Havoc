@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Rare",
+  "CollectionValue": 61,
+  "DisplayName": "Pirate",
+  "Files": [
+    "RareHamsterPirate.rbxm",
+    "RareHamsterPirate.glb"
+  ],
+  "HamsterId": "pirate",
+  "Hash": "ae0c8d38092e9f87",
+  "IncomePerSecond": 62.666666666666664,
+  "MinRebirth": 0,
+  "MovementSpeed": 14,
+  "Name": "RareHamsterPirate",
+  "Parts": 40,
+  "PurchasePrice": 9400,
+  "Rarity": "Rare",
+  "Signature": "round|dot|grin|none|nub|eyepatch+held_sword+pirate||1.00",
+  "SizeStuds": [
+    3.9,
+    4.65,
+    4.03
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.pirate)",
+  "SpawnChance": 0.004658973975903166
+}

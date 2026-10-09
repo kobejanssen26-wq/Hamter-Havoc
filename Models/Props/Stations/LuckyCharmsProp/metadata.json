@@ -1,0 +1,17 @@
+{
+  "Category": "Props/Stations",
+  "Files": [
+    "LuckyCharmsProp.rbxm",
+    "LuckyCharmsProp.glb"
+  ],
+  "Hash": "17288432dc607920",
+  "Name": "LuckyCharmsProp",
+  "Notes": "Shown on the upgrade pedestal, grows with the upgrade level.",
+  "Parts": 6,
+  "SizeStuds": [
+    2.53,
+    3.1,
+    2.65
+  ],
+  "Source": "HouseBuilder.StationProps.LuckyCharms"
+}

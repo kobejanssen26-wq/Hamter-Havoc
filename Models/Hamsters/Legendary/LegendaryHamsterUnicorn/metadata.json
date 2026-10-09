@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Legendary",
+  "CollectionValue": 377,
+  "DisplayName": "Unicorn",
+  "Files": [
+    "LegendaryHamsterUnicorn.rbxm",
+    "LegendaryHamsterUnicorn.glb"
+  ],
+  "HamsterId": "unicorn",
+  "Hash": "8e3a200e6e8c6eac",
+  "IncomePerSecond": 2617.6470588235293,
+  "MinRebirth": 0,
+  "MovementSpeed": 22,
+  "Name": "LegendaryHamsterUnicorn",
+  "Parts": 47,
+  "PurchasePrice": 890000,
+  "Rarity": "Legendary",
+  "Signature": "elf|sparkle|cat|none|none|ground_glow+tail_fluffy+unicorn_horn|sparkle|1.00",
+  "SizeStuds": [
+    5.36,
+    6.09,
+    4.85
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.unicorn)",
+  "SpawnChance": 0.0002691851630521829
+}

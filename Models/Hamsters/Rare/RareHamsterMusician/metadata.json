@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Rare",
+  "CollectionValue": 83,
+  "DisplayName": "Musician",
+  "Files": [
+    "RareHamsterMusician.rbxm",
+    "RareHamsterMusician.glb"
+  ],
+  "HamsterId": "musician",
+  "Hash": "c7abc36d1966f7c6",
+  "IncomePerSecond": 86.66666666666667,
+  "MinRebirth": 0,
+  "MovementSpeed": 14,
+  "Name": "RareHamsterMusician",
+  "Parts": 40,
+  "PurchasePrice": 13000,
+  "Rarity": "Rare",
+  "Signature": "fluffy|happy|open|none|nub|bowtie+headphones||1.00",
+  "SizeStuds": [
+    4,
+    4.9,
+    4.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.musician)",
+  "SpawnChance": 0.004658973975903166
+}

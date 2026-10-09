@@ -1,0 +1,16 @@
+{
+  "Category": "Plants",
+  "Files": [
+    "BerryBush.rbxm",
+    "BerryBush.glb"
+  ],
+  "Hash": "ea30b7a97215f00c",
+  "Name": "BerryBush",
+  "Parts": 6,
+  "SizeStuds": [
+    5.76,
+    2.77,
+    3.85
+  ],
+  "Source": "Decor.bush(berries)"
+}

@@ -1,0 +1,20 @@
+{
+  "Category": "Buildings/Apartment",
+  "Files": [
+    "Floor05.rbxm",
+    "Floor05.glb"
+  ],
+  "FloorName": "Penthouse",
+  "Hash": "23b69e7051011957",
+  "Name": "Floor05",
+  "Notes": "Modular storey: stack Floor01..Floor05, then Roof. Wheels are separate (HamsterWheel).",
+  "Parts": 141,
+  "Purpose": "Prestige hamster area",
+  "SizeStuds": [
+    53.4,
+    11.3,
+    43.4
+  ],
+  "Source": "HouseBuilder (buildFloor 5)",
+  "UnlocksAtRebirth": 14
+}

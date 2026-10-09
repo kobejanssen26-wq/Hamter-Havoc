@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Basic",
+  "CollectionValue": 11,
+  "DisplayName": "Pebbles",
+  "Files": [
+    "BasicHamsterPebbles.rbxm",
+    "BasicHamsterPebbles.glb"
+  ],
+  "HamsterId": "pebbles",
+  "Hash": "5bf4db33f9e7b265",
+  "IncomePerSecond": 1.8333333333333333,
+  "MinRebirth": 0,
+  "MovementSpeed": 9,
+  "Name": "BasicHamsterPebbles",
+  "Parts": 29,
+  "PurchasePrice": 110,
+  "Rarity": "Basic",
+  "Signature": "tiny|dot|flat|none|nub|||1.00",
+  "SizeStuds": [
+    3.89,
+    3.35,
+    4.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.pebbles)",
+  "SpawnChance": 0.03499407119678378
+}

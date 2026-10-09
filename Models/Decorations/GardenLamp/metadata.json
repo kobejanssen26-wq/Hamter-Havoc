@@ -1,0 +1,16 @@
+{
+  "Category": "Decorations",
+  "Files": [
+    "GardenLamp.rbxm",
+    "GardenLamp.glb"
+  ],
+  "Hash": "140368155ce927ca",
+  "Name": "GardenLamp",
+  "Parts": 4,
+  "SizeStuds": [
+    2.2,
+    10.15,
+    2.2
+  ],
+  "Source": "Decor.lamp"
+}

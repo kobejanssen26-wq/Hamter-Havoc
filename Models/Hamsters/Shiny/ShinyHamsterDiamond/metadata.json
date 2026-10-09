@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Shiny",
+  "CollectionValue": 44,
+  "DisplayName": "Diamond",
+  "Files": [
+    "ShinyHamsterDiamond.rbxm",
+    "ShinyHamsterDiamond.glb"
+  ],
+  "HamsterId": "diamond",
+  "Hash": "be8da761eca18d34",
+  "IncomePerSecond": 24.545454545454547,
+  "MinRebirth": 0,
+  "MovementSpeed": 12,
+  "Name": "ShinyHamsterDiamond",
+  "Parts": 39,
+  "PurchasePrice": 2700,
+  "Rarity": "Shiny",
+  "Signature": "fluffy|crystal|smile|none|nub|orbit_shards+tiara|sparkle|1.00",
+  "SizeStuds": [
+    5.02,
+    4.53,
+    5.53
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.diamond)",
+  "SpawnChance": 0.008652380240963022
+}

@@ -1,0 +1,17 @@
+{
+  "Category": "Buildings/Apartment",
+  "Files": [
+    "Lift.rbxm",
+    "Lift.glb"
+  ],
+  "Hash": "23639e80c2e5db7f",
+  "Name": "Lift",
+  "Notes": "Glass lift tower beside the building (shown at 5 floors).",
+  "Parts": 13,
+  "SizeStuds": [
+    8.5,
+    59.75,
+    13
+  ],
+  "Source": "HouseBuilder (buildLift)"
+}

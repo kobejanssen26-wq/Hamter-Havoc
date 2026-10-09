@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Cosmic",
+  "CollectionValue": 2479,
+  "DisplayName": "Quasar",
+  "Files": [
+    "CosmicHamsterQuasar.rbxm",
+    "CosmicHamsterQuasar.glb"
+  ],
+  "HamsterId": "quasar",
+  "Hash": "d498cadee0a49375",
+  "IncomePerSecond": 134285.7142857143,
+  "MinRebirth": 5,
+  "MovementSpeed": 34,
+  "Name": "CosmicHamsterQuasar",
+  "Parts": 41,
+  "PurchasePrice": 94000000,
+  "Rarity": "Cosmic",
+  "Signature": "big|glow|smile|none|nub|jetpack+orbit_ring+visor||1.00",
+  "SizeStuds": [
+    4.96,
+    4.67,
+    5.05
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.quasar)",
+  "SpawnChance": 0.00002294191730558377
+}

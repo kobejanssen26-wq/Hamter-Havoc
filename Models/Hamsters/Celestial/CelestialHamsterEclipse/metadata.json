@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Celestial",
+  "CollectionValue": 5157,
+  "DisplayName": "Eclipse",
+  "Files": [
+    "CelestialHamsterEclipse.rbxm",
+    "CelestialHamsterEclipse.glb"
+  ],
+  "HamsterId": "eclipse",
+  "Hash": "77db0359e0662719",
+  "IncomePerSecond": 556818.1818181818,
+  "MinRebirth": 7,
+  "MovementSpeed": 38,
+  "Name": "CelestialHamsterEclipse",
+  "Parts": 44,
+  "PurchasePrice": 490000000,
+  "Rarity": "Celestial",
+  "Signature": "round|glow|flat|none|nub|cape+ground_glow+sun_crown||1.00",
+  "SizeStuds": [
+    4.6,
+    4.79,
+    4.6
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.eclipse)",
+  "SpawnChance": 0.00001211333233734823
+}

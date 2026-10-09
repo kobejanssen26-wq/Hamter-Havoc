@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Shiny",
+  "CollectionValue": 32,
+  "DisplayName": "Crystal",
+  "Files": [
+    "ShinyHamsterCrystal.rbxm",
+    "ShinyHamsterCrystal.glb"
+  ],
+  "HamsterId": "crystal",
+  "Hash": "fc3a86b8f1f816d3",
+  "IncomePerSecond": 18.181818181818183,
+  "MinRebirth": 0,
+  "MovementSpeed": 12,
+  "Name": "ShinyHamsterCrystal",
+  "Parts": 41,
+  "PurchasePrice": 2000,
+  "Rarity": "Shiny",
+  "Signature": "bear|crystal|smile|none|nub|crystal_crown+orbit_shards|sparkle|1.00",
+  "SizeStuds": [
+    5.02,
+    5.23,
+    5.53
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.crystal)",
+  "SpawnChance": 0.008652380240963022
+}

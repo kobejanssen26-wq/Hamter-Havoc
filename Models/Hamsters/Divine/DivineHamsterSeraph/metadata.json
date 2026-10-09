@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Divine",
+  "CollectionValue": 1598,
+  "DisplayName": "Seraph",
+  "Files": [
+    "DivineHamsterSeraph.rbxm",
+    "DivineHamsterSeraph.glb"
+  ],
+  "HamsterId": "seraph",
+  "Hash": "12b8a44d935b08e3",
+  "IncomePerSecond": 41071.42857142857,
+  "MinRebirth": 3,
+  "MovementSpeed": 30,
+  "Name": "DivineHamsterSeraph",
+  "Parts": 49,
+  "PurchasePrice": 23000000,
+  "Rarity": "Divine",
+  "Signature": "none|happy|smile|none|nub|armor+halo+wings_seraph|sparkle|1.00",
+  "SizeStuds": [
+    9.57,
+    4.47,
+    5.07
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.seraph)",
+  "SpawnChance": 0.000055060601533401044
+}

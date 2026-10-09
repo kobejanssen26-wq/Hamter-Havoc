@@ -1,0 +1,16 @@
+{
+  "Category": "Decorations",
+  "Files": [
+    "Flag.rbxm",
+    "Flag.glb"
+  ],
+  "Hash": "320741234b82dac8",
+  "Name": "Flag",
+  "Parts": 2,
+  "SizeStuds": [
+    3.65,
+    9.1,
+    0.3
+  ],
+  "Source": "Decor.flag"
+}

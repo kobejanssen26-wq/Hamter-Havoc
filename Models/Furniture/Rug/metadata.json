@@ -1,0 +1,16 @@
+{
+  "Category": "Furniture",
+  "Files": [
+    "Rug.rbxm",
+    "Rug.glb"
+  ],
+  "Hash": "30d6972be28cfe85",
+  "Name": "Rug",
+  "Parts": 2,
+  "SizeStuds": [
+    8,
+    0.09,
+    6
+  ],
+  "Source": "HouseBuilder.Furniture.Rug"
+}

@@ -1,0 +1,17 @@
+{
+  "Category": "Props/Stations",
+  "Files": [
+    "CoinMultiplierProp.rbxm",
+    "CoinMultiplierProp.glb"
+  ],
+  "Hash": "37cf92c1b14f7926",
+  "Name": "CoinMultiplierProp",
+  "Notes": "Shown on the upgrade pedestal, grows with the upgrade level.",
+  "Parts": 11,
+  "SizeStuds": [
+    3.21,
+    2.99,
+    2.12
+  ],
+  "Source": "HouseBuilder.StationProps.CoinMultiplier"
+}

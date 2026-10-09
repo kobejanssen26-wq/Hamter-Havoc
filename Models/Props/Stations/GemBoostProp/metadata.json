@@ -1,0 +1,17 @@
+{
+  "Category": "Props/Stations",
+  "Files": [
+    "GemBoostProp.rbxm",
+    "GemBoostProp.glb"
+  ],
+  "Hash": "efb3461682cac40b",
+  "Name": "GemBoostProp",
+  "Notes": "Shown on the upgrade pedestal, grows with the upgrade level.",
+  "Parts": 6,
+  "SizeStuds": [
+    2.3,
+    2.02,
+    2.83
+  ],
+  "Source": "HouseBuilder.StationProps.GemBoost"
+}

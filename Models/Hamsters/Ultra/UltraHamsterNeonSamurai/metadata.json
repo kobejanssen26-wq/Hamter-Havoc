@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Ultra",
+  "CollectionValue": 283,
+  "DisplayName": "Neon Samurai",
+  "Files": [
+    "UltraHamsterNeonSamurai.rbxm",
+    "UltraHamsterNeonSamurai.glb"
+  ],
+  "HamsterId": "neon_samurai",
+  "Hash": "9de9f606722d6129",
+  "IncomePerSecond": 1038.4615384615386,
+  "MinRebirth": 0,
+  "MovementSpeed": 19,
+  "Name": "UltraHamsterNeonSamurai",
+  "Parts": 40,
+  "PurchasePrice": 270000,
+  "Rarity": "Ultra",
+  "Signature": "round|glow|flat|none|nub|held_sword+samurai+visor||1.00",
+  "SizeStuds": [
+    3.89,
+    5.1,
+    4.07
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.neon_samurai)",
+  "SpawnChance": 0.0008412036345380715
+}

@@ -1,0 +1,16 @@
+{
+  "Category": "Trees",
+  "Files": [
+    "LargeCherryTree.rbxm",
+    "LargeCherryTree.glb"
+  ],
+  "Hash": "82ba610a60ef7366",
+  "Name": "LargeCherryTree",
+  "Parts": 9,
+  "SizeStuds": [
+    22.04,
+    19.03,
+    19.49
+  ],
+  "Source": "Decor.largeTree(Cherry)"
+}

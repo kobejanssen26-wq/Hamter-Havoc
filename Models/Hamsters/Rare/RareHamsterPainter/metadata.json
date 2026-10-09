@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Rare",
+  "CollectionValue": 80,
+  "DisplayName": "Painter",
+  "Files": [
+    "RareHamsterPainter.rbxm",
+    "RareHamsterPainter.glb"
+  ],
+  "HamsterId": "painter",
+  "Hash": "8d4ab9fa3572a403",
+  "IncomePerSecond": 80,
+  "MinRebirth": 0,
+  "MovementSpeed": 14,
+  "Name": "RareHamsterPainter",
+  "Parts": 41,
+  "PurchasePrice": 12000,
+  "Rarity": "Rare",
+  "Signature": "round|wink|smile|freckles|nub|beret+held_brush||1.00",
+  "SizeStuds": [
+    3.89,
+    4.15,
+    4.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.painter)",
+  "SpawnChance": 0.004658973975903166
+}

@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Mythic",
+  "CollectionValue": 751,
+  "DisplayName": "Minotaur",
+  "Files": [
+    "MythicHamsterMinotaur.rbxm",
+    "MythicHamsterMinotaur.glb"
+  ],
+  "HamsterId": "minotaur",
+  "Hash": "673e72a65c671686",
+  "IncomePerSecond": 10000,
+  "MinRebirth": 1,
+  "MovementSpeed": 26,
+  "Name": "MythicHamsterMinotaur",
+  "Parts": 49,
+  "PurchasePrice": 4400000,
+  "Rarity": "Mythic",
+  "Signature": "floppy|angry|grin|none|nub|armor+held_hammer+horns+spiked_collar||1.25",
+  "SizeStuds": [
+    6.38,
+    5.7,
+    5.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.minotaur)",
+  "SpawnChance": 0.00013459258152609144
+}

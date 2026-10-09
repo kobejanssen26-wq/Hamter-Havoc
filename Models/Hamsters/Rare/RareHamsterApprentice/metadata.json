@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Rare",
+  "CollectionValue": 70,
+  "DisplayName": "Apprentice",
+  "Files": [
+    "RareHamsterApprentice.rbxm",
+    "RareHamsterApprentice.glb"
+  ],
+  "HamsterId": "apprentice",
+  "Hash": "b0d5c6f02ca8fd1b",
+  "IncomePerSecond": 73.33333333333333,
+  "MinRebirth": 0,
+  "MovementSpeed": 14,
+  "Name": "RareHamsterApprentice",
+  "Parts": 47,
+  "PurchasePrice": 11000,
+  "Rarity": "Rare",
+  "Signature": "elf|big|smile|none|nub|held_book+wizard||1.00",
+  "SizeStuds": [
+    5.36,
+    6.73,
+    4.25
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.apprentice)",
+  "SpawnChance": 0.004658973975903166
+}

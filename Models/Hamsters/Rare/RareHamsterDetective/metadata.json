@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Rare",
+  "CollectionValue": 68,
+  "DisplayName": "Detective",
+  "Files": [
+    "RareHamsterDetective.rbxm",
+    "RareHamsterDetective.glb"
+  ],
+  "HamsterId": "detective",
+  "Hash": "21b0cbd16ed8288e",
+  "IncomePerSecond": 73.33333333333333,
+  "MinRebirth": 0,
+  "MovementSpeed": 14,
+  "Name": "RareHamsterDetective",
+  "Parts": 39,
+  "PurchasePrice": 11000,
+  "Rarity": "Rare",
+  "Signature": "round|dot|flat|none|nub|detective+monocle+tie||1.00",
+  "SizeStuds": [
+    3.89,
+    4.15,
+    4.35
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.detective)",
+  "SpawnChance": 0.004658973975903166
+}

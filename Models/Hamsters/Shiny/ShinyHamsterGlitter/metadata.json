@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Shiny",
+  "CollectionValue": 45,
+  "DisplayName": "Glitter",
+  "Files": [
+    "ShinyHamsterGlitter.rbxm",
+    "ShinyHamsterGlitter.glb"
+  ],
+  "HamsterId": "glitter",
+  "Hash": "61f1758c0d1758d4",
+  "IncomePerSecond": 25.454545454545453,
+  "MinRebirth": 0,
+  "MovementSpeed": 12,
+  "Name": "ShinyHamsterGlitter",
+  "Parts": 45,
+  "PurchasePrice": 2800,
+  "Rarity": "Shiny",
+  "Signature": "round|sparkle|tongue|none|nub|bow+held_wand|sparkle|1.00",
+  "SizeStuds": [
+    3.89,
+    3.8,
+    4.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.glitter)",
+  "SpawnChance": 0.008652380240963022
+}

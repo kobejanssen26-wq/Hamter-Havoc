@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Divine",
+  "CollectionValue": 1102,
+  "DisplayName": "Skyfather",
+  "Files": [
+    "DivineHamsterSkyfather.rbxm",
+    "DivineHamsterSkyfather.glb"
+  ],
+  "HamsterId": "skyfather",
+  "Hash": "a821adbdde214911",
+  "IncomePerSecond": 28571.428571428572,
+  "MinRebirth": 3,
+  "MovementSpeed": 30,
+  "Name": "DivineHamsterSkyfather",
+  "Parts": 47,
+  "PurchasePrice": 16000000,
+  "Rarity": "Divine",
+  "Signature": "round|glow|grin|none|nub|cape+held_orb+laurel+orbit_ring|sparkle|1.00",
+  "SizeStuds": [
+    4.96,
+    3.77,
+    5.08
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.skyfather)",
+  "SpawnChance": 0.000055060601533401044
+}

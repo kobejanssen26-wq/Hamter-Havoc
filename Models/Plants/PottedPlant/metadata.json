@@ -1,0 +1,16 @@
+{
+  "Category": "Plants",
+  "Files": [
+    "PottedPlant.rbxm",
+    "PottedPlant.glb"
+  ],
+  "Hash": "3e901e570c2e70b2",
+  "Name": "PottedPlant",
+  "Parts": 2,
+  "SizeStuds": [
+    2.6,
+    4.3,
+    2.6
+  ],
+  "Source": "HouseBuilder.Furniture.Plant"
+}

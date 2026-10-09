@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Cute",
+  "CollectionValue": 21,
+  "DisplayName": "Cloud",
+  "Files": [
+    "CuteHamsterCloud.rbxm",
+    "CuteHamsterCloud.glb"
+  ],
+  "HamsterId": "cloud",
+  "Hash": "7d340301b96a561f",
+  "IncomePerSecond": 6.75,
+  "MinRebirth": 0,
+  "MovementSpeed": 10.5,
+  "Name": "CuteHamsterCloud",
+  "Parts": 33,
+  "PurchasePrice": 540,
+  "Rarity": "Cute",
+  "Signature": "tiny|sleepy|flat|none|fluffy|cloud||1.00",
+  "SizeStuds": [
+    3.89,
+    5.1,
+    4.61
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.cloud)",
+  "SpawnChance": 0.01802579216867296
+}

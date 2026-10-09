@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Divine",
+  "CollectionValue": 1488,
+  "DisplayName": "Anubis",
+  "Files": [
+    "DivineHamsterAnubis.rbxm",
+    "DivineHamsterAnubis.glb"
+  ],
+  "HamsterId": "anubis",
+  "Hash": "7425c7b2caacee00",
+  "IncomePerSecond": 39285.71428571428,
+  "MinRebirth": 3,
+  "MovementSpeed": 30,
+  "Name": "DivineHamsterAnubis",
+  "Parts": 48,
+  "PurchasePrice": 22000000,
+  "Rarity": "Divine",
+  "Signature": "cat|glow|flat|none|nub|held_staff+medal+pharaoh||1.00",
+  "SizeStuds": [
+    3.89,
+    4.6,
+    4.15
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.anubis)",
+  "SpawnChance": 0.000055060601533401044
+}

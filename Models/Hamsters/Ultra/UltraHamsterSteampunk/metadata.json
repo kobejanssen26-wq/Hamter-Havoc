@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Ultra",
+  "CollectionValue": 258,
+  "DisplayName": "Steampunk",
+  "Files": [
+    "UltraHamsterSteampunk.rbxm",
+    "UltraHamsterSteampunk.glb"
+  ],
+  "HamsterId": "steampunk",
+  "Hash": "4e662688bfb26f5a",
+  "IncomePerSecond": 961.5384615384615,
+  "MinRebirth": 0,
+  "MovementSpeed": 19,
+  "Name": "UltraHamsterSteampunk",
+  "Parts": 60,
+  "PurchasePrice": 250000,
+  "Rarity": "Ultra",
+  "Signature": "round|dot|smile|none|nub|goggles+tophat+wings_mecha||1.00",
+  "SizeStuds": [
+    8.36,
+    4.9,
+    5.02
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.steampunk)",
+  "SpawnChance": 0.0008412036345380715
+}

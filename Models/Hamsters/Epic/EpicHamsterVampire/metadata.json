@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Epic",
+  "CollectionValue": 112,
+  "DisplayName": "Vampire",
+  "Files": [
+    "EpicHamsterVampire.rbxm",
+    "EpicHamsterVampire.glb"
+  ],
+  "HamsterId": "vampire",
+  "Hash": "38ab2f6c454e2583",
+  "IncomePerSecond": 215,
+  "MinRebirth": 0,
+  "MovementSpeed": 16.5,
+  "Name": "EpicHamsterVampire",
+  "Parts": 40,
+  "PurchasePrice": 43000,
+  "Rarity": "Epic",
+  "Signature": "cat|glow|fang|none|nub|cape_royal||1.00",
+  "SizeStuds": [
+    3.89,
+    4.54,
+    4.13
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.vampire)",
+  "SpawnChance": 0.0014250979220409683
+}

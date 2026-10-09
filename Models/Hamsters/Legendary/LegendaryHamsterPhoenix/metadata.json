@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Legendary",
+  "CollectionValue": 364,
+  "DisplayName": "Phoenix",
+  "Files": [
+    "LegendaryHamsterPhoenix.rbxm",
+    "LegendaryHamsterPhoenix.glb"
+  ],
+  "HamsterId": "phoenix",
+  "Hash": "b3552b85d76b6439",
+  "IncomePerSecond": 2529.4117647058824,
+  "MinRebirth": 0,
+  "MovementSpeed": 22,
+  "Name": "LegendaryHamsterPhoenix",
+  "Parts": 69,
+  "PurchasePrice": 860000,
+  "Rarity": "Legendary",
+  "Signature": "tiny|glow|smile|none|none|sun_crown+tail_peacock+wings_flame|flame|1.00",
+  "SizeStuds": [
+    8.25,
+    4.69,
+    4.78
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.phoenix)",
+  "SpawnChance": 0.0002691851630521829
+}

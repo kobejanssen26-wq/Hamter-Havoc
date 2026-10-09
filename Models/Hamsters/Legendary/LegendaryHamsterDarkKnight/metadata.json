@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Legendary",
+  "CollectionValue": 449,
+  "DisplayName": "Dark Knight",
+  "Files": [
+    "LegendaryHamsterDarkKnight.rbxm",
+    "LegendaryHamsterDarkKnight.glb"
+  ],
+  "HamsterId": "dark_knight",
+  "Hash": "73482255f2d77134",
+  "IncomePerSecond": 3235.294117647059,
+  "MinRebirth": 0,
+  "MovementSpeed": 22,
+  "Name": "LegendaryHamsterDarkKnight",
+  "Parts": 41,
+  "PurchasePrice": 1100000,
+  "Rarity": "Legendary",
+  "Signature": "tiny|glow|none|none|nub|armor+cape+held_sword+knight||1.00",
+  "SizeStuds": [
+    3.89,
+    5.5,
+    4.1
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.dark_knight)",
+  "SpawnChance": 0.0002691851630521829
+}

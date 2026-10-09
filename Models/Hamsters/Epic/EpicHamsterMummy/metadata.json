@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Epic",
+  "CollectionValue": 115,
+  "DisplayName": "Mummy",
+  "Files": [
+    "EpicHamsterMummy.rbxm",
+    "EpicHamsterMummy.glb"
+  ],
+  "HamsterId": "mummy",
+  "Hash": "1dff1cbca7e9d8d6",
+  "IncomePerSecond": 220,
+  "MinRebirth": 0,
+  "MovementSpeed": 16.5,
+  "Name": "EpicHamsterMummy",
+  "Parts": 37,
+  "PurchasePrice": 44000,
+  "Rarity": "Epic",
+  "Signature": "tiny|glow|flat|stripes|nub|bandana||1.00",
+  "SizeStuds": [
+    3.89,
+    3.9,
+    4.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.mummy)",
+  "SpawnChance": 0.0014250979220409683
+}

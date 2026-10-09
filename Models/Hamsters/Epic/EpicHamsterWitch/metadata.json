@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Epic",
+  "CollectionValue": 118,
+  "DisplayName": "Witch",
+  "Files": [
+    "EpicHamsterWitch.rbxm",
+    "EpicHamsterWitch.glb"
+  ],
+  "HamsterId": "witch",
+  "Hash": "331b9cfb4f1a48ca",
+  "IncomePerSecond": 225,
+  "MinRebirth": 0,
+  "MovementSpeed": 16.5,
+  "Name": "EpicHamsterWitch",
+  "Parts": 45,
+  "PurchasePrice": 45000,
+  "Rarity": "Epic",
+  "Signature": "cat|cat|grin|none|nub|bellcollar+held_staff+witch||1.00",
+  "SizeStuds": [
+    3.89,
+    7.1,
+    4.3
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.witch)",
+  "SpawnChance": 0.0014250979220409683
+}

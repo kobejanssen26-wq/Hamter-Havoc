@@ -1,0 +1,16 @@
+{
+  "Category": "Trees",
+  "Files": [
+    "LargeDarkTree.rbxm",
+    "LargeDarkTree.glb"
+  ],
+  "Hash": "d17e73fa1170aad6",
+  "Name": "LargeDarkTree",
+  "Parts": 9,
+  "SizeStuds": [
+    22.04,
+    19.03,
+    19.49
+  ],
+  "Source": "Decor.largeTree(LeafDark)"
+}

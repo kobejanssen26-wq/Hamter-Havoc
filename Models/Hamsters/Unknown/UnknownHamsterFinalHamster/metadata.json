@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Unknown",
+  "CollectionValue": 31234,
+  "DisplayName": "Final Hamster",
+  "Files": [
+    "UnknownHamsterFinalHamster.rbxm",
+    "UnknownHamsterFinalHamster.glb"
+  ],
+  "HamsterId": "final_hamster",
+  "Hash": "7eb3c30a539f544e",
+  "IncomePerSecond": 29444444.444444444,
+  "MinRebirth": 15,
+  "MovementSpeed": 56,
+  "Name": "UnknownHamsterFinalHamster",
+  "Parts": 65,
+  "PurchasePrice": 53000000000,
+  "Rarity": "???",
+  "Signature": "cat|glow|fang|none|nub|armor+ground_glow+held_scythe+orbit_ring+void_crown+wings_void|glitch+flame|1.20",
+  "SizeStuds": [
+    9.37,
+    6.77,
+    6.06
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.final_hamster)",
+  "SpawnChance": 6.729629076304572e-7
+}

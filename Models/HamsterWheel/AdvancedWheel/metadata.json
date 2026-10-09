@@ -1,0 +1,18 @@
+{
+  "Category": "HamsterWheel",
+  "Files": [
+    "AdvancedWheel.rbxm",
+    "AdvancedWheel.glb"
+  ],
+  "Hash": "58b34b98bfb64a0b",
+  "Name": "AdvancedWheel",
+  "Notes": "The child model 'Wheel' turns around the hub's X axis (attribute HomeCFrame, AmbientController SpinModel).",
+  "Parts": 24,
+  "SizeStuds": [
+    7.4,
+    6.75,
+    4.6
+  ],
+  "Source": "HouseBuilder (buildWheel) - style AdvancedWheel",
+  "UsedOn": "apartment floors using AdvancedWheel"
+}

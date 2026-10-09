@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Epic",
+  "CollectionValue": 141,
+  "DisplayName": "Ghost",
+  "Files": [
+    "EpicHamsterGhost.rbxm",
+    "EpicHamsterGhost.glb"
+  ],
+  "HamsterId": "ghost",
+  "Hash": "49816dbba15cb345",
+  "IncomePerSecond": 270,
+  "MinRebirth": 0,
+  "MovementSpeed": 16.5,
+  "Name": "EpicHamsterGhost",
+  "Parts": 28,
+  "PurchasePrice": 54000,
+  "Rarity": "Epic",
+  "Signature": "none|dot|oh|none|nub|ghost_sheet||0.95",
+  "SizeStuds": [
+    3.69,
+    3.9,
+    3.81
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.ghost)",
+  "SpawnChance": 0.0014250979220409683
+}

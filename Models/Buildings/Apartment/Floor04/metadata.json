@@ -1,0 +1,20 @@
+{
+  "Category": "Buildings/Apartment",
+  "Files": [
+    "Floor04.rbxm",
+    "Floor04.glb"
+  ],
+  "FloorName": "Golden Suites",
+  "Hash": "7c28d4093e092161",
+  "Name": "Floor04",
+  "Notes": "Modular storey: stack Floor01..Floor05, then Roof. Wheels are separate (HamsterWheel).",
+  "Parts": 145,
+  "Purpose": "High-tier hamster production",
+  "SizeStuds": [
+    53.4,
+    11.3,
+    46.7
+  ],
+  "Source": "HouseBuilder (buildFloor 4)",
+  "UnlocksAtRebirth": 9
+}

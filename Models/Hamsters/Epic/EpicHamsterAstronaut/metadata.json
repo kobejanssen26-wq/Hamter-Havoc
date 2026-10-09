@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Epic",
+  "CollectionValue": 151,
+  "DisplayName": "Astronaut",
+  "Files": [
+    "EpicHamsterAstronaut.rbxm",
+    "EpicHamsterAstronaut.glb"
+  ],
+  "HamsterId": "astronaut",
+  "Hash": "6abcca92b821df65",
+  "IncomePerSecond": 290,
+  "MinRebirth": 0,
+  "MovementSpeed": 16.5,
+  "Name": "EpicHamsterAstronaut",
+  "Parts": 46,
+  "PurchasePrice": 58000,
+  "Rarity": "Epic",
+  "Signature": "tiny|big|oh|none|nub|astro+held_gem+jetpack||1.00",
+  "SizeStuds": [
+    3.89,
+    5.2,
+    4.8
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.astronaut)",
+  "SpawnChance": 0.0014250979220409683
+}

@@ -1,0 +1,16 @@
+{
+  "Category": "Decorations",
+  "Files": [
+    "Signpost.rbxm",
+    "Signpost.glb"
+  ],
+  "Hash": "5d202d90499b98b7",
+  "Name": "Signpost",
+  "Parts": 4,
+  "SizeStuds": [
+    7,
+    6.1,
+    1.2
+  ],
+  "Source": "Decor.signpost"
+}

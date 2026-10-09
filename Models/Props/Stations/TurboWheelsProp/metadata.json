@@ -1,0 +1,17 @@
+{
+  "Category": "Props/Stations",
+  "Files": [
+    "TurboWheelsProp.rbxm",
+    "TurboWheelsProp.glb"
+  ],
+  "Hash": "5b60103306806966",
+  "Name": "TurboWheelsProp",
+  "Notes": "Shown on the upgrade pedestal, grows with the upgrade level.",
+  "Parts": 2,
+  "SizeStuds": [
+    0.5,
+    3.78,
+    3.6
+  ],
+  "Source": "HouseBuilder.StationProps.TurboWheels"
+}

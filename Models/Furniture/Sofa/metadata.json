@@ -1,0 +1,16 @@
+{
+  "Category": "Furniture",
+  "Files": [
+    "Sofa.rbxm",
+    "Sofa.glb"
+  ],
+  "Hash": "2907944bf766ed34",
+  "Name": "Sofa",
+  "Parts": 5,
+  "SizeStuds": [
+    7.8,
+    2.9,
+    2.8
+  ],
+  "Source": "HouseBuilder.Furniture.Sofa"
+}

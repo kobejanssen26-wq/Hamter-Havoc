@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Celestial",
+  "CollectionValue": 4166,
+  "DisplayName": "Moonlight Oracle",
+  "Files": [
+    "CelestialHamsterMoonlightOracle.rbxm",
+    "CelestialHamsterMoonlightOracle.glb"
+  ],
+  "HamsterId": "moonlight_oracle",
+  "Hash": "fb2813ca723ea3c1",
+  "IncomePerSecond": 454545.45454545453,
+  "MinRebirth": 7,
+  "MovementSpeed": 38,
+  "Name": "CelestialHamsterMoonlightOracle",
+  "Parts": 36,
+  "PurchasePrice": 400000000,
+  "Rarity": "Celestial",
+  "Signature": "tiny|glow|flat|none|nub|held_orb+moon_circlet+orbit_ring||1.00",
+  "SizeStuds": [
+    4.96,
+    4.45,
+    5.08
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.moonlight_oracle)",
+  "SpawnChance": 0.00001211333233734823
+}

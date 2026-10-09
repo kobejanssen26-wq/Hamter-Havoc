@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Legendary",
+  "CollectionValue": 474,
+  "DisplayName": "Ruby Queen",
+  "Files": [
+    "LegendaryHamsterRubyQueen.rbxm",
+    "LegendaryHamsterRubyQueen.glb"
+  ],
+  "HamsterId": "ruby_queen",
+  "Hash": "594c8a070219cd80",
+  "IncomePerSecond": 3235.294117647059,
+  "MinRebirth": 0,
+  "MovementSpeed": 22,
+  "Name": "LegendaryHamsterRubyQueen",
+  "Parts": 57,
+  "PurchasePrice": 1100000,
+  "Rarity": "Legendary",
+  "Signature": "fluffy|sparkle|smile|none|nub|cape_royal+crown+pendant||1.00",
+  "SizeStuds": [
+    3.89,
+    4.91,
+    4.25
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.ruby_queen)",
+  "SpawnChance": 0.0002691851630521829
+}

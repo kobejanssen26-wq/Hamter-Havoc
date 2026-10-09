@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Ancient",
+  "CollectionValue": 15183,
+  "DisplayName": "Temple Warden",
+  "Files": [
+    "AncientHamsterTempleWarden.rbxm",
+    "AncientHamsterTempleWarden.glb"
+  ],
+  "HamsterId": "temple_warden",
+  "Hash": "3b916889b9326770",
+  "IncomePerSecond": 6571428.571428572,
+  "MinRebirth": 12,
+  "MovementSpeed": 48,
+  "Name": "AncientHamsterTempleWarden",
+  "Parts": 44,
+  "PurchasePrice": 9200000000,
+  "Rarity": "Ancient",
+  "Signature": "round|glow|flat|none|nub|armor+held_hammer+pharaoh||1.00",
+  "SizeStuds": [
+    3.89,
+    4.1,
+    4.15
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.temple_warden)",
+  "SpawnChance": 2.243209692101524e-6
+}

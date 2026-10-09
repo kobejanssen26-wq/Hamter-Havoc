@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Cute",
+  "CollectionValue": 26,
+  "DisplayName": "Teddy",
+  "Files": [
+    "CuteHamsterTeddy.rbxm",
+    "CuteHamsterTeddy.glb"
+  ],
+  "HamsterId": "teddy",
+  "Hash": "5048deb31dc601ac",
+  "IncomePerSecond": 8,
+  "MinRebirth": 0,
+  "MovementSpeed": 10.5,
+  "Name": "CuteHamsterTeddy",
+  "Parts": 35,
+  "PurchasePrice": 640,
+  "Rarity": "Cute",
+  "Signature": "bear|dot|smile|none|nub|bowtie+held_balloon||1.00",
+  "SizeStuds": [
+    3.89,
+    5.2,
+    4.3
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.teddy)",
+  "SpawnChance": 0.01802579216867296
+}

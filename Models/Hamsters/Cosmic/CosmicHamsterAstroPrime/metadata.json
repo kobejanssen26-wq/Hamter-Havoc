@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Cosmic",
+  "CollectionValue": 2975,
+  "DisplayName": "Astro Prime",
+  "Files": [
+    "CosmicHamsterAstroPrime.rbxm",
+    "CosmicHamsterAstroPrime.glb"
+  ],
+  "HamsterId": "astro_prime",
+  "Hash": "4160638505cc91e0",
+  "IncomePerSecond": 157142.85714285713,
+  "MinRebirth": 5,
+  "MovementSpeed": 34,
+  "Name": "CosmicHamsterAstroPrime",
+  "Parts": 48,
+  "PurchasePrice": 110000000,
+  "Rarity": "Cosmic",
+  "Signature": "tiny|sparkle|smile|none|nub|armor+astro+held_wand||1.00",
+  "SizeStuds": [
+    3.89,
+    4.75,
+    4.35
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.astro_prime)",
+  "SpawnChance": 0.00002294191730558377
+}

@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Ancient",
+  "CollectionValue": 12291,
+  "DisplayName": "Stone Guardian",
+  "Files": [
+    "AncientHamsterStoneGuardian.rbxm",
+    "AncientHamsterStoneGuardian.glb"
+  ],
+  "HamsterId": "stone_guardian",
+  "Hash": "c9a0e22456b847ba",
+  "IncomePerSecond": 5285714.285714285,
+  "MinRebirth": 12,
+  "MovementSpeed": 48,
+  "Name": "AncientHamsterStoneGuardian",
+  "Parts": 38,
+  "PurchasePrice": 7400000000,
+  "Rarity": "Ancient",
+  "Signature": "none|glow|none|none|nub|armor+held_shield+stone_crown||1.30",
+  "SizeStuds": [
+    5.1,
+    5.79,
+    5.21
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.stone_guardian)",
+  "SpawnChance": 2.243209692101524e-6
+}

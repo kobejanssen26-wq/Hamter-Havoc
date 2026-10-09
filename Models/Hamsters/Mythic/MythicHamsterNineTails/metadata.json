@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Mythic",
+  "CollectionValue": 779,
+  "DisplayName": "Nine-Tails",
+  "Files": [
+    "MythicHamsterNineTails.rbxm",
+    "MythicHamsterNineTails.glb"
+  ],
+  "HamsterId": "nine_tails",
+  "Hash": "44295dd5da8aee46",
+  "IncomePerSecond": 10454.545454545454,
+  "MinRebirth": 1,
+  "MovementSpeed": 26,
+  "Name": "MythicHamsterNineTails",
+  "Parts": 57,
+  "PurchasePrice": 4600000,
+  "Rarity": "Mythic",
+  "Signature": "cat|cat|cat|none|none|cat_hood+orbit_orbs+tail_nine|flame|1.00",
+  "SizeStuds": [
+    5.66,
+    4.73,
+    5.35
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.nine_tails)",
+  "SpawnChance": 0.00013459258152609144
+}

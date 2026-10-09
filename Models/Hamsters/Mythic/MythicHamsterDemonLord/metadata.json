@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Mythic",
+  "CollectionValue": 807,
+  "DisplayName": "Demon Lord",
+  "Files": [
+    "MythicHamsterDemonLord.rbxm",
+    "MythicHamsterDemonLord.glb"
+  ],
+  "HamsterId": "demon_lord",
+  "Hash": "5282b4f2d80d600f",
+  "IncomePerSecond": 10681.818181818182,
+  "MinRebirth": 1,
+  "MovementSpeed": 26,
+  "Name": "MythicHamsterDemonLord",
+  "Parts": 53,
+  "PurchasePrice": 4700000,
+  "Rarity": "Mythic",
+  "Signature": "elf|glow|fang|none|nub|cape_royal+crown_of_thorns+held_scythe||1.00",
+  "SizeStuds": [
+    5.36,
+    5.54,
+    4.13
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.demon_lord)",
+  "SpawnChance": 0.00013459258152609144
+}

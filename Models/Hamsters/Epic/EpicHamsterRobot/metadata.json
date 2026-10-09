@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Epic",
+  "CollectionValue": 125,
+  "DisplayName": "Robot",
+  "Files": [
+    "EpicHamsterRobot.rbxm",
+    "EpicHamsterRobot.glb"
+  ],
+  "HamsterId": "robot",
+  "Hash": "e2b24d7000d1036b",
+  "IncomePerSecond": 240,
+  "MinRebirth": 0,
+  "MovementSpeed": 16.5,
+  "Name": "EpicHamsterRobot",
+  "Parts": 31,
+  "PurchasePrice": 48000,
+  "Rarity": "Epic",
+  "Signature": "none|crystal|none|none|nub|jetpack+visor||1.00",
+  "SizeStuds": [
+    3.89,
+    3.75,
+    4.42
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.robot)",
+  "SpawnChance": 0.0014250979220409683
+}

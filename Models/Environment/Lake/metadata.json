@@ -1,0 +1,16 @@
+{
+  "Category": "Environment",
+  "Files": [
+    "Lake.rbxm",
+    "Lake.glb"
+  ],
+  "Hash": "0031362b5ca9c650",
+  "Name": "Lake",
+  "Parts": 22,
+  "SizeStuds": [
+    302.63,
+    11.64,
+    300
+  ],
+  "Source": "EnvironmentBuilder (buildBackdrop)"
+}

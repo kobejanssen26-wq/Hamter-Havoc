@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Cosmic",
+  "CollectionValue": 2678,
+  "DisplayName": "Meteor",
+  "Files": [
+    "CosmicHamsterMeteor.rbxm",
+    "CosmicHamsterMeteor.glb"
+  ],
+  "HamsterId": "meteor",
+  "Hash": "7b2935add2730921",
+  "IncomePerSecond": 142857.14285714287,
+  "MinRebirth": 5,
+  "MovementSpeed": 34,
+  "Name": "CosmicHamsterMeteor",
+  "Parts": 45,
+  "PurchasePrice": 100000000,
+  "Rarity": "Cosmic",
+  "Signature": "tiny|angry|smile|none|none|orbit_shards+stone_crown+tail_flame|embers|1.00",
+  "SizeStuds": [
+    5.02,
+    4.45,
+    5.53
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.meteor)",
+  "SpawnChance": 0.00002294191730558377
+}

@@ -1,0 +1,20 @@
+{
+  "Category": "Buildings/Apartment",
+  "Files": [
+    "Floor03.rbxm",
+    "Floor03.glb"
+  ],
+  "FloorName": "Research Lab",
+  "Hash": "d382ef06389fdb3b",
+  "Name": "Floor03",
+  "Notes": "Modular storey: stack Floor01..Floor05, then Roof. Wheels are separate (HamsterWheel).",
+  "Parts": 147,
+  "Purpose": "Advanced upgrades",
+  "SizeStuds": [
+    53.4,
+    11.3,
+    46.7
+  ],
+  "Source": "HouseBuilder (buildFloor 3)",
+  "UnlocksAtRebirth": 5
+}

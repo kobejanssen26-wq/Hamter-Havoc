@@ -1,0 +1,17 @@
+{
+  "Category": "Props/Stations",
+  "Files": [
+    "WalkSpeedProp.rbxm",
+    "WalkSpeedProp.glb"
+  ],
+  "Hash": "06c8fab28d682543",
+  "Name": "WalkSpeedProp",
+  "Notes": "Shown on the upgrade pedestal, grows with the upgrade level.",
+  "Parts": 11,
+  "SizeStuds": [
+    2.74,
+    2,
+    6
+  ],
+  "Source": "HouseBuilder.StationProps.WalkSpeed"
+}

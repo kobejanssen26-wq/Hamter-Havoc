@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Legendary",
+  "CollectionValue": 425,
+  "DisplayName": "Pirate Captain",
+  "Files": [
+    "LegendaryHamsterPirateCaptain.rbxm",
+    "LegendaryHamsterPirateCaptain.glb"
+  ],
+  "HamsterId": "pirate_captain",
+  "Hash": "5070386f42b6dec2",
+  "IncomePerSecond": 2941.176470588235,
+  "MinRebirth": 0,
+  "MovementSpeed": 22,
+  "Name": "LegendaryHamsterPirateCaptain",
+  "Parts": 50,
+  "PurchasePrice": 1000000,
+  "Rarity": "Legendary",
+  "Signature": "bear|angry|grin|none|nub|cape_royal+eyepatch+held_sword+pirate||1.00",
+  "SizeStuds": [
+    3.9,
+    4.9,
+    4.15
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.pirate_captain)",
+  "SpawnChance": 0.0002691851630521829
+}

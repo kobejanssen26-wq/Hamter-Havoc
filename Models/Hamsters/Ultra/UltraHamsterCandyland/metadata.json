@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Ultra",
+  "CollectionValue": 266,
+  "DisplayName": "Candyland",
+  "Files": [
+    "UltraHamsterCandyland.rbxm",
+    "UltraHamsterCandyland.glb"
+  ],
+  "HamsterId": "candyland",
+  "Hash": "f6b18c89f1653603",
+  "IncomePerSecond": 961.5384615384615,
+  "MinRebirth": 0,
+  "MovementSpeed": 19,
+  "Name": "UltraHamsterCandyland",
+  "Parts": 57,
+  "PurchasePrice": 250000,
+  "Rarity": "Ultra",
+  "Signature": "fluffy|sparkle|tongue|stripes|nub|bow+held_lollipop+tutu||1.00",
+  "SizeStuds": [
+    3.89,
+    3.9,
+    4.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.candyland)",
+  "SpawnChance": 0.0008412036345380715
+}

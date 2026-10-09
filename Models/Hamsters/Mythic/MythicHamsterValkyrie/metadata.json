@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Mythic",
+  "CollectionValue": 863,
+  "DisplayName": "Valkyrie",
+  "Files": [
+    "MythicHamsterValkyrie.rbxm",
+    "MythicHamsterValkyrie.glb"
+  ],
+  "HamsterId": "valkyrie",
+  "Hash": "3dafee5170d28235",
+  "IncomePerSecond": 11590.90909090909,
+  "MinRebirth": 1,
+  "MovementSpeed": 26,
+  "Name": "MythicHamsterValkyrie",
+  "Parts": 64,
+  "PurchasePrice": 5100000,
+  "Rarity": "Mythic",
+  "Signature": "fluffy|sparkle|smile|none|nub|cape+golden_helm+held_shield+wings_angel||1.00",
+  "SizeStuds": [
+    7.82,
+    4.25,
+    4.72
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.valkyrie)",
+  "SpawnChance": 0.00013459258152609144
+}

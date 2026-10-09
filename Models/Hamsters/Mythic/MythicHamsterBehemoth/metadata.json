@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Mythic",
+  "CollectionValue": 696,
+  "DisplayName": "Behemoth",
+  "Files": [
+    "MythicHamsterBehemoth.rbxm",
+    "MythicHamsterBehemoth.glb"
+  ],
+  "HamsterId": "behemoth",
+  "Hash": "eb29121ad8542057",
+  "IncomePerSecond": 9318.181818181818,
+  "MinRebirth": 1,
+  "MovementSpeed": 26,
+  "Name": "MythicHamsterBehemoth",
+  "Parts": 46,
+  "PurchasePrice": 4100000,
+  "Rarity": "Mythic",
+  "Signature": "tiny|angry|grin|none|nub|armor+pauldrons+stone_crown||1.40",
+  "SizeStuds": [
+    5.6,
+    6.23,
+    5.61
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.behemoth)",
+  "SpawnChance": 0.00013459258152609144
+}

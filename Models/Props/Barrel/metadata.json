@@ -1,0 +1,16 @@
+{
+  "Category": "Props",
+  "Files": [
+    "Barrel.rbxm",
+    "Barrel.glb"
+  ],
+  "Hash": "04710a1fde10deca",
+  "Name": "Barrel",
+  "Parts": 3,
+  "SizeStuds": [
+    2.3,
+    2.6,
+    2.3
+  ],
+  "Source": "Decor.barrel"
+}

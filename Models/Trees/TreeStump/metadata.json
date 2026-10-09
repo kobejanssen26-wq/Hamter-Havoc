@@ -1,0 +1,16 @@
+{
+  "Category": "Trees",
+  "Files": [
+    "TreeStump.rbxm",
+    "TreeStump.glb"
+  ],
+  "Hash": "892a9d03efaab5b2",
+  "Name": "TreeStump",
+  "Parts": 2,
+  "SizeStuds": [
+    2.2,
+    1.27,
+    2.2
+  ],
+  "Source": "Decor.stump"
+}

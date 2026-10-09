@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Cosmic",
+  "CollectionValue": 2083,
+  "DisplayName": "Galaxy",
+  "Files": [
+    "CosmicHamsterGalaxy.rbxm",
+    "CosmicHamsterGalaxy.glb"
+  ],
+  "HamsterId": "galaxy",
+  "Hash": "6f67ff6f17b6d7cd",
+  "IncomePerSecond": 112857.14285714286,
+  "MinRebirth": 5,
+  "MovementSpeed": 34,
+  "Name": "CosmicHamsterGalaxy",
+  "Parts": 56,
+  "PurchasePrice": 79000000,
+  "Rarity": "Cosmic",
+  "Signature": "fluffy|glow|smile|spots|nub|held_orb+orbit_ring+wings_cosmic|stars|1.00",
+  "SizeStuds": [
+    7.43,
+    4.54,
+    5.08
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.galaxy)",
+  "SpawnChance": 0.00002294191730558377
+}

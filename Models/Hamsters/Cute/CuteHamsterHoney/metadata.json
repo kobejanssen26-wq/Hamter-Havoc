@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Cute",
+  "CollectionValue": 20,
+  "DisplayName": "Honey",
+  "Files": [
+    "CuteHamsterHoney.rbxm",
+    "CuteHamsterHoney.glb"
+  ],
+  "HamsterId": "honey",
+  "Hash": "2c099c95cd04861f",
+  "IncomePerSecond": 6.25,
+  "MinRebirth": 0,
+  "MovementSpeed": 10.5,
+  "Name": "CuteHamsterHoney",
+  "Parts": 44,
+  "PurchasePrice": 500,
+  "Rarity": "Cute",
+  "Signature": "round|happy|smile|stripes|nub|bee+wings_bee||1.00",
+  "SizeStuds": [
+    4.68,
+    4.8,
+    4.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.honey)",
+  "SpawnChance": 0.01802579216867296
+}

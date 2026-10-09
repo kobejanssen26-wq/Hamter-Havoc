@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Basic",
+  "CollectionValue": 11,
+  "DisplayName": "Sleepy",
+  "Files": [
+    "BasicHamsterSleepy.rbxm",
+    "BasicHamsterSleepy.glb"
+  ],
+  "HamsterId": "sleepy",
+  "Hash": "229bd32e54bde382",
+  "IncomePerSecond": 1.8333333333333333,
+  "MinRebirth": 0,
+  "MovementSpeed": 9,
+  "Name": "BasicHamsterSleepy",
+  "Parts": 38,
+  "PurchasePrice": 110,
+  "Rarity": "Basic",
+  "Signature": "round|sleepy|smile|none|nub|nightcap||1.00",
+  "SizeStuds": [
+    3.89,
+    4.25,
+    4.66
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.sleepy)",
+  "SpawnChance": 0.03499407119678378
+}

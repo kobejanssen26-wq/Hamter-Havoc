@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Mythic",
+  "CollectionValue": 612,
+  "DisplayName": "Hellfire Lord",
+  "Files": [
+    "MythicHamsterHellfireLord.rbxm",
+    "MythicHamsterHellfireLord.glb"
+  ],
+  "HamsterId": "hellfire_lord",
+  "Hash": "f020302e1484f967",
+  "IncomePerSecond": 8181.818181818182,
+  "MinRebirth": 1,
+  "MovementSpeed": 26,
+  "Name": "MythicHamsterHellfireLord",
+  "Parts": 60,
+  "PurchasePrice": 3600000,
+  "Rarity": "Mythic",
+  "Signature": "cat|glow|fang|none|none|held_torch+horns+pauldrons+tail_dragon+wings_bat|flame|1.00",
+  "SizeStuds": [
+    7.06,
+    4.56,
+    7.21
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.hellfire_lord)",
+  "SpawnChance": 0.00013459258152609144
+}

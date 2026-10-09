@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Shiny",
+  "CollectionValue": 40,
+  "DisplayName": "Electric",
+  "Files": [
+    "ShinyHamsterElectric.rbxm",
+    "ShinyHamsterElectric.glb"
+  ],
+  "HamsterId": "electric",
+  "Hash": "b021ebfef6c96276",
+  "IncomePerSecond": 22.727272727272727,
+  "MinRebirth": 0,
+  "MovementSpeed": 12,
+  "Name": "ShinyHamsterElectric",
+  "Parts": 38,
+  "PurchasePrice": 2500,
+  "Rarity": "Shiny",
+  "Signature": "cat|happy|open|none|none|goggles+tail_lightning|sparkle|1.00",
+  "SizeStuds": [
+    3.89,
+    4.29,
+    4.49
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.electric)",
+  "SpawnChance": 0.008652380240963022
+}

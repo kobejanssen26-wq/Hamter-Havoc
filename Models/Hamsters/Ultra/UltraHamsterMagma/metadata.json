@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Ultra",
+  "CollectionValue": 215,
+  "DisplayName": "Magma",
+  "Files": [
+    "UltraHamsterMagma.rbxm",
+    "UltraHamsterMagma.glb"
+  ],
+  "HamsterId": "magma",
+  "Hash": "a8702dc92b7de2ee",
+  "IncomePerSecond": 769.2307692307693,
+  "MinRebirth": 0,
+  "MovementSpeed": 19,
+  "Name": "UltraHamsterMagma",
+  "Parts": 48,
+  "PurchasePrice": 200000,
+  "Rarity": "Ultra",
+  "Signature": "round|glow|fang|tiger|nub|horns+pauldrons|embers|1.00",
+  "SizeStuds": [
+    4,
+    4.56,
+    4.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.magma)",
+  "SpawnChance": 0.0008412036345380715
+}

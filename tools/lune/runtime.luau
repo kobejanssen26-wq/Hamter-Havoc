@@ -409,6 +409,14 @@ function Runtime.boot(projectRoot: string)
 	local result = process.exec(rojo, { "build", projectRoot .. "/default.project.json", "-o", out })
 	assert(result.ok, "rojo build failed: " .. result.stderr)
 	Runtime.game = roblox.deserializePlace(fs.readFile(out))
+	-- parts loaded from a file have no Position in Lune (Roblox derives it from CFrame): fill it in
+	for _, d in Runtime.game:GetDescendants() do
+		if d:IsA("BasePart") then
+			pcall(function()
+				d.Position = d.CFrame.Position
+			end)
+		end
+	end
 	return Runtime.game
 end
 

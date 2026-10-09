@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Cute",
+  "CollectionValue": 18,
+  "DisplayName": "Panda",
+  "Files": [
+    "CuteHamsterPanda.rbxm",
+    "CuteHamsterPanda.glb"
+  ],
+  "HamsterId": "panda",
+  "Hash": "60179d59232b6055",
+  "IncomePerSecond": 5.625,
+  "MinRebirth": 0,
+  "MovementSpeed": 10.5,
+  "Name": "CuteHamsterPanda",
+  "Parts": 39,
+  "PurchasePrice": 450,
+  "Rarity": "Cute",
+  "Signature": "bear|dot|smile|panda|nub|held_bamboo||1.00",
+  "SizeStuds": [
+    3.89,
+    3.77,
+    4.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.panda)",
+  "SpawnChance": 0.01802579216867296
+}

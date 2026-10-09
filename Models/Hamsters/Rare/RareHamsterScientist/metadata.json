@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Rare",
+  "CollectionValue": 75,
+  "DisplayName": "Scientist",
+  "Files": [
+    "RareHamsterScientist.rbxm",
+    "RareHamsterScientist.glb"
+  ],
+  "HamsterId": "scientist",
+  "Hash": "12223e19bbd7a625",
+  "IncomePerSecond": 80,
+  "MinRebirth": 0,
+  "MovementSpeed": 14,
+  "Name": "RareHamsterScientist",
+  "Parts": 46,
+  "PurchasePrice": 12000,
+  "Rarity": "Rare",
+  "Signature": "round|sparkle|smile|none|nub|apron+goggles+held_orb||1.00",
+  "SizeStuds": [
+    3.89,
+    3.66,
+    4.3
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.scientist)",
+  "SpawnChance": 0.004658973975903166
+}

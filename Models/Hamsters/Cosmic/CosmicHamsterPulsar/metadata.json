@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Cosmic",
+  "CollectionValue": 2579,
+  "DisplayName": "Pulsar",
+  "Files": [
+    "CosmicHamsterPulsar.rbxm",
+    "CosmicHamsterPulsar.glb"
+  ],
+  "HamsterId": "pulsar",
+  "Hash": "08bb979bcbc83588",
+  "IncomePerSecond": 140000,
+  "MinRebirth": 5,
+  "MovementSpeed": 34,
+  "Name": "CosmicHamsterPulsar",
+  "Parts": 46,
+  "PurchasePrice": 98000000,
+  "Rarity": "Cosmic",
+  "Signature": "round|star|open|none|none|alien+orbit_orbs+tail_lightning|sparkle|1.00",
+  "SizeStuds": [
+    4.5,
+    5.05,
+    4.88
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.pulsar)",
+  "SpawnChance": 0.00002294191730558377
+}

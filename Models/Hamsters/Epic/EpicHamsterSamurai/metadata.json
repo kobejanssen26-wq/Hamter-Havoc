@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Epic",
+  "CollectionValue": 105,
+  "DisplayName": "Samurai",
+  "Files": [
+    "EpicHamsterSamurai.rbxm",
+    "EpicHamsterSamurai.glb"
+  ],
+  "HamsterId": "samurai",
+  "Hash": "51bf816dbad92b44",
+  "IncomePerSecond": 200,
+  "MinRebirth": 0,
+  "MovementSpeed": 16.5,
+  "Name": "EpicHamsterSamurai",
+  "Parts": 44,
+  "PurchasePrice": 40000,
+  "Rarity": "Epic",
+  "Signature": "round|angry|flat|none|nub|held_sword+pauldrons+samurai||1.00",
+  "SizeStuds": [
+    4,
+    5.1,
+    4.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.samurai)",
+  "SpawnChance": 0.0014250979220409683
+}

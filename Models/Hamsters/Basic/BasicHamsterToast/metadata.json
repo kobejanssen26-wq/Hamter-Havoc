@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Basic",
+  "CollectionValue": 14,
+  "DisplayName": "Toast",
+  "Files": [
+    "BasicHamsterToast.rbxm",
+    "BasicHamsterToast.glb"
+  ],
+  "HamsterId": "toast",
+  "Hash": "3716cbed3376a0ee",
+  "IncomePerSecond": 2.3333333333333335,
+  "MinRebirth": 0,
+  "MovementSpeed": 9,
+  "Name": "BasicHamsterToast",
+  "Parts": 32,
+  "PurchasePrice": 140,
+  "Rarity": "Basic",
+  "Signature": "bear|dot|smile|none|nub|held_cheese||1.00",
+  "SizeStuds": [
+    3.89,
+    3.77,
+    4.36
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.toast)",
+  "SpawnChance": 0.03499407119678378
+}

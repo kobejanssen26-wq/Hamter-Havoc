@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Ancient",
+  "CollectionValue": 16629,
+  "DisplayName": "Elder Druid",
+  "Files": [
+    "AncientHamsterElderDruid.rbxm",
+    "AncientHamsterElderDruid.glb"
+  ],
+  "HamsterId": "elder_druid",
+  "Hash": "c38a1c531b973f68",
+  "IncomePerSecond": 7142857.142857143,
+  "MinRebirth": 12,
+  "MovementSpeed": 48,
+  "Name": "AncientHamsterElderDruid",
+  "Parts": 54,
+  "PurchasePrice": 10000000000,
+  "Rarity": "Ancient",
+  "Signature": "floppy|sleepy|smile|none|nub|antlers+held_staff+lei+wings_leaf||1.00",
+  "SizeStuds": [
+    5.48,
+    5,
+    4.17
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.elder_druid)",
+  "SpawnChance": 2.243209692101524e-6
+}

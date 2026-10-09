@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Epic",
+  "CollectionValue": 121,
+  "DisplayName": "Pharaoh",
+  "Files": [
+    "EpicHamsterPharaoh.rbxm",
+    "EpicHamsterPharaoh.glb"
+  ],
+  "HamsterId": "pharaoh",
+  "Hash": "adba8ec37eb5d796",
+  "IncomePerSecond": 230,
+  "MinRebirth": 0,
+  "MovementSpeed": 16.5,
+  "Name": "EpicHamsterPharaoh",
+  "Parts": 42,
+  "PurchasePrice": 46000,
+  "Rarity": "Epic",
+  "Signature": "round|dot|smile|none|nub|pendant+pharaoh||1.00",
+  "SizeStuds": [
+    3.89,
+    4.1,
+    4.15
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.pharaoh)",
+  "SpawnChance": 0.0014250979220409683
+}

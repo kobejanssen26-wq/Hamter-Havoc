@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Legendary",
+  "CollectionValue": 510,
+  "DisplayName": "Dragon Lord",
+  "Files": [
+    "LegendaryHamsterDragonLord.rbxm",
+    "LegendaryHamsterDragonLord.glb"
+  ],
+  "HamsterId": "dragon_lord",
+  "Hash": "3a1bf625ac250e5a",
+  "IncomePerSecond": 3529.4117647058824,
+  "MinRebirth": 0,
+  "MovementSpeed": 22,
+  "Name": "LegendaryHamsterDragonLord",
+  "Parts": 70,
+  "PurchasePrice": 1200000,
+  "Rarity": "Legendary",
+  "Signature": "cat|cat|fang|none|none|cape_royal+flame_crown+held_sword+tail_dragon+wings_dragon|embers|1.00",
+  "SizeStuds": [
+    7.98,
+    5.35,
+    7.21
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.dragon_lord)",
+  "SpawnChance": 0.0002691851630521829
+}

@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Shiny",
+  "CollectionValue": 36,
+  "DisplayName": "Gem",
+  "Files": [
+    "ShinyHamsterGem.rbxm",
+    "ShinyHamsterGem.glb"
+  ],
+  "HamsterId": "gem",
+  "Hash": "29ab80de00f44a02",
+  "IncomePerSecond": 20,
+  "MinRebirth": 0,
+  "MovementSpeed": 12,
+  "Name": "ShinyHamsterGem",
+  "Parts": 40,
+  "PurchasePrice": 2200,
+  "Rarity": "Shiny",
+  "Signature": "round|sparkle|smile|none|nub|pendant+top_gem|sparkle|1.00",
+  "SizeStuds": [
+    3.89,
+    4.84,
+    4.13
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.gem)",
+  "SpawnChance": 0.008652380240963022
+}

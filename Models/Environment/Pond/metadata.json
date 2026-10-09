@@ -1,0 +1,16 @@
+{
+  "Category": "Environment",
+  "Files": [
+    "Pond.rbxm",
+    "Pond.glb"
+  ],
+  "Hash": "02a3e608d52b4547",
+  "Name": "Pond",
+  "Parts": 7,
+  "SizeStuds": [
+    18.4,
+    0.75,
+    18.4
+  ],
+  "Source": "Decor.pond"
+}

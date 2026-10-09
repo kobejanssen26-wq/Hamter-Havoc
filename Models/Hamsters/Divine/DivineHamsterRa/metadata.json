@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Divine",
+  "CollectionValue": 1433,
+  "DisplayName": "Ra",
+  "Files": [
+    "DivineHamsterRa.rbxm",
+    "DivineHamsterRa.glb"
+  ],
+  "HamsterId": "ra",
+  "Hash": "7d0abfe623fb0c31",
+  "IncomePerSecond": 37500,
+  "MinRebirth": 3,
+  "MovementSpeed": 30,
+  "Name": "DivineHamsterRa",
+  "Parts": 56,
+  "PurchasePrice": 21000000,
+  "Rarity": "Divine",
+  "Signature": "round|glow|smile|none|nub|held_orb+pharaoh+wings_golden|flame|1.00",
+  "SizeStuds": [
+    8.22,
+    4.1,
+    5.06
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.ra)",
+  "SpawnChance": 0.000055060601533401044
+}

@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Divine",
+  "CollectionValue": 1543,
+  "DisplayName": "Odin",
+  "Files": [
+    "DivineHamsterOdin.rbxm",
+    "DivineHamsterOdin.glb"
+  ],
+  "HamsterId": "odin",
+  "Hash": "7515b762f8d66557",
+  "IncomePerSecond": 39285.71428571428,
+  "MinRebirth": 3,
+  "MovementSpeed": 30,
+  "Name": "DivineHamsterOdin",
+  "Parts": 45,
+  "PurchasePrice": 22000000,
+  "Rarity": "Divine",
+  "Signature": "tiny|glow|flat|none|nub|cape+eyepatch+orbit_orbs+viking||1.00",
+  "SizeStuds": [
+    5.35,
+    4.83,
+    4.65
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.odin)",
+  "SpawnChance": 0.000055060601533401044
+}

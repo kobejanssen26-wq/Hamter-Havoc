@@ -1,0 +1,17 @@
+{
+  "Category": "Buildings/Apartment",
+  "Files": [
+    "Lot.rbxm",
+    "Lot.glb"
+  ],
+  "Hash": "524e5a8f1079882b",
+  "Name": "Lot",
+  "Notes": "Garden lot: lawn, driveway, hedges, trees, patio (without the gate).",
+  "Parts": 219,
+  "SizeStuds": [
+    76.6,
+    14.21,
+    97
+  ],
+  "Source": "HouseBuilder (buildYard)"
+}

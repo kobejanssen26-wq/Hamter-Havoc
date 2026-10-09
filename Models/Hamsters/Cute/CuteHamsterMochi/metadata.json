@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Cute",
+  "CollectionValue": 27,
+  "DisplayName": "Mochi",
+  "Files": [
+    "CuteHamsterMochi.rbxm",
+    "CuteHamsterMochi.glb"
+  ],
+  "HamsterId": "mochi",
+  "Hash": "73f09a2d55d51dcc",
+  "IncomePerSecond": 8.5,
+  "MinRebirth": 0,
+  "MovementSpeed": 10.5,
+  "Name": "CuteHamsterMochi",
+  "Parts": 29,
+  "PurchasePrice": 680,
+  "Rarity": "Cute",
+  "Signature": "none|happy|smile|none|nub|sprout||1.20",
+  "SizeStuds": [
+    4.67,
+    5.33,
+    4.81
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.mochi)",
+  "SpawnChance": 0.01802579216867296
+}

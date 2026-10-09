@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Cosmic",
+  "CollectionValue": 2876,
+  "DisplayName": "Solar Flare",
+  "Files": [
+    "CosmicHamsterSolarFlare.rbxm",
+    "CosmicHamsterSolarFlare.glb"
+  ],
+  "HamsterId": "solar_flare",
+  "Hash": "2de850a260bdec0d",
+  "IncomePerSecond": 157142.85714285713,
+  "MinRebirth": 5,
+  "MovementSpeed": 34,
+  "Name": "CosmicHamsterSolarFlare",
+  "Parts": 56,
+  "PurchasePrice": 110000000,
+  "Rarity": "Cosmic",
+  "Signature": "fluffy|glow|smile|none|nub|ground_glow+sun_crown+wings_flame|flame|1.00",
+  "SizeStuds": [
+    8.25,
+    4.78,
+    4.92
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.solar_flare)",
+  "SpawnChance": 0.00002294191730558377
+}

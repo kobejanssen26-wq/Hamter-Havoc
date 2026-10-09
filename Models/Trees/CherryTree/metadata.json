@@ -1,0 +1,16 @@
+{
+  "Category": "Trees",
+  "Files": [
+    "CherryTree.rbxm",
+    "CherryTree.glb"
+  ],
+  "Hash": "375ddb3c94d2111e",
+  "Name": "CherryTree",
+  "Parts": 4,
+  "SizeStuds": [
+    10,
+    12,
+    8.5
+  ],
+  "Source": "Decor.tree(cherry)"
+}

@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Rare",
+  "CollectionValue": 87,
+  "DisplayName": "Sailor",
+  "Files": [
+    "RareHamsterSailor.rbxm",
+    "RareHamsterSailor.glb"
+  ],
+  "HamsterId": "sailor",
+  "Hash": "d7ee2aeb8a4d5d6b",
+  "IncomePerSecond": 93.33333333333333,
+  "MinRebirth": 0,
+  "MovementSpeed": 14,
+  "Name": "RareHamsterSailor",
+  "Parts": 41,
+  "PurchasePrice": 14000,
+  "Rarity": "Rare",
+  "Signature": "round|big|smile|none|nub|sailor+scarf||1.00",
+  "SizeStuds": [
+    3.89,
+    3.85,
+    4.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.sailor)",
+  "SpawnChance": 0.004658973975903166
+}

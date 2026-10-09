@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Shiny",
+  "CollectionValue": 46,
+  "DisplayName": "Prism",
+  "Files": [
+    "ShinyHamsterPrism.rbxm",
+    "ShinyHamsterPrism.glb"
+  ],
+  "HamsterId": "prism",
+  "Hash": "086702790e22449c",
+  "IncomePerSecond": 25.454545454545453,
+  "MinRebirth": 0,
+  "MovementSpeed": 12,
+  "Name": "ShinyHamsterPrism",
+  "Parts": 34,
+  "PurchasePrice": 2800,
+  "Rarity": "Shiny",
+  "Signature": "tiny|glow|smile|none|nub|orbit_ring+visor|sparkle|1.00",
+  "SizeStuds": [
+    4.96,
+    3.35,
+    5.05
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.prism)",
+  "SpawnChance": 0.008652380240963022
+}

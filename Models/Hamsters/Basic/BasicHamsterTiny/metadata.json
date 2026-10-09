@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Basic",
+  "CollectionValue": 11,
+  "DisplayName": "Tiny",
+  "Files": [
+    "BasicHamsterTiny.rbxm",
+    "BasicHamsterTiny.glb"
+  ],
+  "HamsterId": "tiny",
+  "Hash": "6894cc37a04fcd52",
+  "IncomePerSecond": 1.8333333333333333,
+  "MinRebirth": 0,
+  "MovementSpeed": 9,
+  "Name": "BasicHamsterTiny",
+  "Parts": 33,
+  "PurchasePrice": 110,
+  "Rarity": "Basic",
+  "Signature": "tiny|big|oh|none|nub|||0.70",
+  "SizeStuds": [
+    2.72,
+    2.34,
+    2.81
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.tiny)",
+  "SpawnChance": 0.03499407119678378
+}

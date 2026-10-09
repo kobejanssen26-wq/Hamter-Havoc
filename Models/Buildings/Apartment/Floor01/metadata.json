@@ -1,0 +1,20 @@
+{
+  "Category": "Buildings/Apartment",
+  "Files": [
+    "Floor01.rbxm",
+    "Floor01.glb"
+  ],
+  "FloorName": "Workshop",
+  "Hash": "376bf42907113f5d",
+  "Name": "Floor01",
+  "Notes": "Modular storey: stack Floor01..Floor05, then Roof. Wheels are separate (HamsterWheel).",
+  "Parts": 169,
+  "Purpose": "Main hamster production",
+  "SizeStuds": [
+    53.4,
+    12,
+    43.4
+  ],
+  "Source": "HouseBuilder (buildFloor 1)",
+  "UnlocksAtRebirth": 0
+}

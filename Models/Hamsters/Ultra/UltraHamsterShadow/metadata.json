@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Ultra",
+  "CollectionValue": 240,
+  "DisplayName": "Shadow",
+  "Files": [
+    "UltraHamsterShadow.rbxm",
+    "UltraHamsterShadow.glb"
+  ],
+  "HamsterId": "shadow",
+  "Hash": "f8476d31c3fe9ec9",
+  "IncomePerSecond": 884.6153846153846,
+  "MinRebirth": 0,
+  "MovementSpeed": 19,
+  "Name": "UltraHamsterShadow",
+  "Parts": 39,
+  "PurchasePrice": 230000,
+  "Rarity": "Ultra",
+  "Signature": "cat|glow|flat|saddle|nub|cape+held_sword+hood||1.00",
+  "SizeStuds": [
+    3.89,
+    4.39,
+    4.55
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.shadow)",
+  "SpawnChance": 0.0008412036345380715
+}

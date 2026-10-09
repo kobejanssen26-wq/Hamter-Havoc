@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Cute",
+  "CollectionValue": 24,
+  "DisplayName": "Chocolate",
+  "Files": [
+    "CuteHamsterChocolate.rbxm",
+    "CuteHamsterChocolate.glb"
+  ],
+  "HamsterId": "chocolate",
+  "Hash": "121d4ffa7b1612f5",
+  "IncomePerSecond": 7.375,
+  "MinRebirth": 0,
+  "MovementSpeed": 10.5,
+  "Name": "CuteHamsterChocolate",
+  "Parts": 36,
+  "PurchasePrice": 590,
+  "Rarity": "Cute",
+  "Signature": "round|heart|tongue|none|nub|bowtie||1.00",
+  "SizeStuds": [
+    3.89,
+    3.66,
+    4.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.chocolate)",
+  "SpawnChance": 0.01802579216867296
+}

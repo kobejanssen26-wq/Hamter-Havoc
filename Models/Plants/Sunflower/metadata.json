@@ -1,0 +1,16 @@
+{
+  "Category": "Plants",
+  "Files": [
+    "Sunflower.rbxm",
+    "Sunflower.glb"
+  ],
+  "Hash": "98acdf0f851c675c",
+  "Name": "Sunflower",
+  "Parts": 3,
+  "SizeStuds": [
+    0.92,
+    6.51,
+    3
+  ],
+  "Source": "Decor.sunflower"
+}

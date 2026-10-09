@@ -1,0 +1,5609 @@
+{
+  "Assets": [
+    {
+      "Category": "Animals",
+      "Files": [
+        "Bird.rbxm",
+        "Bird.glb"
+      ],
+      "Hash": "02e7266d9df5e366",
+      "Name": "Bird",
+      "Parts": 3,
+      "SizeStuds": [
+        4.8,
+        0.7,
+        1.6
+      ],
+      "Source": "Decor.bird"
+    },
+    {
+      "Category": "Buildings/Apartment",
+      "Files": [
+        "EntranceGate.rbxm",
+        "EntranceGate.glb"
+      ],
+      "Hash": "a7e12de5d6838f4f",
+      "Name": "EntranceGate",
+      "Notes": "Gate with name canopy, security lasers and the security kiosk.",
+      "Parts": 23,
+      "SizeStuds": [
+        22,
+        13.33,
+        7.4
+      ],
+      "Source": "HouseBuilder (buildGate)"
+    },
+    {
+      "Category": "Buildings/Apartment",
+      "Files": [
+        "Floor01.rbxm",
+        "Floor01.glb"
+      ],
+      "FloorName": "Workshop",
+      "Hash": "376bf42907113f5d",
+      "Name": "Floor01",
+      "Notes": "Modular storey: stack Floor01..Floor05, then Roof. Wheels are separate (HamsterWheel).",
+      "Parts": 169,
+      "Purpose": "Main hamster production",
+      "SizeStuds": [
+        53.4,
+        12,
+        43.4
+      ],
+      "Source": "HouseBuilder (buildFloor 1)",
+      "UnlocksAtRebirth": 0
+    },
+    {
+      "Category": "Buildings/Apartment",
+      "Files": [
+        "Floor02.rbxm",
+        "Floor02.glb"
+      ],
+      "FloorName": "Hamster Lofts",
+      "Hash": "c570c42b8013f50c",
+      "Name": "Floor02",
+      "Notes": "Modular storey: stack Floor01..Floor05, then Roof. Wheels are separate (HamsterWheel).",
+      "Parts": 157,
+      "Purpose": "More hamster slots",
+      "SizeStuds": [
+        53.4,
+        11.3,
+        46.7
+      ],
+      "Source": "HouseBuilder (buildFloor 2)",
+      "UnlocksAtRebirth": 2
+    },
+    {
+      "Category": "Buildings/Apartment",
+      "Files": [
+        "Floor03.rbxm",
+        "Floor03.glb"
+      ],
+      "FloorName": "Research Lab",
+      "Hash": "d382ef06389fdb3b",
+      "Name": "Floor03",
+      "Notes": "Modular storey: stack Floor01..Floor05, then Roof. Wheels are separate (HamsterWheel).",
+      "Parts": 147,
+      "Purpose": "Advanced upgrades",
+      "SizeStuds": [
+        53.4,
+        11.3,
+        46.7
+      ],
+      "Source": "HouseBuilder (buildFloor 3)",
+      "UnlocksAtRebirth": 5
+    },
+    {
+      "Category": "Buildings/Apartment",
+      "Files": [
+        "Floor04.rbxm",
+        "Floor04.glb"
+      ],
+      "FloorName": "Golden Suites",
+      "Hash": "7c28d4093e092161",
+      "Name": "Floor04",
+      "Notes": "Modular storey: stack Floor01..Floor05, then Roof. Wheels are separate (HamsterWheel).",
+      "Parts": 145,
+      "Purpose": "High-tier hamster production",
+      "SizeStuds": [
+        53.4,
+        11.3,
+        46.7
+      ],
+      "Source": "HouseBuilder (buildFloor 4)",
+      "UnlocksAtRebirth": 9
+    },
+    {
+      "Category": "Buildings/Apartment",
+      "Files": [
+        "Floor05.rbxm",
+        "Floor05.glb"
+      ],
+      "FloorName": "Penthouse",
+      "Hash": "23b69e7051011957",
+      "Name": "Floor05",
+      "Notes": "Modular storey: stack Floor01..Floor05, then Roof. Wheels are separate (HamsterWheel).",
+      "Parts": 141,
+      "Purpose": "Prestige hamster area",
+      "SizeStuds": [
+        53.4,
+        11.3,
+        43.4
+      ],
+      "Source": "HouseBuilder (buildFloor 5)",
+      "UnlocksAtRebirth": 14
+    },
+    {
+      "Category": "Buildings/Apartment",
+      "Files": [
+        "Lift.rbxm",
+        "Lift.glb"
+      ],
+      "Hash": "23639e80c2e5db7f",
+      "Name": "Lift",
+      "Notes": "Glass lift tower beside the building (shown at 5 floors).",
+      "Parts": 13,
+      "SizeStuds": [
+        8.5,
+        59.75,
+        13
+      ],
+      "Source": "HouseBuilder (buildLift)"
+    },
+    {
+      "Category": "Buildings/Apartment",
+      "Files": [
+        "Lot.rbxm",
+        "Lot.glb"
+      ],
+      "Hash": "524e5a8f1079882b",
+      "Name": "Lot",
+      "Notes": "Garden lot: lawn, driveway, hedges, trees, patio (without the gate).",
+      "Parts": 219,
+      "SizeStuds": [
+        76.6,
+        14.21,
+        97
+      ],
+      "Source": "HouseBuilder (buildYard)"
+    },
+    {
+      "Category": "Buildings/Apartment",
+      "Files": [
+        "PrestigeTrims.rbxm",
+        "PrestigeTrims.glb"
+      ],
+      "Hash": "a9008c0d3bfaeb28",
+      "Name": "PrestigeTrims",
+      "Notes": "Gold bands (R10), crown (R15) and light strips (R20) for a 5-floor apartment.",
+      "Parts": 15,
+      "SizeStuds": [
+        53.8,
+        66.2,
+        10.7
+      ],
+      "Source": "HouseBuilder.setPrestige(20)"
+    },
+    {
+      "Category": "Buildings/Apartment",
+      "Files": [
+        "Roof.rbxm",
+        "Roof.glb"
+      ],
+      "Hash": "df2724588d312fed",
+      "Name": "Roof",
+      "Notes": "Sits on top of the highest floor.",
+      "Parts": 20,
+      "SizeStuds": [
+        54,
+        9.6,
+        36
+      ],
+      "Source": "HouseBuilder (buildRoof)"
+    },
+    {
+      "Category": "Buildings/Apartment",
+      "Files": [
+        "Scaffold.rbxm",
+        "Scaffold.glb"
+      ],
+      "Hash": "67e5fea99e8acb37",
+      "Name": "Scaffold",
+      "Notes": "Next floor under construction, with the 'unlocks at rebirth' sign.",
+      "Parts": 11,
+      "SizeStuds": [
+        50.4,
+        10.18,
+        40.4
+      ],
+      "Source": "HouseBuilder (buildScaffold)"
+    },
+    {
+      "Category": "Buildings/Plaza",
+      "Files": [
+        "HamsterLibrary.rbxm",
+        "HamsterLibrary.glb"
+      ],
+      "Hash": "008845e6498b5e49",
+      "Name": "HamsterLibrary",
+      "Parts": 56,
+      "SizeStuds": [
+        15.6,
+        13.7,
+        11.56
+      ],
+      "Source": "PlazaBuilder (HamsterLibrary)"
+    },
+    {
+      "Category": "Buildings/Plaza",
+      "Files": [
+        "PlazaArch.rbxm",
+        "PlazaArch.glb"
+      ],
+      "Hash": "276eabb75a863bf9",
+      "Name": "PlazaArch",
+      "Parts": 14,
+      "SizeStuds": [
+        7,
+        23,
+        35.6
+      ],
+      "Source": "PlazaBuilder (PlazaArch)"
+    },
+    {
+      "Category": "Buildings/Plaza",
+      "Files": [
+        "RecentFindsBoard.rbxm",
+        "RecentFindsBoard.glb"
+      ],
+      "Hash": "a40834bff6afcb7e",
+      "Name": "RecentFindsBoard",
+      "Parts": 4,
+      "SizeStuds": [
+        13,
+        9.8,
+        1.1
+      ],
+      "Source": "PlazaBuilder (RecentFinds)"
+    },
+    {
+      "Category": "Buildings/Plaza",
+      "Files": [
+        "ShopStall.rbxm",
+        "ShopStall.glb"
+      ],
+      "Hash": "08acfda4334cdf43",
+      "Name": "ShopStall",
+      "Parts": 20,
+      "SizeStuds": [
+        11,
+        11.4,
+        8.35
+      ],
+      "Source": "PlazaBuilder (ShopStall)"
+    },
+    {
+      "Category": "Decorations",
+      "Files": [
+        "Balloon.rbxm",
+        "Balloon.glb"
+      ],
+      "Hash": "159128b215f9d57a",
+      "Name": "Balloon",
+      "Parts": 3,
+      "SizeStuds": [
+        2.6,
+        8,
+        2.6
+      ],
+      "Source": "Decor.balloon"
+    },
+    {
+      "Category": "Decorations",
+      "Files": [
+        "Flag.rbxm",
+        "Flag.glb"
+      ],
+      "Hash": "320741234b82dac8",
+      "Name": "Flag",
+      "Parts": 2,
+      "SizeStuds": [
+        3.65,
+        9.1,
+        0.3
+      ],
+      "Source": "Decor.flag"
+    },
+    {
+      "Category": "Decorations",
+      "Files": [
+        "GardenLamp.rbxm",
+        "GardenLamp.glb"
+      ],
+      "Hash": "140368155ce927ca",
+      "Name": "GardenLamp",
+      "Parts": 4,
+      "SizeStuds": [
+        2.2,
+        10.15,
+        2.2
+      ],
+      "Source": "Decor.lamp"
+    },
+    {
+      "Category": "Decorations",
+      "Files": [
+        "PicketFence.rbxm",
+        "PicketFence.glb"
+      ],
+      "Hash": "d50dce89f1874b45",
+      "Name": "PicketFence",
+      "Parts": 8,
+      "SizeStuds": [
+        16.35,
+        3.8,
+        1.1
+      ],
+      "Source": "Decor.fenceRun"
+    },
+    {
+      "Category": "Decorations",
+      "Files": [
+        "Signpost.rbxm",
+        "Signpost.glb"
+      ],
+      "Hash": "5d202d90499b98b7",
+      "Name": "Signpost",
+      "Parts": 4,
+      "SizeStuds": [
+        7,
+        6.1,
+        1.2
+      ],
+      "Source": "Decor.signpost"
+    },
+    {
+      "Category": "Decorations",
+      "Files": [
+        "StreetLamp.rbxm",
+        "StreetLamp.glb"
+      ],
+      "Hash": "e2a6b481ca08bba1",
+      "Name": "StreetLamp",
+      "Parts": 5,
+      "SizeStuds": [
+        1.6,
+        12,
+        4.5
+      ],
+      "Source": "Decor.streetLamp"
+    },
+    {
+      "Category": "Effects",
+      "EffectOnly": true,
+      "Files": [
+        "Fireflies.rbxm"
+      ],
+      "Hash": "ef7ea3b8051925df",
+      "Name": "Fireflies",
+      "Notes": "Invisible part with a ParticleEmitter (no mesh).",
+      "Parts": 0,
+      "SizeStuds": [
+        0,
+        0,
+        0
+      ],
+      "Source": "Decor.fireflies"
+    },
+    {
+      "Category": "Environment",
+      "Files": [
+        "BurrowHill.rbxm",
+        "BurrowHill.glb"
+      ],
+      "Hash": "24b61d66dad2fa09",
+      "Name": "BurrowHill",
+      "Notes": "Where the hamsters come out of the ground.",
+      "Parts": 3,
+      "SizeStuds": [
+        32,
+        20.5,
+        52
+      ],
+      "Source": "PathBuilder (buildBurrow)"
+    },
+    {
+      "Category": "Environment",
+      "Files": [
+        "Cloud.rbxm",
+        "Cloud.glb"
+      ],
+      "Hash": "ccfac6db8f164d96",
+      "Name": "Cloud",
+      "Parts": 4,
+      "SizeStuds": [
+        59.04,
+        18.07,
+        27.04
+      ],
+      "Source": "Decor.cloud"
+    },
+    {
+      "Category": "Environment",
+      "Files": [
+        "Hill.rbxm",
+        "Hill.glb"
+      ],
+      "Hash": "78088e449f371777",
+      "Name": "Hill",
+      "Parts": 1,
+      "SizeStuds": [
+        60,
+        18,
+        50
+      ],
+      "Source": "Decor.hill"
+    },
+    {
+      "Category": "Environment",
+      "Files": [
+        "Lake.rbxm",
+        "Lake.glb"
+      ],
+      "Hash": "0031362b5ca9c650",
+      "Name": "Lake",
+      "Parts": 22,
+      "SizeStuds": [
+        302.63,
+        11.64,
+        300
+      ],
+      "Source": "EnvironmentBuilder (buildBackdrop)"
+    },
+    {
+      "Category": "Environment",
+      "Files": [
+        "Mountain.rbxm",
+        "Mountain.glb"
+      ],
+      "Hash": "41d47f9791689375",
+      "Name": "Mountain",
+      "Parts": 5,
+      "SizeStuds": [
+        138.76,
+        140.25,
+        109.2
+      ],
+      "Source": "Decor.mountain"
+    },
+    {
+      "Category": "Environment",
+      "Files": [
+        "Pond.rbxm",
+        "Pond.glb"
+      ],
+      "Hash": "02a3e608d52b4547",
+      "Name": "Pond",
+      "Parts": 7,
+      "SizeStuds": [
+        18.4,
+        0.75,
+        18.4
+      ],
+      "Source": "Decor.pond"
+    },
+    {
+      "Category": "Environment",
+      "Files": [
+        "Rock.rbxm",
+        "Rock.glb"
+      ],
+      "Hash": "77156966e44fcb82",
+      "Name": "Rock",
+      "Parts": 2,
+      "SizeStuds": [
+        4.86,
+        1.67,
+        3.77
+      ],
+      "Source": "Decor.rock"
+    },
+    {
+      "Category": "Environment",
+      "Files": [
+        "SnowMountain.rbxm",
+        "SnowMountain.glb"
+      ],
+      "Hash": "72e0ab88942fd307",
+      "Name": "SnowMountain",
+      "Parts": 6,
+      "SizeStuds": [
+        138.76,
+        165.18,
+        109.2
+      ],
+      "Source": "Decor.mountain(snow)"
+    },
+    {
+      "Category": "Environment",
+      "Files": [
+        "Windmill.rbxm",
+        "Windmill.glb"
+      ],
+      "Hash": "52c3c8a882ed16c1",
+      "Name": "Windmill",
+      "Parts": 13,
+      "SizeStuds": [
+        15,
+        16,
+        6.9
+      ],
+      "Source": "Decor.windmill"
+    },
+    {
+      "Category": "Furniture",
+      "Files": [
+        "Bench.rbxm",
+        "Bench.glb"
+      ],
+      "Hash": "06c2a4e70bfee01d",
+      "Name": "Bench",
+      "Parts": 4,
+      "SizeStuds": [
+        5,
+        3.22,
+        1.97
+      ],
+      "Source": "Decor.bench"
+    },
+    {
+      "Category": "Furniture",
+      "Files": [
+        "CeilingLight.rbxm",
+        "CeilingLight.glb"
+      ],
+      "Hash": "874e3137f2ea4ac1",
+      "Name": "CeilingLight",
+      "Parts": 1,
+      "SizeStuds": [
+        4,
+        0.25,
+        4
+      ],
+      "Source": "HouseBuilder.Furniture.CeilingLight"
+    },
+    {
+      "Category": "Furniture",
+      "Files": [
+        "GlassRailing.rbxm",
+        "GlassRailing.glb"
+      ],
+      "Hash": "e177a2c0bb010867",
+      "Name": "GlassRailing",
+      "Parts": 2,
+      "SizeStuds": [
+        10.2,
+        2.82,
+        0.4
+      ],
+      "Source": "HouseBuilder.Furniture.Railing"
+    },
+    {
+      "Category": "Furniture",
+      "Files": [
+        "Rug.rbxm",
+        "Rug.glb"
+      ],
+      "Hash": "30d6972be28cfe85",
+      "Name": "Rug",
+      "Parts": 2,
+      "SizeStuds": [
+        8,
+        0.09,
+        6
+      ],
+      "Source": "HouseBuilder.Furniture.Rug"
+    },
+    {
+      "Category": "Furniture",
+      "Files": [
+        "Sofa.rbxm",
+        "Sofa.glb"
+      ],
+      "Hash": "2907944bf766ed34",
+      "Name": "Sofa",
+      "Parts": 5,
+      "SizeStuds": [
+        7.8,
+        2.9,
+        2.8
+      ],
+      "Source": "HouseBuilder.Furniture.Sofa"
+    },
+    {
+      "Category": "HamsterWheel",
+      "Files": [
+        "AdvancedWheel.rbxm",
+        "AdvancedWheel.glb"
+      ],
+      "Hash": "58b34b98bfb64a0b",
+      "Name": "AdvancedWheel",
+      "Notes": "The child model 'Wheel' turns around the hub's X axis (attribute HomeCFrame, AmbientController SpinModel).",
+      "Parts": 24,
+      "SizeStuds": [
+        7.4,
+        6.75,
+        4.6
+      ],
+      "Source": "HouseBuilder (buildWheel) - style AdvancedWheel",
+      "UsedOn": "apartment floors using AdvancedWheel"
+    },
+    {
+      "Category": "HamsterWheel",
+      "Files": [
+        "BasicWheel.rbxm",
+        "BasicWheel.glb"
+      ],
+      "Hash": "622ed1fe46586622",
+      "Name": "BasicWheel",
+      "Notes": "The child model 'Wheel' turns around the hub's X axis (attribute HomeCFrame, AmbientController SpinModel).",
+      "Parts": 24,
+      "SizeStuds": [
+        7.4,
+        6.75,
+        4.6
+      ],
+      "Source": "HouseBuilder (buildWheel) - style BasicWheel",
+      "UsedOn": "apartment floors using BasicWheel"
+    },
+    {
+      "Category": "HamsterWheel",
+      "Files": [
+        "PremiumWheel.rbxm",
+        "PremiumWheel.glb"
+      ],
+      "Hash": "b9e3f1d7d66c3a17",
+      "Name": "PremiumWheel",
+      "Notes": "The child model 'Wheel' turns around the hub's X axis (attribute HomeCFrame, AmbientController SpinModel).",
+      "Parts": 24,
+      "SizeStuds": [
+        7.4,
+        6.75,
+        4.6
+      ],
+      "Source": "HouseBuilder (buildWheel) - style PremiumWheel",
+      "UsedOn": "apartment floors using PremiumWheel"
+    },
+    {
+      "Category": "Hamsters/Ancient",
+      "CollectionValue": 15906,
+      "DisplayName": "Atlantean",
+      "Files": [
+        "AncientHamsterAtlantean.rbxm",
+        "AncientHamsterAtlantean.glb"
+      ],
+      "HamsterId": "atlantean",
+      "Hash": "bbc1bb9a1fecc3fa",
+      "IncomePerSecond": 6857142.857142857,
+      "MinRebirth": 12,
+      "MovementSpeed": 48,
+      "Name": "AncientHamsterAtlantean",
+      "Parts": 59,
+      "PurchasePrice": 9600000000,
+      "Rarity": "Ancient",
+      "Signature": "fluffy|crystal|smile|none|none|crystal_crown+fish_scales+tail_fish+wings_ice|bubbles|1.00",
+      "SizeStuds": [
+        8.35,
+        5.71,
+        6.14
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.atlantean)",
+      "SpawnChance": 2.243209692101524e-6
+    },
+    {
+      "Category": "Hamsters/Ancient",
+      "CollectionValue": 16629,
+      "DisplayName": "Elder Druid",
+      "Files": [
+        "AncientHamsterElderDruid.rbxm",
+        "AncientHamsterElderDruid.glb"
+      ],
+      "HamsterId": "elder_druid",
+      "Hash": "c38a1c531b973f68",
+      "IncomePerSecond": 7142857.142857143,
+      "MinRebirth": 12,
+      "MovementSpeed": 48,
+      "Name": "AncientHamsterElderDruid",
+      "Parts": 54,
+      "PurchasePrice": 10000000000,
+      "Rarity": "Ancient",
+      "Signature": "floppy|sleepy|smile|none|nub|antlers+held_staff+lei+wings_leaf||1.00",
+      "SizeStuds": [
+        5.48,
+        5,
+        4.17
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.elder_druid)",
+      "SpawnChance": 2.243209692101524e-6
+    },
+    {
+      "Category": "Hamsters/Ancient",
+      "CollectionValue": 11568,
+      "DisplayName": "Fossil",
+      "Files": [
+        "AncientHamsterFossil.rbxm",
+        "AncientHamsterFossil.glb"
+      ],
+      "HamsterId": "fossil",
+      "Hash": "98c6cdb7270d3c58",
+      "IncomePerSecond": 5000000,
+      "MinRebirth": 12,
+      "MovementSpeed": 48,
+      "Name": "AncientHamsterFossil",
+      "Parts": 44,
+      "PurchasePrice": 7000000000,
+      "Rarity": "Ancient",
+      "Signature": "tiny|dot|flat|stripes|nub|floating_runes+stone_crown||1.00",
+      "SizeStuds": [
+        4.72,
+        4.45,
+        4.72
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.fossil)",
+      "SpawnChance": 2.243209692101524e-6
+    },
+    {
+      "Category": "Hamsters/Ancient",
+      "CollectionValue": 14460,
+      "DisplayName": "Mammoth Pup",
+      "Files": [
+        "AncientHamsterMammothPup.rbxm",
+        "AncientHamsterMammothPup.glb"
+      ],
+      "HamsterId": "mammoth_pup",
+      "Hash": "d42a16112afdd1ae",
+      "IncomePerSecond": 6285714.285714285,
+      "MinRebirth": 12,
+      "MovementSpeed": 48,
+      "Name": "AncientHamsterMammothPup",
+      "Parts": 49,
+      "PurchasePrice": 8800000000,
+      "Rarity": "Ancient",
+      "Signature": "big|big|oh|none|nub|ruff+stone_crown||1.25",
+      "SizeStuds": [
+        5.08,
+        5.56,
+        5.06
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.mammoth_pup)",
+      "SpawnChance": 2.243209692101524e-6
+    },
+    {
+      "Category": "Hamsters/Ancient",
+      "CollectionValue": 17352,
+      "DisplayName": "Obsidian Idol",
+      "Files": [
+        "AncientHamsterObsidianIdol.rbxm",
+        "AncientHamsterObsidianIdol.glb"
+      ],
+      "HamsterId": "obsidian_idol",
+      "Hash": "5da1434d688ef69f",
+      "IncomePerSecond": 7857142.857142857,
+      "MinRebirth": 12,
+      "MovementSpeed": 48,
+      "Name": "AncientHamsterObsidianIdol",
+      "Parts": 35,
+      "PurchasePrice": 11000000000,
+      "Rarity": "Ancient",
+      "Signature": "none|glow|none|none|nub|ground_glow+orbit_shards+stone_crown||1.00",
+      "SizeStuds": [
+        5.05,
+        4.54,
+        5.53
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.obsidian_idol)",
+      "SpawnChance": 2.243209692101524e-6
+    },
+    {
+      "Category": "Hamsters/Ancient",
+      "CollectionValue": 13737,
+      "DisplayName": "Primal",
+      "Files": [
+        "AncientHamsterPrimal.rbxm",
+        "AncientHamsterPrimal.glb"
+      ],
+      "HamsterId": "primal",
+      "Hash": "6401f04323dea6ea",
+      "IncomePerSecond": 5928571.428571428,
+      "MinRebirth": 12,
+      "MovementSpeed": 48,
+      "Name": "AncientHamsterPrimal",
+      "Parts": 53,
+      "PurchasePrice": 8300000000,
+      "Rarity": "Ancient",
+      "Signature": "big|angry|fang|none|nub|antlers+dino_spikes+spiked_collar||1.00",
+      "SizeStuds": [
+        4.06,
+        4.9,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.primal)",
+      "SpawnChance": 2.243209692101524e-6
+    },
+    {
+      "Category": "Hamsters/Ancient",
+      "CollectionValue": 13014,
+      "DisplayName": "Rune Keeper",
+      "Files": [
+        "AncientHamsterRuneKeeper.rbxm",
+        "AncientHamsterRuneKeeper.glb"
+      ],
+      "HamsterId": "rune_keeper",
+      "Hash": "f0b4727930424eae",
+      "IncomePerSecond": 5642857.142857143,
+      "MinRebirth": 12,
+      "MovementSpeed": 48,
+      "Name": "AncientHamsterRuneKeeper",
+      "Parts": 43,
+      "PurchasePrice": 7900000000,
+      "Rarity": "Ancient",
+      "Signature": "elf|glow|smile|none|nub|floating_runes+held_staff+rune_circlet||1.00",
+      "SizeStuds": [
+        5.36,
+        4.6,
+        4.72
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.rune_keeper)",
+      "SpawnChance": 2.243209692101524e-6
+    },
+    {
+      "Category": "Hamsters/Ancient",
+      "CollectionValue": 12291,
+      "DisplayName": "Stone Guardian",
+      "Files": [
+        "AncientHamsterStoneGuardian.rbxm",
+        "AncientHamsterStoneGuardian.glb"
+      ],
+      "HamsterId": "stone_guardian",
+      "Hash": "c9a0e22456b847ba",
+      "IncomePerSecond": 5285714.285714285,
+      "MinRebirth": 12,
+      "MovementSpeed": 48,
+      "Name": "AncientHamsterStoneGuardian",
+      "Parts": 38,
+      "PurchasePrice": 7400000000,
+      "Rarity": "Ancient",
+      "Signature": "none|glow|none|none|nub|armor+held_shield+stone_crown||1.30",
+      "SizeStuds": [
+        5.1,
+        5.79,
+        5.21
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.stone_guardian)",
+      "SpawnChance": 2.243209692101524e-6
+    },
+    {
+      "Category": "Hamsters/Ancient",
+      "CollectionValue": 15183,
+      "DisplayName": "Temple Warden",
+      "Files": [
+        "AncientHamsterTempleWarden.rbxm",
+        "AncientHamsterTempleWarden.glb"
+      ],
+      "HamsterId": "temple_warden",
+      "Hash": "3b916889b9326770",
+      "IncomePerSecond": 6571428.571428572,
+      "MinRebirth": 12,
+      "MovementSpeed": 48,
+      "Name": "AncientHamsterTempleWarden",
+      "Parts": 44,
+      "PurchasePrice": 9200000000,
+      "Rarity": "Ancient",
+      "Signature": "round|glow|flat|none|nub|armor+held_hammer+pharaoh||1.00",
+      "SizeStuds": [
+        3.89,
+        4.1,
+        4.15
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.temple_warden)",
+      "SpawnChance": 2.243209692101524e-6
+    },
+    {
+      "Category": "Hamsters/Basic",
+      "CollectionValue": 12,
+      "DisplayName": "Baby",
+      "Files": [
+        "BasicHamsterBaby.rbxm",
+        "BasicHamsterBaby.glb"
+      ],
+      "HamsterId": "baby",
+      "Hash": "13bb207104316aa0",
+      "IncomePerSecond": 2,
+      "MinRebirth": 0,
+      "MovementSpeed": 9,
+      "Name": "BasicHamsterBaby",
+      "Parts": 37,
+      "PurchasePrice": 120,
+      "Rarity": "Basic",
+      "Signature": "tiny|big|smile|none|nub|held_bottle||1.00",
+      "SizeStuds": [
+        3.89,
+        3.35,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.baby)",
+      "SpawnChance": 0.03499407119678378
+    },
+    {
+      "Category": "Hamsters/Basic",
+      "CollectionValue": 13,
+      "DisplayName": "Bread",
+      "Files": [
+        "BasicHamsterBread.rbxm",
+        "BasicHamsterBread.glb"
+      ],
+      "HamsterId": "bread",
+      "Hash": "4d2b4e4504e77e2c",
+      "IncomePerSecond": 2.1666666666666665,
+      "MinRebirth": 0,
+      "MovementSpeed": 9,
+      "Name": "BasicHamsterBread",
+      "Parts": 34,
+      "PurchasePrice": 130,
+      "Rarity": "Basic",
+      "Signature": "tiny|dot|smile|none|nub|bread||1.00",
+      "SizeStuds": [
+        3.89,
+        4.7,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.bread)",
+      "SpawnChance": 0.03499407119678378
+    },
+    {
+      "Category": "Hamsters/Basic",
+      "CollectionValue": 10,
+      "DisplayName": "Brownie",
+      "Files": [
+        "BasicHamsterBrownie.rbxm",
+        "BasicHamsterBrownie.glb"
+      ],
+      "HamsterId": "brownie",
+      "Hash": "0e9783ff01cc25d6",
+      "IncomePerSecond": 1.6666666666666667,
+      "MinRebirth": 0,
+      "MovementSpeed": 9,
+      "Name": "BasicHamsterBrownie",
+      "Parts": 30,
+      "PurchasePrice": 100,
+      "Rarity": "Basic",
+      "Signature": "round|dot|smile|none|nub|||1.00",
+      "SizeStuds": [
+        3.89,
+        3.66,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.brownie)",
+      "SpawnChance": 0.03499407119678378
+    },
+    {
+      "Category": "Hamsters/Basic",
+      "CollectionValue": 13,
+      "DisplayName": "Cheese",
+      "Files": [
+        "BasicHamsterCheese.rbxm",
+        "BasicHamsterCheese.glb"
+      ],
+      "HamsterId": "cheese",
+      "Hash": "980a67ac606bdc89",
+      "IncomePerSecond": 2.1666666666666665,
+      "MinRebirth": 0,
+      "MovementSpeed": 9,
+      "Name": "BasicHamsterCheese",
+      "Parts": 33,
+      "PurchasePrice": 130,
+      "Rarity": "Basic",
+      "Signature": "round|happy|smile|none|nub|cheese||1.00",
+      "SizeStuds": [
+        3.89,
+        4.56,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.cheese)",
+      "SpawnChance": 0.03499407119678378
+    },
+    {
+      "Category": "Hamsters/Basic",
+      "CollectionValue": 12,
+      "DisplayName": "Chubby",
+      "Files": [
+        "BasicHamsterChubby.rbxm",
+        "BasicHamsterChubby.glb"
+      ],
+      "HamsterId": "chubby",
+      "Hash": "fa182a4b95970e69",
+      "IncomePerSecond": 2,
+      "MinRebirth": 0,
+      "MovementSpeed": 9,
+      "Name": "BasicHamsterChubby",
+      "Parts": 30,
+      "PurchasePrice": 120,
+      "Rarity": "Basic",
+      "Signature": "round|happy|open|none|nub|||1.15",
+      "SizeStuds": [
+        4.47,
+        4.21,
+        4.61
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.chubby)",
+      "SpawnChance": 0.03499407119678378
+    },
+    {
+      "Category": "Hamsters/Basic",
+      "CollectionValue": 13,
+      "DisplayName": "Cookie",
+      "Files": [
+        "BasicHamsterCookie.rbxm",
+        "BasicHamsterCookie.glb"
+      ],
+      "HamsterId": "cookie",
+      "Hash": "69cafb5bc138f7db",
+      "IncomePerSecond": 2.1666666666666665,
+      "MinRebirth": 0,
+      "MovementSpeed": 9,
+      "Name": "BasicHamsterCookie",
+      "Parts": 39,
+      "PurchasePrice": 130,
+      "Rarity": "Basic",
+      "Signature": "round|dot|smile|spots|nub|held_cookie||1.00",
+      "SizeStuds": [
+        3.89,
+        3.66,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.cookie)",
+      "SpawnChance": 0.03499407119678378
+    },
+    {
+      "Category": "Hamsters/Basic",
+      "CollectionValue": 15,
+      "DisplayName": "Nibbles",
+      "Files": [
+        "BasicHamsterNibbles.rbxm",
+        "BasicHamsterNibbles.glb"
+      ],
+      "HamsterId": "nibbles",
+      "Hash": "852abdac06c89e33",
+      "IncomePerSecond": 2.5,
+      "MinRebirth": 0,
+      "MovementSpeed": 9,
+      "Name": "BasicHamsterNibbles",
+      "Parts": 36,
+      "PurchasePrice": 150,
+      "Rarity": "Basic",
+      "Signature": "tiny|big|open|none|nub|held_seed||0.85",
+      "SizeStuds": [
+        3.31,
+        2.85,
+        3.41
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.nibbles)",
+      "SpawnChance": 0.03499407119678378
+    },
+    {
+      "Category": "Hamsters/Basic",
+      "CollectionValue": 15,
+      "DisplayName": "Nugget",
+      "Files": [
+        "BasicHamsterNugget.rbxm",
+        "BasicHamsterNugget.glb"
+      ],
+      "HamsterId": "nugget",
+      "Hash": "de5e92ced9c26622",
+      "IncomePerSecond": 2.5,
+      "MinRebirth": 0,
+      "MovementSpeed": 9,
+      "Name": "BasicHamsterNugget",
+      "Parts": 38,
+      "PurchasePrice": 150,
+      "Rarity": "Basic",
+      "Signature": "round|happy|open|freckles|nub|beanie||1.00",
+      "SizeStuds": [
+        3.89,
+        4.65,
+        4.05
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.nugget)",
+      "SpawnChance": 0.03499407119678378
+    },
+    {
+      "Category": "Hamsters/Basic",
+      "CollectionValue": 14,
+      "DisplayName": "Peanut",
+      "Files": [
+        "BasicHamsterPeanut.rbxm",
+        "BasicHamsterPeanut.glb"
+      ],
+      "HamsterId": "peanut",
+      "Hash": "e1f3d78221271895",
+      "IncomePerSecond": 2.3333333333333335,
+      "MinRebirth": 0,
+      "MovementSpeed": 9,
+      "Name": "BasicHamsterPeanut",
+      "Parts": 35,
+      "PurchasePrice": 140,
+      "Rarity": "Basic",
+      "Signature": "bear|dot|oh|none|nub|shell||1.00",
+      "SizeStuds": [
+        3.89,
+        3.77,
+        4.06
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.peanut)",
+      "SpawnChance": 0.03499407119678378
+    },
+    {
+      "Category": "Hamsters/Basic",
+      "CollectionValue": 11,
+      "DisplayName": "Pebbles",
+      "Files": [
+        "BasicHamsterPebbles.rbxm",
+        "BasicHamsterPebbles.glb"
+      ],
+      "HamsterId": "pebbles",
+      "Hash": "5bf4db33f9e7b265",
+      "IncomePerSecond": 1.8333333333333333,
+      "MinRebirth": 0,
+      "MovementSpeed": 9,
+      "Name": "BasicHamsterPebbles",
+      "Parts": 29,
+      "PurchasePrice": 110,
+      "Rarity": "Basic",
+      "Signature": "tiny|dot|flat|none|nub|||1.00",
+      "SizeStuds": [
+        3.89,
+        3.35,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.pebbles)",
+      "SpawnChance": 0.03499407119678378
+    },
+    {
+      "Category": "Hamsters/Basic",
+      "CollectionValue": 14,
+      "DisplayName": "Pudding",
+      "Files": [
+        "BasicHamsterPudding.rbxm",
+        "BasicHamsterPudding.glb"
+      ],
+      "HamsterId": "pudding",
+      "Hash": "129543634d5e1376",
+      "IncomePerSecond": 2.3333333333333335,
+      "MinRebirth": 0,
+      "MovementSpeed": 9,
+      "Name": "BasicHamsterPudding",
+      "Parts": 38,
+      "PurchasePrice": 140,
+      "Rarity": "Basic",
+      "Signature": "fluffy|big|smile|blaze|nub|held_cupcake||1.00",
+      "SizeStuds": [
+        3.89,
+        3.9,
+        4.1
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.pudding)",
+      "SpawnChance": 0.03499407119678378
+    },
+    {
+      "Category": "Hamsters/Basic",
+      "CollectionValue": 11,
+      "DisplayName": "Sleepy",
+      "Files": [
+        "BasicHamsterSleepy.rbxm",
+        "BasicHamsterSleepy.glb"
+      ],
+      "HamsterId": "sleepy",
+      "Hash": "229bd32e54bde382",
+      "IncomePerSecond": 1.8333333333333333,
+      "MinRebirth": 0,
+      "MovementSpeed": 9,
+      "Name": "BasicHamsterSleepy",
+      "Parts": 38,
+      "PurchasePrice": 110,
+      "Rarity": "Basic",
+      "Signature": "round|sleepy|smile|none|nub|nightcap||1.00",
+      "SizeStuds": [
+        3.89,
+        4.25,
+        4.66
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.sleepy)",
+      "SpawnChance": 0.03499407119678378
+    },
+    {
+      "Category": "Hamsters/Basic",
+      "CollectionValue": 10,
+      "DisplayName": "Snowball",
+      "Files": [
+        "BasicHamsterSnowball.rbxm",
+        "BasicHamsterSnowball.glb"
+      ],
+      "HamsterId": "snowball",
+      "Hash": "82b8194fd764c4b9",
+      "IncomePerSecond": 1.6666666666666667,
+      "MinRebirth": 0,
+      "MovementSpeed": 9,
+      "Name": "BasicHamsterSnowball",
+      "Parts": 34,
+      "PurchasePrice": 100,
+      "Rarity": "Basic",
+      "Signature": "round|big|smile|none|nub|||1.00",
+      "SizeStuds": [
+        3.89,
+        3.66,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.snowball)",
+      "SpawnChance": 0.03499407119678378
+    },
+    {
+      "Category": "Hamsters/Basic",
+      "CollectionValue": 11,
+      "DisplayName": "Tiny",
+      "Files": [
+        "BasicHamsterTiny.rbxm",
+        "BasicHamsterTiny.glb"
+      ],
+      "HamsterId": "tiny",
+      "Hash": "6894cc37a04fcd52",
+      "IncomePerSecond": 1.8333333333333333,
+      "MinRebirth": 0,
+      "MovementSpeed": 9,
+      "Name": "BasicHamsterTiny",
+      "Parts": 33,
+      "PurchasePrice": 110,
+      "Rarity": "Basic",
+      "Signature": "tiny|big|oh|none|nub|||0.70",
+      "SizeStuds": [
+        2.72,
+        2.34,
+        2.81
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.tiny)",
+      "SpawnChance": 0.03499407119678378
+    },
+    {
+      "Category": "Hamsters/Basic",
+      "CollectionValue": 14,
+      "DisplayName": "Toast",
+      "Files": [
+        "BasicHamsterToast.rbxm",
+        "BasicHamsterToast.glb"
+      ],
+      "HamsterId": "toast",
+      "Hash": "3716cbed3376a0ee",
+      "IncomePerSecond": 2.3333333333333335,
+      "MinRebirth": 0,
+      "MovementSpeed": 9,
+      "Name": "BasicHamsterToast",
+      "Parts": 32,
+      "PurchasePrice": 140,
+      "Rarity": "Basic",
+      "Signature": "bear|dot|smile|none|nub|held_cheese||1.00",
+      "SizeStuds": [
+        3.89,
+        3.77,
+        4.36
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.toast)",
+      "SpawnChance": 0.03499407119678378
+    },
+    {
+      "Category": "Hamsters/Celestial",
+      "CollectionValue": 4562,
+      "DisplayName": "Aether",
+      "Files": [
+        "CelestialHamsterAether.rbxm",
+        "CelestialHamsterAether.glb"
+      ],
+      "HamsterId": "aether",
+      "Hash": "a12c0271933c4779",
+      "IncomePerSecond": 488636.36363636365,
+      "MinRebirth": 7,
+      "MovementSpeed": 38,
+      "Name": "CelestialHamsterAether",
+      "Parts": 41,
+      "PurchasePrice": 430000000,
+      "Rarity": "Celestial",
+      "Signature": "none|happy|smile|none|nub|halo+orbit_orbs+wings_aurora|bubbles|1.00",
+      "SizeStuds": [
+        7.67,
+        4.47,
+        5.25
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.aether)",
+      "SpawnChance": 0.00001211333233734823
+    },
+    {
+      "Category": "Hamsters/Celestial",
+      "CollectionValue": 4761,
+      "DisplayName": "Constellation",
+      "Files": [
+        "CelestialHamsterConstellation.rbxm",
+        "CelestialHamsterConstellation.glb"
+      ],
+      "HamsterId": "constellation",
+      "Hash": "1a3116fd6b8f5fba",
+      "IncomePerSecond": 511363.63636363635,
+      "MinRebirth": 7,
+      "MovementSpeed": 38,
+      "Name": "CelestialHamsterConstellation",
+      "Parts": 92,
+      "PurchasePrice": 450000000,
+      "Rarity": "Celestial",
+      "Signature": "tiny|star|smile|none|nub|ground_glow+orbit_stars+star_crown+wings_cosmic|stars|1.00",
+      "SizeStuds": [
+        7.43,
+        4.63,
+        5.1
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.constellation)",
+      "SpawnChance": 0.00001211333233734823
+    },
+    {
+      "Category": "Hamsters/Celestial",
+      "CollectionValue": 3570,
+      "DisplayName": "Dawn Bringer",
+      "Files": [
+        "CelestialHamsterDawnBringer.rbxm",
+        "CelestialHamsterDawnBringer.glb"
+      ],
+      "HamsterId": "dawn_bringer",
+      "Hash": "cb2d4b7fece7956e",
+      "IncomePerSecond": 386363.63636363635,
+      "MinRebirth": 7,
+      "MovementSpeed": 38,
+      "Name": "CelestialHamsterDawnBringer",
+      "Parts": 54,
+      "PurchasePrice": 340000000,
+      "Rarity": "Celestial",
+      "Signature": "round|happy|smile|none|nub|cape+sun_crown+wings_aurora|sparkle|1.00",
+      "SizeStuds": [
+        7.67,
+        4.79,
+        4.66
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.dawn_bringer)",
+      "SpawnChance": 0.00001211333233734823
+    },
+    {
+      "Category": "Hamsters/Celestial",
+      "CollectionValue": 5157,
+      "DisplayName": "Eclipse",
+      "Files": [
+        "CelestialHamsterEclipse.rbxm",
+        "CelestialHamsterEclipse.glb"
+      ],
+      "HamsterId": "eclipse",
+      "Hash": "77db0359e0662719",
+      "IncomePerSecond": 556818.1818181818,
+      "MinRebirth": 7,
+      "MovementSpeed": 38,
+      "Name": "CelestialHamsterEclipse",
+      "Parts": 44,
+      "PurchasePrice": 490000000,
+      "Rarity": "Celestial",
+      "Signature": "round|glow|flat|none|nub|cape+ground_glow+sun_crown||1.00",
+      "SizeStuds": [
+        4.6,
+        4.79,
+        4.6
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.eclipse)",
+      "SpawnChance": 0.00001211333233734823
+    },
+    {
+      "Category": "Hamsters/Celestial",
+      "CollectionValue": 5356,
+      "DisplayName": "Harmonic",
+      "Files": [
+        "CelestialHamsterHarmonic.rbxm",
+        "CelestialHamsterHarmonic.glb"
+      ],
+      "HamsterId": "harmonic",
+      "Hash": "5f61425fa1278caf",
+      "IncomePerSecond": 579545.4545454546,
+      "MinRebirth": 7,
+      "MovementSpeed": 38,
+      "Name": "CelestialHamsterHarmonic",
+      "Parts": 71,
+      "PurchasePrice": 510000000,
+      "Rarity": "Celestial",
+      "Signature": "big|happy|open|none|nub|headphones+orbit_stars+wings_seraph|hearts|1.00",
+      "SizeStuds": [
+        9.57,
+        4.9,
+        5.58
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.harmonic)",
+      "SpawnChance": 0.00001211333233734823
+    },
+    {
+      "Category": "Hamsters/Celestial",
+      "CollectionValue": 4166,
+      "DisplayName": "Moonlight Oracle",
+      "Files": [
+        "CelestialHamsterMoonlightOracle.rbxm",
+        "CelestialHamsterMoonlightOracle.glb"
+      ],
+      "HamsterId": "moonlight_oracle",
+      "Hash": "fb2813ca723ea3c1",
+      "IncomePerSecond": 454545.45454545453,
+      "MinRebirth": 7,
+      "MovementSpeed": 38,
+      "Name": "CelestialHamsterMoonlightOracle",
+      "Parts": 36,
+      "PurchasePrice": 400000000,
+      "Rarity": "Celestial",
+      "Signature": "tiny|glow|flat|none|nub|held_orb+moon_circlet+orbit_ring||1.00",
+      "SizeStuds": [
+        4.96,
+        4.45,
+        5.08
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.moonlight_oracle)",
+      "SpawnChance": 0.00001211333233734823
+    },
+    {
+      "Category": "Hamsters/Celestial",
+      "CollectionValue": 3967,
+      "DisplayName": "Starweaver",
+      "Files": [
+        "CelestialHamsterStarweaver.rbxm",
+        "CelestialHamsterStarweaver.glb"
+      ],
+      "HamsterId": "starweaver",
+      "Hash": "e7b3e58dcf0f3329",
+      "IncomePerSecond": 431818.1818181818,
+      "MinRebirth": 7,
+      "MovementSpeed": 38,
+      "Name": "CelestialHamsterStarweaver",
+      "Parts": 81,
+      "PurchasePrice": 380000000,
+      "Rarity": "Celestial",
+      "Signature": "fluffy|star|smile|none|nub|cape_royal+orbit_stars+star_crown|stars|1.00",
+      "SizeStuds": [
+        4.94,
+        4.65,
+        4.94
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.starweaver)",
+      "SpawnChance": 0.00001211333233734823
+    },
+    {
+      "Category": "Hamsters/Celestial",
+      "CollectionValue": 4364,
+      "DisplayName": "Sun Empress",
+      "Files": [
+        "CelestialHamsterSunEmpress.rbxm",
+        "CelestialHamsterSunEmpress.glb"
+      ],
+      "HamsterId": "sun_empress",
+      "Hash": "3f2dacf6ae85c735",
+      "IncomePerSecond": 477272.7272727273,
+      "MinRebirth": 7,
+      "MovementSpeed": 38,
+      "Name": "CelestialHamsterSunEmpress",
+      "Parts": 72,
+      "PurchasePrice": 420000000,
+      "Rarity": "Celestial",
+      "Signature": "round|sparkle|smile|none|nub|cape_royal+held_staff+sun_crown+wings_golden||1.00",
+      "SizeStuds": [
+        8.22,
+        4.94,
+        4.77
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.sun_empress)",
+      "SpawnChance": 0.00001211333233734823
+    },
+    {
+      "Category": "Hamsters/Celestial",
+      "CollectionValue": 3769,
+      "DisplayName": "Twilight Sage",
+      "Files": [
+        "CelestialHamsterTwilightSage.rbxm",
+        "CelestialHamsterTwilightSage.glb"
+      ],
+      "HamsterId": "twilight_sage",
+      "Hash": "550f43fb99bb9521",
+      "IncomePerSecond": 409090.9090909091,
+      "MinRebirth": 7,
+      "MovementSpeed": 38,
+      "Name": "CelestialHamsterTwilightSage",
+      "Parts": 42,
+      "PurchasePrice": 360000000,
+      "Rarity": "Celestial",
+      "Signature": "elf|sleepy|smile|none|nub|held_staff+moon_circlet+wings_fairy|sparkle|1.00",
+      "SizeStuds": [
+        5.84,
+        4.6,
+        4.25
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.twilight_sage)",
+      "SpawnChance": 0.00001211333233734823
+    },
+    {
+      "Category": "Hamsters/Celestial",
+      "CollectionValue": 4959,
+      "DisplayName": "Zodiac",
+      "Files": [
+        "CelestialHamsterZodiac.rbxm",
+        "CelestialHamsterZodiac.glb"
+      ],
+      "HamsterId": "zodiac",
+      "Hash": "beac8ade1d21a802",
+      "IncomePerSecond": 534090.9090909091,
+      "MinRebirth": 7,
+      "MovementSpeed": 38,
+      "Name": "CelestialHamsterZodiac",
+      "Parts": 42,
+      "PurchasePrice": 470000000,
+      "Rarity": "Celestial",
+      "Signature": "fluffy|crystal|smile|none|nub|galaxy_crown+held_gem+orbit_ring||1.00",
+      "SizeStuds": [
+        4.96,
+        5,
+        5.23
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.zodiac)",
+      "SpawnChance": 0.00001211333233734823
+    },
+    {
+      "Category": "Hamsters/Cosmic",
+      "CollectionValue": 2975,
+      "DisplayName": "Astro Prime",
+      "Files": [
+        "CosmicHamsterAstroPrime.rbxm",
+        "CosmicHamsterAstroPrime.glb"
+      ],
+      "HamsterId": "astro_prime",
+      "Hash": "4160638505cc91e0",
+      "IncomePerSecond": 157142.85714285713,
+      "MinRebirth": 5,
+      "MovementSpeed": 34,
+      "Name": "CosmicHamsterAstroPrime",
+      "Parts": 48,
+      "PurchasePrice": 110000000,
+      "Rarity": "Cosmic",
+      "Signature": "tiny|sparkle|smile|none|nub|armor+astro+held_wand||1.00",
+      "SizeStuds": [
+        3.89,
+        4.75,
+        4.35
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.astro_prime)",
+      "SpawnChance": 0.00002294191730558377
+    },
+    {
+      "Category": "Hamsters/Cosmic",
+      "CollectionValue": 2380,
+      "DisplayName": "Black Hole",
+      "Files": [
+        "CosmicHamsterBlackHole.rbxm",
+        "CosmicHamsterBlackHole.glb"
+      ],
+      "HamsterId": "black_hole",
+      "Hash": "b65bcd4db88ff9c9",
+      "IncomePerSecond": 128571.42857142857,
+      "MinRebirth": 5,
+      "MovementSpeed": 34,
+      "Name": "CosmicHamsterBlackHole",
+      "Parts": 30,
+      "PurchasePrice": 90000000,
+      "Rarity": "Cosmic",
+      "Signature": "none|void|none|none|nub|hood+orbit_ring+orbit_shards|glitch|1.00",
+      "SizeStuds": [
+        5.23,
+        4.15,
+        5.59
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.black_hole)",
+      "SpawnChance": 0.00002294191730558377
+    },
+    {
+      "Category": "Hamsters/Cosmic",
+      "CollectionValue": 2281,
+      "DisplayName": "Comet",
+      "Files": [
+        "CosmicHamsterComet.rbxm",
+        "CosmicHamsterComet.glb"
+      ],
+      "HamsterId": "comet",
+      "Hash": "e474e1d25a91edbc",
+      "IncomePerSecond": 122857.14285714286,
+      "MinRebirth": 5,
+      "MovementSpeed": 34,
+      "Name": "CosmicHamsterComet",
+      "Parts": 55,
+      "PurchasePrice": 86000000,
+      "Rarity": "Cosmic",
+      "Signature": "cat|happy|smile|none|none|goggles+orbit_stars+tail_star|sparkle|1.00",
+      "SizeStuds": [
+        4.94,
+        4.29,
+        5.37
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.comet)",
+      "SpawnChance": 0.00002294191730558377
+    },
+    {
+      "Category": "Hamsters/Cosmic",
+      "CollectionValue": 2083,
+      "DisplayName": "Galaxy",
+      "Files": [
+        "CosmicHamsterGalaxy.rbxm",
+        "CosmicHamsterGalaxy.glb"
+      ],
+      "HamsterId": "galaxy",
+      "Hash": "6f67ff6f17b6d7cd",
+      "IncomePerSecond": 112857.14285714286,
+      "MinRebirth": 5,
+      "MovementSpeed": 34,
+      "Name": "CosmicHamsterGalaxy",
+      "Parts": 56,
+      "PurchasePrice": 79000000,
+      "Rarity": "Cosmic",
+      "Signature": "fluffy|glow|smile|spots|nub|held_orb+orbit_ring+wings_cosmic|stars|1.00",
+      "SizeStuds": [
+        7.43,
+        4.54,
+        5.08
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.galaxy)",
+      "SpawnChance": 0.00002294191730558377
+    },
+    {
+      "Category": "Hamsters/Cosmic",
+      "CollectionValue": 2678,
+      "DisplayName": "Meteor",
+      "Files": [
+        "CosmicHamsterMeteor.rbxm",
+        "CosmicHamsterMeteor.glb"
+      ],
+      "HamsterId": "meteor",
+      "Hash": "7b2935add2730921",
+      "IncomePerSecond": 142857.14285714287,
+      "MinRebirth": 5,
+      "MovementSpeed": 34,
+      "Name": "CosmicHamsterMeteor",
+      "Parts": 45,
+      "PurchasePrice": 100000000,
+      "Rarity": "Cosmic",
+      "Signature": "tiny|angry|smile|none|none|orbit_shards+stone_crown+tail_flame|embers|1.00",
+      "SizeStuds": [
+        5.02,
+        4.45,
+        5.53
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.meteor)",
+      "SpawnChance": 0.00002294191730558377
+    },
+    {
+      "Category": "Hamsters/Cosmic",
+      "CollectionValue": 2777,
+      "DisplayName": "Moonwalker",
+      "Files": [
+        "CosmicHamsterMoonwalker.rbxm",
+        "CosmicHamsterMoonwalker.glb"
+      ],
+      "HamsterId": "moonwalker",
+      "Hash": "e54a6f3614bdf3ca",
+      "IncomePerSecond": 157142.85714285713,
+      "MinRebirth": 5,
+      "MovementSpeed": 34,
+      "Name": "CosmicHamsterMoonwalker",
+      "Parts": 38,
+      "PurchasePrice": 110000000,
+      "Rarity": "Cosmic",
+      "Signature": "none|dot|smile|none|nub|astro+backpack+orbit_orbs||1.00",
+      "SizeStuds": [
+        4.5,
+        4.75,
+        4.86
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.moonwalker)",
+      "SpawnChance": 0.00002294191730558377
+    },
+    {
+      "Category": "Hamsters/Cosmic",
+      "CollectionValue": 1984,
+      "DisplayName": "Nebula",
+      "Files": [
+        "CosmicHamsterNebula.rbxm",
+        "CosmicHamsterNebula.glb"
+      ],
+      "HamsterId": "nebula",
+      "Hash": "082f5c9ef3758964",
+      "IncomePerSecond": 107142.85714285714,
+      "MinRebirth": 5,
+      "MovementSpeed": 34,
+      "Name": "CosmicHamsterNebula",
+      "Parts": 80,
+      "PurchasePrice": 75000000,
+      "Rarity": "Cosmic",
+      "Signature": "round|sparkle|smile|none|nub|galaxy_crown+orbit_stars+wings_cosmic|stars|1.00",
+      "SizeStuds": [
+        7.43,
+        5,
+        5.1
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.nebula)",
+      "SpawnChance": 0.00002294191730558377
+    },
+    {
+      "Category": "Hamsters/Cosmic",
+      "CollectionValue": 2579,
+      "DisplayName": "Pulsar",
+      "Files": [
+        "CosmicHamsterPulsar.rbxm",
+        "CosmicHamsterPulsar.glb"
+      ],
+      "HamsterId": "pulsar",
+      "Hash": "08bb979bcbc83588",
+      "IncomePerSecond": 140000,
+      "MinRebirth": 5,
+      "MovementSpeed": 34,
+      "Name": "CosmicHamsterPulsar",
+      "Parts": 46,
+      "PurchasePrice": 98000000,
+      "Rarity": "Cosmic",
+      "Signature": "round|star|open|none|none|alien+orbit_orbs+tail_lightning|sparkle|1.00",
+      "SizeStuds": [
+        4.5,
+        5.05,
+        4.88
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.pulsar)",
+      "SpawnChance": 0.00002294191730558377
+    },
+    {
+      "Category": "Hamsters/Cosmic",
+      "CollectionValue": 2479,
+      "DisplayName": "Quasar",
+      "Files": [
+        "CosmicHamsterQuasar.rbxm",
+        "CosmicHamsterQuasar.glb"
+      ],
+      "HamsterId": "quasar",
+      "Hash": "d498cadee0a49375",
+      "IncomePerSecond": 134285.7142857143,
+      "MinRebirth": 5,
+      "MovementSpeed": 34,
+      "Name": "CosmicHamsterQuasar",
+      "Parts": 41,
+      "PurchasePrice": 94000000,
+      "Rarity": "Cosmic",
+      "Signature": "big|glow|smile|none|nub|jetpack+orbit_ring+visor||1.00",
+      "SizeStuds": [
+        4.96,
+        4.67,
+        5.05
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.quasar)",
+      "SpawnChance": 0.00002294191730558377
+    },
+    {
+      "Category": "Hamsters/Cosmic",
+      "CollectionValue": 2876,
+      "DisplayName": "Solar Flare",
+      "Files": [
+        "CosmicHamsterSolarFlare.rbxm",
+        "CosmicHamsterSolarFlare.glb"
+      ],
+      "HamsterId": "solar_flare",
+      "Hash": "2de850a260bdec0d",
+      "IncomePerSecond": 157142.85714285713,
+      "MinRebirth": 5,
+      "MovementSpeed": 34,
+      "Name": "CosmicHamsterSolarFlare",
+      "Parts": 56,
+      "PurchasePrice": 110000000,
+      "Rarity": "Cosmic",
+      "Signature": "fluffy|glow|smile|none|nub|ground_glow+sun_crown+wings_flame|flame|1.00",
+      "SizeStuds": [
+        8.25,
+        4.78,
+        4.92
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.solar_flare)",
+      "SpawnChance": 0.00002294191730558377
+    },
+    {
+      "Category": "Hamsters/Cosmic",
+      "CollectionValue": 2182,
+      "DisplayName": "Supernova",
+      "Files": [
+        "CosmicHamsterSupernova.rbxm",
+        "CosmicHamsterSupernova.glb"
+      ],
+      "HamsterId": "supernova",
+      "Hash": "aa13609d8175f871",
+      "IncomePerSecond": 118571.42857142857,
+      "MinRebirth": 5,
+      "MovementSpeed": 34,
+      "Name": "CosmicHamsterSupernova",
+      "Parts": 47,
+      "PurchasePrice": 83000000,
+      "Rarity": "Cosmic",
+      "Signature": "tiny|glow|smile|none|none|orbit_shards+sun_crown+tail_flame|flame|1.00",
+      "SizeStuds": [
+        5.02,
+        4.69,
+        5.53
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.supernova)",
+      "SpawnChance": 0.00002294191730558377
+    },
+    {
+      "Category": "Hamsters/Cute",
+      "CollectionValue": 19,
+      "DisplayName": "Bunny",
+      "Files": [
+        "CuteHamsterBunny.rbxm",
+        "CuteHamsterBunny.glb"
+      ],
+      "HamsterId": "bunny",
+      "Hash": "1e9ad8bb670faf34",
+      "IncomePerSecond": 5.875,
+      "MinRebirth": 0,
+      "MovementSpeed": 10.5,
+      "Name": "CuteHamsterBunny",
+      "Parts": 38,
+      "PurchasePrice": 470,
+      "Rarity": "Cute",
+      "Signature": "bunny|big|cat|none|fluffy|bow||1.00",
+      "SizeStuds": [
+        3.89,
+        5.8,
+        4.61
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.bunny)",
+      "SpawnChance": 0.01802579216867296
+    },
+    {
+      "Category": "Hamsters/Cute",
+      "CollectionValue": 23,
+      "DisplayName": "Calendar Cutie",
+      "Files": [
+        "CuteHamsterCalendarCutie.rbxm",
+        "CuteHamsterCalendarCutie.glb"
+      ],
+      "HamsterId": "calendar_cutie",
+      "Hash": "da404f88444ff400",
+      "IncomePerSecond": 7,
+      "MinRebirth": 0,
+      "MovementSpeed": 10.5,
+      "Name": "CuteHamsterCalendarCutie",
+      "Parts": 40,
+      "PurchasePrice": 560,
+      "Rarity": "Cute",
+      "Signature": "bunny|heart|open|none|nub|held_balloon+tiara|hearts|1.00",
+      "SizeStuds": [
+        3.89,
+        5.8,
+        4.3
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.calendar_cutie)",
+      "SpawnChance": 0
+    },
+    {
+      "Category": "Hamsters/Cute",
+      "CollectionValue": 24,
+      "DisplayName": "Caramel",
+      "Files": [
+        "CuteHamsterCaramel.rbxm",
+        "CuteHamsterCaramel.glb"
+      ],
+      "HamsterId": "caramel",
+      "Hash": "a2b3fbd5aa1bec83",
+      "IncomePerSecond": 7.625,
+      "MinRebirth": 0,
+      "MovementSpeed": 10.5,
+      "Name": "CuteHamsterCaramel",
+      "Parts": 38,
+      "PurchasePrice": 610,
+      "Rarity": "Cute",
+      "Signature": "fluffy|big|smile|none|nub|scarf||1.00",
+      "SizeStuds": [
+        3.89,
+        3.9,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.caramel)",
+      "SpawnChance": 0.01802579216867296
+    },
+    {
+      "Category": "Hamsters/Cute",
+      "CollectionValue": 24,
+      "DisplayName": "Chocolate",
+      "Files": [
+        "CuteHamsterChocolate.rbxm",
+        "CuteHamsterChocolate.glb"
+      ],
+      "HamsterId": "chocolate",
+      "Hash": "121d4ffa7b1612f5",
+      "IncomePerSecond": 7.375,
+      "MinRebirth": 0,
+      "MovementSpeed": 10.5,
+      "Name": "CuteHamsterChocolate",
+      "Parts": 36,
+      "PurchasePrice": 590,
+      "Rarity": "Cute",
+      "Signature": "round|heart|tongue|none|nub|bowtie||1.00",
+      "SizeStuds": [
+        3.89,
+        3.66,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.chocolate)",
+      "SpawnChance": 0.01802579216867296
+    },
+    {
+      "Category": "Hamsters/Cute",
+      "CollectionValue": 21,
+      "DisplayName": "Cloud",
+      "Files": [
+        "CuteHamsterCloud.rbxm",
+        "CuteHamsterCloud.glb"
+      ],
+      "HamsterId": "cloud",
+      "Hash": "7d340301b96a561f",
+      "IncomePerSecond": 6.75,
+      "MinRebirth": 0,
+      "MovementSpeed": 10.5,
+      "Name": "CuteHamsterCloud",
+      "Parts": 33,
+      "PurchasePrice": 540,
+      "Rarity": "Cute",
+      "Signature": "tiny|sleepy|flat|none|fluffy|cloud||1.00",
+      "SizeStuds": [
+        3.89,
+        5.1,
+        4.61
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.cloud)",
+      "SpawnChance": 0.01802579216867296
+    },
+    {
+      "Category": "Hamsters/Cute",
+      "CollectionValue": 21,
+      "DisplayName": "Flower",
+      "Files": [
+        "CuteHamsterFlower.rbxm",
+        "CuteHamsterFlower.glb"
+      ],
+      "HamsterId": "flower",
+      "Hash": "1475973e6dcea1e2",
+      "IncomePerSecond": 6.5,
+      "MinRebirth": 0,
+      "MovementSpeed": 10.5,
+      "Name": "CuteHamsterFlower",
+      "Parts": 46,
+      "PurchasePrice": 520,
+      "Rarity": "Cute",
+      "Signature": "round|happy|open|none|nub|flowers||1.00",
+      "SizeStuds": [
+        3.89,
+        3.66,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.flower)",
+      "SpawnChance": 0.01802579216867296
+    },
+    {
+      "Category": "Hamsters/Cute",
+      "CollectionValue": 20,
+      "DisplayName": "Honey",
+      "Files": [
+        "CuteHamsterHoney.rbxm",
+        "CuteHamsterHoney.glb"
+      ],
+      "HamsterId": "honey",
+      "Hash": "2c099c95cd04861f",
+      "IncomePerSecond": 6.25,
+      "MinRebirth": 0,
+      "MovementSpeed": 10.5,
+      "Name": "CuteHamsterHoney",
+      "Parts": 44,
+      "PurchasePrice": 500,
+      "Rarity": "Cute",
+      "Signature": "round|happy|smile|stripes|nub|bee+wings_bee||1.00",
+      "SizeStuds": [
+        4.68,
+        4.8,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.honey)",
+      "SpawnChance": 0.01802579216867296
+    },
+    {
+      "Category": "Hamsters/Cute",
+      "CollectionValue": 25,
+      "DisplayName": "Kitty",
+      "Files": [
+        "CuteHamsterKitty.rbxm",
+        "CuteHamsterKitty.glb"
+      ],
+      "HamsterId": "kitty",
+      "Hash": "794ee516c9649ca8",
+      "IncomePerSecond": 7.75,
+      "MinRebirth": 0,
+      "MovementSpeed": 10.5,
+      "Name": "CuteHamsterKitty",
+      "Parts": 43,
+      "PurchasePrice": 620,
+      "Rarity": "Cute",
+      "Signature": "cat|cat|cat|tiger|long|bellcollar||1.00",
+      "SizeStuds": [
+        3.89,
+        4.29,
+        5.11
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.kitty)",
+      "SpawnChance": 0.01802579216867296
+    },
+    {
+      "Category": "Hamsters/Cute",
+      "CollectionValue": 22,
+      "DisplayName": "Marshmallow",
+      "Files": [
+        "CuteHamsterMarshmallow.rbxm",
+        "CuteHamsterMarshmallow.glb"
+      ],
+      "HamsterId": "marshmallow",
+      "Hash": "3fa08f7bc0497e75",
+      "IncomePerSecond": 6.875,
+      "MinRebirth": 0,
+      "MovementSpeed": 10.5,
+      "Name": "CuteHamsterMarshmallow",
+      "Parts": 36,
+      "PurchasePrice": 550,
+      "Rarity": "Cute",
+      "Signature": "round|big|oh|none|nub|beanie||1.10",
+      "SizeStuds": [
+        4.28,
+        5.12,
+        4.46
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.marshmallow)",
+      "SpawnChance": 0.01802579216867296
+    },
+    {
+      "Category": "Hamsters/Cute",
+      "CollectionValue": 23,
+      "DisplayName": "Milk",
+      "Files": [
+        "CuteHamsterMilk.rbxm",
+        "CuteHamsterMilk.glb"
+      ],
+      "HamsterId": "milk",
+      "Hash": "8578569d26e5e845",
+      "IncomePerSecond": 7.125,
+      "MinRebirth": 0,
+      "MovementSpeed": 10.5,
+      "Name": "CuteHamsterMilk",
+      "Parts": 37,
+      "PurchasePrice": 570,
+      "Rarity": "Cute",
+      "Signature": "floppy|dot|smile|spots|nub|held_bottle||1.00",
+      "SizeStuds": [
+        5.1,
+        3.64,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.milk)",
+      "SpawnChance": 0.01802579216867296
+    },
+    {
+      "Category": "Hamsters/Cute",
+      "CollectionValue": 27,
+      "DisplayName": "Mochi",
+      "Files": [
+        "CuteHamsterMochi.rbxm",
+        "CuteHamsterMochi.glb"
+      ],
+      "HamsterId": "mochi",
+      "Hash": "73f09a2d55d51dcc",
+      "IncomePerSecond": 8.5,
+      "MinRebirth": 0,
+      "MovementSpeed": 10.5,
+      "Name": "CuteHamsterMochi",
+      "Parts": 29,
+      "PurchasePrice": 680,
+      "Rarity": "Cute",
+      "Signature": "none|happy|smile|none|nub|sprout||1.20",
+      "SizeStuds": [
+        4.67,
+        5.33,
+        4.81
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.mochi)",
+      "SpawnChance": 0.01802579216867296
+    },
+    {
+      "Category": "Hamsters/Cute",
+      "CollectionValue": 18,
+      "DisplayName": "Panda",
+      "Files": [
+        "CuteHamsterPanda.rbxm",
+        "CuteHamsterPanda.glb"
+      ],
+      "HamsterId": "panda",
+      "Hash": "60179d59232b6055",
+      "IncomePerSecond": 5.625,
+      "MinRebirth": 0,
+      "MovementSpeed": 10.5,
+      "Name": "CuteHamsterPanda",
+      "Parts": 39,
+      "PurchasePrice": 450,
+      "Rarity": "Cute",
+      "Signature": "bear|dot|smile|panda|nub|held_bamboo||1.00",
+      "SizeStuds": [
+        3.89,
+        3.77,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.panda)",
+      "SpawnChance": 0.01802579216867296
+    },
+    {
+      "Category": "Hamsters/Cute",
+      "CollectionValue": 26,
+      "DisplayName": "Peach",
+      "Files": [
+        "CuteHamsterPeach.rbxm",
+        "CuteHamsterPeach.glb"
+      ],
+      "HamsterId": "peach",
+      "Hash": "bb3432e1de004101",
+      "IncomePerSecond": 8.25,
+      "MinRebirth": 0,
+      "MovementSpeed": 10.5,
+      "Name": "CuteHamsterPeach",
+      "Parts": 44,
+      "PurchasePrice": 660,
+      "Rarity": "Cute",
+      "Signature": "fluffy|sparkle|smile|freckles|nub|leaf||1.00",
+      "SizeStuds": [
+        3.89,
+        3.91,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.peach)",
+      "SpawnChance": 0.01802579216867296
+    },
+    {
+      "Category": "Hamsters/Cute",
+      "CollectionValue": 19,
+      "DisplayName": "Strawberry",
+      "Files": [
+        "CuteHamsterStrawberry.rbxm",
+        "CuteHamsterStrawberry.glb"
+      ],
+      "HamsterId": "strawberry",
+      "Hash": "5091048b39aafe1a",
+      "IncomePerSecond": 6,
+      "MinRebirth": 0,
+      "MovementSpeed": 10.5,
+      "Name": "CuteHamsterStrawberry",
+      "Parts": 54,
+      "PurchasePrice": 480,
+      "Rarity": "Cute",
+      "Signature": "round|sparkle|smile|freckles|nub|strawberry||1.00",
+      "SizeStuds": [
+        3.89,
+        4.79,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.strawberry)",
+      "SpawnChance": 0.01802579216867296
+    },
+    {
+      "Category": "Hamsters/Cute",
+      "CollectionValue": 26,
+      "DisplayName": "Teddy",
+      "Files": [
+        "CuteHamsterTeddy.rbxm",
+        "CuteHamsterTeddy.glb"
+      ],
+      "HamsterId": "teddy",
+      "Hash": "5048deb31dc601ac",
+      "IncomePerSecond": 8,
+      "MinRebirth": 0,
+      "MovementSpeed": 10.5,
+      "Name": "CuteHamsterTeddy",
+      "Parts": 35,
+      "PurchasePrice": 640,
+      "Rarity": "Cute",
+      "Signature": "bear|dot|smile|none|nub|bowtie+held_balloon||1.00",
+      "SizeStuds": [
+        3.89,
+        5.2,
+        4.3
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.teddy)",
+      "SpawnChance": 0.01802579216867296
+    },
+    {
+      "Category": "Hamsters/Divine",
+      "CollectionValue": 1488,
+      "DisplayName": "Anubis",
+      "Files": [
+        "DivineHamsterAnubis.rbxm",
+        "DivineHamsterAnubis.glb"
+      ],
+      "HamsterId": "anubis",
+      "Hash": "7425c7b2caacee00",
+      "IncomePerSecond": 39285.71428571428,
+      "MinRebirth": 3,
+      "MovementSpeed": 30,
+      "Name": "DivineHamsterAnubis",
+      "Parts": 48,
+      "PurchasePrice": 22000000,
+      "Rarity": "Divine",
+      "Signature": "cat|glow|flat|none|nub|held_staff+medal+pharaoh||1.00",
+      "SizeStuds": [
+        3.89,
+        4.6,
+        4.15
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.anubis)",
+      "SpawnChance": 0.000055060601533401044
+    },
+    {
+      "Category": "Hamsters/Divine",
+      "CollectionValue": 1212,
+      "DisplayName": "Athena",
+      "Files": [
+        "DivineHamsterAthena.rbxm",
+        "DivineHamsterAthena.glb"
+      ],
+      "HamsterId": "athena",
+      "Hash": "11d0443665bc6246",
+      "IncomePerSecond": 32142.85714285714,
+      "MinRebirth": 3,
+      "MovementSpeed": 30,
+      "Name": "DivineHamsterAthena",
+      "Parts": 42,
+      "PurchasePrice": 18000000,
+      "Rarity": "Divine",
+      "Signature": "tiny|glow|flat|none|nub|golden_helm+held_book+held_shield||1.00",
+      "SizeStuds": [
+        3.92,
+        4.15,
+        4.1
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.athena)",
+      "SpawnChance": 0.000055060601533401044
+    },
+    {
+      "Category": "Hamsters/Divine",
+      "CollectionValue": 1377,
+      "DisplayName": "Divine Empress",
+      "Files": [
+        "DivineHamsterDivineEmpress.rbxm",
+        "DivineHamsterDivineEmpress.glb"
+      ],
+      "HamsterId": "divine_empress",
+      "Hash": "e624794ebf726240",
+      "IncomePerSecond": 35714.28571428572,
+      "MinRebirth": 3,
+      "MovementSpeed": 30,
+      "Name": "DivineHamsterDivineEmpress",
+      "Parts": 57,
+      "PurchasePrice": 20000000,
+      "Rarity": "Divine",
+      "Signature": "fluffy|sparkle|smile|none|nub|cape_royal+held_flower+tiara||1.00",
+      "SizeStuds": [
+        3.89,
+        4.79,
+        4.13
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.divine_empress)",
+      "SpawnChance": 0.000055060601533401044
+    },
+    {
+      "Category": "Hamsters/Divine",
+      "CollectionValue": 1653,
+      "DisplayName": "Gaia",
+      "Files": [
+        "DivineHamsterGaia.rbxm",
+        "DivineHamsterGaia.glb"
+      ],
+      "HamsterId": "gaia",
+      "Hash": "0f4be4be76fee9a4",
+      "IncomePerSecond": 42857.142857142855,
+      "MinRebirth": 3,
+      "MovementSpeed": 30,
+      "Name": "DivineHamsterGaia",
+      "Parts": 61,
+      "PurchasePrice": 24000000,
+      "Rarity": "Divine",
+      "Signature": "floppy|sparkle|smile|none|nub|laurel+lei+wings_leaf|sparkle|1.00",
+      "SizeStuds": [
+        5.48,
+        3.64,
+        4.24
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.gaia)",
+      "SpawnChance": 0.000055060601533401044
+    },
+    {
+      "Category": "Hamsters/Divine",
+      "CollectionValue": 1322,
+      "DisplayName": "Moon Priestess",
+      "Files": [
+        "DivineHamsterMoonPriestess.rbxm",
+        "DivineHamsterMoonPriestess.glb"
+      ],
+      "HamsterId": "moon_priestess",
+      "Hash": "4fe8f388cc35f739",
+      "IncomePerSecond": 33928.57142857143,
+      "MinRebirth": 3,
+      "MovementSpeed": 30,
+      "Name": "DivineHamsterMoonPriestess",
+      "Parts": 44,
+      "PurchasePrice": 19000000,
+      "Rarity": "Divine",
+      "Signature": "elf|sleepy|smile|none|nub|held_wand+moon_circlet+wings_fairy||1.00",
+      "SizeStuds": [
+        5.84,
+        4.45,
+        4.25
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.moon_priestess)",
+      "SpawnChance": 0.000055060601533401044
+    },
+    {
+      "Category": "Hamsters/Divine",
+      "CollectionValue": 1543,
+      "DisplayName": "Odin",
+      "Files": [
+        "DivineHamsterOdin.rbxm",
+        "DivineHamsterOdin.glb"
+      ],
+      "HamsterId": "odin",
+      "Hash": "7515b762f8d66557",
+      "IncomePerSecond": 39285.71428571428,
+      "MinRebirth": 3,
+      "MovementSpeed": 30,
+      "Name": "DivineHamsterOdin",
+      "Parts": 45,
+      "PurchasePrice": 22000000,
+      "Rarity": "Divine",
+      "Signature": "tiny|glow|flat|none|nub|cape+eyepatch+orbit_orbs+viking||1.00",
+      "SizeStuds": [
+        5.35,
+        4.83,
+        4.65
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.odin)",
+      "SpawnChance": 0.000055060601533401044
+    },
+    {
+      "Category": "Hamsters/Divine",
+      "CollectionValue": 1433,
+      "DisplayName": "Ra",
+      "Files": [
+        "DivineHamsterRa.rbxm",
+        "DivineHamsterRa.glb"
+      ],
+      "HamsterId": "ra",
+      "Hash": "7d0abfe623fb0c31",
+      "IncomePerSecond": 37500,
+      "MinRebirth": 3,
+      "MovementSpeed": 30,
+      "Name": "DivineHamsterRa",
+      "Parts": 56,
+      "PurchasePrice": 21000000,
+      "Rarity": "Divine",
+      "Signature": "round|glow|smile|none|nub|held_orb+pharaoh+wings_golden|flame|1.00",
+      "SizeStuds": [
+        8.22,
+        4.1,
+        5.06
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.ra)",
+      "SpawnChance": 0.000055060601533401044
+    },
+    {
+      "Category": "Hamsters/Divine",
+      "CollectionValue": 1598,
+      "DisplayName": "Seraph",
+      "Files": [
+        "DivineHamsterSeraph.rbxm",
+        "DivineHamsterSeraph.glb"
+      ],
+      "HamsterId": "seraph",
+      "Hash": "12b8a44d935b08e3",
+      "IncomePerSecond": 41071.42857142857,
+      "MinRebirth": 3,
+      "MovementSpeed": 30,
+      "Name": "DivineHamsterSeraph",
+      "Parts": 49,
+      "PurchasePrice": 23000000,
+      "Rarity": "Divine",
+      "Signature": "none|happy|smile|none|nub|armor+halo+wings_seraph|sparkle|1.00",
+      "SizeStuds": [
+        9.57,
+        4.47,
+        5.07
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.seraph)",
+      "SpawnChance": 0.000055060601533401044
+    },
+    {
+      "Category": "Hamsters/Divine",
+      "CollectionValue": 1102,
+      "DisplayName": "Skyfather",
+      "Files": [
+        "DivineHamsterSkyfather.rbxm",
+        "DivineHamsterSkyfather.glb"
+      ],
+      "HamsterId": "skyfather",
+      "Hash": "a821adbdde214911",
+      "IncomePerSecond": 28571.428571428572,
+      "MinRebirth": 3,
+      "MovementSpeed": 30,
+      "Name": "DivineHamsterSkyfather",
+      "Parts": 47,
+      "PurchasePrice": 16000000,
+      "Rarity": "Divine",
+      "Signature": "round|glow|grin|none|nub|cape+held_orb+laurel+orbit_ring|sparkle|1.00",
+      "SizeStuds": [
+        4.96,
+        3.77,
+        5.08
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.skyfather)",
+      "SpawnChance": 0.000055060601533401044
+    },
+    {
+      "Category": "Hamsters/Divine",
+      "CollectionValue": 1267,
+      "DisplayName": "Sun Priest",
+      "Files": [
+        "DivineHamsterSunPriest.rbxm",
+        "DivineHamsterSunPriest.glb"
+      ],
+      "HamsterId": "sun_priest",
+      "Hash": "46c6b29a78119fe8",
+      "IncomePerSecond": 32142.85714285714,
+      "MinRebirth": 3,
+      "MovementSpeed": 30,
+      "Name": "DivineHamsterSunPriest",
+      "Parts": 55,
+      "PurchasePrice": 18000000,
+      "Rarity": "Divine",
+      "Signature": "round|happy|smile|none|nub|sun_crown+wings_golden|sparkle|1.00",
+      "SizeStuds": [
+        8.22,
+        4.69,
+        4.77
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.sun_priest)",
+      "SpawnChance": 0.000055060601533401044
+    },
+    {
+      "Category": "Hamsters/Divine",
+      "CollectionValue": 1157,
+      "DisplayName": "Tidal King",
+      "Files": [
+        "DivineHamsterTidalKing.rbxm",
+        "DivineHamsterTidalKing.glb"
+      ],
+      "HamsterId": "tidal_king",
+      "Hash": "77b29cf3d8ae69f1",
+      "IncomePerSecond": 30357.14285714286,
+      "MinRebirth": 3,
+      "MovementSpeed": 30,
+      "Name": "DivineHamsterTidalKing",
+      "Parts": 63,
+      "PurchasePrice": 17000000,
+      "Rarity": "Divine",
+      "Signature": "fluffy|sparkle|smile|none|none|crown+fish_scales+held_trident+tail_fish|bubbles|1.00",
+      "SizeStuds": [
+        3.89,
+        5.58,
+        6.14
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.tidal_king)",
+      "SpawnChance": 0.000055060601533401044
+    },
+    {
+      "Category": "Hamsters/Epic",
+      "CollectionValue": 128,
+      "DisplayName": "Alien",
+      "Files": [
+        "EpicHamsterAlien.rbxm",
+        "EpicHamsterAlien.glb"
+      ],
+      "HamsterId": "alien",
+      "Hash": "4ec6f0fb41cf9c6f",
+      "IncomePerSecond": 245,
+      "MinRebirth": 0,
+      "MovementSpeed": 16.5,
+      "Name": "EpicHamsterAlien",
+      "Parts": 29,
+      "PurchasePrice": 49000,
+      "Rarity": "Epic",
+      "Signature": "elf|void|oh|none|nub|alien||1.00",
+      "SizeStuds": [
+        5.36,
+        5.05,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.alien)",
+      "SpawnChance": 0.0014250979220409683
+    },
+    {
+      "Category": "Hamsters/Epic",
+      "CollectionValue": 151,
+      "DisplayName": "Astronaut",
+      "Files": [
+        "EpicHamsterAstronaut.rbxm",
+        "EpicHamsterAstronaut.glb"
+      ],
+      "HamsterId": "astronaut",
+      "Hash": "6abcca92b821df65",
+      "IncomePerSecond": 290,
+      "MinRebirth": 0,
+      "MovementSpeed": 16.5,
+      "Name": "EpicHamsterAstronaut",
+      "Parts": 46,
+      "PurchasePrice": 58000,
+      "Rarity": "Epic",
+      "Signature": "tiny|big|oh|none|nub|astro+held_gem+jetpack||1.00",
+      "SizeStuds": [
+        3.89,
+        5.2,
+        4.8
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.astronaut)",
+      "SpawnChance": 0.0014250979220409683
+    },
+    {
+      "Category": "Hamsters/Epic",
+      "CollectionValue": 154,
+      "DisplayName": "DJ",
+      "Files": [
+        "EpicHamsterDJ.rbxm",
+        "EpicHamsterDJ.glb"
+      ],
+      "HamsterId": "dj",
+      "Hash": "9279c7951b204136",
+      "IncomePerSecond": 295,
+      "MinRebirth": 0,
+      "MovementSpeed": 16.5,
+      "Name": "EpicHamsterDJ",
+      "Parts": 50,
+      "PurchasePrice": 59000,
+      "Rarity": "Epic",
+      "Signature": "big|happy|open|none|nub|headphones+heart_glasses+medal||1.00",
+      "SizeStuds": [
+        4.06,
+        4.9,
+        4.04
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.dj)",
+      "SpawnChance": 0.0014250979220409683
+    },
+    {
+      "Category": "Hamsters/Epic",
+      "CollectionValue": 131,
+      "DisplayName": "Founder Fuzz",
+      "Files": [
+        "EpicHamsterFounderFuzz.rbxm",
+        "EpicHamsterFounderFuzz.glb"
+      ],
+      "HamsterId": "founder_fuzz",
+      "Hash": "3668ef63867efe7b",
+      "IncomePerSecond": 250,
+      "MinRebirth": 0,
+      "MovementSpeed": 16.5,
+      "Name": "EpicHamsterFounderFuzz",
+      "Parts": 51,
+      "PurchasePrice": 50000,
+      "Rarity": "Epic",
+      "Signature": "fluffy|sparkle|smile|none|nub|bowtie+medal+party|sparkle|1.00",
+      "SizeStuds": [
+        3.89,
+        5.61,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.founder_fuzz)",
+      "SpawnChance": 0
+    },
+    {
+      "Category": "Hamsters/Epic",
+      "CollectionValue": 157,
+      "DisplayName": "Gamer",
+      "Files": [
+        "EpicHamsterGamer.rbxm",
+        "EpicHamsterGamer.glb"
+      ],
+      "HamsterId": "gamer",
+      "Hash": "4c9b59b85a4720b9",
+      "IncomePerSecond": 300,
+      "MinRebirth": 0,
+      "MovementSpeed": 16.5,
+      "Name": "EpicHamsterGamer",
+      "Parts": 53,
+      "PurchasePrice": 60000,
+      "Rarity": "Epic",
+      "Signature": "round|dot|tongue|none|nub|headphones+held_donut+nerd_glasses||1.00",
+      "SizeStuds": [
+        4,
+        4.9,
+        4.04
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.gamer)",
+      "SpawnChance": 0.0014250979220409683
+    },
+    {
+      "Category": "Hamsters/Epic",
+      "CollectionValue": 141,
+      "DisplayName": "Ghost",
+      "Files": [
+        "EpicHamsterGhost.rbxm",
+        "EpicHamsterGhost.glb"
+      ],
+      "HamsterId": "ghost",
+      "Hash": "49816dbba15cb345",
+      "IncomePerSecond": 270,
+      "MinRebirth": 0,
+      "MovementSpeed": 16.5,
+      "Name": "EpicHamsterGhost",
+      "Parts": 28,
+      "PurchasePrice": 54000,
+      "Rarity": "Epic",
+      "Signature": "none|dot|oh|none|nub|ghost_sheet||0.95",
+      "SizeStuds": [
+        3.69,
+        3.9,
+        3.81
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.ghost)",
+      "SpawnChance": 0.0014250979220409683
+    },
+    {
+      "Category": "Hamsters/Epic",
+      "CollectionValue": 144,
+      "DisplayName": "Jester",
+      "Files": [
+        "EpicHamsterJester.rbxm",
+        "EpicHamsterJester.glb"
+      ],
+      "HamsterId": "jester",
+      "Hash": "89c7bd7185ecbb72",
+      "IncomePerSecond": 275,
+      "MinRebirth": 0,
+      "MovementSpeed": 16.5,
+      "Name": "EpicHamsterJester",
+      "Parts": 40,
+      "PurchasePrice": 55000,
+      "Rarity": "Epic",
+      "Signature": "round|happy|tongue|none|nub|bellcollar+jester||1.00",
+      "SizeStuds": [
+        4.3,
+        4.95,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.jester)",
+      "SpawnChance": 0.0014250979220409683
+    },
+    {
+      "Category": "Hamsters/Epic",
+      "CollectionValue": 135,
+      "DisplayName": "Mermaid",
+      "Files": [
+        "EpicHamsterMermaid.rbxm",
+        "EpicHamsterMermaid.glb"
+      ],
+      "HamsterId": "mermaid",
+      "Hash": "92fee86cdc86c608",
+      "IncomePerSecond": 255,
+      "MinRebirth": 0,
+      "MovementSpeed": 16.5,
+      "Name": "EpicHamsterMermaid",
+      "Parts": 47,
+      "PurchasePrice": 51000,
+      "Rarity": "Epic",
+      "Signature": "fluffy|sparkle|smile|none|none|lei+tail_fish||1.00",
+      "SizeStuds": [
+        3.89,
+        4.38,
+        6.14
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.mermaid)",
+      "SpawnChance": 0.0014250979220409683
+    },
+    {
+      "Category": "Hamsters/Epic",
+      "CollectionValue": 115,
+      "DisplayName": "Mummy",
+      "Files": [
+        "EpicHamsterMummy.rbxm",
+        "EpicHamsterMummy.glb"
+      ],
+      "HamsterId": "mummy",
+      "Hash": "1dff1cbca7e9d8d6",
+      "IncomePerSecond": 220,
+      "MinRebirth": 0,
+      "MovementSpeed": 16.5,
+      "Name": "EpicHamsterMummy",
+      "Parts": 37,
+      "PurchasePrice": 44000,
+      "Rarity": "Epic",
+      "Signature": "tiny|glow|flat|stripes|nub|bandana||1.00",
+      "SizeStuds": [
+        3.89,
+        3.9,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.mummy)",
+      "SpawnChance": 0.0014250979220409683
+    },
+    {
+      "Category": "Hamsters/Epic",
+      "CollectionValue": 121,
+      "DisplayName": "Pharaoh",
+      "Files": [
+        "EpicHamsterPharaoh.rbxm",
+        "EpicHamsterPharaoh.glb"
+      ],
+      "HamsterId": "pharaoh",
+      "Hash": "adba8ec37eb5d796",
+      "IncomePerSecond": 230,
+      "MinRebirth": 0,
+      "MovementSpeed": 16.5,
+      "Name": "EpicHamsterPharaoh",
+      "Parts": 42,
+      "PurchasePrice": 46000,
+      "Rarity": "Epic",
+      "Signature": "round|dot|smile|none|nub|pendant+pharaoh||1.00",
+      "SizeStuds": [
+        3.89,
+        4.1,
+        4.15
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.pharaoh)",
+      "SpawnChance": 0.0014250979220409683
+    },
+    {
+      "Category": "Hamsters/Epic",
+      "CollectionValue": 138,
+      "DisplayName": "Pumpkin",
+      "Files": [
+        "EpicHamsterPumpkin.rbxm",
+        "EpicHamsterPumpkin.glb"
+      ],
+      "HamsterId": "pumpkin",
+      "Hash": "c139d2391b15badc",
+      "IncomePerSecond": 265,
+      "MinRebirth": 0,
+      "MovementSpeed": 16.5,
+      "Name": "EpicHamsterPumpkin",
+      "Parts": 38,
+      "PurchasePrice": 53000,
+      "Rarity": "Epic",
+      "Signature": "tiny|angry|grin|none|nub|held_lantern+sprout||1.00",
+      "SizeStuds": [
+        3.89,
+        4.44,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.pumpkin)",
+      "SpawnChance": 0.0014250979220409683
+    },
+    {
+      "Category": "Hamsters/Epic",
+      "CollectionValue": 125,
+      "DisplayName": "Robot",
+      "Files": [
+        "EpicHamsterRobot.rbxm",
+        "EpicHamsterRobot.glb"
+      ],
+      "HamsterId": "robot",
+      "Hash": "e2b24d7000d1036b",
+      "IncomePerSecond": 240,
+      "MinRebirth": 0,
+      "MovementSpeed": 16.5,
+      "Name": "EpicHamsterRobot",
+      "Parts": 31,
+      "PurchasePrice": 48000,
+      "Rarity": "Epic",
+      "Signature": "none|crystal|none|none|nub|jetpack+visor||1.00",
+      "SizeStuds": [
+        3.89,
+        3.75,
+        4.42
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.robot)",
+      "SpawnChance": 0.0014250979220409683
+    },
+    {
+      "Category": "Hamsters/Epic",
+      "CollectionValue": 105,
+      "DisplayName": "Samurai",
+      "Files": [
+        "EpicHamsterSamurai.rbxm",
+        "EpicHamsterSamurai.glb"
+      ],
+      "HamsterId": "samurai",
+      "Hash": "51bf816dbad92b44",
+      "IncomePerSecond": 200,
+      "MinRebirth": 0,
+      "MovementSpeed": 16.5,
+      "Name": "EpicHamsterSamurai",
+      "Parts": 44,
+      "PurchasePrice": 40000,
+      "Rarity": "Epic",
+      "Signature": "round|angry|flat|none|nub|held_sword+pauldrons+samurai||1.00",
+      "SizeStuds": [
+        4,
+        5.1,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.samurai)",
+      "SpawnChance": 0.0014250979220409683
+    },
+    {
+      "Category": "Hamsters/Epic",
+      "CollectionValue": 112,
+      "DisplayName": "Vampire",
+      "Files": [
+        "EpicHamsterVampire.rbxm",
+        "EpicHamsterVampire.glb"
+      ],
+      "HamsterId": "vampire",
+      "Hash": "38ab2f6c454e2583",
+      "IncomePerSecond": 215,
+      "MinRebirth": 0,
+      "MovementSpeed": 16.5,
+      "Name": "EpicHamsterVampire",
+      "Parts": 40,
+      "PurchasePrice": 43000,
+      "Rarity": "Epic",
+      "Signature": "cat|glow|fang|none|nub|cape_royal||1.00",
+      "SizeStuds": [
+        3.89,
+        4.54,
+        4.13
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.vampire)",
+      "SpawnChance": 0.0014250979220409683
+    },
+    {
+      "Category": "Hamsters/Epic",
+      "CollectionValue": 108,
+      "DisplayName": "Viking",
+      "Files": [
+        "EpicHamsterViking.rbxm",
+        "EpicHamsterViking.glb"
+      ],
+      "HamsterId": "viking",
+      "Hash": "8d7d2b7d59fa7402",
+      "IncomePerSecond": 205,
+      "MinRebirth": 0,
+      "MovementSpeed": 16.5,
+      "Name": "EpicHamsterViking",
+      "Parts": 45,
+      "PurchasePrice": 41000,
+      "Rarity": "Epic",
+      "Signature": "bear|angry|grin|none|nub|cape+held_hammer+viking||1.00",
+      "SizeStuds": [
+        5.35,
+        4.83,
+        4.22
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.viking)",
+      "SpawnChance": 0.0014250979220409683
+    },
+    {
+      "Category": "Hamsters/Epic",
+      "CollectionValue": 118,
+      "DisplayName": "Witch",
+      "Files": [
+        "EpicHamsterWitch.rbxm",
+        "EpicHamsterWitch.glb"
+      ],
+      "HamsterId": "witch",
+      "Hash": "331b9cfb4f1a48ca",
+      "IncomePerSecond": 225,
+      "MinRebirth": 0,
+      "MovementSpeed": 16.5,
+      "Name": "EpicHamsterWitch",
+      "Parts": 45,
+      "PurchasePrice": 45000,
+      "Rarity": "Epic",
+      "Signature": "cat|cat|grin|none|nub|bellcollar+held_staff+witch||1.00",
+      "SizeStuds": [
+        3.89,
+        7.1,
+        4.3
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.witch)",
+      "SpawnChance": 0.0014250979220409683
+    },
+    {
+      "Category": "Hamsters/Epic",
+      "CollectionValue": 148,
+      "DisplayName": "Wizard",
+      "Files": [
+        "EpicHamsterWizard.rbxm",
+        "EpicHamsterWizard.glb"
+      ],
+      "HamsterId": "wizard",
+      "Hash": "770bde9c088f1d1d",
+      "IncomePerSecond": 280,
+      "MinRebirth": 0,
+      "MovementSpeed": 16.5,
+      "Name": "EpicHamsterWizard",
+      "Parts": 53,
+      "PurchasePrice": 56000,
+      "Rarity": "Epic",
+      "Signature": "elf|sparkle|grin|none|none|held_book+tail_star+wizard||1.00",
+      "SizeStuds": [
+        5.36,
+        6.73,
+        5.1
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.wizard)",
+      "SpawnChance": 0.0014250979220409683
+    },
+    {
+      "Category": "Hamsters/Epic",
+      "CollectionValue": 131,
+      "DisplayName": "Yeti",
+      "Files": [
+        "EpicHamsterYeti.rbxm",
+        "EpicHamsterYeti.glb"
+      ],
+      "HamsterId": "yeti",
+      "Hash": "3ebfc64c5878c583",
+      "IncomePerSecond": 250,
+      "MinRebirth": 0,
+      "MovementSpeed": 16.5,
+      "Name": "EpicHamsterYeti",
+      "Parts": 37,
+      "PurchasePrice": 50000,
+      "Rarity": "Epic",
+      "Signature": "tiny|angry|fang|none|nub|hood||1.30",
+      "SizeStuds": [
+        5.06,
+        5.4,
+        5.85
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.yeti)",
+      "SpawnChance": 0.0014250979220409683
+    },
+    {
+      "Category": "Hamsters/Legendary",
+      "CollectionValue": 498,
+      "DisplayName": "Ancient Hamster",
+      "Files": [
+        "LegendaryHamsterAncientHamster.rbxm",
+        "LegendaryHamsterAncientHamster.glb"
+      ],
+      "HamsterId": "ancient_hamster",
+      "Hash": "5d4a94fce1f717a7",
+      "IncomePerSecond": 3529.4117647058824,
+      "MinRebirth": 0,
+      "MovementSpeed": 22,
+      "Name": "LegendaryHamsterAncientHamster",
+      "Parts": 54,
+      "PurchasePrice": 1200000,
+      "Rarity": "Legendary",
+      "Signature": "tiny|glow|flat|none|nub|floating_runes+stone_crown+wings_golden||1.00",
+      "SizeStuds": [
+        8.22,
+        4.45,
+        5.17
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.ancient_hamster)",
+      "SpawnChance": 0.0002691851630521829
+    },
+    {
+      "Category": "Hamsters/Legendary",
+      "CollectionValue": 401,
+      "DisplayName": "Angel Guardian",
+      "Files": [
+        "LegendaryHamsterAngelGuardian.rbxm",
+        "LegendaryHamsterAngelGuardian.glb"
+      ],
+      "HamsterId": "angel_guardian",
+      "Hash": "36999ca5a134300d",
+      "IncomePerSecond": 2764.705882352941,
+      "MinRebirth": 0,
+      "MovementSpeed": 22,
+      "Name": "LegendaryHamsterAngelGuardian",
+      "Parts": 52,
+      "PurchasePrice": 940000,
+      "Rarity": "Legendary",
+      "Signature": "round|happy|smile|none|nub|armor+halo+held_sword+wings_angel||1.00",
+      "SizeStuds": [
+        7.82,
+        4.47,
+        4.68
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.angel_guardian)",
+      "SpawnChance": 0.0002691851630521829
+    },
+    {
+      "Category": "Hamsters/Legendary",
+      "CollectionValue": 413,
+      "DisplayName": "Archmage",
+      "Files": [
+        "LegendaryHamsterArchmage.rbxm",
+        "LegendaryHamsterArchmage.glb"
+      ],
+      "HamsterId": "archmage",
+      "Hash": "c7eca21cb417a1fc",
+      "IncomePerSecond": 2852.9411764705883,
+      "MinRebirth": 0,
+      "MovementSpeed": 22,
+      "Name": "LegendaryHamsterArchmage",
+      "Parts": 50,
+      "PurchasePrice": 970000,
+      "Rarity": "Legendary",
+      "Signature": "elf|glow|grin|none|nub|cape+held_staff+orbit_orbs+wizard||1.00",
+      "SizeStuds": [
+        5.36,
+        6.83,
+        4.65
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.archmage)",
+      "SpawnChance": 0.0002691851630521829
+    },
+    {
+      "Category": "Hamsters/Legendary",
+      "CollectionValue": 449,
+      "DisplayName": "Dark Knight",
+      "Files": [
+        "LegendaryHamsterDarkKnight.rbxm",
+        "LegendaryHamsterDarkKnight.glb"
+      ],
+      "HamsterId": "dark_knight",
+      "Hash": "73482255f2d77134",
+      "IncomePerSecond": 3235.294117647059,
+      "MinRebirth": 0,
+      "MovementSpeed": 22,
+      "Name": "LegendaryHamsterDarkKnight",
+      "Parts": 41,
+      "PurchasePrice": 1100000,
+      "Rarity": "Legendary",
+      "Signature": "tiny|glow|none|none|nub|armor+cape+held_sword+knight||1.00",
+      "SizeStuds": [
+        3.89,
+        5.5,
+        4.1
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.dark_knight)",
+      "SpawnChance": 0.0002691851630521829
+    },
+    {
+      "Category": "Hamsters/Legendary",
+      "CollectionValue": 352,
+      "DisplayName": "Dragon Hamster",
+      "Files": [
+        "LegendaryHamsterDragonHamster.rbxm",
+        "LegendaryHamsterDragonHamster.glb"
+      ],
+      "HamsterId": "dragon_hamster",
+      "Hash": "0804e7612aac4f46",
+      "IncomePerSecond": 2441.176470588235,
+      "MinRebirth": 0,
+      "MovementSpeed": 22,
+      "Name": "LegendaryHamsterDragonHamster",
+      "Parts": 61,
+      "PurchasePrice": 830000,
+      "Rarity": "Legendary",
+      "Signature": "cat|cat|fang|none|none|dino_spikes+horns+tail_dragon+wings_dragon|flame|1.00",
+      "SizeStuds": [
+        7.98,
+        4.56,
+        7.21
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.dragon_hamster)",
+      "SpawnChance": 0.0002691851630521829
+    },
+    {
+      "Category": "Hamsters/Legendary",
+      "CollectionValue": 510,
+      "DisplayName": "Dragon Lord",
+      "Files": [
+        "LegendaryHamsterDragonLord.rbxm",
+        "LegendaryHamsterDragonLord.glb"
+      ],
+      "HamsterId": "dragon_lord",
+      "Hash": "3a1bf625ac250e5a",
+      "IncomePerSecond": 3529.4117647058824,
+      "MinRebirth": 0,
+      "MovementSpeed": 22,
+      "Name": "LegendaryHamsterDragonLord",
+      "Parts": 70,
+      "PurchasePrice": 1200000,
+      "Rarity": "Legendary",
+      "Signature": "cat|cat|fang|none|none|cape_royal+flame_crown+held_sword+tail_dragon+wings_dragon|embers|1.00",
+      "SizeStuds": [
+        7.98,
+        5.35,
+        7.21
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.dragon_lord)",
+      "SpawnChance": 0.0002691851630521829
+    },
+    {
+      "Category": "Hamsters/Legendary",
+      "CollectionValue": 340,
+      "DisplayName": "Golden King",
+      "Files": [
+        "LegendaryHamsterGoldenKing.rbxm",
+        "LegendaryHamsterGoldenKing.glb"
+      ],
+      "HamsterId": "golden_king",
+      "Hash": "c5883df7ac72423c",
+      "IncomePerSecond": 2352.9411764705883,
+      "MinRebirth": 0,
+      "MovementSpeed": 22,
+      "Name": "LegendaryHamsterGoldenKing",
+      "Parts": 59,
+      "PurchasePrice": 800000,
+      "Rarity": "Legendary",
+      "Signature": "round|sparkle|grin|none|nub|cape_royal+held_staff+medal+royal|sparkle|1.00",
+      "SizeStuds": [
+        3.89,
+        5.25,
+        4.18
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.golden_king)",
+      "SpawnChance": 0.0002691851630521829
+    },
+    {
+      "Category": "Hamsters/Legendary",
+      "CollectionValue": 389,
+      "DisplayName": "Griffin",
+      "Files": [
+        "LegendaryHamsterGriffin.rbxm",
+        "LegendaryHamsterGriffin.glb"
+      ],
+      "HamsterId": "griffin",
+      "Hash": "3b6ca45be54ae590",
+      "IncomePerSecond": 2676.470588235294,
+      "MinRebirth": 0,
+      "MovementSpeed": 22,
+      "Name": "LegendaryHamsterGriffin",
+      "Parts": 57,
+      "PurchasePrice": 910000,
+      "Rarity": "Legendary",
+      "Signature": "cat|cat|flat|none|none|laurel+tail_squirrel+wings_golden||1.00",
+      "SizeStuds": [
+        8.22,
+        4.29,
+        4.84
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.griffin)",
+      "SpawnChance": 0.0002691851630521829
+    },
+    {
+      "Category": "Hamsters/Legendary",
+      "CollectionValue": 437,
+      "DisplayName": "Lion Heart",
+      "Files": [
+        "LegendaryHamsterLionHeart.rbxm",
+        "LegendaryHamsterLionHeart.glb"
+      ],
+      "HamsterId": "lion_heart",
+      "Hash": "bfcfa09d88513228",
+      "IncomePerSecond": 2941.176470588235,
+      "MinRebirth": 0,
+      "MovementSpeed": 22,
+      "Name": "LegendaryHamsterLionHeart",
+      "Parts": 60,
+      "PurchasePrice": 1000000,
+      "Rarity": "Legendary",
+      "Signature": "tiny|cat|fang|none|nub|crown+held_shield+ruff||1.15",
+      "SizeStuds": [
+        4.51,
+        5.36,
+        4.66
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.lion_heart)",
+      "SpawnChance": 0.0002691851630521829
+    },
+    {
+      "Category": "Hamsters/Legendary",
+      "CollectionValue": 364,
+      "DisplayName": "Phoenix",
+      "Files": [
+        "LegendaryHamsterPhoenix.rbxm",
+        "LegendaryHamsterPhoenix.glb"
+      ],
+      "HamsterId": "phoenix",
+      "Hash": "b3552b85d76b6439",
+      "IncomePerSecond": 2529.4117647058824,
+      "MinRebirth": 0,
+      "MovementSpeed": 22,
+      "Name": "LegendaryHamsterPhoenix",
+      "Parts": 69,
+      "PurchasePrice": 860000,
+      "Rarity": "Legendary",
+      "Signature": "tiny|glow|smile|none|none|sun_crown+tail_peacock+wings_flame|flame|1.00",
+      "SizeStuds": [
+        8.25,
+        4.69,
+        4.78
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.phoenix)",
+      "SpawnChance": 0.0002691851630521829
+    },
+    {
+      "Category": "Hamsters/Legendary",
+      "CollectionValue": 425,
+      "DisplayName": "Pirate Captain",
+      "Files": [
+        "LegendaryHamsterPirateCaptain.rbxm",
+        "LegendaryHamsterPirateCaptain.glb"
+      ],
+      "HamsterId": "pirate_captain",
+      "Hash": "5070386f42b6dec2",
+      "IncomePerSecond": 2941.176470588235,
+      "MinRebirth": 0,
+      "MovementSpeed": 22,
+      "Name": "LegendaryHamsterPirateCaptain",
+      "Parts": 50,
+      "PurchasePrice": 1000000,
+      "Rarity": "Legendary",
+      "Signature": "bear|angry|grin|none|nub|cape_royal+eyepatch+held_sword+pirate||1.00",
+      "SizeStuds": [
+        3.9,
+        4.9,
+        4.15
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.pirate_captain)",
+      "SpawnChance": 0.0002691851630521829
+    },
+    {
+      "Category": "Hamsters/Legendary",
+      "CollectionValue": 486,
+      "DisplayName": "Royal Hamster",
+      "Files": [
+        "LegendaryHamsterRoyalHamster.rbxm",
+        "LegendaryHamsterRoyalHamster.glb"
+      ],
+      "HamsterId": "royal_hamster",
+      "Hash": "9178df36030e5cdf",
+      "IncomePerSecond": 3235.294117647059,
+      "MinRebirth": 0,
+      "MovementSpeed": 22,
+      "Name": "LegendaryHamsterRoyalHamster",
+      "Parts": 59,
+      "PurchasePrice": 1100000,
+      "Rarity": "Legendary",
+      "Signature": "fluffy|sparkle|grin|none|nub|held_gem+medal+ruff+tiara||1.00",
+      "SizeStuds": [
+        3.89,
+        4.53,
+        4.45
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.royal_hamster)",
+      "SpawnChance": 0.0002691851630521829
+    },
+    {
+      "Category": "Hamsters/Legendary",
+      "CollectionValue": 474,
+      "DisplayName": "Ruby Queen",
+      "Files": [
+        "LegendaryHamsterRubyQueen.rbxm",
+        "LegendaryHamsterRubyQueen.glb"
+      ],
+      "HamsterId": "ruby_queen",
+      "Hash": "594c8a070219cd80",
+      "IncomePerSecond": 3235.294117647059,
+      "MinRebirth": 0,
+      "MovementSpeed": 22,
+      "Name": "LegendaryHamsterRubyQueen",
+      "Parts": 57,
+      "PurchasePrice": 1100000,
+      "Rarity": "Legendary",
+      "Signature": "fluffy|sparkle|smile|none|nub|cape_royal+crown+pendant||1.00",
+      "SizeStuds": [
+        3.89,
+        4.91,
+        4.25
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.ruby_queen)",
+      "SpawnChance": 0.0002691851630521829
+    },
+    {
+      "Category": "Hamsters/Legendary",
+      "CollectionValue": 462,
+      "DisplayName": "Storm Lord",
+      "Files": [
+        "LegendaryHamsterStormLord.rbxm",
+        "LegendaryHamsterStormLord.glb"
+      ],
+      "HamsterId": "storm_lord",
+      "Hash": "d0058357e45e5f2f",
+      "IncomePerSecond": 3235.294117647059,
+      "MinRebirth": 0,
+      "MovementSpeed": 22,
+      "Name": "LegendaryHamsterStormLord",
+      "Parts": 42,
+      "PurchasePrice": 1100000,
+      "Rarity": "Legendary",
+      "Signature": "big|glow|open|none|nub|held_hammer+orbit_ring+viking|sparkle|1.00",
+      "SizeStuds": [
+        5.35,
+        4.72,
+        5.05
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.storm_lord)",
+      "SpawnChance": 0.0002691851630521829
+    },
+    {
+      "Category": "Hamsters/Legendary",
+      "CollectionValue": 425,
+      "DisplayName": "Sunday Sunbeam",
+      "Files": [
+        "LegendaryHamsterSundaySunbeam.rbxm",
+        "LegendaryHamsterSundaySunbeam.glb"
+      ],
+      "HamsterId": "sunday_sunbeam",
+      "Hash": "d573287b148e435f",
+      "IncomePerSecond": 2941.176470588235,
+      "MinRebirth": 0,
+      "MovementSpeed": 22,
+      "Name": "LegendaryHamsterSundaySunbeam",
+      "Parts": 56,
+      "PurchasePrice": 1000000,
+      "Rarity": "Legendary",
+      "Signature": "round|happy|open|none|nub|ground_glow+sun_crown+wings_angel|sparkle|1.00",
+      "SizeStuds": [
+        7.82,
+        4.78,
+        4.82
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.sunday_sunbeam)",
+      "SpawnChance": 0
+    },
+    {
+      "Category": "Hamsters/Legendary",
+      "CollectionValue": 377,
+      "DisplayName": "Unicorn",
+      "Files": [
+        "LegendaryHamsterUnicorn.rbxm",
+        "LegendaryHamsterUnicorn.glb"
+      ],
+      "HamsterId": "unicorn",
+      "Hash": "8e3a200e6e8c6eac",
+      "IncomePerSecond": 2617.6470588235293,
+      "MinRebirth": 0,
+      "MovementSpeed": 22,
+      "Name": "LegendaryHamsterUnicorn",
+      "Parts": 47,
+      "PurchasePrice": 890000,
+      "Rarity": "Legendary",
+      "Signature": "elf|sparkle|cat|none|none|ground_glow+tail_fluffy+unicorn_horn|sparkle|1.00",
+      "SizeStuds": [
+        5.36,
+        6.09,
+        4.85
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.unicorn)",
+      "SpawnChance": 0.0002691851630521829
+    },
+    {
+      "Category": "Hamsters/Mythic",
+      "CollectionValue": 696,
+      "DisplayName": "Behemoth",
+      "Files": [
+        "MythicHamsterBehemoth.rbxm",
+        "MythicHamsterBehemoth.glb"
+      ],
+      "HamsterId": "behemoth",
+      "Hash": "eb29121ad8542057",
+      "IncomePerSecond": 9318.181818181818,
+      "MinRebirth": 1,
+      "MovementSpeed": 26,
+      "Name": "MythicHamsterBehemoth",
+      "Parts": 46,
+      "PurchasePrice": 4100000,
+      "Rarity": "Mythic",
+      "Signature": "tiny|angry|grin|none|nub|armor+pauldrons+stone_crown||1.40",
+      "SizeStuds": [
+        5.6,
+        6.23,
+        5.61
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.behemoth)",
+      "SpawnChance": 0.00013459258152609144
+    },
+    {
+      "Category": "Hamsters/Mythic",
+      "CollectionValue": 724,
+      "DisplayName": "Chimera",
+      "Files": [
+        "MythicHamsterChimera.rbxm",
+        "MythicHamsterChimera.glb"
+      ],
+      "HamsterId": "chimera",
+      "Hash": "246b6839761e2ace",
+      "IncomePerSecond": 9772.727272727272,
+      "MinRebirth": 1,
+      "MovementSpeed": 26,
+      "Name": "MythicHamsterChimera",
+      "Parts": 75,
+      "PurchasePrice": 4300000,
+      "Rarity": "Mythic",
+      "Signature": "big|cat|fang|none|none|antlers+ruff+tail_peacock+wings_dragon||1.00",
+      "SizeStuds": [
+        7.98,
+        4.9,
+        5
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.chimera)",
+      "SpawnChance": 0.00013459258152609144
+    },
+    {
+      "Category": "Hamsters/Mythic",
+      "CollectionValue": 807,
+      "DisplayName": "Demon Lord",
+      "Files": [
+        "MythicHamsterDemonLord.rbxm",
+        "MythicHamsterDemonLord.glb"
+      ],
+      "HamsterId": "demon_lord",
+      "Hash": "5282b4f2d80d600f",
+      "IncomePerSecond": 10681.818181818182,
+      "MinRebirth": 1,
+      "MovementSpeed": 26,
+      "Name": "MythicHamsterDemonLord",
+      "Parts": 53,
+      "PurchasePrice": 4700000,
+      "Rarity": "Mythic",
+      "Signature": "elf|glow|fang|none|nub|cape_royal+crown_of_thorns+held_scythe||1.00",
+      "SizeStuds": [
+        5.36,
+        5.54,
+        4.13
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.demon_lord)",
+      "SpawnChance": 0.00013459258152609144
+    },
+    {
+      "Category": "Hamsters/Mythic",
+      "CollectionValue": 612,
+      "DisplayName": "Hellfire Lord",
+      "Files": [
+        "MythicHamsterHellfireLord.rbxm",
+        "MythicHamsterHellfireLord.glb"
+      ],
+      "HamsterId": "hellfire_lord",
+      "Hash": "f020302e1484f967",
+      "IncomePerSecond": 8181.818181818182,
+      "MinRebirth": 1,
+      "MovementSpeed": 26,
+      "Name": "MythicHamsterHellfireLord",
+      "Parts": 60,
+      "PurchasePrice": 3600000,
+      "Rarity": "Mythic",
+      "Signature": "cat|glow|fang|none|none|held_torch+horns+pauldrons+tail_dragon+wings_bat|flame|1.00",
+      "SizeStuds": [
+        7.06,
+        4.56,
+        7.21
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.hellfire_lord)",
+      "SpawnChance": 0.00013459258152609144
+    },
+    {
+      "Category": "Hamsters/Mythic",
+      "CollectionValue": 640,
+      "DisplayName": "Kraken Pup",
+      "Files": [
+        "MythicHamsterKrakenPup.rbxm",
+        "MythicHamsterKrakenPup.glb"
+      ],
+      "HamsterId": "kraken_pup",
+      "Hash": "b4fb2f944bde1d70",
+      "IncomePerSecond": 8636.363636363636,
+      "MinRebirth": 1,
+      "MovementSpeed": 26,
+      "Name": "MythicHamsterKrakenPup",
+      "Parts": 48,
+      "PurchasePrice": 3800000,
+      "Rarity": "Mythic",
+      "Signature": "tiny|glow|oh|none|none|fish_scales+held_trident+hood+tail_fish|bubbles|1.00",
+      "SizeStuds": [
+        3.89,
+        5.58,
+        6.63
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.kraken_pup)",
+      "SpawnChance": 0.00013459258152609144
+    },
+    {
+      "Category": "Hamsters/Mythic",
+      "CollectionValue": 668,
+      "DisplayName": "Leviathan",
+      "Files": [
+        "MythicHamsterLeviathan.rbxm",
+        "MythicHamsterLeviathan.glb"
+      ],
+      "HamsterId": "leviathan",
+      "Hash": "ec367abe7b240df4",
+      "IncomePerSecond": 8863.636363636364,
+      "MinRebirth": 1,
+      "MovementSpeed": 26,
+      "Name": "MythicHamsterLeviathan",
+      "Parts": 69,
+      "PurchasePrice": 3900000,
+      "Rarity": "Mythic",
+      "Signature": "fluffy|cat|fang|none|none|crystal_crown+fish_scales+tail_dragon+wings_ice|bubbles|1.00",
+      "SizeStuds": [
+        8.35,
+        5.23,
+        7.21
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.leviathan)",
+      "SpawnChance": 0.00013459258152609144
+    },
+    {
+      "Category": "Hamsters/Mythic",
+      "CollectionValue": 918,
+      "DisplayName": "Lich King",
+      "Files": [
+        "MythicHamsterLichKing.rbxm",
+        "MythicHamsterLichKing.glb"
+      ],
+      "HamsterId": "lich_king",
+      "Hash": "40652d6bd0990973",
+      "IncomePerSecond": 12272.727272727272,
+      "MinRebirth": 1,
+      "MovementSpeed": 26,
+      "Name": "MythicHamsterLichKing",
+      "Parts": 47,
+      "PurchasePrice": 5400000,
+      "Rarity": "Mythic",
+      "Signature": "tiny|glow|flat|none|nub|cape_royal+held_staff+ice_crown|snow|1.00",
+      "SizeStuds": [
+        3.89,
+        5.45,
+        4.13
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.lich_king)",
+      "SpawnChance": 0.00013459258152609144
+    },
+    {
+      "Category": "Hamsters/Mythic",
+      "CollectionValue": 751,
+      "DisplayName": "Minotaur",
+      "Files": [
+        "MythicHamsterMinotaur.rbxm",
+        "MythicHamsterMinotaur.glb"
+      ],
+      "HamsterId": "minotaur",
+      "Hash": "673e72a65c671686",
+      "IncomePerSecond": 10000,
+      "MinRebirth": 1,
+      "MovementSpeed": 26,
+      "Name": "MythicHamsterMinotaur",
+      "Parts": 49,
+      "PurchasePrice": 4400000,
+      "Rarity": "Mythic",
+      "Signature": "floppy|angry|grin|none|nub|armor+held_hammer+horns+spiked_collar||1.25",
+      "SizeStuds": [
+        6.38,
+        5.7,
+        5.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.minotaur)",
+      "SpawnChance": 0.00013459258152609144
+    },
+    {
+      "Category": "Hamsters/Mythic",
+      "CollectionValue": 779,
+      "DisplayName": "Nine-Tails",
+      "Files": [
+        "MythicHamsterNineTails.rbxm",
+        "MythicHamsterNineTails.glb"
+      ],
+      "HamsterId": "nine_tails",
+      "Hash": "44295dd5da8aee46",
+      "IncomePerSecond": 10454.545454545454,
+      "MinRebirth": 1,
+      "MovementSpeed": 26,
+      "Name": "MythicHamsterNineTails",
+      "Parts": 57,
+      "PurchasePrice": 4600000,
+      "Rarity": "Mythic",
+      "Signature": "cat|cat|cat|none|none|cat_hood+orbit_orbs+tail_nine|flame|1.00",
+      "SizeStuds": [
+        5.66,
+        4.73,
+        5.35
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.nine_tails)",
+      "SpawnChance": 0.00013459258152609144
+    },
+    {
+      "Category": "Hamsters/Mythic",
+      "CollectionValue": 891,
+      "DisplayName": "Reaper",
+      "Files": [
+        "MythicHamsterReaper.rbxm",
+        "MythicHamsterReaper.glb"
+      ],
+      "HamsterId": "reaper",
+      "Hash": "ca086bd311696239",
+      "IncomePerSecond": 11818.181818181818,
+      "MinRebirth": 1,
+      "MovementSpeed": 26,
+      "Name": "MythicHamsterReaper",
+      "Parts": 25,
+      "PurchasePrice": 5200000,
+      "Rarity": "Mythic",
+      "Signature": "none|void|none|none|nub|held_scythe+hood|smoke|1.00",
+      "SizeStuds": [
+        3.89,
+        5.54,
+        4.5
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.reaper)",
+      "SpawnChance": 0.00013459258152609144
+    },
+    {
+      "Category": "Hamsters/Mythic",
+      "CollectionValue": 835,
+      "DisplayName": "Titan",
+      "Files": [
+        "MythicHamsterTitan.rbxm",
+        "MythicHamsterTitan.glb"
+      ],
+      "HamsterId": "titan",
+      "Hash": "382e461533bbbb2f",
+      "IncomePerSecond": 11136.363636363636,
+      "MinRebirth": 1,
+      "MovementSpeed": 26,
+      "Name": "MythicHamsterTitan",
+      "Parts": 39,
+      "PurchasePrice": 4900000,
+      "Rarity": "Mythic",
+      "Signature": "tiny|glow|flat|none|nub|armor+golden_helm+held_hammer||1.45",
+      "SizeStuds": [
+        5.64,
+        6.02,
+        5.87
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.titan)",
+      "SpawnChance": 0.00013459258152609144
+    },
+    {
+      "Category": "Hamsters/Mythic",
+      "CollectionValue": 863,
+      "DisplayName": "Valkyrie",
+      "Files": [
+        "MythicHamsterValkyrie.rbxm",
+        "MythicHamsterValkyrie.glb"
+      ],
+      "HamsterId": "valkyrie",
+      "Hash": "3dafee5170d28235",
+      "IncomePerSecond": 11590.90909090909,
+      "MinRebirth": 1,
+      "MovementSpeed": 26,
+      "Name": "MythicHamsterValkyrie",
+      "Parts": 64,
+      "PurchasePrice": 5100000,
+      "Rarity": "Mythic",
+      "Signature": "fluffy|sparkle|smile|none|nub|cape+golden_helm+held_shield+wings_angel||1.00",
+      "SizeStuds": [
+        7.82,
+        4.25,
+        4.72
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.valkyrie)",
+      "SpawnChance": 0.00013459258152609144
+    },
+    {
+      "Category": "Hamsters/Rare",
+      "CollectionValue": 70,
+      "DisplayName": "Apprentice",
+      "Files": [
+        "RareHamsterApprentice.rbxm",
+        "RareHamsterApprentice.glb"
+      ],
+      "HamsterId": "apprentice",
+      "Hash": "b0d5c6f02ca8fd1b",
+      "IncomePerSecond": 73.33333333333333,
+      "MinRebirth": 0,
+      "MovementSpeed": 14,
+      "Name": "RareHamsterApprentice",
+      "Parts": 47,
+      "PurchasePrice": 11000,
+      "Rarity": "Rare",
+      "Signature": "elf|big|smile|none|nub|held_book+wizard||1.00",
+      "SizeStuds": [
+        5.36,
+        6.73,
+        4.25
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.apprentice)",
+      "SpawnChance": 0.004658973975903166
+    },
+    {
+      "Category": "Hamsters/Rare",
+      "CollectionValue": 73,
+      "DisplayName": "Cadet",
+      "Files": [
+        "RareHamsterCadet.rbxm",
+        "RareHamsterCadet.glb"
+      ],
+      "HamsterId": "cadet",
+      "Hash": "e98e2dbf0c4ce6b2",
+      "IncomePerSecond": 73.33333333333333,
+      "MinRebirth": 0,
+      "MovementSpeed": 14,
+      "Name": "RareHamsterCadet",
+      "Parts": 40,
+      "PurchasePrice": 11000,
+      "Rarity": "Rare",
+      "Signature": "tiny|dot|smile|none|nub|held_shield+knight||1.00",
+      "SizeStuds": [
+        3.92,
+        5.4,
+        4.05
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.cadet)",
+      "SpawnChance": 0.004658973975903166
+    },
+    {
+      "Category": "Hamsters/Rare",
+      "CollectionValue": 66,
+      "DisplayName": "Chef",
+      "Files": [
+        "RareHamsterChef.rbxm",
+        "RareHamsterChef.glb"
+      ],
+      "HamsterId": "chef",
+      "Hash": "582883cd3cc3d81d",
+      "IncomePerSecond": 66.66666666666667,
+      "MinRebirth": 0,
+      "MovementSpeed": 14,
+      "Name": "RareHamsterChef",
+      "Parts": 36,
+      "PurchasePrice": 10000,
+      "Rarity": "Rare",
+      "Signature": "bear|happy|open|none|nub|apron+chef||1.00",
+      "SizeStuds": [
+        3.89,
+        5.25,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.chef)",
+      "SpawnChance": 0.004658973975903166
+    },
+    {
+      "Category": "Hamsters/Rare",
+      "CollectionValue": 63,
+      "DisplayName": "Cowboy",
+      "Files": [
+        "RareHamsterCowboy.rbxm",
+        "RareHamsterCowboy.glb"
+      ],
+      "HamsterId": "cowboy",
+      "Hash": "c50e1357b2644b0d",
+      "IncomePerSecond": 65.33333333333333,
+      "MinRebirth": 0,
+      "MovementSpeed": 14,
+      "Name": "RareHamsterCowboy",
+      "Parts": 41,
+      "PurchasePrice": 9800,
+      "Rarity": "Rare",
+      "Signature": "floppy|happy|tongue|none|nub|bandana+cowboy||1.00",
+      "SizeStuds": [
+        5.1,
+        4.48,
+        4.5
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.cowboy)",
+      "SpawnChance": 0.004658973975903166
+    },
+    {
+      "Category": "Hamsters/Rare",
+      "CollectionValue": 68,
+      "DisplayName": "Detective",
+      "Files": [
+        "RareHamsterDetective.rbxm",
+        "RareHamsterDetective.glb"
+      ],
+      "HamsterId": "detective",
+      "Hash": "21b0cbd16ed8288e",
+      "IncomePerSecond": 73.33333333333333,
+      "MinRebirth": 0,
+      "MovementSpeed": 14,
+      "Name": "RareHamsterDetective",
+      "Parts": 39,
+      "PurchasePrice": 11000,
+      "Rarity": "Rare",
+      "Signature": "round|dot|flat|none|nub|detective+monocle+tie||1.00",
+      "SizeStuds": [
+        3.89,
+        4.15,
+        4.35
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.detective)",
+      "SpawnChance": 0.004658973975903166
+    },
+    {
+      "Category": "Hamsters/Rare",
+      "CollectionValue": 78,
+      "DisplayName": "Explorer",
+      "Files": [
+        "RareHamsterExplorer.rbxm",
+        "RareHamsterExplorer.glb"
+      ],
+      "HamsterId": "explorer",
+      "Hash": "af2abc283440b359",
+      "IncomePerSecond": 80,
+      "MinRebirth": 0,
+      "MovementSpeed": 14,
+      "Name": "RareHamsterExplorer",
+      "Parts": 39,
+      "PurchasePrice": 12000,
+      "Rarity": "Rare",
+      "Signature": "big|happy|smile|none|nub|backpack+sunhat||1.00",
+      "SizeStuds": [
+        4.06,
+        4.22,
+        4.95
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.explorer)",
+      "SpawnChance": 0.004658973975903166
+    },
+    {
+      "Category": "Hamsters/Rare",
+      "CollectionValue": 85,
+      "DisplayName": "Gardener",
+      "Files": [
+        "RareHamsterGardener.rbxm",
+        "RareHamsterGardener.glb"
+      ],
+      "HamsterId": "gardener",
+      "Hash": "6882cedaf7ed0829",
+      "IncomePerSecond": 86.66666666666667,
+      "MinRebirth": 0,
+      "MovementSpeed": 14,
+      "Name": "RareHamsterGardener",
+      "Parts": 41,
+      "PurchasePrice": 13000,
+      "Rarity": "Rare",
+      "Signature": "floppy|dot|smile|none|nub|held_flower+sunhat||1.00",
+      "SizeStuds": [
+        5.1,
+        4.05,
+        4.7
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.gardener)",
+      "SpawnChance": 0.004658973975903166
+    },
+    {
+      "Category": "Hamsters/Rare",
+      "CollectionValue": 83,
+      "DisplayName": "Musician",
+      "Files": [
+        "RareHamsterMusician.rbxm",
+        "RareHamsterMusician.glb"
+      ],
+      "HamsterId": "musician",
+      "Hash": "c7abc36d1966f7c6",
+      "IncomePerSecond": 86.66666666666667,
+      "MinRebirth": 0,
+      "MovementSpeed": 14,
+      "Name": "RareHamsterMusician",
+      "Parts": 40,
+      "PurchasePrice": 13000,
+      "Rarity": "Rare",
+      "Signature": "fluffy|happy|open|none|nub|bowtie+headphones||1.00",
+      "SizeStuds": [
+        4,
+        4.9,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.musician)",
+      "SpawnChance": 0.004658973975903166
+    },
+    {
+      "Category": "Hamsters/Rare",
+      "CollectionValue": 58,
+      "DisplayName": "Ninja",
+      "Files": [
+        "RareHamsterNinja.rbxm",
+        "RareHamsterNinja.glb"
+      ],
+      "HamsterId": "ninja",
+      "Hash": "188dd5d16a3fec7f",
+      "IncomePerSecond": 60,
+      "MinRebirth": 0,
+      "MovementSpeed": 14,
+      "Name": "RareHamsterNinja",
+      "Parts": 38,
+      "PurchasePrice": 9000,
+      "Rarity": "Rare",
+      "Signature": "round|angry|flat|none|nub|held_sword+ninja_band||1.00",
+      "SizeStuds": [
+        3.89,
+        3.66,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.ninja)",
+      "SpawnChance": 0.004658973975903166
+    },
+    {
+      "Category": "Hamsters/Rare",
+      "CollectionValue": 80,
+      "DisplayName": "Painter",
+      "Files": [
+        "RareHamsterPainter.rbxm",
+        "RareHamsterPainter.glb"
+      ],
+      "HamsterId": "painter",
+      "Hash": "8d4ab9fa3572a403",
+      "IncomePerSecond": 80,
+      "MinRebirth": 0,
+      "MovementSpeed": 14,
+      "Name": "RareHamsterPainter",
+      "Parts": 41,
+      "PurchasePrice": 12000,
+      "Rarity": "Rare",
+      "Signature": "round|wink|smile|freckles|nub|beret+held_brush||1.00",
+      "SizeStuds": [
+        3.89,
+        4.15,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.painter)",
+      "SpawnChance": 0.004658973975903166
+    },
+    {
+      "Category": "Hamsters/Rare",
+      "CollectionValue": 61,
+      "DisplayName": "Pirate",
+      "Files": [
+        "RareHamsterPirate.rbxm",
+        "RareHamsterPirate.glb"
+      ],
+      "HamsterId": "pirate",
+      "Hash": "ae0c8d38092e9f87",
+      "IncomePerSecond": 62.666666666666664,
+      "MinRebirth": 0,
+      "MovementSpeed": 14,
+      "Name": "RareHamsterPirate",
+      "Parts": 40,
+      "PurchasePrice": 9400,
+      "Rarity": "Rare",
+      "Signature": "round|dot|grin|none|nub|eyepatch+held_sword+pirate||1.00",
+      "SizeStuds": [
+        3.9,
+        4.65,
+        4.03
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.pirate)",
+      "SpawnChance": 0.004658973975903166
+    },
+    {
+      "Category": "Hamsters/Rare",
+      "CollectionValue": 87,
+      "DisplayName": "Sailor",
+      "Files": [
+        "RareHamsterSailor.rbxm",
+        "RareHamsterSailor.glb"
+      ],
+      "HamsterId": "sailor",
+      "Hash": "d7ee2aeb8a4d5d6b",
+      "IncomePerSecond": 93.33333333333333,
+      "MinRebirth": 0,
+      "MovementSpeed": 14,
+      "Name": "RareHamsterSailor",
+      "Parts": 41,
+      "PurchasePrice": 14000,
+      "Rarity": "Rare",
+      "Signature": "round|big|smile|none|nub|sailor+scarf||1.00",
+      "SizeStuds": [
+        3.89,
+        3.85,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.sailor)",
+      "SpawnChance": 0.004658973975903166
+    },
+    {
+      "Category": "Hamsters/Rare",
+      "CollectionValue": 75,
+      "DisplayName": "Scientist",
+      "Files": [
+        "RareHamsterScientist.rbxm",
+        "RareHamsterScientist.glb"
+      ],
+      "HamsterId": "scientist",
+      "Hash": "12223e19bbd7a625",
+      "IncomePerSecond": 80,
+      "MinRebirth": 0,
+      "MovementSpeed": 14,
+      "Name": "RareHamsterScientist",
+      "Parts": 46,
+      "PurchasePrice": 12000,
+      "Rarity": "Rare",
+      "Signature": "round|sparkle|smile|none|nub|apron+goggles+held_orb||1.00",
+      "SizeStuds": [
+        3.89,
+        3.66,
+        4.3
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.scientist)",
+      "SpawnChance": 0.004658973975903166
+    },
+    {
+      "Category": "Hamsters/Secret",
+      "CollectionValue": 8212,
+      "DisplayName": "Cipher",
+      "Files": [
+        "SecretHamsterCipher.rbxm",
+        "SecretHamsterCipher.glb"
+      ],
+      "HamsterId": "cipher",
+      "Hash": "de44f9d839465a87",
+      "IncomePerSecond": 1727272.7272727273,
+      "MinRebirth": 9,
+      "MovementSpeed": 42,
+      "Name": "SecretHamsterCipher",
+      "Parts": 45,
+      "PurchasePrice": 1900000000,
+      "Rarity": "Secret",
+      "Signature": "round|crystal|smile|none|nub|floating_runes+glasses_round+rune_circlet||1.00",
+      "SizeStuds": [
+        4.72,
+        3.66,
+        4.72
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.cipher)",
+      "SpawnChance": 5.047221807228429e-6
+    },
+    {
+      "Category": "Hamsters/Secret",
+      "CollectionValue": 8569,
+      "DisplayName": "Echo",
+      "Files": [
+        "SecretHamsterEcho.rbxm",
+        "SecretHamsterEcho.glb"
+      ],
+      "HamsterId": "echo",
+      "Hash": "154d23d32ae239a1",
+      "IncomePerSecond": 1818181.8181818181,
+      "MinRebirth": 9,
+      "MovementSpeed": 42,
+      "Name": "SecretHamsterEcho",
+      "Parts": 57,
+      "PurchasePrice": 2000000000,
+      "Rarity": "Secret",
+      "Signature": "big|glow|smile|none|nub|headphones+orbit_ring+wings_void|glitch|1.00",
+      "SizeStuds": [
+        7.81,
+        4.97,
+        5.05
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.echo)",
+      "SpawnChance": 5.047221807228429e-6
+    },
+    {
+      "Category": "Hamsters/Secret",
+      "CollectionValue": 7855,
+      "DisplayName": "Enigma",
+      "Files": [
+        "SecretHamsterEnigma.rbxm",
+        "SecretHamsterEnigma.glb"
+      ],
+      "HamsterId": "enigma",
+      "Hash": "4992a20e2887d556",
+      "IncomePerSecond": 1636363.6363636365,
+      "MinRebirth": 9,
+      "MovementSpeed": 42,
+      "Name": "SecretHamsterEnigma",
+      "Parts": 37,
+      "PurchasePrice": 1800000000,
+      "Rarity": "Secret",
+      "Signature": "tiny|void|flat|none|nub|held_orb+hood+orbit_shards||1.00",
+      "SizeStuds": [
+        5.02,
+        4.15,
+        5.53
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.enigma)",
+      "SpawnChance": 5.047221807228429e-6
+    },
+    {
+      "Category": "Hamsters/Secret",
+      "CollectionValue": 6427,
+      "DisplayName": "Glitch",
+      "Files": [
+        "SecretHamsterGlitch.rbxm",
+        "SecretHamsterGlitch.glb"
+      ],
+      "HamsterId": "glitch",
+      "Hash": "768ac8387f1e1e07",
+      "IncomePerSecond": 1363636.3636363635,
+      "MinRebirth": 9,
+      "MovementSpeed": 42,
+      "Name": "SecretHamsterGlitch",
+      "Parts": 55,
+      "PurchasePrice": 1500000000,
+      "Rarity": "Secret",
+      "Signature": "round|glow|smile|none|nub|orbit_shards+visor+wings_void|glitch|1.00",
+      "SizeStuds": [
+        7.81,
+        4.97,
+        5.53
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.glitch)",
+      "SpawnChance": 5.047221807228429e-6
+    },
+    {
+      "Category": "Hamsters/Secret",
+      "CollectionValue": 8926,
+      "DisplayName": "Null",
+      "Files": [
+        "SecretHamsterNull.rbxm",
+        "SecretHamsterNull.glb"
+      ],
+      "HamsterId": "null",
+      "Hash": "9e186fcf4d6a79f4",
+      "IncomePerSecond": 1909090.9090909092,
+      "MinRebirth": 9,
+      "MovementSpeed": 42,
+      "Name": "SecretHamsterNull",
+      "Parts": 43,
+      "PurchasePrice": 2100000000,
+      "Rarity": "Secret",
+      "Signature": "none|void|none|spots|nub|ground_glow+orbit_stars+visor||1.00",
+      "SizeStuds": [
+        4.94,
+        3.54,
+        4.97
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.null)",
+      "SpawnChance": 5.047221807228429e-6
+    },
+    {
+      "Category": "Hamsters/Secret",
+      "CollectionValue": 9283,
+      "DisplayName": "Paradox",
+      "Files": [
+        "SecretHamsterParadox.rbxm",
+        "SecretHamsterParadox.glb"
+      ],
+      "HamsterId": "paradox",
+      "Hash": "7137afebdea76e5a",
+      "IncomePerSecond": 2000000,
+      "MinRebirth": 9,
+      "MovementSpeed": 42,
+      "Name": "SecretHamsterParadox",
+      "Parts": 65,
+      "PurchasePrice": 2200000000,
+      "Rarity": "Secret",
+      "Signature": "fluffy|star|smile|none|none|tail_crystal+void_crown+wings_cosmic|stars|1.00",
+      "SizeStuds": [
+        7.43,
+        5.34,
+        4.59
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.paradox)",
+      "SpawnChance": 5.047221807228429e-6
+    },
+    {
+      "Category": "Hamsters/Secret",
+      "CollectionValue": 7498,
+      "DisplayName": "Phantom",
+      "Files": [
+        "SecretHamsterPhantom.rbxm",
+        "SecretHamsterPhantom.glb"
+      ],
+      "HamsterId": "phantom",
+      "Hash": "b6e81f14fddf5384",
+      "IncomePerSecond": 1636363.6363636365,
+      "MinRebirth": 9,
+      "MovementSpeed": 42,
+      "Name": "SecretHamsterPhantom",
+      "Parts": 27,
+      "PurchasePrice": 1800000000,
+      "Rarity": "Secret",
+      "Signature": "none|void|oh|none|nub|ghost_sheet+orbit_orbs|smoke|1.00",
+      "SizeStuds": [
+        4.5,
+        4.1,
+        4.61
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.phantom)",
+      "SpawnChance": 5.047221807228429e-6
+    },
+    {
+      "Category": "Hamsters/Secret",
+      "CollectionValue": 7141,
+      "DisplayName": "Shadow Monarch",
+      "Files": [
+        "SecretHamsterShadowMonarch.rbxm",
+        "SecretHamsterShadowMonarch.glb"
+      ],
+      "HamsterId": "shadow_monarch",
+      "Hash": "f4a4a8e9818c1a9c",
+      "IncomePerSecond": 1545454.5454545454,
+      "MinRebirth": 9,
+      "MovementSpeed": 42,
+      "Name": "SecretHamsterShadowMonarch",
+      "Parts": 57,
+      "PurchasePrice": 1700000000,
+      "Rarity": "Secret",
+      "Signature": "elf|glow|fang|none|nub|armor+cape_royal+crown_of_thorns+held_sword||1.00",
+      "SizeStuds": [
+        5.36,
+        4.12,
+        4.13
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.shadow_monarch)",
+      "SpawnChance": 5.047221807228429e-6
+    },
+    {
+      "Category": "Hamsters/Secret",
+      "CollectionValue": 6784,
+      "DisplayName": "Void Walker",
+      "Files": [
+        "SecretHamsterVoidWalker.rbxm",
+        "SecretHamsterVoidWalker.glb"
+      ],
+      "HamsterId": "void_walker",
+      "Hash": "e27b628277cdfd67",
+      "IncomePerSecond": 1454545.4545454546,
+      "MinRebirth": 9,
+      "MovementSpeed": 42,
+      "Name": "SecretHamsterVoidWalker",
+      "Parts": 37,
+      "PurchasePrice": 1600000000,
+      "Rarity": "Secret",
+      "Signature": "none|void|none|none|nub|cape_royal+orbit_ring+void_crown||1.00",
+      "SizeStuds": [
+        4.96,
+        5.59,
+        5.05
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.void_walker)",
+      "SpawnChance": 5.047221807228429e-6
+    },
+    {
+      "Category": "Hamsters/Secret",
+      "CollectionValue": 9640,
+      "DisplayName": "Wraith",
+      "Files": [
+        "SecretHamsterWraith.rbxm",
+        "SecretHamsterWraith.glb"
+      ],
+      "HamsterId": "wraith",
+      "Hash": "2862d968d658188e",
+      "IncomePerSecond": 2090909.0909090908,
+      "MinRebirth": 9,
+      "MovementSpeed": 42,
+      "Name": "SecretHamsterWraith",
+      "Parts": 45,
+      "PurchasePrice": 2300000000,
+      "Rarity": "Secret",
+      "Signature": "none|glow|none|none|nub|held_scythe+hood+wings_void|smoke|1.00",
+      "SizeStuds": [
+        7.81,
+        5.54,
+        5.16
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.wraith)",
+      "SpawnChance": 5.047221807228429e-6
+    },
+    {
+      "Category": "Hamsters/Shiny",
+      "CollectionValue": 39,
+      "DisplayName": "Bubble",
+      "Files": [
+        "ShinyHamsterBubble.rbxm",
+        "ShinyHamsterBubble.glb"
+      ],
+      "HamsterId": "bubble",
+      "Hash": "07ae2bcc0a92903f",
+      "IncomePerSecond": 21.818181818181817,
+      "MinRebirth": 0,
+      "MovementSpeed": 12,
+      "Name": "ShinyHamsterBubble",
+      "Parts": 38,
+      "PurchasePrice": 2400,
+      "Rarity": "Shiny",
+      "Signature": "tiny|big|smile|none|nub|astro|bubbles|1.00",
+      "SizeStuds": [
+        3.89,
+        4.75,
+        4.35
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.bubble)",
+      "SpawnChance": 0.008652380240963022
+    },
+    {
+      "Category": "Hamsters/Shiny",
+      "CollectionValue": 32,
+      "DisplayName": "Crystal",
+      "Files": [
+        "ShinyHamsterCrystal.rbxm",
+        "ShinyHamsterCrystal.glb"
+      ],
+      "HamsterId": "crystal",
+      "Hash": "fc3a86b8f1f816d3",
+      "IncomePerSecond": 18.181818181818183,
+      "MinRebirth": 0,
+      "MovementSpeed": 12,
+      "Name": "ShinyHamsterCrystal",
+      "Parts": 41,
+      "PurchasePrice": 2000,
+      "Rarity": "Shiny",
+      "Signature": "bear|crystal|smile|none|nub|crystal_crown+orbit_shards|sparkle|1.00",
+      "SizeStuds": [
+        5.02,
+        5.23,
+        5.53
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.crystal)",
+      "SpawnChance": 0.008652380240963022
+    },
+    {
+      "Category": "Hamsters/Shiny",
+      "CollectionValue": 44,
+      "DisplayName": "Diamond",
+      "Files": [
+        "ShinyHamsterDiamond.rbxm",
+        "ShinyHamsterDiamond.glb"
+      ],
+      "HamsterId": "diamond",
+      "Hash": "be8da761eca18d34",
+      "IncomePerSecond": 24.545454545454547,
+      "MinRebirth": 0,
+      "MovementSpeed": 12,
+      "Name": "ShinyHamsterDiamond",
+      "Parts": 39,
+      "PurchasePrice": 2700,
+      "Rarity": "Shiny",
+      "Signature": "fluffy|crystal|smile|none|nub|orbit_shards+tiara|sparkle|1.00",
+      "SizeStuds": [
+        5.02,
+        4.53,
+        5.53
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.diamond)",
+      "SpawnChance": 0.008652380240963022
+    },
+    {
+      "Category": "Hamsters/Shiny",
+      "CollectionValue": 49,
+      "DisplayName": "Disco",
+      "Files": [
+        "ShinyHamsterDisco.rbxm",
+        "ShinyHamsterDisco.glb"
+      ],
+      "HamsterId": "disco",
+      "Hash": "eb8a3ce765154456",
+      "IncomePerSecond": 27.272727272727273,
+      "MinRebirth": 0,
+      "MovementSpeed": 12,
+      "Name": "ShinyHamsterDisco",
+      "Parts": 45,
+      "PurchasePrice": 3000,
+      "Rarity": "Shiny",
+      "Signature": "big|happy|grin|none|nub|ground_glow+headphones+sunglasses|sparkle|1.00",
+      "SizeStuds": [
+        4.6,
+        4.99,
+        4.6
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.disco)",
+      "SpawnChance": 0.008652380240963022
+    },
+    {
+      "Category": "Hamsters/Shiny",
+      "CollectionValue": 40,
+      "DisplayName": "Electric",
+      "Files": [
+        "ShinyHamsterElectric.rbxm",
+        "ShinyHamsterElectric.glb"
+      ],
+      "HamsterId": "electric",
+      "Hash": "b021ebfef6c96276",
+      "IncomePerSecond": 22.727272727272727,
+      "MinRebirth": 0,
+      "MovementSpeed": 12,
+      "Name": "ShinyHamsterElectric",
+      "Parts": 38,
+      "PurchasePrice": 2500,
+      "Rarity": "Shiny",
+      "Signature": "cat|happy|open|none|none|goggles+tail_lightning|sparkle|1.00",
+      "SizeStuds": [
+        3.89,
+        4.29,
+        4.49
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.electric)",
+      "SpawnChance": 0.008652380240963022
+    },
+    {
+      "Category": "Hamsters/Shiny",
+      "CollectionValue": 36,
+      "DisplayName": "Gem",
+      "Files": [
+        "ShinyHamsterGem.rbxm",
+        "ShinyHamsterGem.glb"
+      ],
+      "HamsterId": "gem",
+      "Hash": "29ab80de00f44a02",
+      "IncomePerSecond": 20,
+      "MinRebirth": 0,
+      "MovementSpeed": 12,
+      "Name": "ShinyHamsterGem",
+      "Parts": 40,
+      "PurchasePrice": 2200,
+      "Rarity": "Shiny",
+      "Signature": "round|sparkle|smile|none|nub|pendant+top_gem|sparkle|1.00",
+      "SizeStuds": [
+        3.89,
+        4.84,
+        4.13
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.gem)",
+      "SpawnChance": 0.008652380240963022
+    },
+    {
+      "Category": "Hamsters/Shiny",
+      "CollectionValue": 45,
+      "DisplayName": "Glitter",
+      "Files": [
+        "ShinyHamsterGlitter.rbxm",
+        "ShinyHamsterGlitter.glb"
+      ],
+      "HamsterId": "glitter",
+      "Hash": "61f1758c0d1758d4",
+      "IncomePerSecond": 25.454545454545453,
+      "MinRebirth": 0,
+      "MovementSpeed": 12,
+      "Name": "ShinyHamsterGlitter",
+      "Parts": 45,
+      "PurchasePrice": 2800,
+      "Rarity": "Shiny",
+      "Signature": "round|sparkle|tongue|none|nub|bow+held_wand|sparkle|1.00",
+      "SizeStuds": [
+        3.89,
+        3.8,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.glitter)",
+      "SpawnChance": 0.008652380240963022
+    },
+    {
+      "Category": "Hamsters/Shiny",
+      "CollectionValue": 41,
+      "DisplayName": "Golden",
+      "Files": [
+        "ShinyHamsterGolden.rbxm",
+        "ShinyHamsterGolden.glb"
+      ],
+      "HamsterId": "golden",
+      "Hash": "4e877b8fda900010",
+      "IncomePerSecond": 22.727272727272727,
+      "MinRebirth": 0,
+      "MovementSpeed": 12,
+      "Name": "ShinyHamsterGolden",
+      "Parts": 53,
+      "PurchasePrice": 2500,
+      "Rarity": "Shiny",
+      "Signature": "round|sparkle|smile|none|nub|crown+medal||1.00",
+      "SizeStuds": [
+        3.89,
+        4.66,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.golden)",
+      "SpawnChance": 0.008652380240963022
+    },
+    {
+      "Category": "Hamsters/Shiny",
+      "CollectionValue": 34,
+      "DisplayName": "Neon",
+      "Files": [
+        "ShinyHamsterNeon.rbxm",
+        "ShinyHamsterNeon.glb"
+      ],
+      "HamsterId": "neon",
+      "Hash": "6df83b4e447a9da9",
+      "IncomePerSecond": 19.09090909090909,
+      "MinRebirth": 0,
+      "MovementSpeed": 12,
+      "Name": "ShinyHamsterNeon",
+      "Parts": 36,
+      "PurchasePrice": 2100,
+      "Rarity": "Shiny",
+      "Signature": "round|glow|smile|stripes|nub|visor||1.00",
+      "SizeStuds": [
+        3.89,
+        3.66,
+        4.07
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.neon)",
+      "SpawnChance": 0.008652380240963022
+    },
+    {
+      "Category": "Hamsters/Shiny",
+      "CollectionValue": 47,
+      "DisplayName": "Opal",
+      "Files": [
+        "ShinyHamsterOpal.rbxm",
+        "ShinyHamsterOpal.glb"
+      ],
+      "HamsterId": "opal",
+      "Hash": "59789a10cfa03ab6",
+      "IncomePerSecond": 26.363636363636363,
+      "MinRebirth": 0,
+      "MovementSpeed": 12,
+      "Name": "ShinyHamsterOpal",
+      "Parts": 44,
+      "PurchasePrice": 2900,
+      "Rarity": "Shiny",
+      "Signature": "round|sparkle|cat|spots|nub|moon_circlet||1.00",
+      "SizeStuds": [
+        3.89,
+        4.45,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.opal)",
+      "SpawnChance": 0.008652380240963022
+    },
+    {
+      "Category": "Hamsters/Shiny",
+      "CollectionValue": 46,
+      "DisplayName": "Prism",
+      "Files": [
+        "ShinyHamsterPrism.rbxm",
+        "ShinyHamsterPrism.glb"
+      ],
+      "HamsterId": "prism",
+      "Hash": "086702790e22449c",
+      "IncomePerSecond": 25.454545454545453,
+      "MinRebirth": 0,
+      "MovementSpeed": 12,
+      "Name": "ShinyHamsterPrism",
+      "Parts": 34,
+      "PurchasePrice": 2800,
+      "Rarity": "Shiny",
+      "Signature": "tiny|glow|smile|none|nub|orbit_ring+visor|sparkle|1.00",
+      "SizeStuds": [
+        4.96,
+        3.35,
+        5.05
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.prism)",
+      "SpawnChance": 0.008652380240963022
+    },
+    {
+      "Category": "Hamsters/Shiny",
+      "CollectionValue": 35,
+      "DisplayName": "Rainbow",
+      "Files": [
+        "ShinyHamsterRainbow.rbxm",
+        "ShinyHamsterRainbow.glb"
+      ],
+      "HamsterId": "rainbow",
+      "Hash": "d7adf6cf7ef2ca9c",
+      "IncomePerSecond": 20,
+      "MinRebirth": 0,
+      "MovementSpeed": 12,
+      "Name": "ShinyHamsterRainbow",
+      "Parts": 42,
+      "PurchasePrice": 2200,
+      "Rarity": "Shiny",
+      "Signature": "fluffy|sparkle|smile|none|nub|orbit_ring+propeller|sparkle|1.00",
+      "SizeStuds": [
+        4.96,
+        4.5,
+        5.05
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.rainbow)",
+      "SpawnChance": 0.008652380240963022
+    },
+    {
+      "Category": "Hamsters/Shiny",
+      "CollectionValue": 42,
+      "DisplayName": "Silver",
+      "Files": [
+        "ShinyHamsterSilver.rbxm",
+        "ShinyHamsterSilver.glb"
+      ],
+      "HamsterId": "silver",
+      "Hash": "cd6855dc1e060794",
+      "IncomePerSecond": 23.636363636363637,
+      "MinRebirth": 0,
+      "MovementSpeed": 12,
+      "Name": "ShinyHamsterSilver",
+      "Parts": 36,
+      "PurchasePrice": 2600,
+      "Rarity": "Shiny",
+      "Signature": "bear|dot|smile|none|nub|monocle+tophat||1.00",
+      "SizeStuds": [
+        3.89,
+        4.9,
+        4.05
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.silver)",
+      "SpawnChance": 0.008652380240963022
+    },
+    {
+      "Category": "Hamsters/Shiny",
+      "CollectionValue": 37,
+      "DisplayName": "Star",
+      "Files": [
+        "ShinyHamsterStar.rbxm",
+        "ShinyHamsterStar.glb"
+      ],
+      "HamsterId": "star",
+      "Hash": "7361c56cc4f1bdda",
+      "IncomePerSecond": 20.90909090909091,
+      "MinRebirth": 0,
+      "MovementSpeed": 12,
+      "Name": "ShinyHamsterStar",
+      "Parts": 73,
+      "PurchasePrice": 2300,
+      "Rarity": "Shiny",
+      "Signature": "tiny|star|open|none|nub|orbit_stars+star_crown|stars|1.00",
+      "SizeStuds": [
+        4.94,
+        4.4,
+        4.94
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.star)",
+      "SpawnChance": 0.008652380240963022
+    },
+    {
+      "Category": "Hamsters/Ultra",
+      "CollectionValue": 275,
+      "DisplayName": "Aurora",
+      "Files": [
+        "UltraHamsterAurora.rbxm",
+        "UltraHamsterAurora.glb"
+      ],
+      "HamsterId": "aurora",
+      "Hash": "5bb4eb8e069deddb",
+      "IncomePerSecond": 1000,
+      "MinRebirth": 0,
+      "MovementSpeed": 19,
+      "Name": "UltraHamsterAurora",
+      "Parts": 50,
+      "PurchasePrice": 260000,
+      "Rarity": "Ultra",
+      "Signature": "tiny|sparkle|smile|none|nub|ground_glow+moon_circlet+wings_aurora|sparkle|1.00",
+      "SizeStuds": [
+        7.67,
+        4.54,
+        4.8
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.aurora)",
+      "SpawnChance": 0.0008412036345380715
+    },
+    {
+      "Category": "Hamsters/Ultra",
+      "CollectionValue": 232,
+      "DisplayName": "Blossom",
+      "Files": [
+        "UltraHamsterBlossom.rbxm",
+        "UltraHamsterBlossom.glb"
+      ],
+      "HamsterId": "blossom",
+      "Hash": "f85811771b22698f",
+      "IncomePerSecond": 846.1538461538462,
+      "MinRebirth": 0,
+      "MovementSpeed": 19,
+      "Name": "UltraHamsterBlossom",
+      "Parts": 60,
+      "PurchasePrice": 220000,
+      "Rarity": "Ultra",
+      "Signature": "round|heart|smile|none|nub|flowers+wings_butterfly|hearts|1.00",
+      "SizeStuds": [
+        6.76,
+        3.79,
+        4.45
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.blossom)",
+      "SpawnChance": 0.0008412036345380715
+    },
+    {
+      "Category": "Hamsters/Ultra",
+      "CollectionValue": 266,
+      "DisplayName": "Candyland",
+      "Files": [
+        "UltraHamsterCandyland.rbxm",
+        "UltraHamsterCandyland.glb"
+      ],
+      "HamsterId": "candyland",
+      "Hash": "f6b18c89f1653603",
+      "IncomePerSecond": 961.5384615384615,
+      "MinRebirth": 0,
+      "MovementSpeed": 19,
+      "Name": "UltraHamsterCandyland",
+      "Parts": 57,
+      "PurchasePrice": 250000,
+      "Rarity": "Ultra",
+      "Signature": "fluffy|sparkle|tongue|stripes|nub|bow+held_lollipop+tutu||1.00",
+      "SizeStuds": [
+        3.89,
+        3.9,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.candyland)",
+      "SpawnChance": 0.0008412036345380715
+    },
+    {
+      "Category": "Hamsters/Ultra",
+      "CollectionValue": 249,
+      "DisplayName": "Cyberpunk",
+      "Files": [
+        "UltraHamsterCyberpunk.rbxm",
+        "UltraHamsterCyberpunk.glb"
+      ],
+      "HamsterId": "cyberpunk",
+      "Hash": "77963784f23146ec",
+      "IncomePerSecond": 923.0769230769231,
+      "MinRebirth": 0,
+      "MovementSpeed": 19,
+      "Name": "UltraHamsterCyberpunk",
+      "Parts": 50,
+      "PurchasePrice": 240000,
+      "Rarity": "Ultra",
+      "Signature": "big|glow|smile|stripes|nub|headphones+jetpack+visor||1.00",
+      "SizeStuds": [
+        4.06,
+        5.35,
+        4.42
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.cyberpunk)",
+      "SpawnChance": 0.0008412036345380715
+    },
+    {
+      "Category": "Hamsters/Ultra",
+      "CollectionValue": 198,
+      "DisplayName": "Frostbite",
+      "Files": [
+        "UltraHamsterFrostbite.rbxm",
+        "UltraHamsterFrostbite.glb"
+      ],
+      "HamsterId": "frostbite",
+      "Hash": "520732f8c8590702",
+      "IncomePerSecond": 730.7692307692307,
+      "MinRebirth": 0,
+      "MovementSpeed": 19,
+      "Name": "UltraHamsterFrostbite",
+      "Parts": 53,
+      "PurchasePrice": 190000,
+      "Rarity": "Ultra",
+      "Signature": "round|glow|smile|none|nub|ice_crown+scarf+wings_ice|snow|1.00",
+      "SizeStuds": [
+        8.35,
+        5.2,
+        4.96
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.frostbite)",
+      "SpawnChance": 0.0008412036345380715
+    },
+    {
+      "Category": "Hamsters/Ultra",
+      "CollectionValue": 189,
+      "DisplayName": "Inferno",
+      "Files": [
+        "UltraHamsterInferno.rbxm",
+        "UltraHamsterInferno.glb"
+      ],
+      "HamsterId": "inferno",
+      "Hash": "bf057e8eefdda80c",
+      "IncomePerSecond": 692.3076923076923,
+      "MinRebirth": 0,
+      "MovementSpeed": 19,
+      "Name": "UltraHamsterInferno",
+      "Parts": 54,
+      "PurchasePrice": 180000,
+      "Rarity": "Ultra",
+      "Signature": "cat|angry|grin|none|none|flame_crown+tail_flame+wings_flame|flame|1.00",
+      "SizeStuds": [
+        8.25,
+        5.1,
+        4.78
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.inferno)",
+      "SpawnChance": 0.0008412036345380715
+    },
+    {
+      "Category": "Hamsters/Ultra",
+      "CollectionValue": 215,
+      "DisplayName": "Magma",
+      "Files": [
+        "UltraHamsterMagma.rbxm",
+        "UltraHamsterMagma.glb"
+      ],
+      "HamsterId": "magma",
+      "Hash": "a8702dc92b7de2ee",
+      "IncomePerSecond": 769.2307692307693,
+      "MinRebirth": 0,
+      "MovementSpeed": 19,
+      "Name": "UltraHamsterMagma",
+      "Parts": 48,
+      "PurchasePrice": 200000,
+      "Rarity": "Ultra",
+      "Signature": "round|glow|fang|tiger|nub|horns+pauldrons|embers|1.00",
+      "SizeStuds": [
+        4,
+        4.56,
+        4.01
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.magma)",
+      "SpawnChance": 0.0008412036345380715
+    },
+    {
+      "Category": "Hamsters/Ultra",
+      "CollectionValue": 283,
+      "DisplayName": "Neon Samurai",
+      "Files": [
+        "UltraHamsterNeonSamurai.rbxm",
+        "UltraHamsterNeonSamurai.glb"
+      ],
+      "HamsterId": "neon_samurai",
+      "Hash": "9de9f606722d6129",
+      "IncomePerSecond": 1038.4615384615386,
+      "MinRebirth": 0,
+      "MovementSpeed": 19,
+      "Name": "UltraHamsterNeonSamurai",
+      "Parts": 40,
+      "PurchasePrice": 270000,
+      "Rarity": "Ultra",
+      "Signature": "round|glow|flat|none|nub|held_sword+samurai+visor||1.00",
+      "SizeStuds": [
+        3.89,
+        5.1,
+        4.07
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.neon_samurai)",
+      "SpawnChance": 0.0008412036345380715
+    },
+    {
+      "Category": "Hamsters/Ultra",
+      "CollectionValue": 240,
+      "DisplayName": "Shadow",
+      "Files": [
+        "UltraHamsterShadow.rbxm",
+        "UltraHamsterShadow.glb"
+      ],
+      "HamsterId": "shadow",
+      "Hash": "f8476d31c3fe9ec9",
+      "IncomePerSecond": 884.6153846153846,
+      "MinRebirth": 0,
+      "MovementSpeed": 19,
+      "Name": "UltraHamsterShadow",
+      "Parts": 39,
+      "PurchasePrice": 230000,
+      "Rarity": "Ultra",
+      "Signature": "cat|glow|flat|saddle|nub|cape+held_sword+hood||1.00",
+      "SizeStuds": [
+        3.89,
+        4.39,
+        4.55
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.shadow)",
+      "SpawnChance": 0.0008412036345380715
+    },
+    {
+      "Category": "Hamsters/Ultra",
+      "CollectionValue": 258,
+      "DisplayName": "Steampunk",
+      "Files": [
+        "UltraHamsterSteampunk.rbxm",
+        "UltraHamsterSteampunk.glb"
+      ],
+      "HamsterId": "steampunk",
+      "Hash": "4e662688bfb26f5a",
+      "IncomePerSecond": 961.5384615384615,
+      "MinRebirth": 0,
+      "MovementSpeed": 19,
+      "Name": "UltraHamsterSteampunk",
+      "Parts": 60,
+      "PurchasePrice": 250000,
+      "Rarity": "Ultra",
+      "Signature": "round|dot|smile|none|nub|goggles+tophat+wings_mecha||1.00",
+      "SizeStuds": [
+        8.36,
+        4.9,
+        5.02
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.steampunk)",
+      "SpawnChance": 0.0008412036345380715
+    },
+    {
+      "Category": "Hamsters/Ultra",
+      "CollectionValue": 206,
+      "DisplayName": "Thunderbolt",
+      "Files": [
+        "UltraHamsterThunderbolt.rbxm",
+        "UltraHamsterThunderbolt.glb"
+      ],
+      "HamsterId": "thunderbolt",
+      "Hash": "1955c5b9603d07f9",
+      "IncomePerSecond": 769.2307692307693,
+      "MinRebirth": 0,
+      "MovementSpeed": 19,
+      "Name": "UltraHamsterThunderbolt",
+      "Parts": 40,
+      "PurchasePrice": 200000,
+      "Rarity": "Ultra",
+      "Signature": "big|angry|open|none|none|cape+tail_lightning+visor|sparkle|1.00",
+      "SizeStuds": [
+        4.06,
+        4.32,
+        4.34
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.thunderbolt)",
+      "SpawnChance": 0.0008412036345380715
+    },
+    {
+      "Category": "Hamsters/Ultra",
+      "CollectionValue": 223,
+      "DisplayName": "Tsunami",
+      "Files": [
+        "UltraHamsterTsunami.rbxm",
+        "UltraHamsterTsunami.glb"
+      ],
+      "HamsterId": "tsunami",
+      "Hash": "ed127a5b7ca18e93",
+      "IncomePerSecond": 807.6923076923077,
+      "MinRebirth": 0,
+      "MovementSpeed": 19,
+      "Name": "UltraHamsterTsunami",
+      "Parts": 43,
+      "PurchasePrice": 210000,
+      "Rarity": "Ultra",
+      "Signature": "fluffy|sparkle|smile|none|none|held_trident+tail_fish|bubbles|1.00",
+      "SizeStuds": [
+        3.89,
+        5.58,
+        6.14
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.tsunami)",
+      "SpawnChance": 0.0008412036345380715
+    },
+    {
+      "Category": "Hamsters/Unknown",
+      "CollectionValue": 27070,
+      "DisplayName": "Anomaly",
+      "Files": [
+        "UnknownHamsterAnomaly.rbxm",
+        "UnknownHamsterAnomaly.glb"
+      ],
+      "HamsterId": "anomaly",
+      "Hash": "b0c70a522e935550",
+      "IncomePerSecond": 25555555.555555556,
+      "MinRebirth": 15,
+      "MovementSpeed": 56,
+      "Name": "UnknownHamsterAnomaly",
+      "Parts": 63,
+      "PurchasePrice": 46000000000,
+      "Rarity": "???",
+      "Signature": "elf|star|grin|none|nub|glasses_3d+orbit_ring+propeller+wings_cosmic|glitch|1.00",
+      "SizeStuds": [
+        7.43,
+        4.54,
+        5.05
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.anomaly)",
+      "SpawnChance": 6.729629076304572e-7
+    },
+    {
+      "Category": "Hamsters/Unknown",
+      "CollectionValue": 31234,
+      "DisplayName": "Final Hamster",
+      "Files": [
+        "UnknownHamsterFinalHamster.rbxm",
+        "UnknownHamsterFinalHamster.glb"
+      ],
+      "HamsterId": "final_hamster",
+      "Hash": "7eb3c30a539f544e",
+      "IncomePerSecond": 29444444.444444444,
+      "MinRebirth": 15,
+      "MovementSpeed": 56,
+      "Name": "UnknownHamsterFinalHamster",
+      "Parts": 65,
+      "PurchasePrice": 53000000000,
+      "Rarity": "???",
+      "Signature": "cat|glow|fang|none|nub|armor+ground_glow+held_scythe+orbit_ring+void_crown+wings_void|glitch+flame|1.20",
+      "SizeStuds": [
+        9.37,
+        6.77,
+        6.06
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.final_hamster)",
+      "SpawnChance": 6.729629076304572e-7
+    },
+    {
+      "Category": "Hamsters/Unknown",
+      "CollectionValue": 24988,
+      "DisplayName": "Fragment",
+      "Files": [
+        "UnknownHamsterFragment.rbxm",
+        "UnknownHamsterFragment.glb"
+      ],
+      "HamsterId": "fragment",
+      "Hash": "bef84264f0e4ea93",
+      "IncomePerSecond": 23333333.333333332,
+      "MinRebirth": 15,
+      "MovementSpeed": 56,
+      "Name": "UnknownHamsterFragment",
+      "Parts": 57,
+      "PurchasePrice": 42000000000,
+      "Rarity": "???",
+      "Signature": "tiny|crystal|smile|none|none|crystal_crown+orbit_shards+tail_crystal+wings_ice|glitch|1.00",
+      "SizeStuds": [
+        8.35,
+        5.23,
+        5.77
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.fragment)",
+      "SpawnChance": 6.729629076304572e-7
+    },
+    {
+      "Category": "Hamsters/Unknown",
+      "CollectionValue": 22905,
+      "DisplayName": "Mr. Nobody",
+      "Files": [
+        "UnknownHamsterMrNobody.rbxm",
+        "UnknownHamsterMrNobody.glb"
+      ],
+      "HamsterId": "mr_nobody",
+      "Hash": "c385a045577ab7ff",
+      "IncomePerSecond": 21666666.666666668,
+      "MinRebirth": 15,
+      "MovementSpeed": 56,
+      "Name": "UnknownHamsterMrNobody",
+      "Parts": 42,
+      "PurchasePrice": 39000000000,
+      "Rarity": "???",
+      "Signature": "none|dot|flat|none|nub|cape_royal+monocle+orbit_orbs+tophat|glitch|1.00",
+      "SizeStuds": [
+        4.5,
+        5.15,
+        4.73
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.mr_nobody)",
+      "SpawnChance": 6.729629076304572e-7
+    },
+    {
+      "Category": "Hamsters/Unknown",
+      "CollectionValue": 29152,
+      "DisplayName": "Origin",
+      "Files": [
+        "UnknownHamsterOrigin.rbxm",
+        "UnknownHamsterOrigin.glb"
+      ],
+      "HamsterId": "origin",
+      "Hash": "80939eba9d62ee1b",
+      "IncomePerSecond": 27222222.222222224,
+      "MinRebirth": 15,
+      "MovementSpeed": 56,
+      "Name": "UnknownHamsterOrigin",
+      "Parts": 77,
+      "PurchasePrice": 49000000000,
+      "Rarity": "???",
+      "Signature": "round|glow|smile|none|nub|crown_of_thorns+halo+orbit_stars+wings_seraph|glitch+sparkle|1.00",
+      "SizeStuds": [
+        9.57,
+        4.47,
+        5.58
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.origin)",
+      "SpawnChance": 6.729629076304572e-7
+    },
+    {
+      "Category": "Hamsters/Unknown",
+      "CollectionValue": 20823,
+      "DisplayName": "The Hollow One",
+      "Files": [
+        "UnknownHamsterTheHollowOne.rbxm",
+        "UnknownHamsterTheHollowOne.glb"
+      ],
+      "HamsterId": "the_hollow_one",
+      "Hash": "18a063174070882d",
+      "IncomePerSecond": 19444444.444444444,
+      "MinRebirth": 15,
+      "MovementSpeed": 56,
+      "Name": "UnknownHamsterTheHollowOne",
+      "Parts": 47,
+      "PurchasePrice": 35000000000,
+      "Rarity": "???",
+      "Signature": "none|void|none|none|nub|floating_runes+hood+orbit_ring+wings_void|glitch|1.00",
+      "SizeStuds": [
+        7.81,
+        4.97,
+        5.28
+      ],
+      "Source": "HamsterBuilder.build(HamsterDatabase.ById.the_hollow_one)",
+      "SpawnChance": 6.729629076304572e-7
+    },
+    {
+      "Category": "Plants",
+      "Files": [
+        "BerryBush.rbxm",
+        "BerryBush.glb"
+      ],
+      "Hash": "ea30b7a97215f00c",
+      "Name": "BerryBush",
+      "Parts": 6,
+      "SizeStuds": [
+        5.76,
+        2.77,
+        3.85
+      ],
+      "Source": "Decor.bush(berries)"
+    },
+    {
+      "Category": "Plants",
+      "Files": [
+        "Bush.rbxm",
+        "Bush.glb"
+      ],
+      "Hash": "15ccaa564871b259",
+      "Name": "Bush",
+      "Parts": 3,
+      "SizeStuds": [
+        5.76,
+        2.77,
+        3.85
+      ],
+      "Source": "Decor.bush"
+    },
+    {
+      "Category": "Plants",
+      "Files": [
+        "FlowerPatch.rbxm",
+        "FlowerPatch.glb"
+      ],
+      "Hash": "254a3e548b7764a8",
+      "Name": "FlowerPatch",
+      "Parts": 4,
+      "SizeStuds": [
+        4.25,
+        1.27,
+        4.25
+      ],
+      "Source": "Decor.flowers"
+    },
+    {
+      "Category": "Plants",
+      "Files": [
+        "Hedge.rbxm",
+        "Hedge.glb"
+      ],
+      "Hash": "e65075a77c32b2cd",
+      "Name": "Hedge",
+      "Parts": 4,
+      "SizeStuds": [
+        12.6,
+        4.74,
+        2.6
+      ],
+      "Source": "Decor.hedgeRun"
+    },
+    {
+      "Category": "Plants",
+      "Files": [
+        "LavenderFlowerBed.rbxm",
+        "LavenderFlowerBed.glb"
+      ],
+      "Hash": "9b74eecfe8f4d27b",
+      "Name": "LavenderFlowerBed",
+      "Parts": 20,
+      "SizeStuds": [
+        7,
+        1.82,
+        7
+      ],
+      "Source": "Decor.flowerBed(lavender)"
+    },
+    {
+      "Category": "Plants",
+      "Files": [
+        "Mushrooms.rbxm",
+        "Mushrooms.glb"
+      ],
+      "Hash": "ae5e05d4fcabc3c7",
+      "Name": "Mushrooms",
+      "Parts": 9,
+      "SizeStuds": [
+        3.5,
+        1.63,
+        2.38
+      ],
+      "Source": "Decor.mushrooms"
+    },
+    {
+      "Category": "Plants",
+      "Files": [
+        "PinkFlowerBed.rbxm",
+        "PinkFlowerBed.glb"
+      ],
+      "Hash": "9cc6f3cc5e050837",
+      "Name": "PinkFlowerBed",
+      "Parts": 20,
+      "SizeStuds": [
+        7,
+        1.82,
+        7
+      ],
+      "Source": "Decor.flowerBed(pink)"
+    },
+    {
+      "Category": "Plants",
+      "Files": [
+        "PottedPlant.rbxm",
+        "PottedPlant.glb"
+      ],
+      "Hash": "3e901e570c2e70b2",
+      "Name": "PottedPlant",
+      "Parts": 2,
+      "SizeStuds": [
+        2.6,
+        4.3,
+        2.6
+      ],
+      "Source": "HouseBuilder.Furniture.Plant"
+    },
+    {
+      "Category": "Plants",
+      "Files": [
+        "Sunflower.rbxm",
+        "Sunflower.glb"
+      ],
+      "Hash": "98acdf0f851c675c",
+      "Name": "Sunflower",
+      "Parts": 3,
+      "SizeStuds": [
+        0.92,
+        6.51,
+        3
+      ],
+      "Source": "Decor.sunflower"
+    },
+    {
+      "Category": "Props",
+      "Files": [
+        "Barrel.rbxm",
+        "Barrel.glb"
+      ],
+      "Hash": "04710a1fde10deca",
+      "Name": "Barrel",
+      "Parts": 3,
+      "SizeStuds": [
+        2.3,
+        2.6,
+        2.3
+      ],
+      "Source": "Decor.barrel"
+    },
+    {
+      "Category": "Props",
+      "Files": [
+        "Crate.rbxm",
+        "Crate.glb"
+      ],
+      "Hash": "3a5011b6c3e1287e",
+      "Name": "Crate",
+      "Parts": 2,
+      "SizeStuds": [
+        2.5,
+        2.4,
+        2.5
+      ],
+      "Source": "Decor.crate"
+    },
+    {
+      "Category": "Props/Stations",
+      "Files": [
+        "CoinMultiplierProp.rbxm",
+        "CoinMultiplierProp.glb"
+      ],
+      "Hash": "37cf92c1b14f7926",
+      "Name": "CoinMultiplierProp",
+      "Notes": "Shown on the upgrade pedestal, grows with the upgrade level.",
+      "Parts": 11,
+      "SizeStuds": [
+        3.21,
+        2.99,
+        2.12
+      ],
+      "Source": "HouseBuilder.StationProps.CoinMultiplier"
+    },
+    {
+      "Category": "Props/Stations",
+      "Files": [
+        "CollectionRangeProp.rbxm",
+        "CollectionRangeProp.glb"
+      ],
+      "Hash": "ad4d2b492de95782",
+      "Name": "CollectionRangeProp",
+      "Notes": "Shown on the upgrade pedestal, grows with the upgrade level.",
+      "Parts": 3,
+      "SizeStuds": [
+        4.4,
+        3.4,
+        4.4
+      ],
+      "Source": "HouseBuilder.StationProps.CollectionRange"
+    },
+    {
+      "Category": "Props/Stations",
+      "Files": [
+        "ExtraStorageProp.rbxm",
+        "ExtraStorageProp.glb"
+      ],
+      "Hash": "ecc58d055edf69dc",
+      "Name": "ExtraStorageProp",
+      "Notes": "Shown on the upgrade pedestal, grows with the upgrade level.",
+      "Parts": 6,
+      "SizeStuds": [
+        3.4,
+        3.3,
+        1.1
+      ],
+      "Source": "HouseBuilder.StationProps.ExtraStorage"
+    },
+    {
+      "Category": "Props/Stations",
+      "Files": [
+        "GemBoostProp.rbxm",
+        "GemBoostProp.glb"
+      ],
+      "Hash": "efb3461682cac40b",
+      "Name": "GemBoostProp",
+      "Notes": "Shown on the upgrade pedestal, grows with the upgrade level.",
+      "Parts": 6,
+      "SizeStuds": [
+        2.3,
+        2.02,
+        2.83
+      ],
+      "Source": "HouseBuilder.StationProps.GemBoost"
+    },
+    {
+      "Category": "Props/Stations",
+      "Files": [
+        "HamsterTrainingProp.rbxm",
+        "HamsterTrainingProp.glb"
+      ],
+      "Hash": "c5e14c27df306d4d",
+      "Name": "HamsterTrainingProp",
+      "Notes": "Shown on the upgrade pedestal, grows with the upgrade level.",
+      "Parts": 3,
+      "SizeStuds": [
+        0.4,
+        4.2,
+        4.2
+      ],
+      "Source": "HouseBuilder.StationProps.HamsterTraining"
+    },
+    {
+      "Category": "Props/Stations",
+      "Files": [
+        "LuckyCharmsProp.rbxm",
+        "LuckyCharmsProp.glb"
+      ],
+      "Hash": "17288432dc607920",
+      "Name": "LuckyCharmsProp",
+      "Notes": "Shown on the upgrade pedestal, grows with the upgrade level.",
+      "Parts": 6,
+      "SizeStuds": [
+        2.53,
+        3.1,
+        2.65
+      ],
+      "Source": "HouseBuilder.StationProps.LuckyCharms"
+    },
+    {
+      "Category": "Props/Stations",
+      "Files": [
+        "RebirthBoostProp.rbxm",
+        "RebirthBoostProp.glb"
+      ],
+      "Hash": "22d0c7bfd01a9a21",
+      "Name": "RebirthBoostProp",
+      "Notes": "Shown on the upgrade pedestal, grows with the upgrade level.",
+      "Parts": 2,
+      "SizeStuds": [
+        2.1,
+        3.57,
+        2.1
+      ],
+      "Source": "HouseBuilder.StationProps.RebirthBoost"
+    },
+    {
+      "Category": "Props/Stations",
+      "Files": [
+        "SpawnLuckProp.rbxm",
+        "SpawnLuckProp.glb"
+      ],
+      "Hash": "07adb59789cdec55",
+      "Name": "SpawnLuckProp",
+      "Notes": "Shown on the upgrade pedestal, grows with the upgrade level.",
+      "Parts": 20,
+      "SizeStuds": [
+        5.54,
+        2.24,
+        1.94
+      ],
+      "Source": "HouseBuilder.StationProps.SpawnLuck"
+    },
+    {
+      "Category": "Props/Stations",
+      "Files": [
+        "TurboWheelsProp.rbxm",
+        "TurboWheelsProp.glb"
+      ],
+      "Hash": "5b60103306806966",
+      "Name": "TurboWheelsProp",
+      "Notes": "Shown on the upgrade pedestal, grows with the upgrade level.",
+      "Parts": 2,
+      "SizeStuds": [
+        0.5,
+        3.78,
+        3.6
+      ],
+      "Source": "HouseBuilder.StationProps.TurboWheels"
+    },
+    {
+      "Category": "Props/Stations",
+      "Files": [
+        "WalkSpeedProp.rbxm",
+        "WalkSpeedProp.glb"
+      ],
+      "Hash": "06c8fab28d682543",
+      "Name": "WalkSpeedProp",
+      "Notes": "Shown on the upgrade pedestal, grows with the upgrade level.",
+      "Parts": 11,
+      "SizeStuds": [
+        2.74,
+        2,
+        6
+      ],
+      "Source": "HouseBuilder.StationProps.WalkSpeed"
+    },
+    {
+      "Category": "Trees",
+      "Files": [
+        "CherryTree.rbxm",
+        "CherryTree.glb"
+      ],
+      "Hash": "375ddb3c94d2111e",
+      "Name": "CherryTree",
+      "Parts": 4,
+      "SizeStuds": [
+        10,
+        12,
+        8.5
+      ],
+      "Source": "Decor.tree(cherry)"
+    },
+    {
+      "Category": "Trees",
+      "Files": [
+        "LargeCherryTree.rbxm",
+        "LargeCherryTree.glb"
+      ],
+      "Hash": "82ba610a60ef7366",
+      "Name": "LargeCherryTree",
+      "Parts": 9,
+      "SizeStuds": [
+        22.04,
+        19.03,
+        19.49
+      ],
+      "Source": "Decor.largeTree(Cherry)"
+    },
+    {
+      "Category": "Trees",
+      "Files": [
+        "LargeDarkTree.rbxm",
+        "LargeDarkTree.glb"
+      ],
+      "Hash": "d17e73fa1170aad6",
+      "Name": "LargeDarkTree",
+      "Parts": 9,
+      "SizeStuds": [
+        22.04,
+        19.03,
+        19.49
+      ],
+      "Source": "Decor.largeTree(LeafDark)"
+    },
+    {
+      "Category": "Trees",
+      "Files": [
+        "LargeGreenTree.rbxm",
+        "LargeGreenTree.glb"
+      ],
+      "Hash": "24dffe1bdfafb427",
+      "Name": "LargeGreenTree",
+      "Parts": 9,
+      "SizeStuds": [
+        22.04,
+        19.03,
+        19.49
+      ],
+      "Source": "Decor.largeTree"
+    },
+    {
+      "Category": "Trees",
+      "Files": [
+        "PineTree.rbxm",
+        "PineTree.glb"
+      ],
+      "Hash": "402e3474a80996b8",
+      "Name": "PineTree",
+      "Parts": 4,
+      "SizeStuds": [
+        8.52,
+        12.4,
+        8.52
+      ],
+      "Source": "Decor.tree(pine)"
+    },
+    {
+      "Category": "Trees",
+      "Files": [
+        "RoundTree.rbxm",
+        "RoundTree.glb"
+      ],
+      "Hash": "f6b562eea8dad011",
+      "Name": "RoundTree",
+      "Parts": 4,
+      "SizeStuds": [
+        10,
+        12,
+        8.5
+      ],
+      "Source": "Decor.tree(round)"
+    },
+    {
+      "Category": "Trees",
+      "Files": [
+        "TreeStump.rbxm",
+        "TreeStump.glb"
+      ],
+      "Hash": "892a9d03efaab5b2",
+      "Name": "TreeStump",
+      "Parts": 2,
+      "SizeStuds": [
+        2.2,
+        1.27,
+        2.2
+      ],
+      "Source": "Decor.stump"
+    }
+  ],
+  "Duplicates": {}
+}

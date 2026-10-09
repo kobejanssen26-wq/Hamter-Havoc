@@ -1,0 +1,20 @@
+{
+  "Category": "Buildings/Apartment",
+  "Files": [
+    "Floor02.rbxm",
+    "Floor02.glb"
+  ],
+  "FloorName": "Hamster Lofts",
+  "Hash": "c570c42b8013f50c",
+  "Name": "Floor02",
+  "Notes": "Modular storey: stack Floor01..Floor05, then Roof. Wheels are separate (HamsterWheel).",
+  "Parts": 157,
+  "Purpose": "More hamster slots",
+  "SizeStuds": [
+    53.4,
+    11.3,
+    46.7
+  ],
+  "Source": "HouseBuilder (buildFloor 2)",
+  "UnlocksAtRebirth": 2
+}

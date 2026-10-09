@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Ancient",
+  "CollectionValue": 17352,
+  "DisplayName": "Obsidian Idol",
+  "Files": [
+    "AncientHamsterObsidianIdol.rbxm",
+    "AncientHamsterObsidianIdol.glb"
+  ],
+  "HamsterId": "obsidian_idol",
+  "Hash": "5da1434d688ef69f",
+  "IncomePerSecond": 7857142.857142857,
+  "MinRebirth": 12,
+  "MovementSpeed": 48,
+  "Name": "AncientHamsterObsidianIdol",
+  "Parts": 35,
+  "PurchasePrice": 11000000000,
+  "Rarity": "Ancient",
+  "Signature": "none|glow|none|none|nub|ground_glow+orbit_shards+stone_crown||1.00",
+  "SizeStuds": [
+    5.05,
+    4.54,
+    5.53
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.obsidian_idol)",
+  "SpawnChance": 2.243209692101524e-6
+}

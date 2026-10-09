@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Legendary",
+  "CollectionValue": 437,
+  "DisplayName": "Lion Heart",
+  "Files": [
+    "LegendaryHamsterLionHeart.rbxm",
+    "LegendaryHamsterLionHeart.glb"
+  ],
+  "HamsterId": "lion_heart",
+  "Hash": "bfcfa09d88513228",
+  "IncomePerSecond": 2941.176470588235,
+  "MinRebirth": 0,
+  "MovementSpeed": 22,
+  "Name": "LegendaryHamsterLionHeart",
+  "Parts": 60,
+  "PurchasePrice": 1000000,
+  "Rarity": "Legendary",
+  "Signature": "tiny|cat|fang|none|nub|crown+held_shield+ruff||1.15",
+  "SizeStuds": [
+    4.51,
+    5.36,
+    4.66
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.lion_heart)",
+  "SpawnChance": 0.0002691851630521829
+}

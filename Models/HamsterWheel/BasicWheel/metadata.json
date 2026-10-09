@@ -1,0 +1,18 @@
+{
+  "Category": "HamsterWheel",
+  "Files": [
+    "BasicWheel.rbxm",
+    "BasicWheel.glb"
+  ],
+  "Hash": "622ed1fe46586622",
+  "Name": "BasicWheel",
+  "Notes": "The child model 'Wheel' turns around the hub's X axis (attribute HomeCFrame, AmbientController SpinModel).",
+  "Parts": 24,
+  "SizeStuds": [
+    7.4,
+    6.75,
+    4.6
+  ],
+  "Source": "HouseBuilder (buildWheel) - style BasicWheel",
+  "UsedOn": "apartment floors using BasicWheel"
+}

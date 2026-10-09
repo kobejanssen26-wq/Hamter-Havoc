@@ -5,22 +5,22 @@
     "Workspace": {
       "$className": "Workspace",
       "HamsterPlaza": {
-        "$path": "world/HamsterPlaza.model.json"
+        "$path": "world/HamsterPlaza.rbxm"
       },
       "HamsterPath": {
-        "$path": "world/HamsterPath.model.json"
+        "$path": "world/HamsterPath.rbxm"
       },
       "PlayerHouses": {
-        "$path": "world/PlayerHouses.model.json"
+        "$path": "world/PlayerHouses.rbxm"
       },
       "Environment": {
-        "$path": "world/Environment.model.json"
+        "$path": "world/Environment.rbxm"
       },
       "SpawnLocations": {
-        "$path": "world/SpawnLocations.model.json"
+        "$path": "world/SpawnLocations.rbxm"
       },
       "HamsterShowcase": {
-        "$path": "world/HamsterShowcase.model.json"
+        "$path": "world/HamsterShowcase.rbxm"
       }
     },
     "ReplicatedFirst": {

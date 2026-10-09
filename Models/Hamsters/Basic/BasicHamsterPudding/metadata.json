@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Basic",
+  "CollectionValue": 14,
+  "DisplayName": "Pudding",
+  "Files": [
+    "BasicHamsterPudding.rbxm",
+    "BasicHamsterPudding.glb"
+  ],
+  "HamsterId": "pudding",
+  "Hash": "129543634d5e1376",
+  "IncomePerSecond": 2.3333333333333335,
+  "MinRebirth": 0,
+  "MovementSpeed": 9,
+  "Name": "BasicHamsterPudding",
+  "Parts": 38,
+  "PurchasePrice": 140,
+  "Rarity": "Basic",
+  "Signature": "fluffy|big|smile|blaze|nub|held_cupcake||1.00",
+  "SizeStuds": [
+    3.89,
+    3.9,
+    4.1
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.pudding)",
+  "SpawnChance": 0.03499407119678378
+}

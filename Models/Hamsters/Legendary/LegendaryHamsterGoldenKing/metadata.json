@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Legendary",
+  "CollectionValue": 340,
+  "DisplayName": "Golden King",
+  "Files": [
+    "LegendaryHamsterGoldenKing.rbxm",
+    "LegendaryHamsterGoldenKing.glb"
+  ],
+  "HamsterId": "golden_king",
+  "Hash": "c5883df7ac72423c",
+  "IncomePerSecond": 2352.9411764705883,
+  "MinRebirth": 0,
+  "MovementSpeed": 22,
+  "Name": "LegendaryHamsterGoldenKing",
+  "Parts": 59,
+  "PurchasePrice": 800000,
+  "Rarity": "Legendary",
+  "Signature": "round|sparkle|grin|none|nub|cape_royal+held_staff+medal+royal|sparkle|1.00",
+  "SizeStuds": [
+    3.89,
+    5.25,
+    4.18
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.golden_king)",
+  "SpawnChance": 0.0002691851630521829
+}

@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Ultra",
+  "CollectionValue": 206,
+  "DisplayName": "Thunderbolt",
+  "Files": [
+    "UltraHamsterThunderbolt.rbxm",
+    "UltraHamsterThunderbolt.glb"
+  ],
+  "HamsterId": "thunderbolt",
+  "Hash": "1955c5b9603d07f9",
+  "IncomePerSecond": 769.2307692307693,
+  "MinRebirth": 0,
+  "MovementSpeed": 19,
+  "Name": "UltraHamsterThunderbolt",
+  "Parts": 40,
+  "PurchasePrice": 200000,
+  "Rarity": "Ultra",
+  "Signature": "big|angry|open|none|none|cape+tail_lightning+visor|sparkle|1.00",
+  "SizeStuds": [
+    4.06,
+    4.32,
+    4.34
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.thunderbolt)",
+  "SpawnChance": 0.0008412036345380715
+}

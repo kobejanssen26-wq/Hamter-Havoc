@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Epic",
+  "CollectionValue": 144,
+  "DisplayName": "Jester",
+  "Files": [
+    "EpicHamsterJester.rbxm",
+    "EpicHamsterJester.glb"
+  ],
+  "HamsterId": "jester",
+  "Hash": "89c7bd7185ecbb72",
+  "IncomePerSecond": 275,
+  "MinRebirth": 0,
+  "MovementSpeed": 16.5,
+  "Name": "EpicHamsterJester",
+  "Parts": 40,
+  "PurchasePrice": 55000,
+  "Rarity": "Epic",
+  "Signature": "round|happy|tongue|none|nub|bellcollar+jester||1.00",
+  "SizeStuds": [
+    4.3,
+    4.95,
+    4.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.jester)",
+  "SpawnChance": 0.0014250979220409683
+}

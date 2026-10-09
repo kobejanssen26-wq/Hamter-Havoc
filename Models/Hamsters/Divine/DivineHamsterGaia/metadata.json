@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Divine",
+  "CollectionValue": 1653,
+  "DisplayName": "Gaia",
+  "Files": [
+    "DivineHamsterGaia.rbxm",
+    "DivineHamsterGaia.glb"
+  ],
+  "HamsterId": "gaia",
+  "Hash": "0f4be4be76fee9a4",
+  "IncomePerSecond": 42857.142857142855,
+  "MinRebirth": 3,
+  "MovementSpeed": 30,
+  "Name": "DivineHamsterGaia",
+  "Parts": 61,
+  "PurchasePrice": 24000000,
+  "Rarity": "Divine",
+  "Signature": "floppy|sparkle|smile|none|nub|laurel+lei+wings_leaf|sparkle|1.00",
+  "SizeStuds": [
+    5.48,
+    3.64,
+    4.24
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.gaia)",
+  "SpawnChance": 0.000055060601533401044
+}

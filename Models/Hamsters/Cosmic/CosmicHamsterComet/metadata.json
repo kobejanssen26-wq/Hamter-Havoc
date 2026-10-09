@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Cosmic",
+  "CollectionValue": 2281,
+  "DisplayName": "Comet",
+  "Files": [
+    "CosmicHamsterComet.rbxm",
+    "CosmicHamsterComet.glb"
+  ],
+  "HamsterId": "comet",
+  "Hash": "e474e1d25a91edbc",
+  "IncomePerSecond": 122857.14285714286,
+  "MinRebirth": 5,
+  "MovementSpeed": 34,
+  "Name": "CosmicHamsterComet",
+  "Parts": 55,
+  "PurchasePrice": 86000000,
+  "Rarity": "Cosmic",
+  "Signature": "cat|happy|smile|none|none|goggles+orbit_stars+tail_star|sparkle|1.00",
+  "SizeStuds": [
+    4.94,
+    4.29,
+    5.37
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.comet)",
+  "SpawnChance": 0.00002294191730558377
+}

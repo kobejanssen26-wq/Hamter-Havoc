@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Rare",
+  "CollectionValue": 78,
+  "DisplayName": "Explorer",
+  "Files": [
+    "RareHamsterExplorer.rbxm",
+    "RareHamsterExplorer.glb"
+  ],
+  "HamsterId": "explorer",
+  "Hash": "af2abc283440b359",
+  "IncomePerSecond": 80,
+  "MinRebirth": 0,
+  "MovementSpeed": 14,
+  "Name": "RareHamsterExplorer",
+  "Parts": 39,
+  "PurchasePrice": 12000,
+  "Rarity": "Rare",
+  "Signature": "big|happy|smile|none|nub|backpack+sunhat||1.00",
+  "SizeStuds": [
+    4.06,
+    4.22,
+    4.95
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.explorer)",
+  "SpawnChance": 0.004658973975903166
+}

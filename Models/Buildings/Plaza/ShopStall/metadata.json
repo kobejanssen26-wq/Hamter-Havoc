@@ -1,0 +1,16 @@
+{
+  "Category": "Buildings/Plaza",
+  "Files": [
+    "ShopStall.rbxm",
+    "ShopStall.glb"
+  ],
+  "Hash": "08acfda4334cdf43",
+  "Name": "ShopStall",
+  "Parts": 20,
+  "SizeStuds": [
+    11,
+    11.4,
+    8.35
+  ],
+  "Source": "PlazaBuilder (ShopStall)"
+}

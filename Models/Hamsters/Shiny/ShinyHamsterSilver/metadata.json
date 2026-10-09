@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Shiny",
+  "CollectionValue": 42,
+  "DisplayName": "Silver",
+  "Files": [
+    "ShinyHamsterSilver.rbxm",
+    "ShinyHamsterSilver.glb"
+  ],
+  "HamsterId": "silver",
+  "Hash": "cd6855dc1e060794",
+  "IncomePerSecond": 23.636363636363637,
+  "MinRebirth": 0,
+  "MovementSpeed": 12,
+  "Name": "ShinyHamsterSilver",
+  "Parts": 36,
+  "PurchasePrice": 2600,
+  "Rarity": "Shiny",
+  "Signature": "bear|dot|smile|none|nub|monocle+tophat||1.00",
+  "SizeStuds": [
+    3.89,
+    4.9,
+    4.05
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.silver)",
+  "SpawnChance": 0.008652380240963022
+}

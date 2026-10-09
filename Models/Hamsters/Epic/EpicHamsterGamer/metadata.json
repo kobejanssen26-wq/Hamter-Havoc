@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Epic",
+  "CollectionValue": 157,
+  "DisplayName": "Gamer",
+  "Files": [
+    "EpicHamsterGamer.rbxm",
+    "EpicHamsterGamer.glb"
+  ],
+  "HamsterId": "gamer",
+  "Hash": "4c9b59b85a4720b9",
+  "IncomePerSecond": 300,
+  "MinRebirth": 0,
+  "MovementSpeed": 16.5,
+  "Name": "EpicHamsterGamer",
+  "Parts": 53,
+  "PurchasePrice": 60000,
+  "Rarity": "Epic",
+  "Signature": "round|dot|tongue|none|nub|headphones+held_donut+nerd_glasses||1.00",
+  "SizeStuds": [
+    4,
+    4.9,
+    4.04
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.gamer)",
+  "SpawnChance": 0.0014250979220409683
+}

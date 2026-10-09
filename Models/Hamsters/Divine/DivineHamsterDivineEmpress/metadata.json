@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Divine",
+  "CollectionValue": 1377,
+  "DisplayName": "Divine Empress",
+  "Files": [
+    "DivineHamsterDivineEmpress.rbxm",
+    "DivineHamsterDivineEmpress.glb"
+  ],
+  "HamsterId": "divine_empress",
+  "Hash": "e624794ebf726240",
+  "IncomePerSecond": 35714.28571428572,
+  "MinRebirth": 3,
+  "MovementSpeed": 30,
+  "Name": "DivineHamsterDivineEmpress",
+  "Parts": 57,
+  "PurchasePrice": 20000000,
+  "Rarity": "Divine",
+  "Signature": "fluffy|sparkle|smile|none|nub|cape_royal+held_flower+tiara||1.00",
+  "SizeStuds": [
+    3.89,
+    4.79,
+    4.13
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.divine_empress)",
+  "SpawnChance": 0.000055060601533401044
+}

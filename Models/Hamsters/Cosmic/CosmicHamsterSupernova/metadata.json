@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Cosmic",
+  "CollectionValue": 2182,
+  "DisplayName": "Supernova",
+  "Files": [
+    "CosmicHamsterSupernova.rbxm",
+    "CosmicHamsterSupernova.glb"
+  ],
+  "HamsterId": "supernova",
+  "Hash": "aa13609d8175f871",
+  "IncomePerSecond": 118571.42857142857,
+  "MinRebirth": 5,
+  "MovementSpeed": 34,
+  "Name": "CosmicHamsterSupernova",
+  "Parts": 47,
+  "PurchasePrice": 83000000,
+  "Rarity": "Cosmic",
+  "Signature": "tiny|glow|smile|none|none|orbit_shards+sun_crown+tail_flame|flame|1.00",
+  "SizeStuds": [
+    5.02,
+    4.69,
+    5.53
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.supernova)",
+  "SpawnChance": 0.00002294191730558377
+}

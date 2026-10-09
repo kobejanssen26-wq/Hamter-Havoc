@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Ancient",
+  "CollectionValue": 14460,
+  "DisplayName": "Mammoth Pup",
+  "Files": [
+    "AncientHamsterMammothPup.rbxm",
+    "AncientHamsterMammothPup.glb"
+  ],
+  "HamsterId": "mammoth_pup",
+  "Hash": "d42a16112afdd1ae",
+  "IncomePerSecond": 6285714.285714285,
+  "MinRebirth": 12,
+  "MovementSpeed": 48,
+  "Name": "AncientHamsterMammothPup",
+  "Parts": 49,
+  "PurchasePrice": 8800000000,
+  "Rarity": "Ancient",
+  "Signature": "big|big|oh|none|nub|ruff+stone_crown||1.25",
+  "SizeStuds": [
+    5.08,
+    5.56,
+    5.06
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.mammoth_pup)",
+  "SpawnChance": 2.243209692101524e-6
+}

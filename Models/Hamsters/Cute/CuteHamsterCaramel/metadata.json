@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Cute",
+  "CollectionValue": 24,
+  "DisplayName": "Caramel",
+  "Files": [
+    "CuteHamsterCaramel.rbxm",
+    "CuteHamsterCaramel.glb"
+  ],
+  "HamsterId": "caramel",
+  "Hash": "a2b3fbd5aa1bec83",
+  "IncomePerSecond": 7.625,
+  "MinRebirth": 0,
+  "MovementSpeed": 10.5,
+  "Name": "CuteHamsterCaramel",
+  "Parts": 38,
+  "PurchasePrice": 610,
+  "Rarity": "Cute",
+  "Signature": "fluffy|big|smile|none|nub|scarf||1.00",
+  "SizeStuds": [
+    3.89,
+    3.9,
+    4.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.caramel)",
+  "SpawnChance": 0.01802579216867296
+}

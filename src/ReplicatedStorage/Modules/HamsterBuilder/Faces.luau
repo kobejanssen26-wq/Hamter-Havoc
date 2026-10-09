@@ -74,7 +74,7 @@ Faces.Eyes.wink = function(ctx, spec)
 	Faces.Eyes.big(ctx, spec)
 	-- replace the right eye by a wink arc
 	for _, part in ctx.Model:GetChildren() do
-		if part:IsA("BasePart") and part.Position.X > 0.3 and (part.Name == "Eye" or part.Name == "Iris" or part.Name == "EyeShine" or part.Name == "EyeShine2") then
+		if part:IsA("BasePart") and part.CFrame.Position.X > 0.3 and (part.Name == "Eye" or part.Name == "Iris" or part.Name == "EyeShine" or part.Name == "EyeShine2") then
 			part:Destroy()
 		end
 	end

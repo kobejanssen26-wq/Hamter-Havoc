@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Cosmic",
+  "CollectionValue": 1984,
+  "DisplayName": "Nebula",
+  "Files": [
+    "CosmicHamsterNebula.rbxm",
+    "CosmicHamsterNebula.glb"
+  ],
+  "HamsterId": "nebula",
+  "Hash": "082f5c9ef3758964",
+  "IncomePerSecond": 107142.85714285714,
+  "MinRebirth": 5,
+  "MovementSpeed": 34,
+  "Name": "CosmicHamsterNebula",
+  "Parts": 80,
+  "PurchasePrice": 75000000,
+  "Rarity": "Cosmic",
+  "Signature": "round|sparkle|smile|none|nub|galaxy_crown+orbit_stars+wings_cosmic|stars|1.00",
+  "SizeStuds": [
+    7.43,
+    5,
+    5.1
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.nebula)",
+  "SpawnChance": 0.00002294191730558377
+}

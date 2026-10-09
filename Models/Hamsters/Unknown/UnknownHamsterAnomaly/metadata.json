@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Unknown",
+  "CollectionValue": 27070,
+  "DisplayName": "Anomaly",
+  "Files": [
+    "UnknownHamsterAnomaly.rbxm",
+    "UnknownHamsterAnomaly.glb"
+  ],
+  "HamsterId": "anomaly",
+  "Hash": "b0c70a522e935550",
+  "IncomePerSecond": 25555555.555555556,
+  "MinRebirth": 15,
+  "MovementSpeed": 56,
+  "Name": "UnknownHamsterAnomaly",
+  "Parts": 63,
+  "PurchasePrice": 46000000000,
+  "Rarity": "???",
+  "Signature": "elf|star|grin|none|nub|glasses_3d+orbit_ring+propeller+wings_cosmic|glitch|1.00",
+  "SizeStuds": [
+    7.43,
+    4.54,
+    5.05
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.anomaly)",
+  "SpawnChance": 6.729629076304572e-7
+}

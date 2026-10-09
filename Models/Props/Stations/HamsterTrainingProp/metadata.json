@@ -1,0 +1,17 @@
+{
+  "Category": "Props/Stations",
+  "Files": [
+    "HamsterTrainingProp.rbxm",
+    "HamsterTrainingProp.glb"
+  ],
+  "Hash": "c5e14c27df306d4d",
+  "Name": "HamsterTrainingProp",
+  "Notes": "Shown on the upgrade pedestal, grows with the upgrade level.",
+  "Parts": 3,
+  "SizeStuds": [
+    0.4,
+    4.2,
+    4.2
+  ],
+  "Source": "HouseBuilder.StationProps.HamsterTraining"
+}

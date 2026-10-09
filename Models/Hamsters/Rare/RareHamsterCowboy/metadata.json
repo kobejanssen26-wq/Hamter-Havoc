@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Rare",
+  "CollectionValue": 63,
+  "DisplayName": "Cowboy",
+  "Files": [
+    "RareHamsterCowboy.rbxm",
+    "RareHamsterCowboy.glb"
+  ],
+  "HamsterId": "cowboy",
+  "Hash": "c50e1357b2644b0d",
+  "IncomePerSecond": 65.33333333333333,
+  "MinRebirth": 0,
+  "MovementSpeed": 14,
+  "Name": "RareHamsterCowboy",
+  "Parts": 41,
+  "PurchasePrice": 9800,
+  "Rarity": "Rare",
+  "Signature": "floppy|happy|tongue|none|nub|bandana+cowboy||1.00",
+  "SizeStuds": [
+    5.1,
+    4.48,
+    4.5
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.cowboy)",
+  "SpawnChance": 0.004658973975903166
+}

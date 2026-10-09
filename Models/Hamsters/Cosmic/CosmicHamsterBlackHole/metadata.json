@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Cosmic",
+  "CollectionValue": 2380,
+  "DisplayName": "Black Hole",
+  "Files": [
+    "CosmicHamsterBlackHole.rbxm",
+    "CosmicHamsterBlackHole.glb"
+  ],
+  "HamsterId": "black_hole",
+  "Hash": "b65bcd4db88ff9c9",
+  "IncomePerSecond": 128571.42857142857,
+  "MinRebirth": 5,
+  "MovementSpeed": 34,
+  "Name": "CosmicHamsterBlackHole",
+  "Parts": 30,
+  "PurchasePrice": 90000000,
+  "Rarity": "Cosmic",
+  "Signature": "none|void|none|none|nub|hood+orbit_ring+orbit_shards|glitch|1.00",
+  "SizeStuds": [
+    5.23,
+    4.15,
+    5.59
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.black_hole)",
+  "SpawnChance": 0.00002294191730558377
+}

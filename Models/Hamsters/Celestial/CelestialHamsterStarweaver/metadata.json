@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Celestial",
+  "CollectionValue": 3967,
+  "DisplayName": "Starweaver",
+  "Files": [
+    "CelestialHamsterStarweaver.rbxm",
+    "CelestialHamsterStarweaver.glb"
+  ],
+  "HamsterId": "starweaver",
+  "Hash": "e7b3e58dcf0f3329",
+  "IncomePerSecond": 431818.1818181818,
+  "MinRebirth": 7,
+  "MovementSpeed": 38,
+  "Name": "CelestialHamsterStarweaver",
+  "Parts": 81,
+  "PurchasePrice": 380000000,
+  "Rarity": "Celestial",
+  "Signature": "fluffy|star|smile|none|nub|cape_royal+orbit_stars+star_crown|stars|1.00",
+  "SizeStuds": [
+    4.94,
+    4.65,
+    4.94
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.starweaver)",
+  "SpawnChance": 0.00001211333233734823
+}

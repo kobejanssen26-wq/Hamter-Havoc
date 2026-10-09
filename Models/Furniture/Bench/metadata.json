@@ -1,0 +1,16 @@
+{
+  "Category": "Furniture",
+  "Files": [
+    "Bench.rbxm",
+    "Bench.glb"
+  ],
+  "Hash": "06c2a4e70bfee01d",
+  "Name": "Bench",
+  "Parts": 4,
+  "SizeStuds": [
+    5,
+    3.22,
+    1.97
+  ],
+  "Source": "Decor.bench"
+}

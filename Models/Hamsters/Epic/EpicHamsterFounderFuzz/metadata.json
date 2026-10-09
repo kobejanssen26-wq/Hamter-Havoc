@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Epic",
+  "CollectionValue": 131,
+  "DisplayName": "Founder Fuzz",
+  "Files": [
+    "EpicHamsterFounderFuzz.rbxm",
+    "EpicHamsterFounderFuzz.glb"
+  ],
+  "HamsterId": "founder_fuzz",
+  "Hash": "3668ef63867efe7b",
+  "IncomePerSecond": 250,
+  "MinRebirth": 0,
+  "MovementSpeed": 16.5,
+  "Name": "EpicHamsterFounderFuzz",
+  "Parts": 51,
+  "PurchasePrice": 50000,
+  "Rarity": "Epic",
+  "Signature": "fluffy|sparkle|smile|none|nub|bowtie+medal+party|sparkle|1.00",
+  "SizeStuds": [
+    3.89,
+    5.61,
+    4.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.founder_fuzz)",
+  "SpawnChance": 0
+}

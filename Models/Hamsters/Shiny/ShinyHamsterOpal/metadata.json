@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Shiny",
+  "CollectionValue": 47,
+  "DisplayName": "Opal",
+  "Files": [
+    "ShinyHamsterOpal.rbxm",
+    "ShinyHamsterOpal.glb"
+  ],
+  "HamsterId": "opal",
+  "Hash": "59789a10cfa03ab6",
+  "IncomePerSecond": 26.363636363636363,
+  "MinRebirth": 0,
+  "MovementSpeed": 12,
+  "Name": "ShinyHamsterOpal",
+  "Parts": 44,
+  "PurchasePrice": 2900,
+  "Rarity": "Shiny",
+  "Signature": "round|sparkle|cat|spots|nub|moon_circlet||1.00",
+  "SizeStuds": [
+    3.89,
+    4.45,
+    4.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.opal)",
+  "SpawnChance": 0.008652380240963022
+}

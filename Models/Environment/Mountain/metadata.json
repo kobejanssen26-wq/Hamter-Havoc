@@ -1,0 +1,16 @@
+{
+  "Category": "Environment",
+  "Files": [
+    "Mountain.rbxm",
+    "Mountain.glb"
+  ],
+  "Hash": "41d47f9791689375",
+  "Name": "Mountain",
+  "Parts": 5,
+  "SizeStuds": [
+    138.76,
+    140.25,
+    109.2
+  ],
+  "Source": "Decor.mountain"
+}

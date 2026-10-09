@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Basic",
+  "CollectionValue": 10,
+  "DisplayName": "Brownie",
+  "Files": [
+    "BasicHamsterBrownie.rbxm",
+    "BasicHamsterBrownie.glb"
+  ],
+  "HamsterId": "brownie",
+  "Hash": "0e9783ff01cc25d6",
+  "IncomePerSecond": 1.6666666666666667,
+  "MinRebirth": 0,
+  "MovementSpeed": 9,
+  "Name": "BasicHamsterBrownie",
+  "Parts": 30,
+  "PurchasePrice": 100,
+  "Rarity": "Basic",
+  "Signature": "round|dot|smile|none|nub|||1.00",
+  "SizeStuds": [
+    3.89,
+    3.66,
+    4.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.brownie)",
+  "SpawnChance": 0.03499407119678378
+}

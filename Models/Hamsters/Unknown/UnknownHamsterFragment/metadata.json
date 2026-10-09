@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Unknown",
+  "CollectionValue": 24988,
+  "DisplayName": "Fragment",
+  "Files": [
+    "UnknownHamsterFragment.rbxm",
+    "UnknownHamsterFragment.glb"
+  ],
+  "HamsterId": "fragment",
+  "Hash": "bef84264f0e4ea93",
+  "IncomePerSecond": 23333333.333333332,
+  "MinRebirth": 15,
+  "MovementSpeed": 56,
+  "Name": "UnknownHamsterFragment",
+  "Parts": 57,
+  "PurchasePrice": 42000000000,
+  "Rarity": "???",
+  "Signature": "tiny|crystal|smile|none|none|crystal_crown+orbit_shards+tail_crystal+wings_ice|glitch|1.00",
+  "SizeStuds": [
+    8.35,
+    5.23,
+    5.77
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.fragment)",
+  "SpawnChance": 6.729629076304572e-7
+}

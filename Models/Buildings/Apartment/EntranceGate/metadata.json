@@ -1,0 +1,17 @@
+{
+  "Category": "Buildings/Apartment",
+  "Files": [
+    "EntranceGate.rbxm",
+    "EntranceGate.glb"
+  ],
+  "Hash": "a7e12de5d6838f4f",
+  "Name": "EntranceGate",
+  "Notes": "Gate with name canopy, security lasers and the security kiosk.",
+  "Parts": 23,
+  "SizeStuds": [
+    22,
+    13.33,
+    7.4
+  ],
+  "Source": "HouseBuilder (buildGate)"
+}

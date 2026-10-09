@@ -1,0 +1,16 @@
+{
+  "Category": "Plants",
+  "Files": [
+    "PinkFlowerBed.rbxm",
+    "PinkFlowerBed.glb"
+  ],
+  "Hash": "9cc6f3cc5e050837",
+  "Name": "PinkFlowerBed",
+  "Parts": 20,
+  "SizeStuds": [
+    7,
+    1.82,
+    7
+  ],
+  "Source": "Decor.flowerBed(pink)"
+}

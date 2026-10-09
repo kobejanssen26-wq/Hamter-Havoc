@@ -1,0 +1,17 @@
+{
+  "Category": "Props/Stations",
+  "Files": [
+    "CollectionRangeProp.rbxm",
+    "CollectionRangeProp.glb"
+  ],
+  "Hash": "ad4d2b492de95782",
+  "Name": "CollectionRangeProp",
+  "Notes": "Shown on the upgrade pedestal, grows with the upgrade level.",
+  "Parts": 3,
+  "SizeStuds": [
+    4.4,
+    3.4,
+    4.4
+  ],
+  "Source": "HouseBuilder.StationProps.CollectionRange"
+}

@@ -1,0 +1,17 @@
+{
+  "Category": "Props/Stations",
+  "Files": [
+    "ExtraStorageProp.rbxm",
+    "ExtraStorageProp.glb"
+  ],
+  "Hash": "ecc58d055edf69dc",
+  "Name": "ExtraStorageProp",
+  "Notes": "Shown on the upgrade pedestal, grows with the upgrade level.",
+  "Parts": 6,
+  "SizeStuds": [
+    3.4,
+    3.3,
+    1.1
+  ],
+  "Source": "HouseBuilder.StationProps.ExtraStorage"
+}

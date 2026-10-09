@@ -1,0 +1,17 @@
+{
+  "Category": "Environment",
+  "Files": [
+    "BurrowHill.rbxm",
+    "BurrowHill.glb"
+  ],
+  "Hash": "24b61d66dad2fa09",
+  "Name": "BurrowHill",
+  "Notes": "Where the hamsters come out of the ground.",
+  "Parts": 3,
+  "SizeStuds": [
+    32,
+    20.5,
+    52
+  ],
+  "Source": "PathBuilder (buildBurrow)"
+}

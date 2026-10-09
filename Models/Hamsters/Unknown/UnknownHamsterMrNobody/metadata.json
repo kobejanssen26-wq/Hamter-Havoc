@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Unknown",
+  "CollectionValue": 22905,
+  "DisplayName": "Mr. Nobody",
+  "Files": [
+    "UnknownHamsterMrNobody.rbxm",
+    "UnknownHamsterMrNobody.glb"
+  ],
+  "HamsterId": "mr_nobody",
+  "Hash": "c385a045577ab7ff",
+  "IncomePerSecond": 21666666.666666668,
+  "MinRebirth": 15,
+  "MovementSpeed": 56,
+  "Name": "UnknownHamsterMrNobody",
+  "Parts": 42,
+  "PurchasePrice": 39000000000,
+  "Rarity": "???",
+  "Signature": "none|dot|flat|none|nub|cape_royal+monocle+orbit_orbs+tophat|glitch|1.00",
+  "SizeStuds": [
+    4.5,
+    5.15,
+    4.73
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.mr_nobody)",
+  "SpawnChance": 6.729629076304572e-7
+}

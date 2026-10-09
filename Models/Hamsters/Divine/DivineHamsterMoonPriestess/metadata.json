@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Divine",
+  "CollectionValue": 1322,
+  "DisplayName": "Moon Priestess",
+  "Files": [
+    "DivineHamsterMoonPriestess.rbxm",
+    "DivineHamsterMoonPriestess.glb"
+  ],
+  "HamsterId": "moon_priestess",
+  "Hash": "4fe8f388cc35f739",
+  "IncomePerSecond": 33928.57142857143,
+  "MinRebirth": 3,
+  "MovementSpeed": 30,
+  "Name": "DivineHamsterMoonPriestess",
+  "Parts": 44,
+  "PurchasePrice": 19000000,
+  "Rarity": "Divine",
+  "Signature": "elf|sleepy|smile|none|nub|held_wand+moon_circlet+wings_fairy||1.00",
+  "SizeStuds": [
+    5.84,
+    4.45,
+    4.25
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.moon_priestess)",
+  "SpawnChance": 0.000055060601533401044
+}

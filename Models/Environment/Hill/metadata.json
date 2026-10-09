@@ -1,0 +1,16 @@
+{
+  "Category": "Environment",
+  "Files": [
+    "Hill.rbxm",
+    "Hill.glb"
+  ],
+  "Hash": "78088e449f371777",
+  "Name": "Hill",
+  "Parts": 1,
+  "SizeStuds": [
+    60,
+    18,
+    50
+  ],
+  "Source": "Decor.hill"
+}

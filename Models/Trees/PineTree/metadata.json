@@ -1,0 +1,16 @@
+{
+  "Category": "Trees",
+  "Files": [
+    "PineTree.rbxm",
+    "PineTree.glb"
+  ],
+  "Hash": "402e3474a80996b8",
+  "Name": "PineTree",
+  "Parts": 4,
+  "SizeStuds": [
+    8.52,
+    12.4,
+    8.52
+  ],
+  "Source": "Decor.tree(pine)"
+}

@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Legendary",
+  "CollectionValue": 413,
+  "DisplayName": "Archmage",
+  "Files": [
+    "LegendaryHamsterArchmage.rbxm",
+    "LegendaryHamsterArchmage.glb"
+  ],
+  "HamsterId": "archmage",
+  "Hash": "c7eca21cb417a1fc",
+  "IncomePerSecond": 2852.9411764705883,
+  "MinRebirth": 0,
+  "MovementSpeed": 22,
+  "Name": "LegendaryHamsterArchmage",
+  "Parts": 50,
+  "PurchasePrice": 970000,
+  "Rarity": "Legendary",
+  "Signature": "elf|glow|grin|none|nub|cape+held_staff+orbit_orbs+wizard||1.00",
+  "SizeStuds": [
+    5.36,
+    6.83,
+    4.65
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.archmage)",
+  "SpawnChance": 0.0002691851630521829
+}

@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Mythic",
+  "CollectionValue": 891,
+  "DisplayName": "Reaper",
+  "Files": [
+    "MythicHamsterReaper.rbxm",
+    "MythicHamsterReaper.glb"
+  ],
+  "HamsterId": "reaper",
+  "Hash": "ca086bd311696239",
+  "IncomePerSecond": 11818.181818181818,
+  "MinRebirth": 1,
+  "MovementSpeed": 26,
+  "Name": "MythicHamsterReaper",
+  "Parts": 25,
+  "PurchasePrice": 5200000,
+  "Rarity": "Mythic",
+  "Signature": "none|void|none|none|nub|held_scythe+hood|smoke|1.00",
+  "SizeStuds": [
+    3.89,
+    5.54,
+    4.5
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.reaper)",
+  "SpawnChance": 0.00013459258152609144
+}

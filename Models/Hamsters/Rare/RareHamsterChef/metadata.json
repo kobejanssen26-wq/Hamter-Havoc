@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Rare",
+  "CollectionValue": 66,
+  "DisplayName": "Chef",
+  "Files": [
+    "RareHamsterChef.rbxm",
+    "RareHamsterChef.glb"
+  ],
+  "HamsterId": "chef",
+  "Hash": "582883cd3cc3d81d",
+  "IncomePerSecond": 66.66666666666667,
+  "MinRebirth": 0,
+  "MovementSpeed": 14,
+  "Name": "RareHamsterChef",
+  "Parts": 36,
+  "PurchasePrice": 10000,
+  "Rarity": "Rare",
+  "Signature": "bear|happy|open|none|nub|apron+chef||1.00",
+  "SizeStuds": [
+    3.89,
+    5.25,
+    4.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.chef)",
+  "SpawnChance": 0.004658973975903166
+}

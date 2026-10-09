@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Unknown",
+  "CollectionValue": 29152,
+  "DisplayName": "Origin",
+  "Files": [
+    "UnknownHamsterOrigin.rbxm",
+    "UnknownHamsterOrigin.glb"
+  ],
+  "HamsterId": "origin",
+  "Hash": "80939eba9d62ee1b",
+  "IncomePerSecond": 27222222.222222224,
+  "MinRebirth": 15,
+  "MovementSpeed": 56,
+  "Name": "UnknownHamsterOrigin",
+  "Parts": 77,
+  "PurchasePrice": 49000000000,
+  "Rarity": "???",
+  "Signature": "round|glow|smile|none|nub|crown_of_thorns+halo+orbit_stars+wings_seraph|glitch+sparkle|1.00",
+  "SizeStuds": [
+    9.57,
+    4.47,
+    5.58
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.origin)",
+  "SpawnChance": 6.729629076304572e-7
+}

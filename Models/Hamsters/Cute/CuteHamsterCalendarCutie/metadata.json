@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Cute",
+  "CollectionValue": 23,
+  "DisplayName": "Calendar Cutie",
+  "Files": [
+    "CuteHamsterCalendarCutie.rbxm",
+    "CuteHamsterCalendarCutie.glb"
+  ],
+  "HamsterId": "calendar_cutie",
+  "Hash": "da404f88444ff400",
+  "IncomePerSecond": 7,
+  "MinRebirth": 0,
+  "MovementSpeed": 10.5,
+  "Name": "CuteHamsterCalendarCutie",
+  "Parts": 40,
+  "PurchasePrice": 560,
+  "Rarity": "Cute",
+  "Signature": "bunny|heart|open|none|nub|held_balloon+tiara|hearts|1.00",
+  "SizeStuds": [
+    3.89,
+    5.8,
+    4.3
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.calendar_cutie)",
+  "SpawnChance": 0
+}

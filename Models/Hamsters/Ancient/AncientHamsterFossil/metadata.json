@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Ancient",
+  "CollectionValue": 11568,
+  "DisplayName": "Fossil",
+  "Files": [
+    "AncientHamsterFossil.rbxm",
+    "AncientHamsterFossil.glb"
+  ],
+  "HamsterId": "fossil",
+  "Hash": "98c6cdb7270d3c58",
+  "IncomePerSecond": 5000000,
+  "MinRebirth": 12,
+  "MovementSpeed": 48,
+  "Name": "AncientHamsterFossil",
+  "Parts": 44,
+  "PurchasePrice": 7000000000,
+  "Rarity": "Ancient",
+  "Signature": "tiny|dot|flat|stripes|nub|floating_runes+stone_crown||1.00",
+  "SizeStuds": [
+    4.72,
+    4.45,
+    4.72
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.fossil)",
+  "SpawnChance": 2.243209692101524e-6
+}

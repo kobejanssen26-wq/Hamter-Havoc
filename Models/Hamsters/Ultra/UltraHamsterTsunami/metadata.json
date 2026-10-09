@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Ultra",
+  "CollectionValue": 223,
+  "DisplayName": "Tsunami",
+  "Files": [
+    "UltraHamsterTsunami.rbxm",
+    "UltraHamsterTsunami.glb"
+  ],
+  "HamsterId": "tsunami",
+  "Hash": "ed127a5b7ca18e93",
+  "IncomePerSecond": 807.6923076923077,
+  "MinRebirth": 0,
+  "MovementSpeed": 19,
+  "Name": "UltraHamsterTsunami",
+  "Parts": 43,
+  "PurchasePrice": 210000,
+  "Rarity": "Ultra",
+  "Signature": "fluffy|sparkle|smile|none|none|held_trident+tail_fish|bubbles|1.00",
+  "SizeStuds": [
+    3.89,
+    5.58,
+    6.14
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.tsunami)",
+  "SpawnChance": 0.0008412036345380715
+}

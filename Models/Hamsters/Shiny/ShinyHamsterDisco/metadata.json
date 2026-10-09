@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Shiny",
+  "CollectionValue": 49,
+  "DisplayName": "Disco",
+  "Files": [
+    "ShinyHamsterDisco.rbxm",
+    "ShinyHamsterDisco.glb"
+  ],
+  "HamsterId": "disco",
+  "Hash": "eb8a3ce765154456",
+  "IncomePerSecond": 27.272727272727273,
+  "MinRebirth": 0,
+  "MovementSpeed": 12,
+  "Name": "ShinyHamsterDisco",
+  "Parts": 45,
+  "PurchasePrice": 3000,
+  "Rarity": "Shiny",
+  "Signature": "big|happy|grin|none|nub|ground_glow+headphones+sunglasses|sparkle|1.00",
+  "SizeStuds": [
+    4.6,
+    4.99,
+    4.6
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.disco)",
+  "SpawnChance": 0.008652380240963022
+}

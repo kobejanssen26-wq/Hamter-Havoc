@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Legendary",
+  "CollectionValue": 425,
+  "DisplayName": "Sunday Sunbeam",
+  "Files": [
+    "LegendaryHamsterSundaySunbeam.rbxm",
+    "LegendaryHamsterSundaySunbeam.glb"
+  ],
+  "HamsterId": "sunday_sunbeam",
+  "Hash": "d573287b148e435f",
+  "IncomePerSecond": 2941.176470588235,
+  "MinRebirth": 0,
+  "MovementSpeed": 22,
+  "Name": "LegendaryHamsterSundaySunbeam",
+  "Parts": 56,
+  "PurchasePrice": 1000000,
+  "Rarity": "Legendary",
+  "Signature": "round|happy|open|none|nub|ground_glow+sun_crown+wings_angel|sparkle|1.00",
+  "SizeStuds": [
+    7.82,
+    4.78,
+    4.82
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.sunday_sunbeam)",
+  "SpawnChance": 0
+}

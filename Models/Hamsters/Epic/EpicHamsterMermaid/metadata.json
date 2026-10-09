@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Epic",
+  "CollectionValue": 135,
+  "DisplayName": "Mermaid",
+  "Files": [
+    "EpicHamsterMermaid.rbxm",
+    "EpicHamsterMermaid.glb"
+  ],
+  "HamsterId": "mermaid",
+  "Hash": "92fee86cdc86c608",
+  "IncomePerSecond": 255,
+  "MinRebirth": 0,
+  "MovementSpeed": 16.5,
+  "Name": "EpicHamsterMermaid",
+  "Parts": 47,
+  "PurchasePrice": 51000,
+  "Rarity": "Epic",
+  "Signature": "fluffy|sparkle|smile|none|none|lei+tail_fish||1.00",
+  "SizeStuds": [
+    3.89,
+    4.38,
+    6.14
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.mermaid)",
+  "SpawnChance": 0.0014250979220409683
+}

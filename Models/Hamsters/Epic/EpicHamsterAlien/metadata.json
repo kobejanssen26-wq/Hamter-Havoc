@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Epic",
+  "CollectionValue": 128,
+  "DisplayName": "Alien",
+  "Files": [
+    "EpicHamsterAlien.rbxm",
+    "EpicHamsterAlien.glb"
+  ],
+  "HamsterId": "alien",
+  "Hash": "4ec6f0fb41cf9c6f",
+  "IncomePerSecond": 245,
+  "MinRebirth": 0,
+  "MovementSpeed": 16.5,
+  "Name": "EpicHamsterAlien",
+  "Parts": 29,
+  "PurchasePrice": 49000,
+  "Rarity": "Epic",
+  "Signature": "elf|void|oh|none|nub|alien||1.00",
+  "SizeStuds": [
+    5.36,
+    5.05,
+    4.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.alien)",
+  "SpawnChance": 0.0014250979220409683
+}

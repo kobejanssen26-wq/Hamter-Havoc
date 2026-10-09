@@ -1,0 +1,17 @@
+{
+  "Category": "Buildings/Apartment",
+  "Files": [
+    "Roof.rbxm",
+    "Roof.glb"
+  ],
+  "Hash": "df2724588d312fed",
+  "Name": "Roof",
+  "Notes": "Sits on top of the highest floor.",
+  "Parts": 20,
+  "SizeStuds": [
+    54,
+    9.6,
+    36
+  ],
+  "Source": "HouseBuilder (buildRoof)"
+}

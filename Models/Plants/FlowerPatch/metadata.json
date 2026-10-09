@@ -1,0 +1,16 @@
+{
+  "Category": "Plants",
+  "Files": [
+    "FlowerPatch.rbxm",
+    "FlowerPatch.glb"
+  ],
+  "Hash": "254a3e548b7764a8",
+  "Name": "FlowerPatch",
+  "Parts": 4,
+  "SizeStuds": [
+    4.25,
+    1.27,
+    4.25
+  ],
+  "Source": "Decor.flowers"
+}

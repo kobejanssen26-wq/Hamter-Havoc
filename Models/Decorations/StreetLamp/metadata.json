@@ -1,0 +1,16 @@
+{
+  "Category": "Decorations",
+  "Files": [
+    "StreetLamp.rbxm",
+    "StreetLamp.glb"
+  ],
+  "Hash": "e2a6b481ca08bba1",
+  "Name": "StreetLamp",
+  "Parts": 5,
+  "SizeStuds": [
+    1.6,
+    12,
+    4.5
+  ],
+  "Source": "Decor.streetLamp"
+}

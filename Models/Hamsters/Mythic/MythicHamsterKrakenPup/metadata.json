@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Mythic",
+  "CollectionValue": 640,
+  "DisplayName": "Kraken Pup",
+  "Files": [
+    "MythicHamsterKrakenPup.rbxm",
+    "MythicHamsterKrakenPup.glb"
+  ],
+  "HamsterId": "kraken_pup",
+  "Hash": "b4fb2f944bde1d70",
+  "IncomePerSecond": 8636.363636363636,
+  "MinRebirth": 1,
+  "MovementSpeed": 26,
+  "Name": "MythicHamsterKrakenPup",
+  "Parts": 48,
+  "PurchasePrice": 3800000,
+  "Rarity": "Mythic",
+  "Signature": "tiny|glow|oh|none|none|fish_scales+held_trident+hood+tail_fish|bubbles|1.00",
+  "SizeStuds": [
+    3.89,
+    5.58,
+    6.63
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.kraken_pup)",
+  "SpawnChance": 0.00013459258152609144
+}

@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Epic",
+  "CollectionValue": 138,
+  "DisplayName": "Pumpkin",
+  "Files": [
+    "EpicHamsterPumpkin.rbxm",
+    "EpicHamsterPumpkin.glb"
+  ],
+  "HamsterId": "pumpkin",
+  "Hash": "c139d2391b15badc",
+  "IncomePerSecond": 265,
+  "MinRebirth": 0,
+  "MovementSpeed": 16.5,
+  "Name": "EpicHamsterPumpkin",
+  "Parts": 38,
+  "PurchasePrice": 53000,
+  "Rarity": "Epic",
+  "Signature": "tiny|angry|grin|none|nub|held_lantern+sprout||1.00",
+  "SizeStuds": [
+    3.89,
+    4.44,
+    4.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.pumpkin)",
+  "SpawnChance": 0.0014250979220409683
+}

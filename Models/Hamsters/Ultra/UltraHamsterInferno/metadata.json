@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Ultra",
+  "CollectionValue": 189,
+  "DisplayName": "Inferno",
+  "Files": [
+    "UltraHamsterInferno.rbxm",
+    "UltraHamsterInferno.glb"
+  ],
+  "HamsterId": "inferno",
+  "Hash": "bf057e8eefdda80c",
+  "IncomePerSecond": 692.3076923076923,
+  "MinRebirth": 0,
+  "MovementSpeed": 19,
+  "Name": "UltraHamsterInferno",
+  "Parts": 54,
+  "PurchasePrice": 180000,
+  "Rarity": "Ultra",
+  "Signature": "cat|angry|grin|none|none|flame_crown+tail_flame+wings_flame|flame|1.00",
+  "SizeStuds": [
+    8.25,
+    5.1,
+    4.78
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.inferno)",
+  "SpawnChance": 0.0008412036345380715
+}

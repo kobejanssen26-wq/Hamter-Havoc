@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Mythic",
+  "CollectionValue": 835,
+  "DisplayName": "Titan",
+  "Files": [
+    "MythicHamsterTitan.rbxm",
+    "MythicHamsterTitan.glb"
+  ],
+  "HamsterId": "titan",
+  "Hash": "382e461533bbbb2f",
+  "IncomePerSecond": 11136.363636363636,
+  "MinRebirth": 1,
+  "MovementSpeed": 26,
+  "Name": "MythicHamsterTitan",
+  "Parts": 39,
+  "PurchasePrice": 4900000,
+  "Rarity": "Mythic",
+  "Signature": "tiny|glow|flat|none|nub|armor+golden_helm+held_hammer||1.45",
+  "SizeStuds": [
+    5.64,
+    6.02,
+    5.87
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.titan)",
+  "SpawnChance": 0.00013459258152609144
+}

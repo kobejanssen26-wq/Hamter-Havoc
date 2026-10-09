@@ -1,0 +1,16 @@
+{
+  "Category": "Environment",
+  "Files": [
+    "Cloud.rbxm",
+    "Cloud.glb"
+  ],
+  "Hash": "ccfac6db8f164d96",
+  "Name": "Cloud",
+  "Parts": 4,
+  "SizeStuds": [
+    59.04,
+    18.07,
+    27.04
+  ],
+  "Source": "Decor.cloud"
+}

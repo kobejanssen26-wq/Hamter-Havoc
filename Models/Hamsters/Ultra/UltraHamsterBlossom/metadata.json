@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Ultra",
+  "CollectionValue": 232,
+  "DisplayName": "Blossom",
+  "Files": [
+    "UltraHamsterBlossom.rbxm",
+    "UltraHamsterBlossom.glb"
+  ],
+  "HamsterId": "blossom",
+  "Hash": "f85811771b22698f",
+  "IncomePerSecond": 846.1538461538462,
+  "MinRebirth": 0,
+  "MovementSpeed": 19,
+  "Name": "UltraHamsterBlossom",
+  "Parts": 60,
+  "PurchasePrice": 220000,
+  "Rarity": "Ultra",
+  "Signature": "round|heart|smile|none|nub|flowers+wings_butterfly|hearts|1.00",
+  "SizeStuds": [
+    6.76,
+    3.79,
+    4.45
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.blossom)",
+  "SpawnChance": 0.0008412036345380715
+}

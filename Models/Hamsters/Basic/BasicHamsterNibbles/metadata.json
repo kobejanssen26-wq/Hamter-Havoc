@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Basic",
+  "CollectionValue": 15,
+  "DisplayName": "Nibbles",
+  "Files": [
+    "BasicHamsterNibbles.rbxm",
+    "BasicHamsterNibbles.glb"
+  ],
+  "HamsterId": "nibbles",
+  "Hash": "852abdac06c89e33",
+  "IncomePerSecond": 2.5,
+  "MinRebirth": 0,
+  "MovementSpeed": 9,
+  "Name": "BasicHamsterNibbles",
+  "Parts": 36,
+  "PurchasePrice": 150,
+  "Rarity": "Basic",
+  "Signature": "tiny|big|open|none|nub|held_seed||0.85",
+  "SizeStuds": [
+    3.31,
+    2.85,
+    3.41
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.nibbles)",
+  "SpawnChance": 0.03499407119678378
+}

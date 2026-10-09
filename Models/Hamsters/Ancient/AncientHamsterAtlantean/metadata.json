@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Ancient",
+  "CollectionValue": 15906,
+  "DisplayName": "Atlantean",
+  "Files": [
+    "AncientHamsterAtlantean.rbxm",
+    "AncientHamsterAtlantean.glb"
+  ],
+  "HamsterId": "atlantean",
+  "Hash": "bbc1bb9a1fecc3fa",
+  "IncomePerSecond": 6857142.857142857,
+  "MinRebirth": 12,
+  "MovementSpeed": 48,
+  "Name": "AncientHamsterAtlantean",
+  "Parts": 59,
+  "PurchasePrice": 9600000000,
+  "Rarity": "Ancient",
+  "Signature": "fluffy|crystal|smile|none|none|crystal_crown+fish_scales+tail_fish+wings_ice|bubbles|1.00",
+  "SizeStuds": [
+    8.35,
+    5.71,
+    6.14
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.atlantean)",
+  "SpawnChance": 2.243209692101524e-6
+}

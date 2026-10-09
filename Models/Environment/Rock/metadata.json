@@ -1,0 +1,16 @@
+{
+  "Category": "Environment",
+  "Files": [
+    "Rock.rbxm",
+    "Rock.glb"
+  ],
+  "Hash": "77156966e44fcb82",
+  "Name": "Rock",
+  "Parts": 2,
+  "SizeStuds": [
+    4.86,
+    1.67,
+    3.77
+  ],
+  "Source": "Decor.rock"
+}

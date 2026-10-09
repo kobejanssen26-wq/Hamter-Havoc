@@ -1,0 +1,17 @@
+{
+  "Category": "Props/Stations",
+  "Files": [
+    "SpawnLuckProp.rbxm",
+    "SpawnLuckProp.glb"
+  ],
+  "Hash": "07adb59789cdec55",
+  "Name": "SpawnLuckProp",
+  "Notes": "Shown on the upgrade pedestal, grows with the upgrade level.",
+  "Parts": 20,
+  "SizeStuds": [
+    5.54,
+    2.24,
+    1.94
+  ],
+  "Source": "HouseBuilder.StationProps.SpawnLuck"
+}

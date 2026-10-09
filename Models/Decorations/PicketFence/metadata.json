@@ -1,0 +1,16 @@
+{
+  "Category": "Decorations",
+  "Files": [
+    "PicketFence.rbxm",
+    "PicketFence.glb"
+  ],
+  "Hash": "d50dce89f1874b45",
+  "Name": "PicketFence",
+  "Parts": 8,
+  "SizeStuds": [
+    16.35,
+    3.8,
+    1.1
+  ],
+  "Source": "Decor.fenceRun"
+}

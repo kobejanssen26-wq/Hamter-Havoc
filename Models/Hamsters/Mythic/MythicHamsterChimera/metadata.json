@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Mythic",
+  "CollectionValue": 724,
+  "DisplayName": "Chimera",
+  "Files": [
+    "MythicHamsterChimera.rbxm",
+    "MythicHamsterChimera.glb"
+  ],
+  "HamsterId": "chimera",
+  "Hash": "246b6839761e2ace",
+  "IncomePerSecond": 9772.727272727272,
+  "MinRebirth": 1,
+  "MovementSpeed": 26,
+  "Name": "MythicHamsterChimera",
+  "Parts": 75,
+  "PurchasePrice": 4300000,
+  "Rarity": "Mythic",
+  "Signature": "big|cat|fang|none|none|antlers+ruff+tail_peacock+wings_dragon||1.00",
+  "SizeStuds": [
+    7.98,
+    4.9,
+    5
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.chimera)",
+  "SpawnChance": 0.00013459258152609144
+}

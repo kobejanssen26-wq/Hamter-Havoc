@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Cute",
+  "CollectionValue": 19,
+  "DisplayName": "Strawberry",
+  "Files": [
+    "CuteHamsterStrawberry.rbxm",
+    "CuteHamsterStrawberry.glb"
+  ],
+  "HamsterId": "strawberry",
+  "Hash": "5091048b39aafe1a",
+  "IncomePerSecond": 6,
+  "MinRebirth": 0,
+  "MovementSpeed": 10.5,
+  "Name": "CuteHamsterStrawberry",
+  "Parts": 54,
+  "PurchasePrice": 480,
+  "Rarity": "Cute",
+  "Signature": "round|sparkle|smile|freckles|nub|strawberry||1.00",
+  "SizeStuds": [
+    3.89,
+    4.79,
+    4.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.strawberry)",
+  "SpawnChance": 0.01802579216867296
+}

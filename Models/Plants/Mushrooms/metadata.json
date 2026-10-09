@@ -1,0 +1,16 @@
+{
+  "Category": "Plants",
+  "Files": [
+    "Mushrooms.rbxm",
+    "Mushrooms.glb"
+  ],
+  "Hash": "ae5e05d4fcabc3c7",
+  "Name": "Mushrooms",
+  "Parts": 9,
+  "SizeStuds": [
+    3.5,
+    1.63,
+    2.38
+  ],
+  "Source": "Decor.mushrooms"
+}

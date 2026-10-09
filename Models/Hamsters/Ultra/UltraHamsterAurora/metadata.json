@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Ultra",
+  "CollectionValue": 275,
+  "DisplayName": "Aurora",
+  "Files": [
+    "UltraHamsterAurora.rbxm",
+    "UltraHamsterAurora.glb"
+  ],
+  "HamsterId": "aurora",
+  "Hash": "5bb4eb8e069deddb",
+  "IncomePerSecond": 1000,
+  "MinRebirth": 0,
+  "MovementSpeed": 19,
+  "Name": "UltraHamsterAurora",
+  "Parts": 50,
+  "PurchasePrice": 260000,
+  "Rarity": "Ultra",
+  "Signature": "tiny|sparkle|smile|none|nub|ground_glow+moon_circlet+wings_aurora|sparkle|1.00",
+  "SizeStuds": [
+    7.67,
+    4.54,
+    4.8
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.aurora)",
+  "SpawnChance": 0.0008412036345380715
+}

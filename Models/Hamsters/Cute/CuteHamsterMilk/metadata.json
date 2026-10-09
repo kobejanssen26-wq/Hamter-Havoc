@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Cute",
+  "CollectionValue": 23,
+  "DisplayName": "Milk",
+  "Files": [
+    "CuteHamsterMilk.rbxm",
+    "CuteHamsterMilk.glb"
+  ],
+  "HamsterId": "milk",
+  "Hash": "8578569d26e5e845",
+  "IncomePerSecond": 7.125,
+  "MinRebirth": 0,
+  "MovementSpeed": 10.5,
+  "Name": "CuteHamsterMilk",
+  "Parts": 37,
+  "PurchasePrice": 570,
+  "Rarity": "Cute",
+  "Signature": "floppy|dot|smile|spots|nub|held_bottle||1.00",
+  "SizeStuds": [
+    5.1,
+    3.64,
+    4.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.milk)",
+  "SpawnChance": 0.01802579216867296
+}

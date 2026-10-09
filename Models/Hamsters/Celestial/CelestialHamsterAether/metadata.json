@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Celestial",
+  "CollectionValue": 4562,
+  "DisplayName": "Aether",
+  "Files": [
+    "CelestialHamsterAether.rbxm",
+    "CelestialHamsterAether.glb"
+  ],
+  "HamsterId": "aether",
+  "Hash": "a12c0271933c4779",
+  "IncomePerSecond": 488636.36363636365,
+  "MinRebirth": 7,
+  "MovementSpeed": 38,
+  "Name": "CelestialHamsterAether",
+  "Parts": 41,
+  "PurchasePrice": 430000000,
+  "Rarity": "Celestial",
+  "Signature": "none|happy|smile|none|nub|halo+orbit_orbs+wings_aurora|bubbles|1.00",
+  "SizeStuds": [
+    7.67,
+    4.47,
+    5.25
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.aether)",
+  "SpawnChance": 0.00001211333233734823
+}

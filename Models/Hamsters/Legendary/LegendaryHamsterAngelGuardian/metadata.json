@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Legendary",
+  "CollectionValue": 401,
+  "DisplayName": "Angel Guardian",
+  "Files": [
+    "LegendaryHamsterAngelGuardian.rbxm",
+    "LegendaryHamsterAngelGuardian.glb"
+  ],
+  "HamsterId": "angel_guardian",
+  "Hash": "36999ca5a134300d",
+  "IncomePerSecond": 2764.705882352941,
+  "MinRebirth": 0,
+  "MovementSpeed": 22,
+  "Name": "LegendaryHamsterAngelGuardian",
+  "Parts": 52,
+  "PurchasePrice": 940000,
+  "Rarity": "Legendary",
+  "Signature": "round|happy|smile|none|nub|armor+halo+held_sword+wings_angel||1.00",
+  "SizeStuds": [
+    7.82,
+    4.47,
+    4.68
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.angel_guardian)",
+  "SpawnChance": 0.0002691851630521829
+}

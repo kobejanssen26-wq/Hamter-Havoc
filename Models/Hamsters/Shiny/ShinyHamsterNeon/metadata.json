@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Shiny",
+  "CollectionValue": 34,
+  "DisplayName": "Neon",
+  "Files": [
+    "ShinyHamsterNeon.rbxm",
+    "ShinyHamsterNeon.glb"
+  ],
+  "HamsterId": "neon",
+  "Hash": "6df83b4e447a9da9",
+  "IncomePerSecond": 19.09090909090909,
+  "MinRebirth": 0,
+  "MovementSpeed": 12,
+  "Name": "ShinyHamsterNeon",
+  "Parts": 36,
+  "PurchasePrice": 2100,
+  "Rarity": "Shiny",
+  "Signature": "round|glow|smile|stripes|nub|visor||1.00",
+  "SizeStuds": [
+    3.89,
+    3.66,
+    4.07
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.neon)",
+  "SpawnChance": 0.008652380240963022
+}

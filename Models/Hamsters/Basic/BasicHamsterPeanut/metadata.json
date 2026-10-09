@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Basic",
+  "CollectionValue": 14,
+  "DisplayName": "Peanut",
+  "Files": [
+    "BasicHamsterPeanut.rbxm",
+    "BasicHamsterPeanut.glb"
+  ],
+  "HamsterId": "peanut",
+  "Hash": "e1f3d78221271895",
+  "IncomePerSecond": 2.3333333333333335,
+  "MinRebirth": 0,
+  "MovementSpeed": 9,
+  "Name": "BasicHamsterPeanut",
+  "Parts": 35,
+  "PurchasePrice": 140,
+  "Rarity": "Basic",
+  "Signature": "bear|dot|oh|none|nub|shell||1.00",
+  "SizeStuds": [
+    3.89,
+    3.77,
+    4.06
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.peanut)",
+  "SpawnChance": 0.03499407119678378
+}

@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Basic",
+  "CollectionValue": 15,
+  "DisplayName": "Nugget",
+  "Files": [
+    "BasicHamsterNugget.rbxm",
+    "BasicHamsterNugget.glb"
+  ],
+  "HamsterId": "nugget",
+  "Hash": "de5e92ced9c26622",
+  "IncomePerSecond": 2.5,
+  "MinRebirth": 0,
+  "MovementSpeed": 9,
+  "Name": "BasicHamsterNugget",
+  "Parts": 38,
+  "PurchasePrice": 150,
+  "Rarity": "Basic",
+  "Signature": "round|happy|open|freckles|nub|beanie||1.00",
+  "SizeStuds": [
+    3.89,
+    4.65,
+    4.05
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.nugget)",
+  "SpawnChance": 0.03499407119678378
+}

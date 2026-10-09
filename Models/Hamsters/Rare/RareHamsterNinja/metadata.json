@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Rare",
+  "CollectionValue": 58,
+  "DisplayName": "Ninja",
+  "Files": [
+    "RareHamsterNinja.rbxm",
+    "RareHamsterNinja.glb"
+  ],
+  "HamsterId": "ninja",
+  "Hash": "188dd5d16a3fec7f",
+  "IncomePerSecond": 60,
+  "MinRebirth": 0,
+  "MovementSpeed": 14,
+  "Name": "RareHamsterNinja",
+  "Parts": 38,
+  "PurchasePrice": 9000,
+  "Rarity": "Rare",
+  "Signature": "round|angry|flat|none|nub|held_sword+ninja_band||1.00",
+  "SizeStuds": [
+    3.89,
+    3.66,
+    4.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.ninja)",
+  "SpawnChance": 0.004658973975903166
+}

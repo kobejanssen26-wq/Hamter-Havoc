@@ -1,0 +1,16 @@
+{
+  "Category": "Environment",
+  "Files": [
+    "SnowMountain.rbxm",
+    "SnowMountain.glb"
+  ],
+  "Hash": "72e0ab88942fd307",
+  "Name": "SnowMountain",
+  "Parts": 6,
+  "SizeStuds": [
+    138.76,
+    165.18,
+    109.2
+  ],
+  "Source": "Decor.mountain(snow)"
+}

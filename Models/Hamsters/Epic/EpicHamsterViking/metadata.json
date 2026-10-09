@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Epic",
+  "CollectionValue": 108,
+  "DisplayName": "Viking",
+  "Files": [
+    "EpicHamsterViking.rbxm",
+    "EpicHamsterViking.glb"
+  ],
+  "HamsterId": "viking",
+  "Hash": "8d7d2b7d59fa7402",
+  "IncomePerSecond": 205,
+  "MinRebirth": 0,
+  "MovementSpeed": 16.5,
+  "Name": "EpicHamsterViking",
+  "Parts": 45,
+  "PurchasePrice": 41000,
+  "Rarity": "Epic",
+  "Signature": "bear|angry|grin|none|nub|cape+held_hammer+viking||1.00",
+  "SizeStuds": [
+    5.35,
+    4.83,
+    4.22
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.viking)",
+  "SpawnChance": 0.0014250979220409683
+}

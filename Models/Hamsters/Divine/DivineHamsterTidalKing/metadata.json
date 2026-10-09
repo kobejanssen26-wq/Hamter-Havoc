@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Divine",
+  "CollectionValue": 1157,
+  "DisplayName": "Tidal King",
+  "Files": [
+    "DivineHamsterTidalKing.rbxm",
+    "DivineHamsterTidalKing.glb"
+  ],
+  "HamsterId": "tidal_king",
+  "Hash": "77b29cf3d8ae69f1",
+  "IncomePerSecond": 30357.14285714286,
+  "MinRebirth": 3,
+  "MovementSpeed": 30,
+  "Name": "DivineHamsterTidalKing",
+  "Parts": 63,
+  "PurchasePrice": 17000000,
+  "Rarity": "Divine",
+  "Signature": "fluffy|sparkle|smile|none|none|crown+fish_scales+held_trident+tail_fish|bubbles|1.00",
+  "SizeStuds": [
+    3.89,
+    5.58,
+    6.14
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.tidal_king)",
+  "SpawnChance": 0.000055060601533401044
+}

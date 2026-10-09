@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Legendary",
+  "CollectionValue": 498,
+  "DisplayName": "Ancient Hamster",
+  "Files": [
+    "LegendaryHamsterAncientHamster.rbxm",
+    "LegendaryHamsterAncientHamster.glb"
+  ],
+  "HamsterId": "ancient_hamster",
+  "Hash": "5d4a94fce1f717a7",
+  "IncomePerSecond": 3529.4117647058824,
+  "MinRebirth": 0,
+  "MovementSpeed": 22,
+  "Name": "LegendaryHamsterAncientHamster",
+  "Parts": 54,
+  "PurchasePrice": 1200000,
+  "Rarity": "Legendary",
+  "Signature": "tiny|glow|flat|none|nub|floating_runes+stone_crown+wings_golden||1.00",
+  "SizeStuds": [
+    8.22,
+    4.45,
+    5.17
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.ancient_hamster)",
+  "SpawnChance": 0.0002691851630521829
+}

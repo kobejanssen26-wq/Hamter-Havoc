@@ -1,0 +1,17 @@
+{
+  "Category": "Effects",
+  "EffectOnly": true,
+  "Files": [
+    "Fireflies.rbxm"
+  ],
+  "Hash": "ef7ea3b8051925df",
+  "Name": "Fireflies",
+  "Notes": "Invisible part with a ParticleEmitter (no mesh).",
+  "Parts": 0,
+  "SizeStuds": [
+    0,
+    0,
+    0
+  ],
+  "Source": "Decor.fireflies"
+}

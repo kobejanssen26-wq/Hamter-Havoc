@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Celestial",
+  "CollectionValue": 3769,
+  "DisplayName": "Twilight Sage",
+  "Files": [
+    "CelestialHamsterTwilightSage.rbxm",
+    "CelestialHamsterTwilightSage.glb"
+  ],
+  "HamsterId": "twilight_sage",
+  "Hash": "550f43fb99bb9521",
+  "IncomePerSecond": 409090.9090909091,
+  "MinRebirth": 7,
+  "MovementSpeed": 38,
+  "Name": "CelestialHamsterTwilightSage",
+  "Parts": 42,
+  "PurchasePrice": 360000000,
+  "Rarity": "Celestial",
+  "Signature": "elf|sleepy|smile|none|nub|held_staff+moon_circlet+wings_fairy|sparkle|1.00",
+  "SizeStuds": [
+    5.84,
+    4.6,
+    4.25
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.twilight_sage)",
+  "SpawnChance": 0.00001211333233734823
+}

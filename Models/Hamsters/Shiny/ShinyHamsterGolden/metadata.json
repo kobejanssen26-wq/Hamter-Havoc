@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Shiny",
+  "CollectionValue": 41,
+  "DisplayName": "Golden",
+  "Files": [
+    "ShinyHamsterGolden.rbxm",
+    "ShinyHamsterGolden.glb"
+  ],
+  "HamsterId": "golden",
+  "Hash": "4e877b8fda900010",
+  "IncomePerSecond": 22.727272727272727,
+  "MinRebirth": 0,
+  "MovementSpeed": 12,
+  "Name": "ShinyHamsterGolden",
+  "Parts": 53,
+  "PurchasePrice": 2500,
+  "Rarity": "Shiny",
+  "Signature": "round|sparkle|smile|none|nub|crown+medal||1.00",
+  "SizeStuds": [
+    3.89,
+    4.66,
+    4.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.golden)",
+  "SpawnChance": 0.008652380240963022
+}

@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Celestial",
+  "CollectionValue": 4761,
+  "DisplayName": "Constellation",
+  "Files": [
+    "CelestialHamsterConstellation.rbxm",
+    "CelestialHamsterConstellation.glb"
+  ],
+  "HamsterId": "constellation",
+  "Hash": "1a3116fd6b8f5fba",
+  "IncomePerSecond": 511363.63636363635,
+  "MinRebirth": 7,
+  "MovementSpeed": 38,
+  "Name": "CelestialHamsterConstellation",
+  "Parts": 92,
+  "PurchasePrice": 450000000,
+  "Rarity": "Celestial",
+  "Signature": "tiny|star|smile|none|nub|ground_glow+orbit_stars+star_crown+wings_cosmic|stars|1.00",
+  "SizeStuds": [
+    7.43,
+    4.63,
+    5.1
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.constellation)",
+  "SpawnChance": 0.00001211333233734823
+}

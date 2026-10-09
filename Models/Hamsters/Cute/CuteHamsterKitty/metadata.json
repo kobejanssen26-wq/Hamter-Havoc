@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Cute",
+  "CollectionValue": 25,
+  "DisplayName": "Kitty",
+  "Files": [
+    "CuteHamsterKitty.rbxm",
+    "CuteHamsterKitty.glb"
+  ],
+  "HamsterId": "kitty",
+  "Hash": "794ee516c9649ca8",
+  "IncomePerSecond": 7.75,
+  "MinRebirth": 0,
+  "MovementSpeed": 10.5,
+  "Name": "CuteHamsterKitty",
+  "Parts": 43,
+  "PurchasePrice": 620,
+  "Rarity": "Cute",
+  "Signature": "cat|cat|cat|tiger|long|bellcollar||1.00",
+  "SizeStuds": [
+    3.89,
+    4.29,
+    5.11
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.kitty)",
+  "SpawnChance": 0.01802579216867296
+}

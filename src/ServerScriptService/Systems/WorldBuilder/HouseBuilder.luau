@@ -1229,4 +1229,15 @@ function HouseBuilder.setSecurity(house: House, state: string, tier: any)
 	security.Prompt.Enabled = state == "Ready"
 end
 
+-- Small building blocks, exposed for tools (the /Models asset library export builds each one on its own).
+HouseBuilder.Furniture = {
+	Plant = plant,
+	Sofa = sofa,
+	Rug = rug,
+	CeilingLight = ceilingLight,
+	Railing = railing,
+}
+HouseBuilder.StationProps = propBuilders
+HouseBuilder.WheelStyles = WHEEL_STYLES
+
 return HouseBuilder

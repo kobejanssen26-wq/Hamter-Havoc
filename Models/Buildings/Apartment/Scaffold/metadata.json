@@ -1,0 +1,17 @@
+{
+  "Category": "Buildings/Apartment",
+  "Files": [
+    "Scaffold.rbxm",
+    "Scaffold.glb"
+  ],
+  "Hash": "67e5fea99e8acb37",
+  "Name": "Scaffold",
+  "Notes": "Next floor under construction, with the 'unlocks at rebirth' sign.",
+  "Parts": 11,
+  "SizeStuds": [
+    50.4,
+    10.18,
+    40.4
+  ],
+  "Source": "HouseBuilder (buildScaffold)"
+}

@@ -1,0 +1,16 @@
+{
+  "Category": "Plants",
+  "Files": [
+    "Hedge.rbxm",
+    "Hedge.glb"
+  ],
+  "Hash": "e65075a77c32b2cd",
+  "Name": "Hedge",
+  "Parts": 4,
+  "SizeStuds": [
+    12.6,
+    4.74,
+    2.6
+  ],
+  "Source": "Decor.hedgeRun"
+}

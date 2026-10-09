@@ -1,0 +1,16 @@
+{
+  "Category": "Plants",
+  "Files": [
+    "LavenderFlowerBed.rbxm",
+    "LavenderFlowerBed.glb"
+  ],
+  "Hash": "9b74eecfe8f4d27b",
+  "Name": "LavenderFlowerBed",
+  "Parts": 20,
+  "SizeStuds": [
+    7,
+    1.82,
+    7
+  ],
+  "Source": "Decor.flowerBed(lavender)"
+}

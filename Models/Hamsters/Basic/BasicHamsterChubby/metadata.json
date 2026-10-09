@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Basic",
+  "CollectionValue": 12,
+  "DisplayName": "Chubby",
+  "Files": [
+    "BasicHamsterChubby.rbxm",
+    "BasicHamsterChubby.glb"
+  ],
+  "HamsterId": "chubby",
+  "Hash": "fa182a4b95970e69",
+  "IncomePerSecond": 2,
+  "MinRebirth": 0,
+  "MovementSpeed": 9,
+  "Name": "BasicHamsterChubby",
+  "Parts": 30,
+  "PurchasePrice": 120,
+  "Rarity": "Basic",
+  "Signature": "round|happy|open|none|nub|||1.15",
+  "SizeStuds": [
+    4.47,
+    4.21,
+    4.61
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.chubby)",
+  "SpawnChance": 0.03499407119678378
+}

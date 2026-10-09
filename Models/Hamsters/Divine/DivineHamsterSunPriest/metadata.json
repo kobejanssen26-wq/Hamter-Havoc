@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Divine",
+  "CollectionValue": 1267,
+  "DisplayName": "Sun Priest",
+  "Files": [
+    "DivineHamsterSunPriest.rbxm",
+    "DivineHamsterSunPriest.glb"
+  ],
+  "HamsterId": "sun_priest",
+  "Hash": "46c6b29a78119fe8",
+  "IncomePerSecond": 32142.85714285714,
+  "MinRebirth": 3,
+  "MovementSpeed": 30,
+  "Name": "DivineHamsterSunPriest",
+  "Parts": 55,
+  "PurchasePrice": 18000000,
+  "Rarity": "Divine",
+  "Signature": "round|happy|smile|none|nub|sun_crown+wings_golden|sparkle|1.00",
+  "SizeStuds": [
+    8.22,
+    4.69,
+    4.77
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.sun_priest)",
+  "SpawnChance": 0.000055060601533401044
+}

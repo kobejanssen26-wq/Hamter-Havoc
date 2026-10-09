@@ -78,7 +78,7 @@ local function setupLighting()
 end
 
 function WorldBuilder.build(): World
-	-- (the editor copies in world/*.model.json and HamsterShowcase are only a preview: the real world is built below)
+	-- (the editor copies in world/*.rbxm and HamsterShowcase are only a preview: the real world is built below)
 	for _, name in { "HamsterPlaza", "HamsterPath", "PlayerHouses", "Environment", "SpawnLocations", "HamsterShowcase", "Baseplate" } do
 		local old = Workspace:FindFirstChild(name)
 		if old then

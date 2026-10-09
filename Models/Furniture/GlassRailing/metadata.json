@@ -1,0 +1,16 @@
+{
+  "Category": "Furniture",
+  "Files": [
+    "GlassRailing.rbxm",
+    "GlassRailing.glb"
+  ],
+  "Hash": "e177a2c0bb010867",
+  "Name": "GlassRailing",
+  "Parts": 2,
+  "SizeStuds": [
+    10.2,
+    2.82,
+    0.4
+  ],
+  "Source": "HouseBuilder.Furniture.Railing"
+}

@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Basic",
+  "CollectionValue": 13,
+  "DisplayName": "Cookie",
+  "Files": [
+    "BasicHamsterCookie.rbxm",
+    "BasicHamsterCookie.glb"
+  ],
+  "HamsterId": "cookie",
+  "Hash": "69cafb5bc138f7db",
+  "IncomePerSecond": 2.1666666666666665,
+  "MinRebirth": 0,
+  "MovementSpeed": 9,
+  "Name": "BasicHamsterCookie",
+  "Parts": 39,
+  "PurchasePrice": 130,
+  "Rarity": "Basic",
+  "Signature": "round|dot|smile|spots|nub|held_cookie||1.00",
+  "SizeStuds": [
+    3.89,
+    3.66,
+    4.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.cookie)",
+  "SpawnChance": 0.03499407119678378
+}

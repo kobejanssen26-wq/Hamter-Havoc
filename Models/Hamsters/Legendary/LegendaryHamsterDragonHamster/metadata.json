@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Legendary",
+  "CollectionValue": 352,
+  "DisplayName": "Dragon Hamster",
+  "Files": [
+    "LegendaryHamsterDragonHamster.rbxm",
+    "LegendaryHamsterDragonHamster.glb"
+  ],
+  "HamsterId": "dragon_hamster",
+  "Hash": "0804e7612aac4f46",
+  "IncomePerSecond": 2441.176470588235,
+  "MinRebirth": 0,
+  "MovementSpeed": 22,
+  "Name": "LegendaryHamsterDragonHamster",
+  "Parts": 61,
+  "PurchasePrice": 830000,
+  "Rarity": "Legendary",
+  "Signature": "cat|cat|fang|none|none|dino_spikes+horns+tail_dragon+wings_dragon|flame|1.00",
+  "SizeStuds": [
+    7.98,
+    4.56,
+    7.21
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.dragon_hamster)",
+  "SpawnChance": 0.0002691851630521829
+}

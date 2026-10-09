@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Rare",
+  "CollectionValue": 85,
+  "DisplayName": "Gardener",
+  "Files": [
+    "RareHamsterGardener.rbxm",
+    "RareHamsterGardener.glb"
+  ],
+  "HamsterId": "gardener",
+  "Hash": "6882cedaf7ed0829",
+  "IncomePerSecond": 86.66666666666667,
+  "MinRebirth": 0,
+  "MovementSpeed": 14,
+  "Name": "RareHamsterGardener",
+  "Parts": 41,
+  "PurchasePrice": 13000,
+  "Rarity": "Rare",
+  "Signature": "floppy|dot|smile|none|nub|held_flower+sunhat||1.00",
+  "SizeStuds": [
+    5.1,
+    4.05,
+    4.7
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.gardener)",
+  "SpawnChance": 0.004658973975903166
+}

@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Epic",
+  "CollectionValue": 154,
+  "DisplayName": "DJ",
+  "Files": [
+    "EpicHamsterDJ.rbxm",
+    "EpicHamsterDJ.glb"
+  ],
+  "HamsterId": "dj",
+  "Hash": "9279c7951b204136",
+  "IncomePerSecond": 295,
+  "MinRebirth": 0,
+  "MovementSpeed": 16.5,
+  "Name": "EpicHamsterDJ",
+  "Parts": 50,
+  "PurchasePrice": 59000,
+  "Rarity": "Epic",
+  "Signature": "big|happy|open|none|nub|headphones+heart_glasses+medal||1.00",
+  "SizeStuds": [
+    4.06,
+    4.9,
+    4.04
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.dj)",
+  "SpawnChance": 0.0014250979220409683
+}

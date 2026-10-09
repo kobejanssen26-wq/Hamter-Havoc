@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Rare",
+  "CollectionValue": 73,
+  "DisplayName": "Cadet",
+  "Files": [
+    "RareHamsterCadet.rbxm",
+    "RareHamsterCadet.glb"
+  ],
+  "HamsterId": "cadet",
+  "Hash": "e98e2dbf0c4ce6b2",
+  "IncomePerSecond": 73.33333333333333,
+  "MinRebirth": 0,
+  "MovementSpeed": 14,
+  "Name": "RareHamsterCadet",
+  "Parts": 40,
+  "PurchasePrice": 11000,
+  "Rarity": "Rare",
+  "Signature": "tiny|dot|smile|none|nub|held_shield+knight||1.00",
+  "SizeStuds": [
+    3.92,
+    5.4,
+    4.05
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.cadet)",
+  "SpawnChance": 0.004658973975903166
+}

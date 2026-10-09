@@ -1,0 +1,17 @@
+{
+  "Category": "Buildings/Apartment",
+  "Files": [
+    "PrestigeTrims.rbxm",
+    "PrestigeTrims.glb"
+  ],
+  "Hash": "a9008c0d3bfaeb28",
+  "Name": "PrestigeTrims",
+  "Notes": "Gold bands (R10), crown (R15) and light strips (R20) for a 5-floor apartment.",
+  "Parts": 15,
+  "SizeStuds": [
+    53.8,
+    66.2,
+    10.7
+  ],
+  "Source": "HouseBuilder.setPrestige(20)"
+}

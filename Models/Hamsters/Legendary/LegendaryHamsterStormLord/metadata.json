@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Legendary",
+  "CollectionValue": 462,
+  "DisplayName": "Storm Lord",
+  "Files": [
+    "LegendaryHamsterStormLord.rbxm",
+    "LegendaryHamsterStormLord.glb"
+  ],
+  "HamsterId": "storm_lord",
+  "Hash": "d0058357e45e5f2f",
+  "IncomePerSecond": 3235.294117647059,
+  "MinRebirth": 0,
+  "MovementSpeed": 22,
+  "Name": "LegendaryHamsterStormLord",
+  "Parts": 42,
+  "PurchasePrice": 1100000,
+  "Rarity": "Legendary",
+  "Signature": "big|glow|open|none|nub|held_hammer+orbit_ring+viking|sparkle|1.00",
+  "SizeStuds": [
+    5.35,
+    4.72,
+    5.05
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.storm_lord)",
+  "SpawnChance": 0.0002691851630521829
+}

@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Legendary",
+  "CollectionValue": 389,
+  "DisplayName": "Griffin",
+  "Files": [
+    "LegendaryHamsterGriffin.rbxm",
+    "LegendaryHamsterGriffin.glb"
+  ],
+  "HamsterId": "griffin",
+  "Hash": "3b6ca45be54ae590",
+  "IncomePerSecond": 2676.470588235294,
+  "MinRebirth": 0,
+  "MovementSpeed": 22,
+  "Name": "LegendaryHamsterGriffin",
+  "Parts": 57,
+  "PurchasePrice": 910000,
+  "Rarity": "Legendary",
+  "Signature": "cat|cat|flat|none|none|laurel+tail_squirrel+wings_golden||1.00",
+  "SizeStuds": [
+    8.22,
+    4.29,
+    4.84
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.griffin)",
+  "SpawnChance": 0.0002691851630521829
+}

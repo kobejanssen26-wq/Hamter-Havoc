@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Cute",
+  "CollectionValue": 26,
+  "DisplayName": "Peach",
+  "Files": [
+    "CuteHamsterPeach.rbxm",
+    "CuteHamsterPeach.glb"
+  ],
+  "HamsterId": "peach",
+  "Hash": "bb3432e1de004101",
+  "IncomePerSecond": 8.25,
+  "MinRebirth": 0,
+  "MovementSpeed": 10.5,
+  "Name": "CuteHamsterPeach",
+  "Parts": 44,
+  "PurchasePrice": 660,
+  "Rarity": "Cute",
+  "Signature": "fluffy|sparkle|smile|freckles|nub|leaf||1.00",
+  "SizeStuds": [
+    3.89,
+    3.91,
+    4.01
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.peach)",
+  "SpawnChance": 0.01802579216867296
+}

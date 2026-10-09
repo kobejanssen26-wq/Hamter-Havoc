@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Shiny",
+  "CollectionValue": 35,
+  "DisplayName": "Rainbow",
+  "Files": [
+    "ShinyHamsterRainbow.rbxm",
+    "ShinyHamsterRainbow.glb"
+  ],
+  "HamsterId": "rainbow",
+  "Hash": "d7adf6cf7ef2ca9c",
+  "IncomePerSecond": 20,
+  "MinRebirth": 0,
+  "MovementSpeed": 12,
+  "Name": "ShinyHamsterRainbow",
+  "Parts": 42,
+  "PurchasePrice": 2200,
+  "Rarity": "Shiny",
+  "Signature": "fluffy|sparkle|smile|none|nub|orbit_ring+propeller|sparkle|1.00",
+  "SizeStuds": [
+    4.96,
+    4.5,
+    5.05
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.rainbow)",
+  "SpawnChance": 0.008652380240963022
+}

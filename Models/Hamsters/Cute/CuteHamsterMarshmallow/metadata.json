@@ -1,0 +1,26 @@
+{
+  "Category": "Hamsters/Cute",
+  "CollectionValue": 22,
+  "DisplayName": "Marshmallow",
+  "Files": [
+    "CuteHamsterMarshmallow.rbxm",
+    "CuteHamsterMarshmallow.glb"
+  ],
+  "HamsterId": "marshmallow",
+  "Hash": "3fa08f7bc0497e75",
+  "IncomePerSecond": 6.875,
+  "MinRebirth": 0,
+  "MovementSpeed": 10.5,
+  "Name": "CuteHamsterMarshmallow",
+  "Parts": 36,
+  "PurchasePrice": 550,
+  "Rarity": "Cute",
+  "Signature": "round|big|oh|none|nub|beanie||1.10",
+  "SizeStuds": [
+    4.28,
+    5.12,
+    4.46
+  ],
+  "Source": "HamsterBuilder.build(HamsterDatabase.ById.marshmallow)",
+  "SpawnChance": 0.01802579216867296
+}
