@@ -20,6 +20,7 @@ local SettingsSystem = require(script.Parent.SettingsSystem)
 local ShopSystem = require(script.Parent.ShopSystem)
 local ItemSystem = require(script.Parent.ItemSystem)
 local EmoteSystem = require(script.Parent.EmoteSystem)
+local LeaderboardService = require(script.Parent.LeaderboardService)
 local TutorialSystem = require(script.Parent.TutorialSystem)
 local UpgradeSystem = require(script.Parent.UpgradeSystem)
 
@@ -161,6 +162,11 @@ end
 
 actions.Emote = function(player, payload)
 	local ok, message, extra = EmoteSystem.request(player, payload.Id)
+	return result(ok, message, extra)
+end
+
+actions.Leaderboard = function(player, payload)
+	local ok, message, extra = LeaderboardService.request(player, payload.Metric, payload.Period)
 	return result(ok, message, extra)
 end
 

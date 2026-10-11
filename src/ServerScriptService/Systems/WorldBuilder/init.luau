@@ -2,7 +2,8 @@
 	WorldBuilder: creates the whole map at server start.
 
 	Workspace
-	├── HamsterPlaza   arch, shop, hamster library, recent-finds board
+	├── HamsterPlaza   arch, shop, hamster library
+	├── LeaderboardHall three leaderboard boards + kiosk (behind the library, away from the road and the houses)
 	├── HamsterPath    the physical road + spawn burrow + exit tunnel
 	├── PlayerHouses   8 houses (4 north row, 4 south row), see WorldLayout
 	├── Environment    ground, promenades, gate paths, lamps, forest, boundary
@@ -16,6 +17,7 @@ local Workspace = game:GetService("Workspace")
 local Build = require(script.Build)
 local EnvironmentBuilder = require(script.EnvironmentBuilder)
 local HouseBuilder = require(script.HouseBuilder)
+local LeaderboardBuilder = require(script.LeaderboardBuilder)
 local PathBuilder = require(script.PathBuilder)
 local PlazaBuilder = require(script.PlazaBuilder)
 
@@ -27,7 +29,7 @@ local WorldBuilder = {}
 
 export type World = {
 	Houses: { HouseBuilder.House },
-	RecentLabels: { TextLabel },
+	Boards: { LeaderboardBuilder.Board },
 	StatueCFrame: CFrame,
 	PlazaFolder: Folder,
 }
@@ -79,7 +81,7 @@ end
 
 function WorldBuilder.build(): World
 	-- (the editor copies in world/*.model.json and HamsterShowcase are only a preview: the real world is built below)
-	for _, name in { "HamsterPlaza", "HamsterPath", "PlayerHouses", "Environment", "SpawnLocations", "HamsterShowcase", "Baseplate" } do
+	for _, name in { "HamsterPlaza", "LeaderboardHall", "HamsterPath", "PlayerHouses", "Environment", "SpawnLocations", "HamsterShowcase", "Baseplate" } do
 		local old = Workspace:FindFirstChild(name)
 		if old then
 			old:Destroy()
@@ -92,6 +94,7 @@ function WorldBuilder.build(): World
 	EnvironmentBuilder.build(Workspace, rng)
 	PathBuilder.build(Workspace, rng)
 	local plaza = PlazaBuilder.build(Workspace, rng)
+	local hall = LeaderboardBuilder.build(Workspace, rng)
 
 	-- the golden king watches over the road from the top of the arch
 	local statue = HamsterBuilder.build(HamsterDatabase.ById.golden_king, { Scale = 2.6, Particles = false })
@@ -115,7 +118,7 @@ function WorldBuilder.build(): World
 
 	return {
 		Houses = houses,
-		RecentLabels = plaza.RecentLabels,
+		Boards = hall.Boards,
 		StatueCFrame = plaza.StatueCFrame,
 		PlazaFolder = plaza.Folder,
 	}

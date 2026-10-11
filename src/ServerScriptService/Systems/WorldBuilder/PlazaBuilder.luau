@@ -16,7 +16,6 @@ local NEON = Enum.Material.Neon
 
 export type PlazaInfo = {
 	Folder: Folder,
-	RecentLabels: { TextLabel },
 	StatueCFrame: CFrame,
 }
 
@@ -110,46 +109,6 @@ local function buildLibrary(parent: Instance, cframe: CFrame)
 	publicPrompt(lectern, "Hamster Index", "Open", "Index", 14)
 end
 
-local function buildRecentBoard(parent: Instance, cframe: CFrame): { TextLabel }
-	local model = Build.model(parent, "RecentFinds")
-	for _, side in { -1, 1 } do
-		Build.part(model, "Post", Vector3.new(0.9, 9, 0.9), cframe * CFrame.new(side * 5.7, 4.5, 0.8), Palette.WoodDark, WOOD)
-	end
-	local board = Build.part(model, "Board", Vector3.new(12, 7.4, 0.8), cframe * CFrame.new(0, 5.6, 0.8), Palette.Ink, PLASTIC)
-	Build.part(model, "Frame", Vector3.new(13, 8.4, 0.5), cframe * CFrame.new(0, 5.6, 1.2), Palette.WoodDark, WOOD, { CanCollide = false })
-	local gui = Instance.new("SurfaceGui")
-	gui.Face = Enum.NormalId.Front
-	gui.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
-	gui.PixelsPerStud = 40
-	gui.Parent = board
-
-	local title = Instance.new("TextLabel")
-	title.BackgroundTransparency = 1
-	title.Size = UDim2.new(1, 0, 0, 46)
-	title.Font = Enum.Font.FredokaOne
-	title.TextSize = 32
-	title.TextColor3 = Palette.Gold
-	title.Text = "RECENT FINDS"
-	title.Parent = gui
-
-	local labels = {}
-	for index = 1, 6 do
-		local label = Instance.new("TextLabel")
-		label.BackgroundTransparency = 1
-		label.Position = UDim2.new(0.05, 0, 0, 52 + (index - 1) * 32)
-		label.Size = UDim2.new(0.9, 0, 0, 30)
-		label.Font = Enum.Font.GothamBold
-		label.TextSize = 16
-		label.TextXAlignment = Enum.TextXAlignment.Left
-		label.TextColor3 = Color3.fromRGB(200, 200, 215)
-		label.RichText = true
-		label.Text = "—"
-		label.Parent = gui
-		table.insert(labels, label)
-	end
-	return labels
-end
-
 -- The arch over the road: two pillars, a beam with the plaza name and the golden king on top.
 local function buildArch(parent: Instance): CFrame
 	local model = Build.model(parent, "PlazaArch")
@@ -203,9 +162,6 @@ function PlazaBuilder.build(parent: Instance, rng: Random): PlazaInfo
 		end
 	end
 
-	-- recent finds board (the only board in the plaza), next to the library path
-	local recentLabels = buildRecentBoard(folder, CFrame.new(-21, 0, -50) * CFrame.Angles(0, math.pi, 0))
-
 	-- guest spawn on the plaza (players without a house)
 	local spawn = Instance.new("SpawnLocation")
 	spawn.Name = "PlazaSpawn"
@@ -220,7 +176,6 @@ function PlazaBuilder.build(parent: Instance, rng: Random): PlazaInfo
 
 	return {
 		Folder = folder,
-		RecentLabels = recentLabels,
 		StatueCFrame = statueCFrame,
 	}
 end

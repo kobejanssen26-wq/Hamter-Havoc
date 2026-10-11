@@ -40,6 +40,7 @@ local AnnounceSystem = require(script.Parent.AnnounceSystem)
 local CollectionSystem = require(script.Parent.CollectionSystem)
 local DataSystem = require(script.Parent.DataSystem)
 local EconomySystem = require(script.Parent.EconomySystem)
+local Events = require(script.Parent.Events)
 local HouseSystem = require(script.Parent.HouseSystem)
 local Notifier = require(script.Parent.Notifier)
 local PlayerState = require(script.Parent.PlayerState)
@@ -773,6 +774,7 @@ local function secure(e: Entity, player: Player)
 	Notifier.send(player, "HAMSTER SECURED! " .. e.Species.Name .. " is yours for good.", "success")
 	if stolen then
 		AnnounceSystem.stolenSecured(player, payer, e.Species)
+		Events.TheftCompleted:Fire(player, payer, e.SpeciesId)
 	end
 end
 

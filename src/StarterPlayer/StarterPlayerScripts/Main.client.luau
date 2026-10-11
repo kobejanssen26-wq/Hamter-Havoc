@@ -48,6 +48,7 @@ local screens = {
 	"AnnouncementUI",
 	"HotbarUI",
 	"EmoteUI",
+	"LeaderboardUI",
 	"TutorialUI",
 }
 for _, name in screens do
