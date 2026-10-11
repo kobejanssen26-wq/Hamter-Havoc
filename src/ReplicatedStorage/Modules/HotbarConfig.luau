@@ -1,42 +1,20 @@
 --[[
-	Hotbar: the permanent bottom bar. Fully configuration driven; the server uses it to validate UseItem and the
-	client only draws it.
-
-	Kinds
-	  Ability     always available, never consumed (Slap). Using it is done with the normal combat input.
-	  Consumable  a counted item in profile.Items[itemId]. Bought in the shop, used from the hotbar (server checks
-	              the count, applies the effect and removes one).
-
-	There is deliberately NO weapon/tool system: only mechanics that really exist are listed. To add one later
-	append an entry here (and handle its Kind in ItemSystem).
+	Hotbar layout rules. WHAT can be on the hotbar comes from ItemRegistry (weapons and consumables the player owns);
+	this module only holds the layout:
+	  Slot 1      the built-in Slap (an ability everybody has; also used when no weapon is equipped)
+	  Slots 2..N  owned weapons / consumables, assigned by the server in the order you got them (profile.Hotbar),
+	              re-orderable in the Backpack. Empty slots stay empty placeholders.
+	There is deliberately no fake item: a slot is filled only by an item the server says you own.
 ]]
 
 local HotbarConfig = {}
 
-export type Slot = {
-	Id: string,
-	Kind: string,
-	Name: string,
-	Desc: string,
-	Icon: string,
-	BoostId: string?,
-	Seconds: number?,
-	Minutes: number?,
-	Effect: string?,
-}
+HotbarConfig.SlotCount = 8 -- number keys 1-8
+HotbarConfig.Ability = { Id = "slap", Name = "Paws", Desc = "Slap thieves away. Press Q, tap Slap, or click while it is selected.", Icon = "fist" }
 
-HotbarConfig.Slots = {
-	{ Id = "slap", Kind = "Ability", Name = "Slap", Desc = "Knock thieves off your hamsters. Press Q or tap Slap.", Icon = "fist" },
-	{ Id = "item_coins", Kind = "Consumable", Name = "2x Cash", Desc = "Doubles all cash you earn for 15 minutes.", Icon = "coin", Effect = "Boost", BoostId = "Coins2x", Seconds = 900 },
-	{ Id = "item_luck", Kind = "Consumable", Name = "2x Luck", Desc = "Rarer hamsters appear more often for 10 minutes.", Icon = "clover", Effect = "Boost", BoostId = "Luck2x", Seconds = 600 },
-	{ Id = "item_speed", Kind = "Consumable", Name = "Speed Tonic", Desc = "+6 walk speed for 10 minutes.", Icon = "bolt", Effect = "Boost", BoostId = "Speed2x", Seconds = 600 },
-	{ Id = "item_auto", Kind = "Consumable", Name = "Auto Collector", Desc = "Grabs affordable hamsters in range for 10 minutes.", Icon = "bot", Effect = "Boost", BoostId = "AutoCollect", Seconds = 600 },
-	{ Id = "item_pouch", Kind = "Consumable", Name = "Cash Pouch", Desc = "10 minutes of your current income, instantly.", Icon = "pouch", Effect = "Pouch", Minutes = 10 },
-} :: { Slot }
-
-HotbarConfig.ById = {} :: { [string]: Slot }
-for _, slot in HotbarConfig.Slots do
-	HotbarConfig.ById[slot.Id] = slot
+-- Valid slot keys are the strings "2".."SlotCount".
+function HotbarConfig.validSlot(slot: any): boolean
+	return type(slot) == "number" and slot % 1 == 0 and slot >= 2 and slot <= HotbarConfig.SlotCount
 end
 
 return HotbarConfig

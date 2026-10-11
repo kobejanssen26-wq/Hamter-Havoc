@@ -1,6 +1,6 @@
 --[[
 	InventoryUI ("Hamsters"): everything you own. Equip hamsters onto your house shelf (they earn coins
-	there), sell extras, or let the game equip your best ones. Paged so only a handful of 3D icons render.
+	there), sell extras, or let the game equip your best ones. Every owned hamster is listed in a scroll view.
 ]]
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -16,8 +16,7 @@ local UIKit = require(script.Parent.UIKit)
 local InventoryUI = {}
 
 local C = UIKit.Colors
-local PAGE_SIZE = 8
-
+local 
 function InventoryUI.start()
 	local panel = UIKit.panel({ Name = "Inventory", Title = "My Hamsters", Icon = "hamster", Design = Vector2.new(940, 640), Accent = C.Peach })
 	local body = panel.Body
@@ -64,7 +63,8 @@ function InventoryUI.start()
 		end,
 	})
 
-	local grid = UIKit.frame(body, { Size = UDim2.new(1, 0, 1, -112), Position = UDim2.fromOffset(0, 60), BackgroundTransparency = 1 })
+	local grid = UIKit.scroll(body, { Size = UDim2.new(1, 0, 1, -64), Position = UDim2.fromOffset(0, 60) })
+	local render
 	local emptyLabel = UIKit.label(body, {
 		Size = UDim2.new(1, 0, 0, 80),
 		Position = UDim2.fromOffset(0, 200),
@@ -74,39 +74,6 @@ function InventoryUI.start()
 		TextColor3 = C.Muted,
 		Font = UIKit.Fonts.Title,
 		Visible = false,
-	})
-
-	local pager = UIKit.frame(body, { Size = UDim2.new(1, 0, 0, 44), Position = UDim2.new(0, 0, 1, -44), BackgroundTransparency = 1 })
-	local page = 1
-	local pageLabel = UIKit.label(pager, {
-		Size = UDim2.fromScale(1, 1),
-		TextXAlignment = Enum.TextXAlignment.Center,
-		Font = UIKit.Fonts.Title,
-		TextSize = 18,
-		Text = "1 / 1",
-	})
-	local render
-	UIKit.button(pager, {
-		Text = "◀",
-		Size = UDim2.fromOffset(60, 38),
-		Position = UDim2.new(0.5, -120, 0.5, 0),
-		AnchorPoint = Vector2.new(0.5, 0.5),
-		Color = C.BrownLight,
-		OnClick = function()
-			page = math.max(1, page - 1)
-			render()
-		end,
-	})
-	UIKit.button(pager, {
-		Text = "▶",
-		Size = UDim2.fromOffset(60, 38),
-		Position = UDim2.new(0.5, 120, 0.5, 0),
-		AnchorPoint = Vector2.new(0.5, 0.5),
-		Color = C.BrownLight,
-		OnClick = function()
-			page += 1
-			render()
-		end,
 	})
 
 	render = function()
@@ -137,21 +104,19 @@ function InventoryUI.start()
 			return a.Species.Id < b.Species.Id
 		end)
 
-		local pages = math.max(1, math.ceil(#entries / PAGE_SIZE))
-		page = math.clamp(page, 1, pages)
-		pageLabel.Text = string.format("Page %d / %d  •  %d hamsters", page, pages, #entries)
 		emptyLabel.Visible = #entries == 0
 
+		-- every owned hamster is listed (scroll down); you choose exactly which ones work in the wheels
 		grid:ClearAllChildren()
 		UIKit.new("UIGridLayout", {
-			CellSize = UDim2.fromOffset(216, 232),
+			CellSize = UDim2.fromOffset(216, 236),
 			CellPadding = UDim2.fromOffset(9, 10),
 			SortOrder = Enum.SortOrder.LayoutOrder,
 			HorizontalAlignment = Enum.HorizontalAlignment.Center,
 		}, grid)
 
 		local multiplier = derived.IncomeMultiplier or 1
-		for index = (page - 1) * PAGE_SIZE + 1, math.min(#entries, page * PAGE_SIZE) do
+		for index = 1, #entries do
 			local entry = entries[index]
 			local species = entry.Species
 			local definition = RarityConfig.ById[species.Rarity]
@@ -202,10 +167,10 @@ function InventoryUI.start()
 			end
 
 			local free = entry.Count - equipped
-			local equipButton = UIKit.button(card, {
-				Text = "Equip",
+			local work = UIKit.button(card, {
+				Text = "Work +",
 				Size = UDim2.fromOffset(98, 32),
-				Position = UDim2.fromOffset(8, 192),
+				Position = UDim2.fromOffset(8, 160),
 				Color = C.Green,
 				TextSize = 15,
 				OnClick = function()
@@ -215,31 +180,38 @@ function InventoryUI.start()
 					end
 				end,
 			})
-			UIKit.setEnabled(equipButton, free > 0 and #data.Equipped < slots)
-			UIKit.button(card, {
-				Text = if equipped > 0 then "Remove" else "Sell",
+			UIKit.setEnabled(work, free > 0 and #data.Equipped < slots)
+			local rest = UIKit.button(card, {
+				Text = "Rest −",
 				Size = UDim2.fromOffset(98, 32),
-				Position = UDim2.new(1, -106, 0, 192),
-				Color = if equipped > 0 then C.BrownLight else C.Red,
+				Position = UDim2.new(1, -106, 0, 160),
+				Color = C.BrownLight,
 				TextSize = 15,
 				OnClick = function()
-					if equipped > 0 then
-						DataController.request("Unequip", { Id = species.Id })
+					DataController.request("Unequip", { Id = species.Id })
+				end,
+			})
+			UIKit.setEnabled(rest, equipped > 0)
+			local sell = UIKit.button(card, {
+				Text = "Sell one",
+				Size = UDim2.new(1, -16, 0, 28),
+				Position = UDim2.fromOffset(8, 198),
+				Color = C.Red,
+				TextSize = 14,
+				OnClick = function()
+					local result = DataController.request("Sell", { Id = species.Id, Count = 1 })
+					if result.ok then
+						notify(string.format("Sold %s for %s cash", species.Name, Format.short(result.extra or 0)), "success")
 					else
-						local result = DataController.request("Sell", { Id = species.Id, Count = 1 })
-						if result.ok then
-							notify(string.format("Sold %s for %s cash", species.Name, Format.short(result.extra or 0)), "success")
-						else
-							notify(result.msg, "error")
-						end
+						notify(result.msg, "error")
 					end
 				end,
 			})
+			UIKit.setEnabled(sell, free > 0)
 		end
 	end
 
 	panel.OnOpen[1] = function()
-		page = 1
 		render()
 	end
 	DataController.onChanged(function(keys)

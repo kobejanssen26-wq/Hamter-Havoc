@@ -24,6 +24,8 @@ return {
 	Upgrades = {}, -- [upgradeId] = level
 	Boosts = {}, -- [boostId] = unix time it expires
 	Items = {}, -- [itemId] = count of consumable items (hotbar); server authoritative
+	Gear = {}, -- [itemId] = true for owned weapons / equipment (ItemRegistry); server authoritative
+	Hotbar = {}, -- ["2".."8"] = itemId on that hotbar slot (slot 1 is always the built-in Slap)
 	Tutorial = { Step = 1, Done = false, Skipped = false },
 	Passes = {}, -- [passKey] = true (re-verified on join)
 	Cosmetics = { Owned = {}, Roof = "default" },

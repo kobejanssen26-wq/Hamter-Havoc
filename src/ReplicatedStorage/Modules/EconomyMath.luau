@@ -6,6 +6,7 @@
 local FloorConfig = require(script.Parent.FloorConfig)
 local HamsterDatabase = require(script.Parent.HamsterDatabase)
 local IndexRewardConfig = require(script.Parent.IndexRewardConfig)
+local ItemRegistry = require(script.Parent.ItemRegistry)
 local RarityConfig = require(script.Parent.RarityConfig)
 local RebirthConfig = require(script.Parent.RebirthConfig)
 local ShopConfig = require(script.Parent.ShopConfig)
@@ -107,7 +108,7 @@ function EconomyMath.luck(data: any, now: number): number
 end
 
 function EconomyMath.collectRange(data: any): number
-	return EconomyMath.BaseCollectRange + UpgradeConfig.effect("CollectionRange", EconomyMath.level(data, "CollectionRange"))
+	return EconomyMath.BaseCollectRange + UpgradeConfig.effect("CollectionRange", EconomyMath.level(data, "CollectionRange")) + ItemRegistry.gearBonus(data, "CollectRange")
 end
 
 function EconomyMath.walkSpeed(data: any, now: number): number
@@ -116,6 +117,7 @@ function EconomyMath.walkSpeed(data: any, now: number): number
 		speed += 6
 	end
 	speed += passEffect(data, "WalkSpeed") or 0
+	speed += ItemRegistry.gearBonus(data, "WalkSpeed")
 	return speed
 end
 

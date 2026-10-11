@@ -185,4 +185,114 @@ function ContentValidator.validateAnimation(def: any, seen: { [string]: boolean 
 	return list
 end
 
+local ITEM_CATEGORIES = { Weapon = true, Equipment = true, Consumable = true }
+local PASSIVE_STATS = { CollectRange = true, WalkSpeed = true }
+local WEAPON_LIMITS = { Range = { 3, 80 }, Cooldown = { 0.3, 10 }, Knockback = { 0, 100 }, Stun = { 0, 3 }, DropChance = { 0, 1 }, Arc = { -1, 1 } }
+local BOOST_IDS = { Coins2x = true, Luck2x = true, Speed2x = true, AutoCollect = true }
+
+-- context: { Rarities, ExistingIds, ModelExists: ((string) -> boolean)? }
+function ContentValidator.validateItem(def: any, context: any): { Issue }
+	local list: { Issue } = {}
+	local id = if type(def) == "table" and type(def.Id) == "string" then def.Id else "?"
+	local function err(message: string)
+		issue(list, "error", "Item", id, message)
+	end
+	if type(def) ~= "table" then
+		err("definition must be a table")
+		return list
+	end
+	if not isStableId(def.Id) then
+		err("Id must be lowercase letters, digits and underscores, starting with a letter")
+	elseif context.ExistingIds and context.ExistingIds[def.Id] then
+		err("duplicate item Id")
+	end
+	if type(def.DisplayName) ~= "string" or def.DisplayName == "" or #def.DisplayName > 28 then
+		err("DisplayName must be a text of 1-28 characters")
+	end
+	if def.Description ~= nil and (type(def.Description) ~= "string" or #def.Description > 160) then
+		err("Description must be a text of at most 160 characters")
+	end
+	if not ITEM_CATEGORIES[def.Category] then
+		err("Category must be Weapon, Equipment or Consumable")
+	end
+	if type(def.Icon) ~= "string" or def.Icon == "" then
+		err("Icon must be a drawn icon id (UI/Icons.luau) or \"rbxassetid://<number>\"")
+	elseif string.sub(def.Icon, 1, 4) == "rbxa" then
+		checkAsset(list, "Item", id, "Icon", def.Icon)
+	end
+	if def.Rarity ~= nil and not context.Rarities[def.Rarity] then
+		err("Rarity '" .. tostring(def.Rarity) .. "' does not exist")
+	end
+	if (def.Price == nil) ~= (def.Currency == nil) then
+		err("Price and Currency must be set together (or both left out for items that are not sold)")
+	elseif def.Price ~= nil then
+		if def.Currency ~= "Coins" and def.Currency ~= "Gems" then
+			err("Currency must be \"Coins\" (cash) or \"Gems\" (diamonds) - Robux items are Game Passes")
+		end
+		if type(def.Price) ~= "number" or def.Price ~= def.Price or def.Price < 1 or def.Price > 1e12 then
+			err("Price must be a number >= 1")
+		end
+	end
+	local equip = def.Equip
+	if type(equip) ~= "table" then
+		err("Equip must be a table")
+		return list
+	end
+	if equip.Kind == "Tool" then
+		if def.Category ~= "Weapon" then
+			err("a Tool item must have Category = \"Weapon\"")
+		end
+		local weapon = equip.Weapon
+		if type(weapon) ~= "table" then
+			err("Equip.Weapon is missing")
+		else
+			if weapon.Type ~= "Melee" and weapon.Type ~= "Ranged" then
+				err("Weapon.Type must be Melee or Ranged")
+			end
+			for stat, limits in WEAPON_LIMITS do
+				local value = weapon[stat]
+				if type(value) ~= "number" or value ~= value or value < limits[1] or value > limits[2] then
+					err(string.format("Weapon.%s must be a number between %s and %s", stat, limits[1], limits[2]))
+				end
+			end
+		end
+		if def.ModelName ~= nil and context.ModelExists and not context.ModelExists(def.ModelName) then
+			issue(list, "warn", "Item", id, string.format("tool model '%s' not found in ReplicatedStorage/Assets/Tools - the built-in weapon model is used", def.ModelName))
+		end
+	elseif equip.Kind == "Passive" then
+		if def.Category ~= "Equipment" then
+			err("a Passive item must have Category = \"Equipment\"")
+		end
+		if type(equip.Stats) ~= "table" or next(equip.Stats) == nil then
+			err("Equip.Stats is missing")
+		else
+			for stat, value in equip.Stats do
+				if not PASSIVE_STATS[stat] then
+					err("unsupported stat '" .. tostring(stat) .. "' (supported: CollectRange, WalkSpeed)")
+				elseif type(value) ~= "number" or value ~= value or value < 0 or value > 100 then
+					err("stat " .. tostring(stat) .. " must be a number between 0 and 100")
+				end
+			end
+		end
+	elseif equip.Kind == "Consume" then
+		if def.Category ~= "Consumable" then
+			err("a Consume item must have Category = \"Consumable\"")
+		end
+		if equip.Effect == "Boost" then
+			if not BOOST_IDS[equip.BoostId] or type(equip.Seconds) ~= "number" or equip.Seconds < 10 or equip.Seconds > 86400 then
+				err("Boost needs a known BoostId (Coins2x, Luck2x, Speed2x, AutoCollect) and Seconds between 10 and 86400")
+			end
+		elseif equip.Effect == "Pouch" then
+			if type(equip.Minutes) ~= "number" or equip.Minutes <= 0 or equip.Minutes > 600 then
+				err("Pouch needs Minutes between 0 and 600")
+			end
+		else
+			err("Effect must be Boost or Pouch")
+		end
+	else
+		err("Equip.Kind must be Tool, Passive or Consume")
+	end
+	return list
+end
+
 return ContentValidator

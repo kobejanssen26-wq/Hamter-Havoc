@@ -12,14 +12,16 @@ local ShopConfig = {}
 -- really be bought right now (nothing is faked to fill a tab). "Equipment" and "Limited Offers" stay empty until
 -- real equipment / timed offers (item.Limited = { EndsAt = unixTime }) are added to Items.
 ShopConfig.Categories = {
+	{ Id = "Weapons", Name = "Weapons", Icon = "bat" },
+	{ Id = "Equipment", Name = "Equipment", Icon = "boots" },
 	{ Id = "Boosts", Name = "Boosts", Icon = "bolt" },
-	{ Id = "Equipment", Name = "Equipment", Icon = "shield" },
 	{ Id = "Hamsters", Name = "Hamsters", Icon = "hamster" },
 	{ Id = "Diamonds", Name = "Diamonds", Icon = "gem" },
+	{ Id = "Gamepasses", Name = "Game Passes", Icon = "crown" },
 	{ Id = "Cosmetics", Name = "Cosmetics", Icon = "paint" },
 	{ Id = "Limited", Name = "Limited Offers", Icon = "star" },
 }
-ShopConfig.SectionToCategory = { Pets = "Hamsters", Boosts = "Boosts", Currency = "Diamonds", Gamepasses = "Diamonds", Cosmetics = "Cosmetics" }
+ShopConfig.SectionToCategory = { Pets = "Hamsters", Boosts = "Boosts", Currency = "Diamonds", Cosmetics = "Cosmetics" }
 
 ShopConfig.Boosts = {
 	Coins2x = { Name = "2x Cash", Icon = "coin", Desc = "Doubles all cash earned." },
@@ -50,13 +52,6 @@ ShopConfig.Items = {
 	{ Id = "gems_medium", Section = "Currency", Name = "Pouch of Diamonds", Icon = "gem", Desc = "550 diamonds.", Robux = 249, Kind = "Product", ProductId = 0, GemAmount = 550 },
 	{ Id = "gems_large", Section = "Currency", Name = "Chest of Diamonds", Icon = "gem", Desc = "1,200 diamonds.", Robux = 499, Kind = "Product", ProductId = 0, GemAmount = 1200 },
 
-	-- Gamepasses
-	{ Id = "pass_coins", Section = "Gamepasses", Name = "2x Cash", Icon = "coin", Desc = "Permanent x2 cash.", Robux = 299, Kind = "Pass", PassKey = "DoubleCoins", PassId = 0 },
-	{ Id = "pass_auto", Section = "Gamepasses", Name = "Auto Collect", Icon = "bot", Desc = "Permanent auto collect.", Robux = 399, Kind = "Pass", PassKey = "AutoCollect", PassId = 0 },
-	{ Id = "pass_storage", Section = "Gamepasses", Name = "Extra Storage", Icon = "home", Desc = "+3 house display slots.", Robux = 199, Kind = "Pass", PassKey = "ExtraStorage", PassId = 0 },
-	{ Id = "pass_luck", Section = "Gamepasses", Name = "Lucky Charm", Icon = "clover", Desc = "Permanent x1.25 luck.", Robux = 249, Kind = "Pass", PassKey = "LuckyCharm", PassId = 0 },
-	{ Id = "pass_speed", Section = "Gamepasses", Name = "Speed Runner", Icon = "shoe", Desc = "+4 walk speed.", Robux = 99, Kind = "Pass", PassKey = "SpeedRunner", PassId = 0 },
-
 	-- Cosmetics (roof colours for your house)
 	{ Id = "roof_rose", Section = "Cosmetics", Name = "Rose Roof", Icon = "flower", Desc = "A soft pink roof.", Gems = 100, Kind = "Roof", RoofKey = "rose", Color = Color3.fromRGB(246, 150, 180) },
 	{ Id = "roof_mint", Section = "Cosmetics", Name = "Mint Roof", Icon = "leaf", Desc = "A fresh mint roof.", Gems = 100, Kind = "Roof", RoofKey = "mint", Color = Color3.fromRGB(130, 215, 175) },
@@ -66,11 +61,56 @@ ShopConfig.Items = {
 	{ Id = "roof_midnight", Section = "Cosmetics", Name = "Midnight Roof", Icon = "moon", Desc = "A deep midnight roof.", Gems = 250, Kind = "Roof", RoofKey = "midnight", Color = Color3.fromRGB(60, 62, 120) },
 }
 
+-- Items generated from the registries (never edit these here):
+--   * weapons / equipment with a Currency + Price in Modules/Content/Items
+--   * game passes from GamepassConfig (Robux; PassId 0 = not configured, never purchasable)
+do
+	local ItemRegistry = require(script.Parent.ItemRegistry)
+	for _, def in ItemRegistry.List do
+		if def.Price and def.Equip.Kind ~= "Consume" then
+			table.insert(ShopConfig.Items, {
+				Id = "gear_" .. def.Id,
+				Section = "Gear",
+				Category = ItemRegistry.ShopCategory[def.Category],
+				Name = def.DisplayName,
+				Icon = def.Icon,
+				Desc = def.Description or "",
+				Rarity = def.Rarity,
+				Kind = "Gear",
+				ItemId = def.Id,
+				Coins = if def.Currency == "Coins" then def.Price else nil,
+				Gems = if def.Currency == "Gems" then def.Price else nil,
+			})
+		end
+	end
+	local GamepassConfig = require(script.Parent.GamepassConfig)
+	for _, pass in GamepassConfig.List do
+		if GamepassConfig.ByKey[pass.Key] then
+			table.insert(ShopConfig.Items, {
+				Id = "pass_" .. pass.Key,
+				Section = "Pass",
+				Category = pass.Category,
+				Name = pass.Name,
+				Icon = pass.Icon,
+				Desc = pass.Description or "",
+				Kind = "Pass",
+				PassKey = pass.Key,
+				PassId = pass.PassId,
+				Order = pass.Order,
+				Robux = 0, -- the real price is fetched from Roblox by the server (ShopSystem.passPrice)
+				Unconfigured = not GamepassConfig.configured(pass),
+			})
+		end
+	end
+end
+
 ShopConfig.ById = {} :: { [string]: any }
 -- Currency + price in one place: item.Currency is "Coins", "Gems" or "Robux"; the UI shows them as Cash / Diamonds / Robux.
 for _, item in ShopConfig.Items do
 	item.Category = item.Category or ShopConfig.SectionToCategory[item.Section] or "Boosts"
-	if item.Coins then
+	if item.Kind == "Pass" then
+		item.Currency, item.Price = "Robux", 0
+	elseif item.Coins then
 		item.Currency, item.Price = "Coins", item.Coins
 	elseif item.Gems then
 		item.Currency, item.Price = "Gems", item.Gems
@@ -90,17 +130,28 @@ function ShopConfig.available(item: any, now: number?): boolean
 	return true
 end
 
+-- Unconfigured game passes (PassId 0) are listed, greyed out and never purchasable, ONLY while testing in Studio.
+function ShopConfig.listedInStudio(item: any): boolean
+	return item.Kind == "Pass" and item.Unconfigured == true and game:GetService("RunService"):IsStudio()
+end
+
 -- Categories that really have something to sell, each with its items.
 function ShopConfig.categories(now: number?): { any }
 	local result = {}
 	for _, category in ShopConfig.Categories do
 		local items = {}
 		for _, item in ShopConfig.Items do
-			if (item.Limited and category.Id == "Limited" or (not item.Limited and item.Category == category.Id)) and ShopConfig.available(item, now) then
+			if (item.Limited and category.Id == "Limited" or (not item.Limited and item.Category == category.Id)) and (ShopConfig.available(item, now) or ShopConfig.listedInStudio(item)) then
 				table.insert(items, item)
 			end
 		end
-		if #items > 0 then
+		if category.Id == "Gamepasses" then
+			table.sort(items, function(a, b)
+				return (a.Order or 100) < (b.Order or 100)
+			end)
+		end
+		-- the Game Pass section always exists (it shows an empty state until you configure a pass)
+		if #items > 0 or category.Id == "Gamepasses" then
 			table.insert(result, { Id = category.Id, Name = category.Name, Icon = category.Icon, Items = items })
 		end
 	end
@@ -114,13 +165,7 @@ for _, item in ShopConfig.Items do
 	end
 end
 
--- Permanent effects of gamepasses (read by EconomyMath on both sides).
-ShopConfig.PassEffects = {
-	DoubleCoins = { CoinMult = 2 },
-	AutoCollect = { AutoCollect = true },
-	ExtraStorage = { Slots = 3 },
-	LuckyCharm = { Luck = 1.25 },
-	SpeedRunner = { WalkSpeed = 4 },
-}
+-- Permanent effects of gamepasses (read by EconomyMath on both sides): defined by each pass in GamepassConfig.
+ShopConfig.PassEffects = require(script.Parent.GamepassConfig).Effects
 
 return ShopConfig
