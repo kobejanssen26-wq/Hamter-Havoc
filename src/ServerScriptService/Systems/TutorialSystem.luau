@@ -54,6 +54,19 @@ function TutorialSystem.skip(player: Player): (boolean, string)
 	return true, "Tutorial skipped"
 end
 
+-- Settings > Replay tutorial: starts again from step 1 (only the player's own profile, nothing else changes).
+function TutorialSystem.replay(player: Player): (boolean, string)
+	local data = DataSystem.get(player)
+	if not data then
+		return false, "No data"
+	end
+	data.Tutorial.Step = 1
+	data.Tutorial.Done = false
+	data.Tutorial.Skipped = false
+	ReplicationSystem.mark(player, "Tutorial")
+	return true, "Tutorial restarted"
+end
+
 -- Advances "Stat" steps from real progress. Cheap; called once a second for players still in the tutorial.
 function TutorialSystem.check(player: Player)
 	local data = DataSystem.get(player)
@@ -61,7 +74,12 @@ function TutorialSystem.check(player: Player)
 		return
 	end
 	local step = TutorialConfig.Steps[data.Tutorial.Step]
-	if step and step.Kind == "Stat" and (data.Stats[step.Stat] or 0) >= step.Target then
+	if not step then
+		return
+	end
+	if step.Kind == "Stat" and (data.Stats[step.Stat] or 0) >= step.Target then
+		advance(player, data)
+	elseif step.Kind == "Equipped" and #data.Equipped >= 1 then
 		advance(player, data)
 	end
 end

@@ -129,6 +129,28 @@ function SettingsUI.start()
 		})
 	end
 
+	-- replay the tutorial
+	do
+		local row = UIKit.frame(scroll, { Size = UDim2.new(1, -10, 0, 48), LayoutOrder = 1000, BackgroundTransparency = 1 })
+		UIKit.icon(row, "scroll", { Size = UDim2.fromOffset(24, 24), Position = UDim2.new(0, 4, 0.5, 0), AnchorPoint = Vector2.new(0, 0.5) })
+		UIKit.label(row, { Position = UDim2.fromOffset(40, 0), Size = UDim2.new(0.55, -42, 1, 0), Text = "Tutorial", TextSize = UIKit.Type.Heading, Font = UIKit.Fonts.Title })
+		UIKit.button(row, {
+			Name = "ReplayTutorial",
+			Text = "Replay",
+			Size = UDim2.fromOffset(170, 36),
+			Position = UDim2.new(1, -12, 0.5, 0),
+			AnchorPoint = Vector2.new(1, 0.5),
+			Color = C.Blue,
+			TextSize = 15,
+			OnClick = function()
+				local response = DataController.request("TutorialReplay")
+				if response.ok then
+					panel:Close()
+				end
+			end,
+		})
+	end
+
 	local function sync()
 		for key, control in controls do
 			control.Set(DataController.setting(key))

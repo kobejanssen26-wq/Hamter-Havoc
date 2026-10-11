@@ -1,21 +1,27 @@
 --[[
-	First-time player tutorial. Steps are tiny and skippable; completion is saved (profile.Tutorial) so it never
-	shows twice, and profiles that existed before the tutorial was added are marked done on load.
+	First-time player tutorial (7 steps). Edit this file to change the text or the order. Steps are tiny and skippable;
+	completion is saved (profile.Tutorial) so it never shows twice, and profiles that existed before it was added are
+	marked done on load. Players can replay it from Settings.
 
-	Kind "Ack"    the player presses the button (nothing to verify)
-	Kind "Stat"   the server watches the real profile: advances itself when Stats[Stat] >= Target
-	Target        what the guide arrow points to: "Plot", "Hamsters", "Shop" or nil
+	Kind "Ack"       the player presses the button (nothing to verify)
+	Kind "Stat"      the server watches the real profile: advances itself when Stats[Stat] >= Target
+	Kind "Equipped"  advances itself when at least one hamster is placed on the working bench
+	Target           what the guide points at, found by TAG in the world (never by coordinates):
+	                   "Base" "Bench" "Gate" "Upgrade" "Altar" "Leaderboard"   (objects marked with Build.target in the builders)
+	                   "Hamsters"                                              (the nearest hamster ball on the road)
+	Objects inside a house are only offered to that house's owner, so everybody is guided to THEIR OWN base.
 ]]
 
 local TutorialConfig = {}
 
 TutorialConfig.Steps = {
-	{ Id = "welcome", Kind = "Ack", Title = "Welcome to Hamster Plaza!", Text = "Hamsters roll down the street in balls. Buy them, bring them home and they earn cash for you.", Button = "Let's go" },
-	{ Id = "plot", Kind = "Ack", Title = "This is your plot", Text = "You were given your own base automatically. Hamsters you secure live here and produce cash.", Target = "Plot", Button = "Got it" },
-	{ Id = "discover", Kind = "Ack", Title = "Spot the hamsters", Text = "Each hamster shows its name, rarity, price and income per second. Pick something you can afford.", Target = "Hamsters", Button = "Next" },
-	{ Id = "buy", Kind = "Stat", Stat = "Claimed", Target = 1, Title = "Buy your first hamster", Text = "Walk up to a hamster ball and hold E to pay for it.", Pointer = "Hamsters" },
-	{ Id = "earn", Kind = "Stat", Stat = "Secured", Target = 1, Title = "Bring it home", Text = "Your hamster rolls to your base on its own. Guard it - other players can steal it! Slap thieves with Q.", Pointer = "Plot" },
-	{ Id = "progress", Kind = "Ack", Title = "Keep growing", Text = "Earn cash, buy upgrades at your terminal, collect new species, and rebirth for permanent power. Daily Quests and the Shop are in the corner buttons.", Button = "Start playing" },
+	{ Id = "base", Kind = "Ack", Title = "Your base", Text = "This is your base. Hamsters you win are brought here and work for you. Nobody else owns it.", Target = "Base", Button = "Next" },
+	{ Id = "hamster", Kind = "Stat", Stat = "Claimed", Target = 1, Title = "Get your first hamster", Text = "Walk up to a hamster ball on the road and hold E to buy it with cash. Check its price first.", Pointer = "Hamsters" },
+	{ Id = "bench", Kind = "Equipped", Title = "Your working bench", Text = "Your hamster rolls home and runs on a wheel of your bench, earning money every second. Open Backpack > Hamsters to choose who works.", Target = "Bench" },
+	{ Id = "gate", Kind = "Ack", Title = "Lock your base", Text = "Other players can steal from an open base. Your gate protects it for a while: press E at the security panel to switch it back on.", Target = "Gate", Button = "Next" },
+	{ Id = "upgrade", Kind = "Ack", Title = "Upgrade", Text = "Spend your cash here: more income, more luck, faster walking. Upgrades are the quickest way to grow.", Target = "Upgrade", Button = "Next" },
+	{ Id = "altar", Kind = "Ack", Title = "Rebirth altar", Text = "When you have the cash and the required hamsters, rebirth here for permanent income and new gear. You keep all your hamsters.", Target = "Altar", Button = "Next" },
+	{ Id = "leaderboard", Kind = "Ack", Title = "Leaderboard", Text = "Compete with everyone: most hamsters, most steals, most money. Good luck!", Target = "Leaderboard", Button = "Finish" },
 }
 
 TutorialConfig.DoneStep = 99

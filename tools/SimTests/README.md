@@ -15,6 +15,8 @@ tools/SimTests/run.sh scn_theft.lua    # a single scenario with full output
 | `scn_gear` | items/weapons/equipment: validation, server-side purchases, hotbar layout, equip rules, melee + ranged combat (range, cooldown, aim, walls, theft interruption), game-pass flow with a mock MarketplaceService, hotbar/shop/backpack UI geometry and behaviour |
 | `scn_rebirth` | rebirth keeps the whole collection and the bench (same hamsters, same places), save/leave/rejoin, auto-place never replaces, hamster catalog (new fields, balance, limited editions) |
 | `scn_world` | Studio-owned Environment is kept on Play, mountain placement/shape/budget, Lighting ownership |
+| `scn_audit` | geometry audit of the generated world: solid objects of different buildings intersecting, buried or floating parts (with a self-test that proves the audit can see a problem) |
+| `scn_tutorial` | 7-step tutorial: tagged real targets (your own base only), markers follow moved objects, skip / replay / persistence |
 | `scn_lb` | leaderboards: period buckets, scoring rules, caching, outages, persistence across sessions |
 | `scn_ui` | HUD regions (6 screen sizes: no overlap, on screen, top-centre under the top bar), layers, UI registry rules, hotbar, shop, leaderboard screen, tutorial, panels, cursor |
 | `scn_content` | content validator, custom hamsters (good + deliberately broken files), animation registry, key bindings, emote server rules, emote wheel (B) |

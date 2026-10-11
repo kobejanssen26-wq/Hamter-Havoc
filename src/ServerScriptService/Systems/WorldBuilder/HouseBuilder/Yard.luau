@@ -99,18 +99,41 @@ function Yard.build(house: any, rng: Random)
 	securityPrompt.Enabled = false
 	securityPrompt:SetAttribute("SecurityHouse", house.Index)
 	securityPrompt.Parent = panel
+	Build.target(panel, "Gate")
 	house.Security = { Beams = beams, Field = field, Lamps = lamps, PylonLamp = pylonLamp, Prompt = securityPrompt, Anchor = anchor, Screen = screenLabel }
 
 	-----------------------------------------------------------------------
 	-- rebirth altar, mailbox, name sign
 	-----------------------------------------------------------------------
-	Build.pillar(yard, "AltarBase", 4.6, 0.7, L(19, 0.35, 12), Palette.Stone, Enum.Material.Cobblestone)
-	local altar = Build.pillar(yard, "AltarPillar", 2.4, 1.8, L(19, 1.6, 12), Palette.Cream, PLASTIC)
-	Build.pillar(yard, "AltarCap", 3, 0.3, L(19, 2.65, 12), Palette.Gold, METAL, { CanCollide = false })
-	local orb = Build.blob(yard, "AltarOrb", Vector3.one * 1.6, L(19, 4.1, 12), Color3.fromRGB(255, 130, 60), NEON, { CanCollide = false })
-	Build.light(orb, Color3.fromRGB(255, 150, 80), 1, 16)
+	-- the altar is the one place you rebirth: a two-tier stone platform with a glowing ring, six rune stones, the plinth with
+	-- the floating orb, a stepping-stone path from the driveway and a tall sign (so a new player can't miss it)
+	local AX, AZ = 19, 14
+	Build.pillar(yard, "AltarBase", 9.2, 0.5, L(AX, 0.25, AZ), Palette.StoneDark, Enum.Material.Cobblestone)
+	Build.pillar(yard, "AltarTier", 6.6, 0.5, L(AX, 0.75, AZ), Palette.Stone, Enum.Material.Cobblestone)
+	Build.pillar(yard, "AltarRing", 5.4, 0.1, L(AX, 1.03, AZ), Color3.fromRGB(255, 150, 70), NEON, { CanCollide = false, CastShadow = false })
+	for index = 0, 5 do
+		local angle = index * math.pi / 3
+		local sx, sz = AX + math.cos(angle) * 4.1, AZ + math.sin(angle) * 4.1
+		local stone = Build.part(yard, "RuneStone", Vector3.new(1.1, 3.6, 0.9), cframe * CFrame.new(sx, 1.8, sz) * CFrame.Angles(0, -angle + math.pi / 2, 0), Palette.Stone, Enum.Material.Slate)
+		Build.deco(yard, "Rune", Vector3.new(0.5, 1.4, 0.12), cframe * CFrame.new(sx, 2.3, sz) * CFrame.Angles(0, -angle + math.pi / 2, 0) * CFrame.new(0, 0, -0.5), Color3.fromRGB(255, 150, 70), NEON)
+		stone:SetAttribute("Decor", "RuneStone")
+	end
+	local altar = Build.pillar(yard, "AltarPillar", 2.4, 2.4, L(AX, 2.2, AZ), Palette.Cream, Enum.Material.Marble)
+	Build.pillar(yard, "AltarCap", 3.2, 0.35, L(AX, 3.55, AZ), Palette.Gold, METAL, { CanCollide = false })
+	local orb = Build.blob(yard, "AltarOrb", Vector3.one * 1.7, L(AX, 5, AZ), Color3.fromRGB(255, 130, 60), NEON, { CanCollide = false })
+	Build.light(orb, Color3.fromRGB(255, 150, 80), 1.4, 22)
 	Build.animate(orb, "Bob", { Amplitude = 0.35, Speed = 1.6 })
-	house.Prompts.Rebirth = makePrompt(altar, "Rebirth Altar", "Rebirth", "Rebirth", 11)
+	-- stepping stones from the driveway edge to the platform
+	for index = 0, 3 do
+		Build.deco(yard, "StepStone", Vector3.new(2.4, 0.12, 2.4), L(8.5 + index * 2.6, 0.08, AZ - 0.6 + math.sin(index * 1.7) * 0.5), Palette.Pavement, Enum.Material.Cobblestone)
+	end
+	-- sign: "REBIRTH ALTAR" on a post, and a name tag floating above the orb
+	Build.part(yard, "AltarSignPost", Vector3.new(0.5, 5.4, 0.5), L(AX - 6.8, 2.7, AZ - 3.2), Palette.WoodDark, WOOD)
+	local altarSign = Build.part(yard, "AltarSign", Vector3.new(6.4, 2.2, 0.4), L(AX - 6.8, 5.3, AZ - 3.2) * CFrame.Angles(0, math.rad(-30), 0), Palette.WoodLight, WOOD, { CanCollide = false })
+	Build.surfaceText(altarSign, Enum.NormalId.Front, "REBIRTH ALTAR", { TextColor = Palette.WoodDark, PixelsPerStud = 50 })
+	Build.billboard(orb, "REBIRTH ALTAR", Vector2.new(240, 38), Vector3.new(0, 2.4, 0), { MaxDistance = 140, TextColor = Color3.fromRGB(255, 190, 120), Name = "AltarTag" })
+	Build.target(altar, "Altar")
+	house.Prompts.Rebirth = makePrompt(altar, "Rebirth Altar - start over, stronger", "Rebirth", "Rebirth", 13)
 
 	Build.part(yard, "MailPost", Vector3.new(0.5, 3.4, 0.5), L(-12, 1.7, 3.6), Palette.WoodDark, WOOD)
 	local mailbox = Build.blob(yard, "Mailbox", Vector3.new(2.6, 1.8, 1.8), L(-12, 3.7, 3.6), Color3.fromRGB(100, 170, 255), PLASTIC)

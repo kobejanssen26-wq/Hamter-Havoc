@@ -138,6 +138,46 @@ local function buildBackdrop(folder: Folder, rng: Random)
 	end
 end
 
+-- Ground transitions: the lawn does not stop at a hard line. Outside the walls grass breaks up into dirt, then scree and
+-- boulders towards the foot of the mountains; inside, flower beds soften the edge of the forest. All flat, non-colliding
+-- patches (a few hundred cheap parts) plus boulders.
+local function buildTransitions(folder: Folder, rng: Random)
+	local transitions = Build.folder(folder, "Transitions")
+	local DIRT = Color3.fromRGB(158, 126, 92)
+	local SCREE = Color3.fromRGB(132, 126, 134)
+	local function patch(x: number, z: number, radius: number, color: Color3, material: Enum.Material)
+		Build.pillar(transitions, "Patch", radius * 2, 0.06, CFrame.new(x, 0.03 + rng:NextNumber() * 0.04, z), color, material, { CanCollide = false, CanQuery = false, CastShadow = false })
+	end
+	for _ = 1, 150 do
+		-- a point in a band 4-70 studs outside the ground, anywhere around it
+		local onEnds = rng:NextNumber() < 0.45
+		local depth = 4 + rng:NextNumber() * 66
+		local along = (rng:NextNumber() * 2 - 1)
+		local x, z
+		if onEnds then
+			x = (GROUND_HALF_X + depth) * (if rng:NextNumber() > 0.5 then 1 else -1)
+			z = along * (GROUND_HALF_Z + 40)
+		else
+			z = (GROUND_HALF_Z + depth) * (if rng:NextNumber() > 0.5 then 1 else -1)
+			x = along * (GROUND_HALF_X + 40)
+		end
+		local t = depth / 70 -- 0 = next to the lawn, 1 = foot of the mountains
+		local material = if t < 0.45 then Enum.Material.Ground else Enum.Material.Slate
+		patch(x, z, 5 + rng:NextNumber() * 12, if t < 0.45 then DIRT else SCREE, material)
+		if rng:NextNumber() < 0.28 + t * 0.4 then
+			Decor.rock(transitions, Vector3.new(x + (rng:NextNumber() - 0.5) * 10, 0, z + (rng:NextNumber() - 0.5) * 10), 1.2 + rng:NextNumber() * 2.2 * (0.5 + t), rng)
+		end
+	end
+	-- flower beds just inside the forest edge, away from lots and paths
+	for _ = 1, 40 do
+		local x = (rng:NextNumber() * 2 - 1) * (GROUND_HALF_X - 14)
+		local z = (if rng:NextNumber() > 0.5 then 1 else -1) * (LOT_BACK + 14 + rng:NextNumber() * (GROUND_HALF_Z - LOT_BACK - 26))
+		if not isCore(x, z) then
+			Decor.flowers(transitions, Vector3.new(x, 0, z), 2 + rng:NextNumber() * 2, 8, rng)
+		end
+	end
+end
+
 ---------------------------------------------------------------------------
 -- playable ground
 ---------------------------------------------------------------------------
@@ -220,6 +260,7 @@ function EnvironmentBuilder.build(parent: Instance, rng: Random): Folder
 	end
 
 	buildBackdrop(folder, rng)
+	buildTransitions(folder, rng)
 
 	-- invisible boundary so nobody wanders off the map
 	local boundary = Build.folder(folder, "Boundary")

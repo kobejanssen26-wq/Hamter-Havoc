@@ -142,7 +142,7 @@ Every asset has its own folder with `README.md` (hierarchy, pivot, dependencies,
 ## Verification status — please read
 
 Checked here (no Roblox Studio is available in this environment): `rojo build`, `luau-lsp` typecheck (clean), `ModelLibrary` export `--test` (42) / `--check`, and a
-**mock-Roblox simulation** (`tools/SimTests/run.sh --all`) that runs the real server + client scripts. Executed in the last run: **scn_loop 110, scn_ui 91, scn_gear 111, scn_rebirth 42, scn_world 15, scn_theft 65, scn_lb 34, scn_content 42,
+**mock-Roblox simulation** (`tools/SimTests/run.sh --all`) that runs the real server + client scripts. Executed in the last run: **scn_loop 111, scn_ui 97, scn_gear 150, scn_rebirth 46, scn_world 15, scn_audit 4, scn_tutorial 36, scn_theft 65, scn_lb 34, scn_content 42,
 scn_econ, scn_wheels 5, scn_game** — all passing. They cover: weapons/equipment/hotbar/shop/backpack/game-pass flow (mock MarketplaceService), the claim → steal → secure loop, shop/hotbar/tutorial, HUD geometry at 6 screen sizes (no overlaps, top HUD centred under the top bar),
 UI registry rules, rack theft (locked base, owner hit, completion, duplicates, gate trap + 60 s timeout, death, disconnect, rebirth), +10 s gate time per rebirth, elevators per unlocked floor,
 leaderboard periods/scoring/caching/outages/persistence, content validator + custom hamsters, emote server rules and the emote wheel (B).

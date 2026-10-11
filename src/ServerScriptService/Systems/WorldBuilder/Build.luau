@@ -199,6 +199,14 @@ function Build.light(parent: Instance, color: Color3, brightness: number, range:
 	return light
 end
 
+-- Marks an object as something the tutorial can point at ("Base", "Bench", "Gate", "Upgrade", "Altar", "Leaderboard").
+-- The client finds it by tag + attribute (never by coordinates), so moving or rebuilding the object cannot break the guide.
+-- Objects inside a house are only offered to the house's owner (the house Model's OwnerUserId attribute).
+function Build.target(instance: Instance, name: string)
+	instance:SetAttribute("TutorialTarget", name)
+	instance:AddTag("TutorialTarget")
+end
+
 -- Client animates anything carrying these tags (see DecorAnimator).
 function Build.animate(instance: Instance, tag: string, attributes: { [string]: any }?)
 	-- attributes first: the client reads them the moment the tag appears

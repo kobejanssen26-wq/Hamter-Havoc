@@ -1,7 +1,8 @@
 --[[
 	Hamster Plaza: the calm centre of the map. The hamster road runs straight through a paved circle and
-	under a big golden-hamster arch; two short annex paths lead to the two buildings that matter
-	(Shop and Hamster Index). Everything is mirror-symmetric, nothing else is placed on purpose.
+	under a big golden-hamster arch; two short annex paths lead to the two places that matter
+	(the Shop building in the north, a fountain in the south that leads on to the Leaderboard Hall). The Hamster Index
+	has no building: it is a tab in the Backpack. Everything is mirror-symmetric, nothing else is placed on purpose.
 ]]
 
 local Build = require(script.Parent.Build)
@@ -33,80 +34,125 @@ local function publicPrompt(parent: BasePart, objectText: string, actionText: st
 	return prompt
 end
 
--- Small market stall. Customers stand at -Z; `cframe` is the ground point in front of the counter.
-local function buildStall(parent: Instance, name: string, cframe: CFrame, title: string, icon: string, awning: Color3, opens: string, action: string)
-	local model = Build.model(parent, name)
-	Build.part(model, "Base", Vector3.new(11, 0.5, 8), cframe * CFrame.new(0, 0.25, 2.8), Palette.Stone, Enum.Material.Cobblestone)
-	Build.part(model, "BackWall", Vector3.new(9.6, 7.4, 0.6), cframe * CFrame.new(0, 4.2, 6), Palette.Wall, PLASTIC)
+-- The Shop: a proper little building (walls, door, windows, gable roof, awning, counter with shelves and goods inside).
+-- `cframe` is the ground point in front of the door; the door faces -Z (towards the plaza), the room extends to +Z.
+local function darker(color: Color3): Color3
+	return color:Lerp(Color3.new(0, 0, 0), 0.25)
+end
+
+local function buildShop(parent: Instance, cframe: CFrame)
+	local model = Build.model(parent, "ShopHouse")
+	local wall = Palette.Wall
+	local roofColor = Palette.RoofColors[2]
+	-- everything is built from a few modular pieces: foundation, 4 walls with a door gap, two roof slopes, gable ends
+	Build.part(model, "Foundation", Vector3.new(16, 0.6, 11.4), cframe * CFrame.new(0, 0.3, 5), Palette.StoneDark, Enum.Material.Cobblestone)
+	Build.part(model, "Floor", Vector3.new(14.6, 0.2, 10), cframe * CFrame.new(0, 0.65, 5), Palette.WoodLight, WOOD, { CanCollide = false })
+	Build.part(model, "WallBack", Vector3.new(14, 8, 0.7), cframe * CFrame.new(0, 4.6, 9.65), wall, PLASTIC)
 	for _, side in { -1, 1 } do
-		Build.part(model, "SideWall", Vector3.new(0.6, 7.4, 6), cframe * CFrame.new(side * 4.8, 4.2, 3), Palette.Wall, PLASTIC)
-		Build.part(model, "Post", Vector3.new(0.8, 8.2, 0.8), cframe * CFrame.new(side * 4.9, 4.6, -0.2), Palette.WoodDark, WOOD)
-		Build.blob(model, "Lantern", Vector3.new(0.9, 1.1, 0.9), cframe * CFrame.new(side * 4.9, 3.4, -0.9), Color3.fromRGB(255, 226, 150), NEON, { CanCollide = false })
+		Build.part(model, "WallSide", Vector3.new(0.7, 8, 9.6), cframe * CFrame.new(side * 6.65, 4.6, 4.85), wall, PLASTIC)
+		Build.part(model, "WallFront", Vector3.new(4.4, 8, 0.7), cframe * CFrame.new(side * 4.8, 4.6, 0.2), wall, PLASTIC)
+		Build.part(model, "CornerPost", Vector3.new(1, 8.6, 1), cframe * CFrame.new(side * 7, 4.9, 0.2), Palette.WoodDark, WOOD)
+		Build.part(model, "CornerPostBack", Vector3.new(1, 8.6, 1), cframe * CFrame.new(side * 7, 4.9, 9.7), Palette.WoodDark, WOOD)
+		-- window with frame, glass and a flower box
+		Build.part(model, "WindowGlass", Vector3.new(0.2, 3, 3.6), cframe * CFrame.new(side * 6.72, 5.2, 4.8), Palette.Sky, Enum.Material.Glass, { Transparency = 0.45, CanCollide = false })
+		Build.deco(model, "WindowFrame", Vector3.new(0.3, 3.4, 4), cframe * CFrame.new(side * 6.8, 5.2, 4.8), Palette.WoodDark, WOOD, { Transparency = 0.0 })
+		Build.deco(model, "FlowerBox", Vector3.new(0.9, 0.7, 4.2), cframe * CFrame.new(side * 7.2, 3.2, 4.8), Palette.Wood, WOOD)
+		for index = 1, 3 do
+			Build.blob(model, "Blossom", Vector3.new(0.8, 0.8, 0.8), cframe * CFrame.new(side * 7.2, 3.8, 3.2 + index * 1.2), Palette.FlowerColors[(index + (side + 1)) % #Palette.FlowerColors + 1], Enum.Material.Grass, { CanCollide = false })
+		end
 	end
-	local counter = Build.part(model, "Counter", Vector3.new(9.2, 2.6, 2.4), cframe * CFrame.new(0, 1.8, 0.4), Palette.WoodLight, WOOD)
-	Build.part(model, "CounterTop", Vector3.new(9.8, 0.4, 3), cframe * CFrame.new(0, 3.3, 0.3), Palette.WoodDark, WOOD, { CanCollide = false })
+	Build.part(model, "Lintel", Vector3.new(5.2, 2.6, 0.7), cframe * CFrame.new(0, 7.3, 0.2), wall, PLASTIC)
+	Build.deco(model, "DoorFrameTop", Vector3.new(5.4, 0.4, 0.9), cframe * CFrame.new(0, 6.1, 0.1), Palette.WoodDark, WOOD)
+	-- steps up to the door
+	Build.part(model, "Step1", Vector3.new(6.6, 0.3, 1.6), cframe * CFrame.new(0, 0.75, -0.9), Palette.Stone, Enum.Material.Slate)
+	Build.part(model, "Step2", Vector3.new(7.4, 0.3, 1.6), cframe * CFrame.new(0, 0.45, -2.2), Palette.StoneDark, Enum.Material.Slate)
 
-	for index = 1, 5 do
-		local color = if index % 2 == 0 then Palette.Cream else awning
-		Build.part(model, "Awning", Vector3.new(2.1, 0.3, 6.4), cframe * CFrame.new(-4.2 + (index - 1) * 2.1, 8.1, 1.7) * CFrame.Angles(math.rad(-14), 0, 0), color, PLASTIC, { CanCollide = false })
-	end
-
-	local sign = Build.part(model, "Sign", Vector3.new(9, 2.4, 0.5), cframe * CFrame.new(0, 10.2, -1.3), Palette.WoodLight, WOOD, { CanCollide = false })
-	Build.surfaceText(sign, Enum.NormalId.Front, title, { TextColor = Palette.Ink, PixelsPerStud = 50 })
+	-- gable roof (ridge along X), overhanging the walls
+	local rise = 6 * math.tan(math.rad(28))
 	for _, side in { -1, 1 } do
-		Build.deco(model, "SignPost", Vector3.new(0.4, 2.2, 0.4), cframe * CFrame.new(side * 3.8, 9, -1.3), Palette.WoodDark, WOOD)
+		Build.part(model, "Roof", Vector3.new(16, 0.7, 7.2), cframe * CFrame.new(0, 8.6 + rise / 2 + 0.4, 5 + side * 3) * CFrame.Angles(math.rad(side * 28), 0, 0), roofColor, Enum.Material.Slate, { CanCollide = false })
+	end
+	Build.deco(model, "Ridge", Vector3.new(16, 0.6, 1), cframe * CFrame.new(0, 8.6 + rise + 0.5, 5), darker(roofColor), Enum.Material.Slate)
+	for _, x in { -6.95, 6.95 } do
+		for slice = 1, 5 do
+			local height = rise / 5
+			Build.part(model, "Gable", Vector3.new(0.7, height + 0.02, 10.4 * (1 - (slice - 0.5) / 5)), cframe * CFrame.new(x, 8.6 + (slice - 0.5) * height, 5), wall, PLASTIC)
+		end
 	end
 
-	-- little trinkets on the counter so each stall feels lived in
-	Build.blob(model, "Trinket", Vector3.new(1.2, 1.2, 1.2), cframe * CFrame.new(-2.8, 4.1, 0.3), awning, PLASTIC, { CanCollide = false })
-	Build.blob(model, "Trinket", Vector3.new(1, 1, 1), cframe * CFrame.new(2.6, 4, 0.3), Palette.Gold, Enum.Material.Metal, { CanCollide = false })
+	-- striped awning over the door
+	for index = 1, 6 do
+		local color = if index % 2 == 0 then Palette.Cream else roofColor
+		Build.deco(model, "Awning", Vector3.new(1.0, 0.25, 4.2), cframe * CFrame.new(-2.5 + (index - 0.5) * 0.84 - 0.1, 7.2, -1.5) * CFrame.Angles(math.rad(-16), 0, 0), color, PLASTIC)
+	end
 
-	publicPrompt(counter, title, action, opens, 13)
+	-- inside: back shelves with goods, a counter, a rug and a hanging lamp
+	Build.part(model, "Shelf", Vector3.new(11, 5.2, 1), cframe * CFrame.new(0, 3.3, 9), Palette.WoodDark, WOOD)
+	for row = 1, 3 do
+		Build.deco(model, "ShelfBoard", Vector3.new(10.6, 0.25, 1.3), cframe * CFrame.new(0, 1.2 + row * 1.25, 8.6), Palette.WoodLight, WOOD)
+		for slot = 1, 7 do
+			local color = Palette.FlowerColors[(slot + row) % #Palette.FlowerColors + 1]
+			local y = 1.2 + row * 1.25 + 0.65
+			if (slot + row) % 3 == 0 then
+				Build.blob(model, "Jar", Vector3.new(0.8, 1.0, 0.8), cframe * CFrame.new(-4.2 + (slot - 1) * 1.4, y, 8.5), color, Enum.Material.Glass, { CanCollide = false, Transparency = 0.15 })
+			elseif (slot + row) % 3 == 1 then
+				Build.deco(model, "Crate", Vector3.new(0.95, 0.9, 0.95), cframe * CFrame.new(-4.2 + (slot - 1) * 1.4, y - 0.05, 8.5), color, PLASTIC)
+			else
+				Build.blob(model, "Plush", Vector3.new(0.9, 0.9, 0.9), cframe * CFrame.new(-4.2 + (slot - 1) * 1.4, y, 8.5), color, PLASTIC, { CanCollide = false })
+			end
+		end
+	end
+	Build.deco(model, "Rug", Vector3.new(7, 0.06, 4.4), cframe * CFrame.new(0, 0.78, 4.6), roofColor, Enum.Material.Fabric)
+	local counter = Build.part(model, "Counter", Vector3.new(7.2, 2.6, 1.8), cframe * CFrame.new(0, 2, 6.4), Palette.WoodLight, WOOD)
+	Build.part(model, "CounterTop", Vector3.new(7.8, 0.35, 2.4), cframe * CFrame.new(0, 3.45, 6.4), Palette.WoodDark, WOOD, { CanCollide = false })
+	Build.deco(model, "Till", Vector3.new(1.6, 1.0, 1.1), cframe * CFrame.new(2.2, 4.1, 6.4), Palette.Gold, Enum.Material.Metal)
+	Build.deco(model, "Scale", Vector3.new(1.2, 0.2, 1.2), cframe * CFrame.new(-2.2, 3.7, 6.4), Palette.Stone, Enum.Material.Metal)
+	local lamp = Build.blob(model, "ShopLamp", Vector3.new(1.5, 1.3, 1.5), cframe * CFrame.new(0, 8, 4.5), Color3.fromRGB(255, 226, 160), NEON, { CanCollide = false })
+	Build.light(lamp, Color3.fromRGB(255, 224, 170), 1.3, 20)
+
+	-- hanging blade sign + painted fascia
+	local sign = Build.part(model, "Sign", Vector3.new(9.5, 2.4, 0.5), cframe * CFrame.new(0, 10.4, -0.7), Palette.WoodDark, WOOD, { CanCollide = false })
+	Build.surfaceText(sign, Enum.NormalId.Front, "HAMSTER SHOP", { TextColor = Palette.Cream, PixelsPerStud = 50 })
+	for _, side in { -1, 1 } do
+		Build.deco(model, "SignPost", Vector3.new(0.4, 1.6, 0.4), cframe * CFrame.new(side * 4.2, 9.5, -0.5), Palette.WoodDark, WOOD)
+	end
+
+	-- outside props: barrels and crates beside the steps, lanterns on the posts
+	for _, side in { -1, 1 } do
+		Build.pillar(model, "Barrel", 1.7, 2, cframe * CFrame.new(side * 5.4, 1.6, -1.6), Palette.Wood, WOOD)
+		Build.deco(model, "BarrelBand", Vector3.new(1.85, 0.15, 1.85), cframe * CFrame.new(side * 5.4, 1.9, -1.6), Palette.StoneDark, Enum.Material.Metal)
+		Build.blob(model, "Lantern", Vector3.new(0.8, 1.0, 0.8), cframe * CFrame.new(side * 7.2, 4, -0.5), Color3.fromRGB(255, 226, 150), NEON, { CanCollide = false })
+	end
+	Build.deco(model, "CrateStack", Vector3.new(1.6, 1.6, 1.6), cframe * CFrame.new(-8.6, 1.4, -0.4), Palette.WoodLight, WOOD)
+	Build.deco(model, "CrateSmall", Vector3.new(1.1, 1.1, 1.1), cframe * CFrame.new(-8.4, 2.75, -0.5) * CFrame.Angles(0, math.rad(18), 0), Palette.Wood, WOOD)
+
+	publicPrompt(counter, "Hamster Shop", "Browse", "Shop", 14)
 	return model
 end
 
-local function buildLibrary(parent: Instance, cframe: CFrame)
-	local model = Build.model(parent, "HamsterLibrary")
-	local wallColor = Palette.Wall
-	Build.part(model, "Floor", Vector3.new(15, 0.5, 10.4), cframe * CFrame.new(0, 0.25, 5), Palette.WoodLight, WOOD)
-	Build.part(model, "WallBack", Vector3.new(14, 8, 0.7), cframe * CFrame.new(0, 4, 9.6), wallColor, PLASTIC)
+-- The plaza fountain at the south end of the plaza (where a second building used to be): a round stone basin,
+-- a column and two bowls, rippling water, benches and flowers. Everything is concentric, so nothing can clip.
+local function buildFountain(parent: Instance, cframe: CFrame, rng: Random)
+	local model = Build.model(parent, "PlazaFountain")
+	local center = cframe.Position
+	Build.pillar(model, "Basin", 15, 1.6, CFrame.new(center.X, 0.8, center.Z), Palette.Stone, Enum.Material.Slate)
+	Build.pillar(model, "BasinRim", 15.8, 0.4, CFrame.new(center.X, 1.6, center.Z), Palette.StoneDark, Enum.Material.Slate)
+	local water = Build.pillar(model, "Water", 13, 0.3, CFrame.new(center.X, 1.55, center.Z), Palette.Water, Enum.Material.Glass, { CanCollide = false, Transparency = 0.25, Reflectance = 0.2, CastShadow = false })
+	water:SetAttribute("Ripple", true)
+	Build.pillar(model, "Column", 2, 4.5, CFrame.new(center.X, 3.6, center.Z), Palette.Cream, Enum.Material.Marble)
+	Build.pillar(model, "BowlLower", 6, 0.7, CFrame.new(center.X, 3.1, center.Z), Palette.Cream, Enum.Material.Marble)
+	Build.pillar(model, "BowlUpper", 3.6, 0.6, CFrame.new(center.X, 5.5, center.Z), Palette.Cream, Enum.Material.Marble)
+	Build.blob(model, "Finial", Vector3.new(1.4, 1.8, 1.4), CFrame.new(center.X, 6.6, center.Z), Palette.Gold, Enum.Material.Metal, { CanCollide = false })
+	for index = 0, 5 do
+		local angle = index * math.pi / 3
+		Build.blob(model, "Spout", Vector3.new(0.5, 1.4, 0.5), CFrame.new(center.X + math.cos(angle) * 2.6, 3.9, center.Z + math.sin(angle) * 2.6), Palette.Water, Enum.Material.Glass, { CanCollide = false, Transparency = 0.35 })
+	end
 	for _, side in { -1, 1 } do
-		Build.part(model, "WallSide", Vector3.new(0.7, 8, 9.6), cframe * CFrame.new(side * 6.65, 4, 4.8), wallColor, PLASTIC)
-		Build.part(model, "WallFrontSide", Vector3.new(4.4, 8, 0.7), cframe * CFrame.new(side * 4.8, 4, 0.2), wallColor, PLASTIC)
-		Build.part(model, "Pillar", Vector3.new(1, 8.6, 1), cframe * CFrame.new(side * 7, 4.3, 0.2), Palette.WoodDark, WOOD)
-		Build.part(model, "Window", Vector3.new(0.2, 3, 3.6), cframe * CFrame.new(side * 6.72, 4.8, 4.8), Palette.Sky, Enum.Material.Glass, { Transparency = 0.45, CanCollide = false })
+		Decor.bench(model, CFrame.new(center.X + side * 13, 0, center.Z) * CFrame.Angles(0, math.rad(90 * side), 0))
+		Decor.flowers(model, Vector3.new(center.X + side * 9, 0, center.Z + 9.5), 2.5, 8, rng)
+		Decor.flowers(model, Vector3.new(center.X + side * 9, 0, center.Z - 9.5), 2.5, 8, rng)
 	end
-	Build.part(model, "Lintel", Vector3.new(5.2, 2.4, 0.7), cframe * CFrame.new(0, 6.8, 0.2), wallColor, PLASTIC)
-
-	-- gable roof (ridge along X)
-	local rise = 5.4 * math.tan(math.rad(28))
-	for _, side in { -1, 1 } do
-		Build.part(model, "Roof", Vector3.new(15.6, 0.7, 6.6), cframe * CFrame.new(0, 8 + rise / 2 + 0.4, 4.8 + side * 2.7) * CFrame.Angles(math.rad(side * 28), 0, 0), Palette.RoofColors[3], Enum.Material.Slate)
-	end
-	Build.part(model, "Ridge", Vector3.new(15.6, 0.6, 1), cframe * CFrame.new(0, 8 + rise + 0.45, 4.8), Palette.RoofColors[3], Enum.Material.Slate)
-	for _, x in { -6.9, 6.9 } do
-		for slice = 1, 5 do
-			local height = rise / 5
-			Build.part(model, "Gable", Vector3.new(0.7, height + 0.02, 10.4 * (1 - (slice - 0.5) / 5)), cframe * CFrame.new(x, 8 + (slice - 0.5) * height, 4.8), wallColor, PLASTIC)
-		end
-	end
-
-	-- interior glow, bookshelf, lectern
-	Build.part(model, "Shelf", Vector3.new(11, 5, 1), cframe * CFrame.new(0, 3, 9), Palette.WoodDark, WOOD)
-	for row = 1, 3 do
-		for book = 1, 9 do
-			local color = Palette.FlowerColors[(book + row) % #Palette.FlowerColors + 1]
-			Build.deco(model, "Book", Vector3.new(0.7, 1.1, 0.5), cframe * CFrame.new(-4.6 + (book - 1) * 1.15, 1.6 + row * 1.3, 8.4), color, PLASTIC)
-		end
-	end
-	local lamp = Build.blob(model, "HallLamp", Vector3.new(1.6, 1.4, 1.6), cframe * CFrame.new(0, 7.2, 4.5), Color3.fromRGB(255, 226, 160), NEON, { CanCollide = false })
-	Build.light(lamp, Color3.fromRGB(255, 224, 170), 1.2, 18)
-	local lectern = Build.part(model, "Lectern", Vector3.new(2.6, 2.8, 1.6), cframe * CFrame.new(0, 1.9, 3.4), Palette.Wood, WOOD)
-	Build.part(model, "Book", Vector3.new(2.2, 0.2, 1.4), cframe * CFrame.new(0, 3.4, 3.4) * CFrame.Angles(math.rad(-20), 0, 0), Palette.Cream, PLASTIC, { CanCollide = false })
-
-	local sign = Build.part(model, "Sign", Vector3.new(12, 2.6, 0.6), cframe * CFrame.new(0, 12.4, -0.4), Palette.WoodDark, WOOD, { CanCollide = false })
-	Build.surfaceText(sign, Enum.NormalId.Front, "HAMSTER INDEX", { TextColor = Palette.Cream, PixelsPerStud = 50 })
-	publicPrompt(lectern, "Hamster Index", "Open", "Index", 14)
+	return model
 end
 
 -- The arch over the road: two pillars, a beam with the plaza name and the golden king on top.
@@ -143,8 +189,8 @@ function PlazaBuilder.build(parent: Instance, rng: Random): PlazaInfo
 	end
 	local north = CFrame.new(0, 0, 52)
 	local south = CFrame.new(0, 0, -52) * CFrame.Angles(0, math.pi, 0)
-	buildStall(folder, "ShopStall", north, "Shop", "", Palette.RoofColors[2], "Shop", "Browse")
-	buildLibrary(folder, south)
+	buildShop(folder, north)
+	buildFountain(folder, south, rng)
 
 	-- a few quiet details: lamps along the annex, two trees per annex
 	for _, sign in { 1, -1 } do

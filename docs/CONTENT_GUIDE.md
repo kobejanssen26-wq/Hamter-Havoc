@@ -133,6 +133,17 @@ A valid hit by the **owner** on a thief carrying a hamster uses the existing fai
 
 **Hotbar:** slot 1 is always the paws (slap). Owned weapons/consumables fill slots 2–8 in the order you got them (`profile.Hotbar`); re-order in the Backpack. Keys 1–8, `I` opens the Backpack. Pressing a weapon's key equips it, pressing again puts it away.
 
+### Abilities, rebirth locks (Content/Items)
+Weapon `Type` can also be `Freeze` (Range, Cooldown, Duration <= 3 s), `Cloak` or `Decoy` (Cooldown, Duration). The rules live in
+`ServerScriptService/Systems/AbilitySystem` and `CombatSystem`; the item file only picks numbers within hard caps. `MinRebirth = N`
+keeps the item visible in the Shop with a lock and "Requires Rebirth N" and makes the server refuse the purchase below that level.
+Current ladder: Squeak Bat (R0) - Frost Wand (R1) - Seed Slingshot (R2) - Shadow Cloak (R3) - Mirror Clone (R5).
+
+### Characters (Content/Hamsters)
+New fields: `Persona` (idle personality), `Inspiration` (who/what the joke is, why it is recognisable), `Licensed` / `LicensedName`
+(a real name is shown ONLY when `Licensed = true`, i.e. when you hold the rights). Character props for `Look.Acc` are in `HamsterBuilder/Characters`
+(cash_stack, sweater_vest, side_part, box_stack, mini_rocket, jersey, held_pie, quiff, trench_coat, held_microphone, headset_mic, bald_shine).
+
 ## 7c. Game passes (Robux) — `GamepassConfig.luau`
 1. Creator Dashboard → your experience → Monetization → Passes → create the pass, copy its numeric **PassId**.
 2. In `Modules/GamepassConfig.luau` set `PassId` on an existing entry or add one: `{ Key = "VIP", PassId = 123456, Name = ..., Description = ..., Icon = ..., Order = 60, Benefit = { CoinMult = 1.5 } }`.

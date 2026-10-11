@@ -219,6 +219,11 @@ actions.TutorialSkip = function(player)
 	return result(ok, message)
 end
 
+actions.TutorialReplay = function(player)
+	local ok, message = TutorialSystem.replay(player)
+	return result(ok, message)
+end
+
 actions.SetRoof = function(player, payload)
 	local ok, message = ShopSystem.setRoof(player, payload.Key)
 	return result(ok, message)

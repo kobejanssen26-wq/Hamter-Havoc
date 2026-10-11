@@ -341,7 +341,7 @@ task.spawn(function()
 	data.Tutorial = { Step = 1, Done = false, Skipped = false }
 	M.isServer = true; ReplicationSystem.mark(p, "Tutorial"); M.isServer = false
 	adv(1.5)
-	check("tutorial card shows for a new player", card ~= nil and RawData[card].Props.Visible == true and string.find(textsOf(card), "Welcome", 1, true) ~= nil)
+	check("tutorial card shows for a new player", card ~= nil and RawData[card].Props.Visible == true and string.find(textsOf(card), "Your base", 1, true) ~= nil)
 	RawData[byName(card, "Next")[1]].Signals.Activated:Fire()
 	adv(1.5)
 	check("pressing the button advances the SERVER step", data.Tutorial.Step == 2, data.Tutorial.Step)

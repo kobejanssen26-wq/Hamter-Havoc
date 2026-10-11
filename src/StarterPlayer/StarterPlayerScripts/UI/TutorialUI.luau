@@ -1,10 +1,16 @@
 --[[
-	TutorialUI: the short, skippable first-time guide. The step lives in the server-owned profile.Tutorial
-	(see TutorialSystem); this module shows the current objective card, a subtle bobbing arrow over the target
-	(your plot or the nearest hamster) and sends "TutorialAck" / "TutorialSkip". Players whose tutorial is done
-	(including everyone who existed before it was added) never see anything.
+	TutorialUI: the short, skippable first-time guide (7 steps, see TutorialConfig).
+	The step lives in the server-owned profile.Tutorial (TutorialSystem). This module shows a SMALL objective card in the
+	left column and marks the real object the step is about: a bobbing arrow plus an outline Highlight on it.
+
+	How targets are found (no coordinates anywhere): the world builders mark objects with Build.target(...), which sets the
+	tag "TutorialTarget" and the attribute TutorialTarget = "Base" | "Bench" | "Gate" | "Upgrade" | "Altar" | "Leaderboard".
+	Objects inside a house belong to that house's Model (attribute OwnerUserId): only YOUR objects are offered. If the map
+	is rebuilt or objects move, the guide simply follows the tagged objects. "Hamsters" points at the nearest hamster ball.
+	Players whose tutorial is done never see anything; Settings > Replay tutorial starts it again.
 ]]
 
+local CollectionService = game:GetService("CollectionService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
@@ -12,7 +18,6 @@ local Workspace = game:GetService("Workspace")
 
 local Modules = ReplicatedStorage:WaitForChild("Modules")
 local TutorialConfig = require(Modules:WaitForChild("TutorialConfig"))
-local WorldLayout = require(Modules:WaitForChild("WorldLayout"))
 
 local DataController = require(script.Parent.Parent.Controllers.DataController)
 local WorldController = require(script.Parent.Parent.Controllers.WorldController)
@@ -23,6 +28,36 @@ local TutorialUI = {}
 local C = UIKit.Colors
 local player = Players.LocalPlayer
 
+-- The tagged part named `target` that belongs to this player (or to nobody: shared places like the leaderboard).
+function TutorialUI.findTarget(target: string): BasePart?
+	local best: BasePart? = nil
+	local bestDistance = math.huge
+	local character = player.Character
+	local root = character and character:FindFirstChild("HumanoidRootPart")
+	local here = if root and root:IsA("BasePart") then root.Position else Vector3.zero
+	for _, instance in CollectionService:GetTagged("TutorialTarget") do
+		if instance:IsA("BasePart") and instance:GetAttribute("TutorialTarget") == target then
+			local owner: number? = nil
+			local node: Instance? = instance.Parent
+			while node and node ~= Workspace do
+				local value = node:GetAttribute("OwnerUserId")
+				if value ~= nil then
+					owner = value
+					break
+				end
+				node = node.Parent
+			end
+			if owner == nil or owner == player.UserId then
+				local distance = (instance.Position - here).Magnitude
+				if distance < bestDistance then
+					best, bestDistance = instance, distance
+				end
+			end
+		end
+	end
+	return best
+end
+
 function TutorialUI.start()
 	local left = require(script.Parent.MainUI).region("LeftColumn")
 	if not left then
@@ -31,24 +66,23 @@ function TutorialUI.start()
 	end
 	local card = UIKit.frame(left, {
 		Name = "TutorialCard",
-		Size = UDim2.fromOffset(300, 150),
+		Size = UDim2.fromOffset(290, 142),
 		LayoutOrder = 5,
 		BackgroundColor3 = C.Cream,
-		BackgroundTransparency = 0.03,
 		Visible = false,
 	})
-	UIKit.corner(card, 10)
-	UIKit.stroke(card, C.Line, 1.5)
-	local step = UIKit.label(card, { Size = UDim2.new(1, -20, 0, 16), Position = UDim2.fromOffset(14, 10), Font = UIKit.Fonts.Title, TextSize = 12, TextColor3 = C.Gold })
-	local title = UIKit.label(card, { Size = UDim2.new(1, -28, 0, 24), Position = UDim2.fromOffset(14, 28), Font = UIKit.Fonts.Title, TextSize = 18, TextColor3 = C.Ink, TextTruncate = Enum.TextTruncate.AtEnd })
-	local text = UIKit.label(card, { Size = UDim2.new(1, -28, 0, 56), Position = UDim2.fromOffset(14, 54), Font = UIKit.Fonts.Soft, TextSize = 13, TextColor3 = C.Muted, TextWrapped = true, TextYAlignment = Enum.TextYAlignment.Top })
-	local action = UIKit.button(card, { Text = "Next", Size = UDim2.fromOffset(120, 32), Position = UDim2.new(1, -14, 1, -12), AnchorPoint = Vector2.new(1, 1), Color = C.Green, TextSize = 14, Name = "Next" })
-	local skip = UIKit.button(card, { Text = "Skip tutorial", Size = UDim2.fromOffset(110, 28), Position = UDim2.new(0, 14, 1, -14), AnchorPoint = Vector2.new(0, 1), Color = C.Card, TextSize = 12, Name = "Skip" })
-	local progress = UIKit.frame(card, { Size = UDim2.new(1, 0, 0, 3), Position = UDim2.new(0, 0, 0, 0), BackgroundColor3 = C.Gold })
+	UIKit.corner(card, 8)
+	UIKit.stroke(card, C.Line, 1)
+	local step = UIKit.label(card, { Name = "Step", Size = UDim2.new(1, -20, 0, 14), Position = UDim2.fromOffset(14, 10), Font = UIKit.Fonts.Title, TextSize = UIKit.Type.Caption, TextColor3 = C.Gold })
+	local title = UIKit.label(card, { Name = "Title", Size = UDim2.new(1, -28, 0, 22), Position = UDim2.fromOffset(14, 26), Font = UIKit.Fonts.Title, TextSize = UIKit.Type.Heading + 2, TextColor3 = C.Ink, TextTruncate = Enum.TextTruncate.AtEnd })
+	local text = UIKit.label(card, { Name = "Text", Size = UDim2.new(1, -28, 0, 54), Position = UDim2.fromOffset(14, 50), Font = UIKit.Fonts.Soft, TextSize = UIKit.Type.Caption + 1, TextColor3 = C.Muted, TextWrapped = true, TextYAlignment = Enum.TextYAlignment.Top })
+	local action = UIKit.button(card, { Text = "Next", Size = UDim2.fromOffset(96, 28), Position = UDim2.new(1, -14, 1, -10), AnchorPoint = Vector2.new(1, 1), Color = C.Green, TextSize = 14, Name = "Next" })
+	local skip = UIKit.button(card, { Text = "Skip", Size = UDim2.fromOffset(64, 28), Position = UDim2.new(0, 14, 1, -10), AnchorPoint = Vector2.new(0, 1), Color = C.Card, TextSize = 13, Name = "Skip" })
+	local progress = UIKit.frame(card, { Name = "Progress", Size = UDim2.new(0, 0, 0, 2), BackgroundColor3 = C.Gold })
 
-	-- the arrow: one billboard, moved between targets (never recreated)
+	-- the marker: one arrow billboard + one Highlight, moved between targets (never recreated)
 	local arrowPart = Instance.new("Part")
-	arrowPart.Name = "TutorialTarget"
+	arrowPart.Name = "TutorialMarker"
 	arrowPart.Anchored = true
 	arrowPart.CanCollide = false
 	arrowPart.CanQuery = false
@@ -57,11 +91,12 @@ function TutorialUI.start()
 	arrowPart.Size = Vector3.one * 0.4
 	arrowPart.Parent = Workspace
 	local arrowGui = Instance.new("BillboardGui")
+	arrowGui.Name = "Arrow"
 	arrowGui.Size = UDim2.fromOffset(36, 44)
 	arrowGui.AlwaysOnTop = true
 	arrowGui.LightInfluence = 0
 	arrowGui.MaxDistance = 900
-	arrowGui.StudsOffsetWorldSpace = Vector3.new(0, 6, 0)
+	arrowGui.StudsOffsetWorldSpace = Vector3.new(0, 5, 0)
 	arrowGui.Adornee = arrowPart
 	arrowGui.Enabled = false
 	arrowGui.Parent = arrowPart
@@ -69,17 +104,22 @@ function TutorialUI.start()
 	arrow.Rotation = 180
 	arrow.Position = UDim2.fromOffset(2, 4)
 	arrow.Parent = arrowGui
+	local highlight = Instance.new("Highlight")
+	highlight.Name = "TutorialHighlight"
+	highlight.FillColor = C.Gold
+	highlight.FillTransparency = 0.75
+	highlight.OutlineColor = C.Gold
+	highlight.OutlineTransparency = 0.1
+	highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+	highlight.Enabled = false
+	highlight.Parent = arrowPart
 
 	local currentStep: any = nil
-	local pointer: string? = nil
+	local targetName: string? = nil
+	TutorialUI.CurrentTarget = nil :: Instance? -- exposed for tests
 
-	local function pointerPosition(): Vector3?
-		if pointer == "Plot" then
-			local houseId = player:GetAttribute("HouseId")
-			if type(houseId) == "number" then
-				return WorldLayout.padPosition(WorldLayout.houseCFrame(houseId))
-			end
-		elseif pointer == "Hamsters" then
+	local function markerPosition(): (Vector3?, BasePart?)
+		if targetName == "Hamsters" then
 			local character = player.Character
 			local root = character and character:FindFirstChild("HumanoidRootPart")
 			if root and root:IsA("BasePart") then
@@ -92,10 +132,16 @@ function TutorialUI.start()
 						end
 					end
 				end
-				return best
+				return best, nil
+			end
+			return nil, nil
+		elseif targetName then
+			local part = TutorialUI.findTarget(targetName)
+			if part then
+				return part.Position, part
 			end
 		end
-		return nil
+		return nil, nil
 	end
 
 	local function render()
@@ -103,8 +149,9 @@ function TutorialUI.start()
 		if not tutorial or tutorial.Done then
 			card.Visible = false
 			currentStep = nil
-			pointer = nil
+			targetName = nil
 			arrowGui.Enabled = false
+			highlight.Enabled = false
 			return
 		end
 		local def = TutorialConfig.Steps[tutorial.Step]
@@ -117,11 +164,11 @@ function TutorialUI.start()
 			step.Text = string.format("TUTORIAL  %d / %d", tutorial.Step, #TutorialConfig.Steps)
 			title.Text = def.Title
 			text.Text = def.Text
-			UIKit.tween(progress, 0.3, { Size = UDim2.new((tutorial.Step - 1) / #TutorialConfig.Steps + 0.08, 0, 0, 3) })
+			UIKit.tween(progress, 0.3, { Size = UDim2.new(tutorial.Step / #TutorialConfig.Steps, 0, 0, 2) })
 			action.Visible = def.Kind == "Ack"
 			UIKit.setButtonContent(action, nil, def.Button or "Next", C.White)
 			card.Visible = true
-			pointer = def.Target or def.Pointer
+			targetName = def.Target or def.Pointer
 		end
 	end
 
@@ -134,18 +181,25 @@ function TutorialUI.start()
 		DataController.request("TutorialSkip")
 	end)
 
-	-- arrow follows the target; a gentle bob, only while there is a target
+	-- the marker follows the tagged object (or the nearest ball); a gentle bob, only while there is a target
 	RunService.Heartbeat:Connect(function()
-		if not pointer then
+		if not targetName then
 			arrowGui.Enabled = false
+			highlight.Enabled = false
+			TutorialUI.CurrentTarget = nil
 			return
 		end
-		local position = pointerPosition()
+		local position, part = markerPosition()
 		if position then
 			arrowPart.Position = position + Vector3.new(0, math.sin(os.clock() * 3) * 0.6, 0)
 			arrowGui.Enabled = true
+			highlight.Adornee = part
+			highlight.Enabled = part ~= nil
+			TutorialUI.CurrentTarget = part
 		else
 			arrowGui.Enabled = false
+			highlight.Enabled = false
+			TutorialUI.CurrentTarget = nil
 		end
 	end)
 

@@ -200,6 +200,9 @@ local function buildStations(house: any, floorModel: Model, f: number)
 			index += 1
 			local center = L(house, x, y0 + Wheels.CenterAboveFloor, z)
 			local ring = Build.pillar(interior, "SlotRing", 4.4, 0.06, L(house, x, y0 + 0.04, z), Color3.fromRGB(90, 80, 90), NEON, { CanCollide = false, Transparency = 0.7 })
+			if index == 1 then
+				Build.target(ring, "Bench") -- the first working-bench slot
+			end
 			local labelAnchor = Build.deco(interior, "WheelLabelAnchor", Vector3.one * 0.2, L(house, x, y0 + Wheels.CenterAboveFloor + Wheels.Radius + 1.2, z), Color3.new(1, 1, 1), PLASTIC, { Transparency = 1 })
 			if TheftConfig.floorStealable(f) then
 				-- rack theft: held by a thief on an OPEN base (enabled/disabled by TheftSystem, validated again on the server)
@@ -353,6 +356,7 @@ local function furnishHall(house: any, interior: Model, rng: Random)
 	Build.pillar(interior, "PadInner", 6.4, 0.1, L(house, pad.X, y0 + 0.06, pad.Z), Palette.Cream, PLASTIC, { CanCollide = false })
 	local glow = Build.pillar(interior, "PadGlow", 4, 0.12, L(house, pad.X, y0 + 0.07, pad.Z), Color3.fromRGB(255, 214, 120), NEON, { CanCollide = false, Transparency = 0.35 })
 	glow:SetAttribute("Ripple", true)
+	Build.target(glow, "Base") -- the arrival pad: where hamsters you win are secured
 
 	-- hamster chest (opens the inventory)
 	local chest = Build.part(interior, "ChestBody", Vector3.new(3.6, 1.7, 2.3), L(house, -12.5, y0 + 0.85, 30.4), Palette.WoodLight, WOOD)
@@ -360,16 +364,13 @@ local function furnishHall(house: any, interior: Model, rng: Random)
 	Build.deco(interior, "ChestLock", Vector3.new(0.5, 0.7, 0.2), L(house, -12.5, y0 + 1.7, 29.2), Palette.Gold, METAL)
 	house.Prompts.Chest = makePrompt(chest, "Hamster Chest", "Open", "Inventory", nil)
 
-	-- upgrade terminal (opens Upgrades) and collection archive (opens the Hamster Index): both live in your own plot
+	-- upgrade terminal (opens Upgrades), in your own plot
 	local terminal = Build.part(interior, "UpgradeTerminal", Vector3.new(2.8, 3, 1.6), L(house, -7.8, y0 + 1.5, 30.3), Color3.fromRGB(58, 62, 76), PLASTIC)
 	Build.deco(interior, "TerminalScreen", Vector3.new(2.2, 1.4, 0.15), L(house, -7.8, y0 + 2.2, 29.45), Color3.fromRGB(226, 184, 84), NEON)
 	Build.deco(interior, "TerminalKeys", Vector3.new(2.2, 0.2, 0.7), L(house, -7.8, y0 + 3.05, 29.9), Color3.fromRGB(110, 118, 140), PLASTIC)
 	house.Prompts.Terminal = makePrompt(terminal, "Upgrade Terminal", "Open upgrades", "Upgrades", nil)
-	local archive = Build.part(interior, "CollectionArchive", Vector3.new(3, 1.4, 2.2), L(house, 6.6, y0 + 0.7, 30.3), Palette.WoodDark, WOOD)
-	Build.part(interior, "ArchiveGlass", Vector3.new(2.7, 2.2, 1.9), L(house, 6.6, y0 + 2.5, 30.3), Color3.fromRGB(190, 220, 240), Enum.Material.Glass, { Transparency = 0.55, CanCollide = false })
-	Build.blob(interior, "ArchiveHamster", Vector3.new(1.1, 1, 1.2), L(house, 6.6, y0 + 2.1, 30.3), Palette.Gold, METAL, { CanCollide = false })
-	Build.deco(interior, "ArchiveGlow", Vector3.new(2.7, 0.15, 1.9), L(house, 6.6, y0 + 1.45, 30.3), Color3.fromRGB(226, 184, 84), NEON)
-	house.Prompts.Archive = makePrompt(archive, "Hamster Archive", "Open collection", "Index", nil)
+	Build.target(terminal, "Upgrade")
+	-- (the Hamster Index has no object in the world any more: it is a button in the Backpack)
 
 	-- lobby seating and plants
 	Props.sofa(interior, L(house, 13, y0, 30.8) * CFrame.Angles(0, math.pi, 0), Palette.RoofColors[(house.Index % #Palette.RoofColors) + 1], 7)

@@ -12,7 +12,7 @@ Open `HamsterPlaza.rbxl` in Roblox Studio → **View → Explorer**. Je ziet de 
 
 | Explorer-pad | Wat is het |
 |---|---|
-| `Workspace/HamsterPlaza` | Het plein: boog met gouden hamster (`PlazaArch`), `ShopStall`, `HamsterLibrary` (Index), bord met recente vondsten |
+| `Workspace/HamsterPlaza` | Het plein: boog met gouden hamster (`PlazaArch`), `ShopHouse` (winkelgebouw), `PlazaFountain` (fontein). De Hamster Index heeft geen gebouw meer: hij zit in de Backpack |
 | `Workspace/LeaderboardHall` | De prikbord-hal achter de bibliotheek met 3 leaderboards (Most Hamsters / Most Steals / Most Money) en een kiosk die het volledige scherm opent |
 | `Workspace/HamsterPath` | De weg met pijlen (`Road`, `Arrow`), het hol waar hamsters beginnen (`BurrowHill`, `BurrowHole`) en de uitgangstunnel (`ExitHill`) |
 | `Workspace/PlayerHouses/House1 … House8` | De 8 appartementen-torens. 1-4 = noordrij, 5-8 = zuidrij. In de voorbeeldkopie hebben ze 1,2,3,4,5,3,2,1 verdiepingen zodat je ziet hoe het gebouw groeit (bij Play start iedereen met 1 verdieping) |

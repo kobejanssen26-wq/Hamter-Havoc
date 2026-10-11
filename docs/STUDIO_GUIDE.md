@@ -50,3 +50,7 @@ every `require` and every Rojo path for no gain, so the map above is the answer 
    `local d=require(game.ServerScriptService.Systems.DataSystem).get(game.Players:GetPlayers()[1]); d.Coins=1e7` then claim hamsters / use the rebirth screen. Place hamsters (Hamsters panel → *Work +*), rebirth, check the bench is identical, stop, play again, check again.
 3. New hamster: copy `Content/Hamsters/_Template`, remove `Enabled = false`, rename Id/DisplayName, Play, open the Hamster Index. Run the content check (see CONTENT_GUIDE §8).
 4. Environment edit: delete a mountain, press Play: it stays deleted. Set `Environment.StudioOwned = false`, Play: the scenery is regenerated.
+
+## Tutorial and world markers
+`Modules/TutorialConfig` holds the 7 steps (text, order, target). Targets are found by tag: builders call `Build.target(part, "Base" | "Bench" | "Gate" | "Upgrade" | "Altar" | "Leaderboard")`.
+To point the guide at something else, tag another part the same way (set attribute `TutorialTarget` and add the tag `TutorialTarget` in Studio). Objects inside a house are offered only to its owner.

@@ -1,6 +1,6 @@
 --[[
 	LeaderboardBuilder: the Leaderboard Hall. Three boards (Most Hamsters / Most Steals / Most Money) on a small paved
-	square behind the library, away from the hamster road, the promenades and every base. A kiosk in the middle opens
+	square behind the plaza fountain, away from the hamster road, the promenades and every base. A kiosk in the middle opens
 	the full leaderboard screen. The boards are plain SurfaceGuis; LeaderboardService fills in the texts.
 ]]
 
@@ -16,7 +16,7 @@ local NEON = Enum.Material.Neon
 
 export type Board = { Metric: string, Title: TextLabel, Period: TextLabel, Rows: { TextLabel }, Footer: TextLabel }
 
-local CENTER = Vector3.new(0, 0, -104) -- behind the library (plaza gap, south), nothing else is built here
+local CENTER = Vector3.new(0, 0, -104) -- behind the plaza fountain (plaza gap, south), nothing else is built here
 local RADIUS = 19
 local ROWS = 10
 
@@ -97,6 +97,7 @@ function LeaderboardBuilder.build(parent: Instance, rng: Random): { Folder: Fold
 	prompt.Exclusivity = Enum.ProximityPromptExclusivity.OnePerButton
 	prompt:SetAttribute("OpenUI", "Leaderboards")
 	prompt.Parent = plinth
+	Build.target(plinth, "Leaderboard")
 
 	local sign = Build.part(folder, "HallSign", Vector3.new(16, 2.6, 0.6), CFrame.new(CENTER.X, 3.4, CENTER.Z + 40) * CFrame.Angles(0, math.pi, 0), Palette.WoodDark, WOOD, { CanCollide = false })
 	Build.surfaceText(sign, Enum.NormalId.Front, "LEADERBOARDS", { TextColor = Palette.Cream, PixelsPerStud = 50 })
