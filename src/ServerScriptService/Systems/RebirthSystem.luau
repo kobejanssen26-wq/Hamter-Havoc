@@ -2,8 +2,9 @@
 	RebirthSystem. A rebirth has real requirements (coins + a collection + a hamster of the right rarity, see
 	RebirthConfig) and real rewards (a slot, permanent income + luck, floors, advanced upgrades, keepsakes ...).
 
-	RESET: coins, owned hamsters except your best "keepsakes", coin upgrades.
-	KEEP:  Hamster Index, rebirths + everything they unlocked, floors, token upgrades, gems, tokens,
+	RESET: coins and the upgrades flagged ResetOnRebirth in UpgradeConfig. NOTHING ELSE.
+	KEEP:  every owned hamster (profile.Inventory), the hamsters placed on the working bench (profile.Equipped - same
+	       species in the same places; a rebirth only ever ADDS a slot), Hamster Index, rebirths + everything they unlocked, floors, token upgrades, gems, tokens,
 	       quests, achievements, daily streak, cosmetics, gamepasses.
 ]]
 
@@ -12,14 +13,12 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Modules = ReplicatedStorage.Modules
 local FloorConfig = require(Modules.FloorConfig)
 local Format = require(Modules.Format)
-local HamsterDatabase = require(Modules.HamsterDatabase)
 local RebirthConfig = require(Modules.RebirthConfig)
 local UpgradeConfig = require(Modules.UpgradeConfig)
 
 local Remotes = require(ReplicatedStorage.Remotes)
 
 local AnnounceSystem = require(script.Parent.AnnounceSystem)
-local CollectionSystem = require(script.Parent.CollectionSystem)
 local DataSystem = require(script.Parent.DataSystem)
 local EconomySystem = require(script.Parent.EconomySystem)
 local Events = require(script.Parent.Events)
@@ -27,34 +26,6 @@ local Notifier = require(script.Parent.Notifier)
 local ReplicationSystem = require(script.Parent.ReplicationSystem)
 
 local RebirthSystem = {}
-
--- The `count` best hamsters (by income) of an inventory, as a new inventory table.
-local function keepsakeInventory(inventory: { [string]: number }, count: number): { [string]: number }
-	local entries = {}
-	for speciesId, owned in inventory do
-		local species = HamsterDatabase.ById[speciesId]
-		if species and owned > 0 then
-			table.insert(entries, { Id = speciesId, Income = HamsterDatabase.income(species), Owned = owned })
-		end
-	end
-	table.sort(entries, function(a, b)
-		if a.Income ~= b.Income then
-			return a.Income > b.Income
-		end
-		return a.Id < b.Id
-	end)
-	local kept: { [string]: number } = {}
-	local left = count
-	for _, entry in entries do
-		if left <= 0 then
-			break
-		end
-		local take = math.min(entry.Owned, left)
-		kept[entry.Id] = take
-		left -= take
-	end
-	return kept
-end
 
 -- Returns (ok, message)
 function RebirthSystem.perform(player: Player): (boolean, string)
@@ -88,14 +59,12 @@ function RebirthSystem.perform(player: Player): (boolean, string)
 	-- reset
 	data.Rebirths = nextRebirth
 	EconomySystem.setCoins(player, RebirthConfig.startingCoins(nextRebirth))
-	data.Inventory = keepsakeInventory(data.Inventory, RebirthConfig.keepsakes(nextRebirth))
-	data.Equipped = {}
+	-- Inventory and Equipped are deliberately untouched: the collection and the bench setup survive a rebirth.
 	for id, definition in UpgradeConfig.Definitions do
 		if definition.ResetOnRebirth then
 			data.Upgrades[id] = nil
 		end
 	end
-	CollectionSystem.equipBest(player)
 
 	-- rewards
 	local gems = EconomySystem.addGems(player, RebirthConfig.gemReward(nextRebirth), true)
@@ -103,7 +72,7 @@ function RebirthSystem.perform(player: Player): (boolean, string)
 	EconomySystem.addTokens(player, tokens)
 
 	EconomySystem.updateAttributes(player)
-	ReplicationSystem.mark(player, "Rebirths", "Inventory", "Equipped", "Upgrades", "Stats")
+	ReplicationSystem.mark(player, "Rebirths", "Upgrades", "Stats")
 	Events.EquippedChanged:Fire(player)
 	Events.Rebirthed:Fire(player, nextRebirth)
 	AnnounceSystem.rebirth(player, nextRebirth)

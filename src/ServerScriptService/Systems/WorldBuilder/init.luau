@@ -6,7 +6,7 @@
 	├── LeaderboardHall three leaderboard boards + kiosk (behind the library, away from the road and the houses)
 	├── HamsterPath    the physical road + spawn burrow + exit tunnel
 	├── PlayerHouses   8 houses (4 north row, 4 south row), see WorldLayout
-	├── Environment    ground, promenades, gate paths, lamps, forest, boundary
+	├── Environment    ground, promenades, gate paths, lamps, forest, mountains, lakes, clouds, boundary (STUDIO-OWNED, see EnvironmentConfig)
 	└── SpawnLocations guest spawn
 ]]
 
@@ -23,6 +23,7 @@ local PlazaBuilder = require(script.PlazaBuilder)
 
 local HamsterBuilder = require(ReplicatedStorage.Modules.HamsterBuilder)
 local HamsterDatabase = require(ReplicatedStorage.Modules.HamsterDatabase)
+local EnvironmentConfig = require(ReplicatedStorage.Modules.EnvironmentConfig)
 local WorldLayout = require(ReplicatedStorage.Modules.WorldLayout)
 
 local WorldBuilder = {}
@@ -34,64 +35,58 @@ export type World = {
 	PlazaFolder: Folder,
 }
 
+-- Lighting normally lives in the place (Lighting service + Atmosphere / Bloom / ColorCorrection / SunRays objects, all
+-- editable in Studio). Only when the Lighting service does NOT carry StudioOwned = true the numbers of
+-- EnvironmentConfig.Lighting are applied (first run of a fresh place).
 local function setupLighting()
-	Lighting.ClockTime = 15.4
-	Lighting.Brightness = 2.4
-	Lighting.Ambient = Color3.fromRGB(112, 104, 128)
-	Lighting.OutdoorAmbient = Color3.fromRGB(150, 140, 160)
-	Lighting.EnvironmentDiffuseScale = 0.5
-	Lighting.EnvironmentSpecularScale = 0.3
+	if Lighting:GetAttribute("StudioOwned") == true then
+		return
+	end
+	local config = EnvironmentConfig.Lighting
+	for _, name in { "ClockTime", "Brightness", "Ambient", "OutdoorAmbient", "ColorShift_Top", "EnvironmentDiffuseScale", "EnvironmentSpecularScale", "ShadowSoftness" } do
+		(Lighting :: any)[name] = (config :: any)[name]
+	end
 	Lighting.GlobalShadows = true
-	Lighting.ShadowSoftness = 0.3
-	Lighting.ColorShift_Top = Color3.fromRGB(255, 230, 200)
-
-	for _, name in { "Atmosphere", "Bloom", "ColorCorrection", "SunRays" } do
-		local old = Lighting:FindFirstChild(name)
+	for _, effect in { "Atmosphere", "BloomEffect", "ColorCorrectionEffect", "SunRaysEffect" } do
+		local old = Lighting:FindFirstChildOfClass(effect)
 		if old then
 			old:Destroy()
 		end
 	end
-
-	local atmosphere = Instance.new("Atmosphere")
-	atmosphere.Density = 0.28
-	atmosphere.Offset = 0.2
-	atmosphere.Color = Color3.fromRGB(255, 226, 205)
-	atmosphere.Decay = Color3.fromRGB(255, 188, 168)
-	atmosphere.Glare = 0.1
-	atmosphere.Haze = 1.1
-	atmosphere.Parent = Lighting
-
-	local bloom = Instance.new("BloomEffect")
-	bloom.Intensity = 0.35
-	bloom.Size = 22
-	bloom.Threshold = 1.6
-	bloom.Parent = Lighting
-
-	local correction = Instance.new("ColorCorrectionEffect")
-	correction.Saturation = 0.14
-	correction.Contrast = 0.05
-	correction.TintColor = Color3.fromRGB(255, 249, 241)
-	correction.Parent = Lighting
-
-	local rays = Instance.new("SunRaysEffect")
-	rays.Intensity = 0.04
-	rays.Spread = 0.6
-	rays.Parent = Lighting
+	local function make(className: string, props: { [string]: any })
+		local instance = Instance.new(className)
+		for key, value in props do
+			(instance :: any)[key] = value
+		end
+		instance.Parent = Lighting
+	end
+	make("Atmosphere", config.Atmosphere)
+	make("BloomEffect", config.Bloom)
+	make("ColorCorrectionEffect", config.ColorCorrection)
+	make("SunRaysEffect", config.SunRays)
 end
 
 function WorldBuilder.build(): World
 	-- (the editor copies in world/*.model.json and HamsterShowcase are only a preview: the real world is built below)
+	-- The scenery folder is Studio-owned (see EnvironmentConfig): when it carries StudioOwned = true it is kept exactly
+	-- as you left it in Studio. Everything else is rebuilt from code because gameplay is wired to it.
+	local environment = Workspace:FindFirstChild("Environment")
+	local keepEnvironment = environment ~= nil and environment:GetAttribute("StudioOwned") == true
 	for _, name in { "HamsterPlaza", "LeaderboardHall", "HamsterPath", "PlayerHouses", "Environment", "SpawnLocations", "HamsterShowcase", "Baseplate" } do
 		local old = Workspace:FindFirstChild(name)
-		if old then
+		if old and not (name == "Environment" and keepEnvironment) then
 			old:Destroy()
 		end
 	end
 
 	setupLighting()
-	local rng = Random.new(20240601)
+	local rng = Random.new(EnvironmentConfig.Seed)
 
-	EnvironmentBuilder.build(Workspace, rng)
+	if keepEnvironment and environment then
+		EnvironmentBuilder.adopt(environment)
+	else
+		EnvironmentBuilder.build(Workspace, rng)
+	end
 	PathBuilder.build(Workspace, rng)
 	local plaza = PlazaBuilder.build(Workspace, rng)
 	local hall = LeaderboardBuilder.build(Workspace, rng)

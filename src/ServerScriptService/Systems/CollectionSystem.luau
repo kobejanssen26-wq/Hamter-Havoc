@@ -35,7 +35,7 @@ function CollectionSystem.available(data: any, speciesId: string): number
 	return (data.Inventory[speciesId] or 0) - equippedCount(data, speciesId)
 end
 
--- Fills the display slots with the highest-income hamsters you own.
+-- Explicit "Equip Best" button: REPLACES the whole bench with the highest-income hamsters you own.
 function CollectionSystem.equipBest(player: Player)
 	local data = DataSystem.get(player)
 	if not data or TheftState.anyLocked(player.UserId) then
@@ -66,6 +66,18 @@ function CollectionSystem.equipBest(player: Player)
 		end
 	end
 	data.Equipped = equipped
+	ReplicationSystem.mark(player, "Equipped")
+	Events.EquippedChanged:Fire(player)
+end
+
+-- Auto-place: a newly collected hamster goes onto a FREE bench slot. It never replaces, moves or removes a hamster the
+-- player placed, and it never re-ranks the bench (use "Equip Best" for that, it is an explicit button).
+function CollectionSystem.autoPlace(player: Player, speciesId: string)
+	local data = DataSystem.get(player)
+	if not data or #data.Equipped >= EconomyMath.slots(data) or CollectionSystem.available(data, speciesId) <= 0 then
+		return
+	end
+	table.insert(data.Equipped, speciesId)
 	ReplicationSystem.mark(player, "Equipped")
 	Events.EquippedChanged:Fire(player)
 end
@@ -191,7 +203,7 @@ function CollectionSystem.grant(player: Player, speciesId: string, source: strin
 
 	ReplicationSystem.mark(player, "Inventory", "Index", "Stats")
 	if not autoSold and data.Settings.AutoEquip then
-		CollectionSystem.equipBest(player)
+		CollectionSystem.autoPlace(player, speciesId)
 	end
 
 	AnnounceSystem.rareCollected(player, species, isNew)

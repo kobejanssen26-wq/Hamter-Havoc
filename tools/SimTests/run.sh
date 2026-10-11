@@ -19,7 +19,9 @@ run_one() {
 
 with_temp_content() {
 	# scn_content.lua checks good AND deliberately broken content files: write them, run, always remove them
-	local C="$HERE/../../src/ReplicatedStorage/Modules/Content"
+	C="$(cd "$HERE/../../src/ReplicatedStorage/Modules/Content" && pwd)"
+	# (C is deliberately NOT local: the EXIT trap runs after the function returned. A local C used to leave the
+	#  Test*.luau files behind in the real Content folders.)
 	trap 'rm -f "$C"/Hamsters/Test*.luau "$C"/Animations/Test*.luau' EXIT
 	cat > "$C/Hamsters/TestNibbler.luau" <<'L'
 return { Id = "test_nibbler", DisplayName = "Testy Nibbler", Rarity = "Rare", Price = 12345, IncomePerSecond = 77, Look = { Fur = "A0B0C0", Ears = "pointy" } }
@@ -34,7 +36,7 @@ L
 }
 
 if [ "$1" = "--all" ]; then
-	for s in scn_loop scn_ui scn_gear scn_theft scn_lb scn_content scn_econ scn_wheels scn_game; do
+	for s in scn_loop scn_ui scn_gear scn_rebirth scn_world scn_theft scn_lb scn_content scn_econ scn_wheels scn_game; do
 		if [ "$s" = "scn_content" ]; then out="$( (with_temp_content) )"; else out="$(run_one $s.lua)"; fi
 		echo "== $s: $(echo "$out" | grep -E 'PASS [0-9]+|TOTAL ERRORS|fails:' | tail -1)"
 		echo "$out" | grep -E "\[FAIL\]" || true

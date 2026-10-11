@@ -6,8 +6,8 @@
 	  milestones      new floors (R3 / R6 / R10 / R15), advanced upgrades (R5 / R10), keepsake hamsters,
 	                  better security, new rarities, tower trim (silver / gold / diamond)
 
-	RESET: coins, your owned hamsters (except your best "keepsakes"), coin upgrades.
-	KEEP:  Hamster Index + milestones, rebirth count and everything it unlocked, floors, token upgrades,
+	RESET: coins and the coin upgrades (see ResetList below). Nothing else.
+	KEEP:  ALL owned hamsters, the hamsters placed on your working bench (profile.Equipped, in the same order), Hamster Index + milestones, rebirth count and everything it unlocked, floors, token upgrades,
 	       gems, tokens, quests, achievements, cosmetics, gamepasses.
 	Numbers were tuned with the progression simulation (see tests): first rebirth after roughly an hour.
 ]]
@@ -78,14 +78,6 @@ end
 -- Hamster slots earned through rebirths (+1 every rebirth).
 function RebirthConfig.bonusSlots(rebirths: number): number
 	return rebirths
-end
-
--- How many of your best hamsters survive a rebirth.
-function RebirthConfig.keepsakes(rebirths: number): number
-	if rebirths <= 0 then
-		return 0
-	end
-	return math.min(1 + rebirths // 3, 6)
 end
 
 -- Extra upgrade levels unlocked by rebirths (advanced upgrade tiers).
@@ -171,9 +163,6 @@ function RebirthConfig.rewards(n: number, boostLevel: number?): { Reward }
 	if tierAfter > tierBefore then
 		table.insert(list, { Icon = "upgrade", Text = string.format("Advanced upgrades, tier %d (more levels)", tierAfter) })
 	end
-	if RebirthConfig.keepsakes(n) > RebirthConfig.keepsakes(n - 1) then
-		table.insert(list, { Icon = "keep", Text = string.format("Keep your %d best hamster%s through rebirth", RebirthConfig.keepsakes(n), if RebirthConfig.keepsakes(n) > 1 then "s" else "") })
-	end
 	for _, tier in SecurityConfig.Tiers do
 		if tier.MinRebirth == n and n > 0 then
 			table.insert(list, { Icon = "security", Text = string.format("Stronger gate: %s", tier.Name) })
@@ -196,10 +185,10 @@ end
 -- What a rebirth resets and what it keeps (shown before you confirm).
 RebirthConfig.ResetList = {
 	"Coins",
-	"Your owned hamsters (except your best keepsakes)",
 	"Coin upgrades (training, range, multiplier, luck, speed, storage)",
 }
 RebirthConfig.KeepList = {
+	"ALL your hamsters, and the ones working on your bench (same places)",
 	"Hamster Index, discoveries and collection bonuses",
 	"Rebirth level, income multiplier, luck, floors and tower trim",
 	"Token upgrades, diamonds and tokens",

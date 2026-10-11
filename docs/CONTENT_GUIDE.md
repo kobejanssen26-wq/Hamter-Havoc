@@ -53,6 +53,17 @@ return {
 * Hamster-specific animations / sounds / effects: `Animation = { Idle = "Name", Walk = "Name" }` (names from `Content/Animations`),
   `Sound = { Spawn = "Coin" }` (names from `AudioConfig.Sfx`), `Effects = { { "sparkle", "FFD35A" } }`.
 
+### Catalog fields, rarities and naming rules
+`Id` (permanent), `DisplayName`, `Rarity`, optional `Price` / `IncomePerSecond` (otherwise the rarity formula, so a hamster can never break the economy), `SpawnWeight` (rarer inside its rarity),
+`ModelName`, `Icon`, `Look`, `Effects`, `Animation`, `Sound`, `Unlock = { MinRebirth }`, `Description` (collection text), `Limited = { EndsAt, StartsAt? }` (limited edition), `Spawnable = false` (reward-only).
+The rarity ladder is `RarityConfig` (Basic, Cute, Shiny, Rare, Epic, Ultra, Legendary, Mythic, Divine, Cosmic, Celestial, Secret, Ancient, Unknown): common-to-secret and beyond, each with its own spawn weight, unlock rebirth and visual effects.
+Rarity is *balance* (how hard to get, how much it earns), never fame. Lowest income of a rarity must beat the best of the one below; the tests check this.
+
+**Names and real people:** the bundled internet-culture hamsters (Lurker Larry, Viral Vera, Million Sub Milo ...) are original characters named after online *behaviour and archetypes*,
+not after real streamers, YouTubers or celebrities, and use no logos or brand names. Do not add a real person's name, likeness, voice, channel logo or a recognisable branded character
+without their written permission, and read Roblox's Terms of Use and Community Standards (impersonation, intellectual property) first: using someone's name can also suggest they endorse your game.
+When in doubt use a parody archetype ("Clip Farmer Finn"), not a name.
+
 ## 3. Add an animation  **[upload]**
 1. Make it in Studio's Animation Editor (R15 rig for player emotes; a custom rig for custom hamster models) → *Publish to Roblox* → copy the id.
 2. Copy `Content/Animations/_Template.luau` → `Hamster_Walk.luau`, set `Name`, `AssetId = "rbxassetid://<id>"`, `Rig`, `Use`, `Priority`, `Looped`, `Speed`.

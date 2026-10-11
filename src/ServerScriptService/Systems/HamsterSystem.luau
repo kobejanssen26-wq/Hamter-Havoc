@@ -341,11 +341,17 @@ function HamsterSystem.roll(data: any, now: number): any
 	local rarityId = if index then ids[index] else "Basic"
 	local pool = HamsterDatabase.Spawnable[rarityId]
 	local poolWeights = table.create(#pool, 1)
+	local fallback = nil
 	for i, species in pool do
-		local locked = species.Unlock and species.Unlock.MinRebirth and data.Rebirths < species.Unlock.MinRebirth
-		poolWeights[i] = if locked then 0 else (species.SpawnWeight or 1)
+		local open = HamsterDatabase.rollable(species, data.Rebirths, now)
+		poolWeights[i] = if open then (species.SpawnWeight or 1) else 0
+		if open and not fallback then
+			fallback = species
+		end
 	end
-	return pool[Util.weightedIndex(poolWeights, random) or 1]
+	fallback = fallback or pool[1]
+	local picked = Util.weightedIndex(poolWeights, random)
+	return if picked then pool[picked] else fallback
 end
 
 local function countOnRoad(): number

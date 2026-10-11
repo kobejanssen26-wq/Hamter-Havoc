@@ -68,9 +68,9 @@ Rebirth is hard to reach and every one gives permanent power (`RebirthConfig.lua
 
 - **Requirements:** cash ($700,000 × 4.6^(n-1)), a growing collection (n + 3 hamsters), and a hamster of a minimum rarity (Shiny → … → Unknown); the first rebirth specifically needs the Silver hamster (shown in-game as "Argent Nibbler", id `silver`).
 - **Every rebirth:** +1 hamster slot (3 at the start), +30 % permanent income, +5 % luck, diamonds and tokens.
-- **Milestones:** new floors (R3/6/10/15), advanced upgrade tiers (R5/R10), better security, new rarities (Mythic R2 … Unknown R12), keepsake hamsters
+- **Milestones:** new floors (R3/6/10/15), advanced upgrade tiers (R5/R10), better security, new rarities (Mythic R2 … Unknown R12)
   (you keep your best N hamsters, N grows with rebirths), tower trim.
-- **Resets:** coins, hamsters (except keepsakes), coin upgrades. **Keeps:** Index, rebirth level and everything it unlocked, floors, token upgrades, gems, tokens, quests, achievements, cosmetics, gamepasses.
+- **Resets:** coins and coin upgrades only. **Keeps:** ALL hamsters and your working bench (same hamsters, same places), Index, rebirth level and everything it unlocked, floors, token upgrades, gems, tokens, quests, achievements, cosmetics, gamepasses.
 - The Rebirth screen shows requirements with live progress, your slots, your tower floors, every reward, and what resets / what you keep.
 
 ## Economy
@@ -142,7 +142,7 @@ Every asset has its own folder with `README.md` (hierarchy, pivot, dependencies,
 ## Verification status — please read
 
 Checked here (no Roblox Studio is available in this environment): `rojo build`, `luau-lsp` typecheck (clean), `ModelLibrary` export `--test` (42) / `--check`, and a
-**mock-Roblox simulation** (`tools/SimTests/run.sh --all`) that runs the real server + client scripts. Executed in the last run: **scn_loop 110, scn_ui 91, scn_gear 111, scn_theft 65, scn_lb 34, scn_content 42,
+**mock-Roblox simulation** (`tools/SimTests/run.sh --all`) that runs the real server + client scripts. Executed in the last run: **scn_loop 110, scn_ui 91, scn_gear 111, scn_rebirth 42, scn_world 15, scn_theft 65, scn_lb 34, scn_content 42,
 scn_econ, scn_wheels 5, scn_game** — all passing. They cover: weapons/equipment/hotbar/shop/backpack/game-pass flow (mock MarketplaceService), the claim → steal → secure loop, shop/hotbar/tutorial, HUD geometry at 6 screen sizes (no overlaps, top HUD centred under the top bar),
 UI registry rules, rack theft (locked base, owner hit, completion, duplicates, gate trap + 60 s timeout, death, disconnect, rebirth), +10 s gate time per rebirth, elevators per unlocked floor,
 leaderboard periods/scoring/caching/outages/persistence, content validator + custom hamsters, emote server rules and the emote wheel (B).

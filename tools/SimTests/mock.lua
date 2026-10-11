@@ -294,6 +294,10 @@ CFrame.lookAt = function(at, look)
 	local y = Vector3.Cross(z, x)
 	return cf(at.X, at.Y, at.Z, { x.X, y.X, z.X, x.Y, y.Y, z.Y, x.Z, y.Z, z.Z })
 end
+CFrame.fromMatrix = function(pos, x, y, z)
+	z = z or Vector3.Cross(x, y)
+	return cf(pos.X, pos.Y, pos.Z, { x.X, y.X, z.X, x.Y, y.Y, z.Y, x.Z, y.Z, z.Z })
+end
 function CFrame.Inverse(a)
 	local rt = transpose(a.r)
 	local x = -(rt[1] * a.X + rt[2] * a.Y + rt[3] * a.Z)

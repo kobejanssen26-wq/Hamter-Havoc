@@ -18,6 +18,10 @@ return {
 	-- SpawnWeight = 1, -- relative chance among the hamsters of the same rarity
 	-- Spawnable = false, -- true/omitted: rolls down the road; false: only from rewards/codes (like exclusives)
 
+	-- Collection text (shown in the Hamster Index) and limited editions
+	-- Description = "Short collectible blurb, max 140 characters.",
+	-- Limited = { EndsAt = 1798761600 }, -- unix time (UTC). After it the hamster stops rolling; owners keep theirs. Optional StartsAt too.
+
 	-- Look. Either use your own model ...
 	-- ModelName = "MyNewHamster", -- a Model inside ReplicatedStorage/Assets/HamsterModels (see the guide for the rig rules)
 	-- Icon = "rbxassetid://<your uploaded image id>", -- thumbnail for menus (optional; a snapshot of the model is used otherwise)
@@ -28,5 +32,5 @@ return {
 	-- Animation = { Idle = "My_Hamster_Idle", Walk = "My_Hamster_Walk" }, -- names from Content/Animations (custom rigs only)
 	-- Sound = { Spawn = "Coin" }, -- names from AudioConfig.Sfx
 	-- Effects = { { "sparkle", "FFD35A" } }, -- particle effects, same kinds as the built-in hamsters
-	-- Unlock = { MinRebirth = 2 }, -- only appears in the world from this many rebirths
+	-- Unlock = { MinRebirth = 2 }, -- only appears in the world from this many rebirths (on top of the rarity's own unlock)
 }

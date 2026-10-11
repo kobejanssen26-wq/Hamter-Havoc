@@ -37,7 +37,7 @@ SettingsConfig.List = {
 	{ Key = "ShowValues", Label = "Show hamster values", Type = "toggle", Icon = "pouch" },
 	{ Key = "Notifications", Label = "Notifications", Type = "toggle", Icon = "bell" },
 	{ Key = "CameraShake", Label = "Camera shake", Type = "toggle", Icon = "bolt" },
-	{ Key = "AutoEquip", Label = "Auto-equip best hamsters", Type = "toggle", Icon = "star" },
+	{ Key = "AutoEquip", Label = "Auto-place new hamsters on free slots", Type = "toggle", Icon = "star" },
 	{
 		Key = "EmoteKey",
 		Label = "Emote wheel key",

@@ -2,7 +2,10 @@
 
 Open `HamsterPlaza.rbxl` in Roblox Studio → **View → Explorer**. Je ziet de wereld nu ook **zonder op Play te drukken**.
 
-> Let op: dit is een **voorbeeldkopie**. Bij Play bouwt het spel de wereld opnieuw op vanuit de code (`WorldBuilder`).
+> **Nieuw:** `Workspace/Environment` (bergen, bos, meren, wolken, grond) en de **Lighting**-service zijn nu echt van jou: pas ze in Studio aan, ze blijven staan bij Play (attribuut `StudioOwned = true`). Zie `docs/STUDIO_GUIDE.md`.
+> Huizen, wielen/werkbank, plein en weg worden nog steeds bij Play opnieuw gebouwd.
+>
+> Let op: dit is voor huizen/plein/weg een **voorbeeldkopie**. Bij Play bouwt het spel de wereld opnieuw op vanuit de code (`WorldBuilder`).
 > Wil je iets blijvend veranderen, pas dan de bouwcode aan (zie "Welk bestand pas ik aan?"), niet de modellen in de Explorer.
 
 ## Workspace (de 3D-wereld)

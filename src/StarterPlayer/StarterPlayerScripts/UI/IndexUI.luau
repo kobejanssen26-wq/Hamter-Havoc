@@ -247,6 +247,15 @@ function IndexUI.start()
 			working,
 			bestRarityFound(data)
 		)
+		if species.Description and not hidden then
+			inspectFacts.Text ..= "\n\n" .. species.Description
+		end
+		if species.Limited then
+			inspectFacts.Text ..= string.format("\nLimited edition - rolls until %s", os.date("!%d %b %Y", species.Limited.EndsAt))
+		end
+		if species.Unlock and species.Unlock.MinRebirth and species.Unlock.MinRebirth > 0 then
+			inspectFacts.Text ..= string.format("\nAppears from Rebirth %d", species.Unlock.MinRebirth)
+		end
 		inspect.Visible = true
 	end
 

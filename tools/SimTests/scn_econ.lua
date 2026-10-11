@@ -34,7 +34,7 @@ for n = 1, RebirthConfig.MaxRebirths do
 	local rewards = RebirthConfig.rewards(n, 0)
 	local texts = {}
 	for _, r in rewards do table.insert(texts, r.Text) end
-	if n <= 12 or n % 5 == 0 then print(string.format("  R%-2d  %9s  %2d hamsters  %-9s  floors=%d slots=%d keep=%d | %s", n, Format.short(req[1].Need), req[2].Need, req[3].Label, FloorConfig.count(n), 3 + n, RebirthConfig.keepsakes(n), table.concat(texts, "; "))) end
+	if n <= 12 or n % 5 == 0 then print(string.format("  R%-2d  %9s  %2d hamsters  %-9s  floors=%d slots=%d | %s", n, Format.short(req[1].Need), req[2].Need, req[3].Label, FloorConfig.count(n), 3 + n, table.concat(texts, "; "))) end
 end
 check("rebirth cost strictly increasing", RebirthConfig.cost(2) > RebirthConfig.cost(1) and RebirthConfig.cost(25) > RebirthConfig.cost(24))
 check("floors unlock at 3/6/10/15", FloorConfig.count(2) == 1 and FloorConfig.count(3) == 2 and FloorConfig.count(6) == 3 and FloorConfig.count(10) == 4 and FloorConfig.count(15) == 5)

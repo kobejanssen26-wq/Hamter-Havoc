@@ -570,13 +570,15 @@ task.spawn(function()
 	CollectionSystem0.grant(alice, "silver", "Reward")
 	data(alice).Coins = RebirthConfig.cost(1) + 10; EconomySystem.updateAttributes(alice)
 	local slotsBefore = EconomyMath.slots(data(alice))
+	local before_rebirth_total = 0
+	for _, v in data(alice).Inventory do before_rebirth_total += v end
 	local r = Remotes2.func("Request"):InvokeServer("Rebirth", {})
 	check("rebirth succeeds", r.ok and data(alice).Rebirths == 1, r.msg)
 	check("rebirth resets coins to starting coins", data(alice).Coins <= RebirthConfig.startingCoins(1) + 50, data(alice).Coins)
 	check("rebirth gives +1 hamster slot", EconomyMath.slots(data(alice)) == slotsBefore + 1, EconomyMath.slots(data(alice)) .. " vs " .. slotsBefore)
 	local kept = 0
 	for _, v in data(alice).Inventory do kept += v end
-	check("rebirth keeps the best hamsters (keepsakes)", kept >= 1 and kept <= RebirthConfig.keepsakes(1) + 0, kept)
+	check("rebirth keeps the whole collection", kept == before_rebirth_total, kept .. " vs " .. tostring(before_rebirth_total))
 	
 	check("rebirth gives a better security tier", aliceHouse.Model:GetAttribute("SecTier") == "Advanced Security", aliceHouse.Model:GetAttribute("SecTier"))
 	report()

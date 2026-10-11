@@ -85,6 +85,16 @@ function ContentValidator.validateHamster(def: any, context: any): { Issue }
 		end
 	end
 	checkAsset(list, "Hamster", id, "Icon", def.Icon)
+	if def.Description ~= nil and (type(def.Description) ~= "string" or #def.Description > 140) then
+		err("Description must be a text of at most 140 characters (shown in the Hamster Index)")
+	end
+	if def.Limited ~= nil then
+		if type(def.Limited) ~= "table" or type(def.Limited.EndsAt) ~= "number" or def.Limited.EndsAt ~= def.Limited.EndsAt then
+			err("Limited must be a table like { EndsAt = <unix time> } (optionally StartsAt)")
+		elseif def.Limited.StartsAt ~= nil and (type(def.Limited.StartsAt) ~= "number" or def.Limited.StartsAt >= def.Limited.EndsAt) then
+			err("Limited.StartsAt must be a unix time before EndsAt")
+		end
+	end
 	if def.Animation ~= nil and type(def.Animation) ~= "table" then
 		err("Animation must be a table like { Idle = \"name\", Walk = \"name\" } (names from Content/Animations)")
 	end

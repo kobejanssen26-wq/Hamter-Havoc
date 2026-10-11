@@ -401,6 +401,8 @@ local function loadCustomHamsters()
 				Animation = def.Animation,
 				Sound = def.Sound,
 				Unlock = def.Unlock,
+				Description = def.Description,
+				Limited = def.Limited,
 				PriceOverride = def.Price,
 				IncomeOverride = def.IncomePerSecond,
 				SpawnWeight = def.SpawnWeight,
@@ -434,6 +436,18 @@ end
 loadCustomHamsters()
 
 HamsterDatabase.Total = #HamsterDatabase.Species
+
+-- Is this hamster currently allowed to roll down the road? (Unlock.MinRebirth and limited-edition windows.)
+function HamsterDatabase.rollable(species: any, rebirths: number, now: number): boolean
+	if species.Unlock and species.Unlock.MinRebirth and rebirths < species.Unlock.MinRebirth then
+		return false
+	end
+	local limited = species.Limited
+	if limited and (now >= limited.EndsAt or now < (limited.StartsAt or 0)) then
+		return false
+	end
+	return true
+end
 
 function HamsterDatabase.get(id: string)
 	return HamsterDatabase.ById[id]

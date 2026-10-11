@@ -1,6 +1,7 @@
 --[[
 	Ground, promenades, the paths from every gate to the road, a few lamps, and the scenery around the playable
-	area: forest, rocks, cliffs, hills, lakes, a ring of mountains and drifting clouds. Deliberately calm: no signs,
+	area: forest, rocks, cliffs, hills, lakes, layered angular mountain ranges (MountainBuilder) and drifting clouds.
+	The result is baked into the place file and then edited in Roblox Studio (attribute StudioOwned, see EnvironmentConfig). Deliberately calm: no signs,
 	barrels or random props. The playable core is mirror-symmetric around the road (z = 0) and the plaza (x = 0).
 ]]
 
@@ -8,6 +9,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Build = require(script.Parent.Build)
 local Decor = require(script.Parent.Decor)
+local MountainBuilder = require(script.Parent.MountainBuilder)
 local Palette = require(script.Parent.Palette)
 
 local WorldLayout = require(ReplicatedStorage.Modules.WorldLayout)
@@ -24,7 +26,6 @@ local LOT_BACK = WorldLayout.GateDistance + WorldLayout.LotDepth -- |z| of the b
 local LOT_OUTER_X = WorldLayout.HouseColumns[#WorldLayout.HouseColumns] + WorldLayout.LotHalfWidth
 
 local ROCK_COLORS = { Color3.fromRGB(132, 128, 142), Color3.fromRGB(150, 144, 156), Color3.fromRGB(118, 116, 132) }
-local FAR_TINT = Color3.fromRGB(150, 160, 196) -- far mountains fade towards the haze colour
 
 -- True for points that belong to the playable core (road, promenades, lots, plaza annexes, burrow and exit).
 local function isCore(x: number, z: number): boolean
@@ -34,38 +35,9 @@ local function isCore(x: number, z: number): boolean
 	return math.abs(x) < LOT_OUTER_X + 8 and math.abs(z) < LOT_BACK + 8
 end
 
-local function lerpColor(a: Color3, b: Color3, t: number): Color3
-	return a:Lerp(b, t)
-end
-
 ---------------------------------------------------------------------------
 -- backdrop: mountains, hills, lakes, cliffs, clouds
 ---------------------------------------------------------------------------
-
--- A mountain made of stacked, narrowing rock slabs plus a snow cap. `fade` (0..1) tints distant ones towards the haze.
-local function mountain(parent: Instance, base: Vector3, width: number, height: number, fade: number, rng: Random)
-	local model = Build.model(parent, "Mountain")
-	local rock = lerpColor(ROCK_COLORS[rng:NextInteger(1, #ROCK_COLORS)], FAR_TINT, fade)
-	local layers = 5
-	local yaw = rng:NextNumber() * math.pi
-	for layer = 1, layers do
-		local t = (layer - 1) / layers
-		local layerWidth = width * (1 - t * 0.8) * (0.9 + rng:NextNumber() * 0.2)
-		local layerHeight = height / layers * 1.35
-		local offset = Vector3.new((rng:NextNumber() - 0.5) * width * 0.08, 0, (rng:NextNumber() - 0.5) * width * 0.08)
-		local color = if layer > layers - 1 then Color3.fromRGB(246, 248, 255) else lerpColor(rock, Color3.fromRGB(96, 150, 96), math.max(0, 0.45 - t * 1.1) * (1 - fade))
-		Build.blob(
-			model,
-			"Slice" .. layer,
-			Vector3.new(layerWidth, layerHeight, layerWidth * 0.9),
-			CFrame.new(base + offset + Vector3.new(0, height * t + layerHeight * 0.3, 0)) * CFrame.Angles(0, yaw + layer * 0.3, 0),
-			color,
-			if layer > layers - 1 then Enum.Material.Snow else ROCK,
-			{ CanCollide = false, CastShadow = false }
-		)
-	end
-	return model
-end
 
 local function hill(parent: Instance, pos: Vector3, radius: number, height: number, rng: Random, withTrees: boolean)
 	local model = Build.model(parent, "Hill")
@@ -128,26 +100,8 @@ local function buildBackdrop(folder: Folder, rng: Random)
 		{ Vector3.new(GROUND_HALF_X + 120, 0, -GROUND_HALF_Z - 40), 46 },
 	}
 
-	-- mountain ring: three rows, the far ones are bigger and hazier
-	local rows = { { 360, 90, 0.2 }, { 470, 150, 0.45 }, { 600, 230, 0.7 } }
-	for _, row in rows do
-		local radiusX, height, fade = row[1] + GROUND_HALF_X - 250, row[2], row[3]
-		local radiusZ = row[1] + GROUND_HALF_Z - 175
-		local count = 16 + math.floor(row[1] / 60)
-		for index = 1, count do
-			local angle = (index / count) * math.pi * 2 + rng:NextNumber() * 0.15
-			local pos = Vector3.new(math.cos(angle) * radiusX, -2, math.sin(angle) * radiusZ)
-			local size = height * (1.5 + rng:NextNumber() * 0.9)
-			local blocked = false
-			for _, entry in lakes do
-				blocked = blocked or (pos - entry[1]).Magnitude < entry[2] + size * 0.45
-			end
-			if blocked then
-				continue
-			end
-			mountain(backdrop, pos, size, height * (0.7 + rng:NextNumber() * 0.6), fade, rng)
-		end
-	end
+	-- angular mountain ranges around the outer edges (see MountainBuilder / EnvironmentConfig)
+	MountainBuilder.build(backdrop, rng, GROUND_HALF_X, GROUND_HALF_Z, lakes)
 
 	-- rolling hills just outside the playable ground
 	for _ = 1, 26 do
@@ -160,7 +114,7 @@ local function buildBackdrop(folder: Folder, rng: Random)
 			blocked = blocked or (pos - entry[1]).Magnitude < entry[2] + radius
 		end
 		if not blocked then
-			hill(backdrop, pos, radius, 12 + rng:NextNumber() * 20, rng, true)
+			hill(backdrop, pos, radius, 8 + rng:NextNumber() * 12, rng, true)
 		end
 	end
 
@@ -274,7 +228,24 @@ function EnvironmentBuilder.build(parent: Instance, rng: Random): Folder
 	Build.part(boundary, "South", Vector3.new(GROUND_HALF_X * 2, 80, 2), CFrame.new(0, 40, -GROUND_HALF_Z), Palette.Cream, Enum.Material.SmoothPlastic, wallProps)
 	Build.part(boundary, "East", Vector3.new(2, 80, GROUND_HALF_Z * 2), CFrame.new(GROUND_HALF_X, 40, 0), Palette.Cream, Enum.Material.SmoothPlastic, wallProps)
 	Build.part(boundary, "West", Vector3.new(2, 80, GROUND_HALF_Z * 2), CFrame.new(-GROUND_HALF_X, 40, 0), Palette.Cream, Enum.Material.SmoothPlastic, wallProps)
+	-- From now on the scenery belongs to Roblox Studio: WorldBuilder keeps it as it is (set the attribute to false to
+	-- let the code rebuild it from EnvironmentConfig on the next Play).
+	folder:SetAttribute("StudioOwned", true)
 	return folder
+end
+
+-- A scenery folder that was built into the place (StudioOwned): give back the runtime tags that a saved place can't
+-- keep (the client sways trees and drifts clouds based on them).
+function EnvironmentBuilder.adopt(folder: Instance)
+	for _, descendant in folder:GetDescendants() do
+		if descendant:IsA("Model") then
+			if descendant.Name == "Cloud" then
+				descendant:AddTag("Cloud")
+			elseif string.sub(descendant.Name, 1, 5) == "Tree_" then
+				descendant:AddTag("TreeSway")
+			end
+		end
+	end
 end
 
 return EnvironmentBuilder
