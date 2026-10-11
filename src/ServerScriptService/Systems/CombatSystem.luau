@@ -17,6 +17,7 @@ local HamsterStates = require(ReplicatedStorage.Modules.HamsterStates)
 local Remotes = require(ReplicatedStorage.Remotes)
 
 local DataSystem = require(script.Parent.DataSystem)
+local AbilitySystem = require(script.Parent.AbilitySystem)
 local GearSystem = require(script.Parent.GearSystem)
 local HamsterSystem = require(script.Parent.HamsterSystem)
 local Notifier = require(script.Parent.Notifier)
@@ -31,7 +32,8 @@ CombatSystem.theftHook = nil :: ((Player, Player) -> boolean)?
 local Config = HamsterStates.Config
 local CONTEXT_RADIUS = 34
 
-local lastSlap: { [Player]: number } = {}
+-- cooldowns are per tool (the bat does not delay the Frost Wand, but every tool has its own timer)
+local lastSlap: { [Player]: { [string]: number } } = {}
 local random = Random.new()
 
 local function flat(v: Vector3): Vector3
@@ -116,10 +118,24 @@ local function currentAttack(attacker: Player): (any?, any)
 	}
 end
 
+local lastNotice: { [Player]: number } = {}
+
 function CombatSystem.attack(attacker: Player, rawAim: any)
 	local def, stats = currentAttack(attacker)
 	local clock = os.clock()
-	if (lastSlap[attacker] or 0) + stats.Cooldown > clock then
+	local timers = lastSlap[attacker]
+	if not timers then
+		timers = {}
+		lastSlap[attacker] = timers
+	end
+	local key = if def then def.Id else "paws"
+	local remaining = (timers[key] or 0) + stats.Cooldown - clock
+	if remaining > 0 then
+		-- long cooldowns (abilities) tell the player how long is left, at most once a second
+		if stats.Cooldown >= 8 and (lastNotice[attacker] or 0) + 1 < clock then
+			lastNotice[attacker] = clock
+			Notifier.send(attacker, string.format("%s recharging: %d s", if def then def.DisplayName else "Paws", math.ceil(remaining)), "info")
+		end
 		return
 	end
 	local _, root = PlayerState.character(attacker)
@@ -129,14 +145,39 @@ function CombatSystem.attack(attacker: Player, rawAim: any)
 
 	-- aim: only ranged weapons use it; it must be a real direction (client data is never trusted)
 	local aim: Vector3? = nil
-	if stats.Type == "Ranged" then
+	local isAbility = stats.Type == "Freeze" or stats.Type == "Cloak" or stats.Type == "Decoy"
+	if stats.Type == "Ranged" or stats.Type == "Freeze" then
 		if typeof(rawAim) == "Vector3" and rawAim.Magnitude > 0.5 and rawAim.Magnitude < 1.5 and rawAim.X == rawAim.X and rawAim.Y == rawAim.Y and rawAim.Z == rawAim.Z then
 			aim = rawAim.Unit
 		else
 			aim = root.CFrame.LookVector -- missing / bad aim: shoot where the character looks
 		end
 	end
-	lastSlap[attacker] = clock
+	local previousSlap = timers[key]
+	timers[key] = clock
+	if stats.Type ~= "Cloak" then
+		AbilitySystem.reveal(attacker) -- attacking (or using any other tool) ends your cloak
+	end
+
+	-- self abilities: no target needed
+	if stats.Type == "Cloak" or stats.Type == "Decoy" then
+		local ok, message
+		if stats.Type == "Cloak" then
+			ok, message = AbilitySystem.cloak(attacker, stats.Duration)
+		else
+			ok, message = AbilitySystem.decoy(attacker, stats.Duration)
+		end
+		if not ok then
+			timers[key] = previousSlap -- nothing happened: no cooldown
+			if message then
+				Notifier.send(attacker, message, "error")
+			end
+			return
+		end
+		Remotes.event("Fx"):FireAllClients("WeaponUse", (def :: any).Id, root.Position, attacker.UserId, root.CFrame.LookVector)
+		Notifier.send(attacker, string.format("%s for %d s", if stats.Type == "Cloak" then "You are cloaked" else "Decoy sent", stats.Duration), "success")
+		return
+	end
 
 	if def then
 		local direction = aim or root.CFrame.LookVector
@@ -150,8 +191,14 @@ function CombatSystem.attack(attacker: Player, rawAim: any)
 		target, targetRoot = findShotTarget(attacker, root, aim, stats.Range)
 	else
 		target, targetRoot = findTarget(attacker, root, stats.Range, stats.Arc)
+		if not target and AbilitySystem.popDecoyNear(root.Position + flat(root.CFrame.LookVector).Unit * (stats.Range * 0.5), stats.Range * 0.5 + 2, attacker) then
+			return -- the swing popped somebody's decoy
+		end
 	end
 	if not target or not targetRoot then
+		if stats.Type == "Freeze" then
+			timers[key] = clock - stats.Cooldown + 3 -- a miss only costs 3 s, a hit the full cooldown
+		end
 		return
 	end
 	local carried = HamsterSystem.carriedBy(target)
@@ -162,11 +209,30 @@ function CombatSystem.attack(attacker: Player, rawAim: any)
 		or HamsterSystem.hamsterNear(root.Position, CONTEXT_RADIUS)
 	if not fight then
 		Notifier.send(attacker, "Attacks only work near a hamster that's rolling home, carried or dropped.", "info")
+		if isAbility then
+			timers[key] = previousSlap
+		end
 		return
 	end
 	if PlayerState.isImmune(target) then
 		return
 	end
+
+	if stats.Type == "Freeze" then
+		if AbilitySystem.freeze(attacker, target, stats.Duration) then
+			local data = DataSystem.get(attacker)
+			if data then
+				data.Stats.Slaps = (data.Stats.Slaps or 0) + 1
+				ReplicationSystem.mark(attacker, "Stats")
+			end
+			-- the OWNER freezing a thief carrying their hamster: the thief is stuck, the owner can finish it with a hit
+			Notifier.send(attacker, "Frozen!", "success")
+		else
+			timers[key] = clock - stats.Cooldown + 3
+		end
+		return
+	end
+	AbilitySystem.reveal(target) -- a hit reveals a cloaked player
 
 	local direction = flat(targetRoot.Position - root.Position)
 	direction = if direction.Magnitude > 0.1 then direction.Unit else flat(root.CFrame.LookVector).Unit
@@ -207,6 +273,7 @@ end
 
 function CombatSystem.forget(player: Player)
 	lastSlap[player] = nil
+	lastNotice[player] = nil
 end
 
 return CombatSystem

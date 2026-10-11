@@ -9,5 +9,6 @@ return {
 	Rarity = "Cute",
 	Currency = "Coins",
 	Price = 15000,
+	MinRebirth = 0,
 	Equip = { Kind = "Passive", Stats = { CollectRange = 4 } },
 }

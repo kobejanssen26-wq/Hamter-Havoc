@@ -198,6 +198,12 @@ end
 local ITEM_CATEGORIES = { Weapon = true, Equipment = true, Consumable = true }
 local PASSIVE_STATS = { CollectRange = true, WalkSpeed = true }
 local WEAPON_LIMITS = { Range = { 3, 80 }, Cooldown = { 0.3, 10 }, Knockback = { 0, 100 }, Stun = { 0, 3 }, DropChance = { 0, 1 }, Arc = { -1, 1 } }
+-- Ability weapons: their own stat sets and hard caps, so no item file can make an unbounded power.
+local ABILITY_LIMITS = {
+	Freeze = { Range = { 5, 60 }, Cooldown = { 8, 120 }, Duration = { 0.5, 3 } },
+	Cloak = { Cooldown = { 15, 180 }, Duration = { 2, 10 } },
+	Decoy = { Cooldown = { 15, 180 }, Duration = { 2, 10 } },
+}
 local BOOST_IDS = { Coins2x = true, Luck2x = true, Speed2x = true, AutoCollect = true }
 
 -- context: { Rarities, ExistingIds, ModelExists: ((string) -> boolean)? }
@@ -233,6 +239,9 @@ function ContentValidator.validateItem(def: any, context: any): { Issue }
 	if def.Rarity ~= nil and not context.Rarities[def.Rarity] then
 		err("Rarity '" .. tostring(def.Rarity) .. "' does not exist")
 	end
+	if def.MinRebirth ~= nil and (type(def.MinRebirth) ~= "number" or def.MinRebirth % 1 ~= 0 or def.MinRebirth < 0 or def.MinRebirth > 25) then
+		err("MinRebirth must be a whole number from 0 to 25 (the rebirth level that unlocks buying it)")
+	end
 	if (def.Price == nil) ~= (def.Currency == nil) then
 		err("Price and Currency must be set together (or both left out for items that are not sold)")
 	elseif def.Price ~= nil then
@@ -256,13 +265,15 @@ function ContentValidator.validateItem(def: any, context: any): { Issue }
 		if type(weapon) ~= "table" then
 			err("Equip.Weapon is missing")
 		else
-			if weapon.Type ~= "Melee" and weapon.Type ~= "Ranged" then
-				err("Weapon.Type must be Melee or Ranged")
-			end
-			for stat, limits in WEAPON_LIMITS do
-				local value = weapon[stat]
-				if type(value) ~= "number" or value ~= value or value < limits[1] or value > limits[2] then
-					err(string.format("Weapon.%s must be a number between %s and %s", stat, limits[1], limits[2]))
+			local limitsFor = if weapon.Type == "Melee" or weapon.Type == "Ranged" then WEAPON_LIMITS else ABILITY_LIMITS[weapon.Type]
+			if not limitsFor then
+				err("Weapon.Type must be Melee, Ranged, Freeze, Cloak or Decoy")
+			else
+				for stat, limits in limitsFor do
+					local value = weapon[stat]
+					if type(value) ~= "number" or value ~= value or value < limits[1] or value > limits[2] then
+						err(string.format("Weapon.%s must be a number between %s and %s", stat, limits[1], limits[2]))
+					end
 				end
 			end
 		end

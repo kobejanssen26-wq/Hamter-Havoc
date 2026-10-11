@@ -78,6 +78,7 @@ do
 				Rarity = def.Rarity,
 				Kind = "Gear",
 				ItemId = def.Id,
+				MinRebirth = def.MinRebirth,
 				Coins = if def.Currency == "Coins" then def.Price else nil,
 				Gems = if def.Currency == "Gems" then def.Price else nil,
 			})

@@ -51,7 +51,12 @@ do
 			ItemRegistry.ById[entry.Def.Id] = entry.Def
 		end
 	end
+	-- shop order: by the rebirth that unlocks it, then price (so the unlock ladder reads top to bottom)
 	table.sort(ItemRegistry.List, function(a, b)
+		local ar, br = a.MinRebirth or 0, b.MinRebirth or 0
+		if ar ~= br then
+			return ar < br
+		end
 		local ap, bp = a.Price or 0, b.Price or 0
 		if ap ~= bp then
 			return ap < bp

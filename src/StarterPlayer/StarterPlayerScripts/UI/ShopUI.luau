@@ -139,7 +139,7 @@ function ShopUI.start()
 			end
 		end
 		if item.MinRebirth and (data.Rebirths or 0) < item.MinRebirth then
-			return string.format("Locked - rebirth %d", item.MinRebirth), false, C.Card, "lock", "none"
+			return string.format("Requires Rebirth %d", item.MinRebirth), false, C.Card, "lock", "none"
 		end
 		if balanceOf(item.Currency) < item.Price then
 			return Format.short(item.Price), false, Color3.fromRGB(110, 62, 62), currency.Icon, "buy"
@@ -236,6 +236,11 @@ function ShopUI.start()
 		if item.Unconfigured then
 			card.BackgroundTransparency = 0.45
 		end
+		-- locked behind a rebirth: stays visible, dimmed, with a lock and the level that opens it
+		if item.MinRebirth and item.MinRebirth > 0 and (data.Rebirths or 0) < item.MinRebirth then
+			card.BackgroundTransparency = 0.35
+			UIKit.icon(card, "lock", { Name = "LockIcon", Size = UDim2.fromOffset(18, 18), Position = UDim2.new(1, -24, 0, 6), ZIndex = 5 })
+		end
 		if item.Limited and item.Limited.EndsAt then
 			UIKit.chip(card, "Ends " .. Format.clock(math.max(0, item.Limited.EndsAt - os.time())), C.Red, UDim2.fromOffset(96, 18)).Position = UDim2.new(1, -102, 0, 6)
 		end
@@ -274,6 +279,10 @@ function ShopUI.start()
 			end
 		end
 		local y = 218
+		if item.MinRebirth and item.MinRebirth > 0 then
+			local met = (data.Rebirths or 0) >= item.MinRebirth
+			table.insert(rows, 1, { if met then "Unlocked" else "Locked", string.format("Rebirth %d  (you: %d)", item.MinRebirth, data.Rebirths or 0) })
+		end
 		for _, row in rows do
 			if y > 300 then
 				break

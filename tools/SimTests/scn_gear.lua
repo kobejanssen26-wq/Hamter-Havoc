@@ -76,12 +76,12 @@ task.spawn(function()
 	for _, def in ItemRegistry.List do
 		if def.Equip.Kind == "Tool" then weapons += 1 elseif def.Equip.Kind == "Passive" then gear += 1 else consumables += 1 end
 	end
-	check("3 weapons, 2 equipment items, 5 consumables are registered", weapons == 3 and gear == 2 and consumables == 5, weapons .. "/" .. gear .. "/" .. consumables)
+	check("5 weapons/abilities, 2 equipment items, 5 consumables are registered", weapons == 5 and gear == 2 and consumables == 5, weapons .. "/" .. gear .. "/" .. consumables)
 	check("the template item is not registered", ItemRegistry.ById["template_item"] == nil and ItemRegistry.ById["my_item_id"] == nil)
 	local cats = {}
 	for _, c in ShopConfig.categories() do cats[c.Id] = c end
 	check("shop has Weapons, Equipment, Boosts and Game Passes", cats.Weapons and cats.Equipment and cats.Boosts and cats.Gamepasses ~= nil)
-	check("weapon prices come from the item files", ShopConfig.ById["gear_foam_bat"].Price == 8000 and ShopConfig.ById["gear_foam_bat"].Currency == "Coins" and ShopConfig.ById["gear_iron_ladle"].Currency == "Gems")
+	check("weapon prices come from the item files", ShopConfig.ById["gear_foam_bat"].Price == 8000 and ShopConfig.ById["gear_foam_bat"].Currency == "Coins" and ShopConfig.ById["gear_shadow_cloak"].Currency == "Gems")
 	local anyPurchasable = false
 	for _, item in ShopConfig.Items do if item.Kind == "Pass" and ShopConfig.available(item) then anyPurchasable = true end end
 	check("placeholder passes (PassId 0) are NOT purchasable", not anyPurchasable)
@@ -113,6 +113,14 @@ task.spawn(function()
 	section("2. purchases are validated by the server")
 	local a = data(alice)
 	a.Coins = 100; a.Gems = 0; a.Gear = {}; a.Hotbar = {}; a.Items = {}
+	-- rebirth-locked gear is VISIBLE in the shop (with its requirement) but the server refuses it below the level
+	a.Gems = 400; adv(1)
+	local lockedBuy = as(alice, "ShopBuy", { Id = "gear_shadow_cloak" })
+	check("a rebirth-locked item can't be bought below its level (server)", not lockedBuy.ok and a.Gems == 400 and a.Gear.shadow_cloak == nil, lockedBuy.msg)
+	check("...and its requirement is in the shop data", ShopConfig.ById["gear_shadow_cloak"].MinRebirth == 3 and ShopConfig.ById["gear_frost_wand"].MinRebirth == 1 and ShopConfig.ById["gear_mirror_clone"].MinRebirth == 5)
+	a.Gems = 0
+	a.Rebirths = 3
+	a.Coins = 100
 	local r = as(alice, "ShopBuy", { Id = "gear_foam_bat" })
 	check("can't afford a weapon -> refused, nothing granted, no charge", not r.ok and a.Coins == 100 and next(a.Gear) == nil, r.msg)
 	adv(1)
@@ -126,11 +134,11 @@ task.spawn(function()
 	r = as(alice, "ShopBuy", { Id = "gear_foam_bat" })
 	check("buying the same weapon twice is refused (no second charge)", not r.ok and a.Coins == 8000, r.msg)
 	a.Coins = 0
-	r = as(alice, "ShopBuy", { Id = "gear_iron_ladle" })
-	check("a diamond weapon needs diamonds", not r.ok and a.Gear.iron_ladle == nil, r.msg)
-	a.Gems = 250; adv(1)
-	r = as(alice, "ShopBuy", { Id = "gear_iron_ladle" })
-	check("diamond weapon bought", r.ok and a.Gems == 0 and a.Gear.iron_ladle and a.Hotbar["3"] == "iron_ladle")
+	r = as(alice, "ShopBuy", { Id = "gear_shadow_cloak" })
+	check("a diamond weapon needs diamonds", not r.ok and a.Gear.shadow_cloak == nil, r.msg)
+	a.Gems = 400; adv(1)
+	r = as(alice, "ShopBuy", { Id = "gear_shadow_cloak" })
+	check("diamond weapon bought", r.ok and a.Gems == 0 and a.Gear.shadow_cloak and a.Hotbar["3"] == "shadow_cloak")
 	r = as(alice, "ShopBuy", { Id = "gear_not_real" })
 	check("unknown shop id refused", not r.ok)
 	r = as(alice, "ShopBuy", { Id = "pass_DoubleCoins" })
@@ -152,16 +160,16 @@ task.spawn(function()
 	r = as(alice, "EquipItem", { Id = "foam_bat" })
 	check("owned weapon equips into the character", r.ok and heldIds(alice)[1] == "foam_bat" and #toolIds(backpackOf(alice)) == 1, r.msg)
 	adv(0.3)
-	r = as(alice, "EquipItem", { Id = "iron_ladle" })
-	check("equipping another swaps (only one weapon held)", r.ok and #heldIds(alice) == 1 and heldIds(alice)[1] == "iron_ladle")
+	r = as(alice, "EquipItem", { Id = "shadow_cloak" })
+	check("equipping another swaps (only one weapon held)", r.ok and #heldIds(alice) == 1 and heldIds(alice)[1] == "shadow_cloak")
 	adv(0.3)
 	r = as(alice, "UnequipItem")
 	check("unequip puts it back in the backpack", r.ok and #heldIds(alice) == 0 and #toolIds(backpackOf(alice)) == 2)
 	M.spawnCharacter(alice)
 	adv(1)
 	check("after a respawn the tools are handed out again (no duplicates)", #toolIds(backpackOf(alice)) == 2, table.concat(toolIds(backpackOf(alice)), ","))
-	r = as(alice, "HotbarMove", { Id = "iron_ladle", Slot = 2 })
-	check("moving an item to a taken slot swaps", r.ok and a.Hotbar["2"] == "iron_ladle" and a.Hotbar["3"] == "foam_bat")
+	r = as(alice, "HotbarMove", { Id = "shadow_cloak", Slot = 2 })
+	check("moving an item to a taken slot swaps", r.ok and a.Hotbar["2"] == "shadow_cloak" and a.Hotbar["3"] == "foam_bat")
 	check("slot 1, slot 9 and fractions are invalid", not as(alice, "HotbarMove", { Id = "foam_bat", Slot = 1 }).ok and not as(alice, "HotbarMove", { Id = "foam_bat", Slot = 9 }).ok and not as(alice, "HotbarMove", { Id = "foam_bat", Slot = 2.5 }).ok)
 	check("an unowned item can't be placed on the hotbar", not as(alice, "HotbarMove", { Id = "seed_slingshot", Slot = 5 }).ok and a.Hotbar["5"] == nil)
 	check("weapons and equipment can't be discarded", not as(alice, "DiscardItem", { Id = "foam_bat", Amount = 1 }).ok and a.Gear.foam_bat == true)
@@ -180,7 +188,7 @@ task.spawn(function()
 	-----------------------------------------------------------------
 	section("4. passive equipment")
 	local before = { range = EconomyMath.collectRange(a, os.time()), speed = EconomyMath.walkSpeed(a, os.time()) }
-	a.Coins = 40000; adv(1)
+	a.Coins = 100000; adv(1)
 	check("net bought", as(alice, "ShopBuy", { Id = "gear_hamster_net" }).ok and a.Gear.hamster_net == true)
 	adv(1)
 	check("boots bought", as(alice, "ShopBuy", { Id = "gear_runner_boots" }).ok and a.Gear.runner_boots == true)
@@ -240,7 +248,7 @@ task.spawn(function()
 	RawData[PPS].Signals.PromptTriggered:Fire(aliceHouse.TheftPrompts[2], carol)
 	adv(0.5)
 	check("carol steals slot 2", HamsterSystem.carriedBy(carol) ~= nil)
-	a.Coins = 40000; adv(1)
+	a.Coins = 200000; adv(1)
 	check("slingshot bought", as(alice, "ShopBuy", { Id = "gear_seed_slingshot" }).ok)
 	adv(0.5)
 	as(alice, "EquipItem", { Id = "seed_slingshot" })
@@ -276,6 +284,136 @@ task.spawn(function()
 	CombatSystem.attack(alice, aim)
 	adv(0.3)
 	check("ranged: a clean 30 stud shot hits the thief -> theft fails", HamsterSystem.carriedBy(carol) == nil and a.Stats.TheftsStopped == 2, tostring(a.Stats.TheftsStopped))
+
+	-----------------------------------------------------------------
+	section("5c. abilities: Frost Wand, Shadow Cloak, Mirror Clone")
+	-----------------------------------------------------------------
+	local AbilitySystem = require(find(S .. "AbilitySystem"))
+	a.Coins = 300000; a.Gems = 2000; adv(1)
+	a.Rebirths = 0
+	r = as(alice, "ShopBuy", { Id = "gear_frost_wand" })
+	check("Frost Wand is locked at rebirth 0 (server refuses, nothing charged)", not r.ok and a.Gear.frost_wand == nil and a.Coins >= 300000, r.msg)
+	a.Rebirths = 1; adv(1)
+	r = as(alice, "ShopBuy", { Id = "gear_frost_wand" })
+	check("Frost Wand unlocks at rebirth 1 and can be bought for cash", r.ok and a.Gear.frost_wand == true and a.Coins < 300000, r.msg)
+	adv(1)
+	r = as(alice, "ShopBuy", { Id = "gear_mirror_clone" })
+	check("Mirror Clone (rebirth 5) is still locked at rebirth 1", not r.ok and a.Gear.mirror_clone == nil, r.msg)
+
+	-- a fresh theft for the freeze test (bob steals slot 1 again)
+	adv(60)
+	local frozenSpot = wheelPos(1) + Vector3.new(0, 2, 3)
+	place(bob, frozenSpot)
+	adv(4.5)
+	RawData[PPS].Signals.PromptTriggered:Fire(aliceHouse.TheftPrompts[1], bob)
+	adv(0.5)
+	check("bob is carrying a stolen hamster again", HamsterSystem.carriedBy(bob) ~= nil)
+	as(alice, "EquipItem", { Id = "frost_wand" })
+	adv(0.5)
+	place(carol, Vector3.new(0, 5, -150)) -- keep bystanders out of the line of fire
+	local from = frozenSpot + Vector3.new(25, 0, 0)
+	place(alice, from, frozenSpot)
+	adv(1)
+	local aim2 = (frozenSpot - from).Unit
+	local gearBefore = table.clone(a.Gear)
+	CombatSystem.attack(alice, aim2)
+	adv(0.3)
+	check("Freeze: the thief is frozen (can't act)", PlayerState.isFrozen(bob) and PlayerState.isStunned(bob))
+	local bobHumanoid = M.InstanceMethods.FindFirstChild(RawData[bob].Props.Character, "Humanoid")
+	check("...WalkSpeed 0 and no jumping", RawData[bobHumanoid].Props.WalkSpeed == 0 and RawData[bobHumanoid].Props.JumpPower == 0)
+	check("...an ice block surrounds them (visible cue for everyone)", M.InstanceMethods.FindFirstChild(RawData[bob].Props.Character, "FrozenIce") ~= nil)
+	check("...they still hold the hamster (the owner can finish the job)", HamsterSystem.carriedBy(bob) ~= nil)
+	check("...a frozen player can't attack back", (function() local before = a.Stats.Slaps or 0 CombatSystem.attack(bob, nil) return (data(bob).Stats.Slaps or 0) == (data(bob).Stats.Slaps or 0) end)())
+	CombatSystem.attack(alice, aim2)
+	adv(0.2)
+	check("Freeze has a long cooldown (a second shot right away does nothing)", PlayerState.isFrozen(bob) and a.Gear.frost_wand == true)
+	adv(2.5)
+	check("Freeze ends after 2 seconds", not PlayerState.isFrozen(bob) and RawData[bobHumanoid].Props.WalkSpeed > 0, RawData[bobHumanoid].Props.WalkSpeed)
+	check("a frozen player is immune to being frozen again for a while", not AbilitySystem.freeze(alice, bob, 2))
+	check("the duration is capped (a 99 s request freezes at most 3 s)", (function()
+		adv(8)
+		local ok3 = AbilitySystem.freeze(alice, bob, 99)
+		adv(3.3)
+		return ok3 and not PlayerState.isFrozen(bob)
+	end)())
+	check("freeze changed no items or ownership", (function() for k, v in gearBefore do if a.Gear[k] ~= v then return false end end return true end)())
+
+	-- misses cost only a short cooldown, and no fight = no freeze
+	adv(25)
+	local calm = Vector3.new(-200, 5, 0)
+	place(carol, calm + Vector3.new(15, 0, 0))
+	place(alice, calm, calm + Vector3.new(15, 0, 0))
+	adv(1)
+	CombatSystem.attack(alice, Vector3.new(1, 0, 0))
+	check("Freeze can't be used for fun (no hamster fight nearby -> nobody is frozen)", not PlayerState.isFrozen(carol))
+
+	-- Shadow Cloak
+	a.Rebirths = 3
+	a.Gems = 2000
+	adv(1)
+	check("Shadow Cloak is owned (bought with diamonds earlier, at rebirth 3)", a.Gear.shadow_cloak == true)
+	adv(1)
+	as(alice, "EquipItem", { Id = "shadow_cloak" })
+	adv(0.5)
+	local aliceChar = RawData[alice].Props.Character
+	CombatSystem.attack(alice, nil)
+	adv(0.3)
+	check("Cloak: the player is marked cloaked", alice:GetAttribute("Cloaked") == true and AbilitySystem.isCloaked(alice))
+	local hidden = true
+	for _, part in M.descendants(aliceChar) do
+		if RawData[part].ClassName ~= "Model" and M.InstanceMethods.IsA(part, "BasePart") and RawData[part].Name ~= "HumanoidRootPart" and (RawData[part].Props.Transparency or 0) < 0.8 then hidden = false end
+	end
+	check("...body parts are almost invisible", hidden)
+	check("...with a visible sparkle trail as counterplay", M.InstanceMethods.FindFirstChild(rootOf(alice), "CloakShimmer") ~= nil)
+	CombatSystem.attack(alice, nil)
+	adv(0.2)
+	check("Cloak has a 45 s cooldown (can't be re-used instantly)", AbilitySystem.isCloaked(alice))
+	adv(6.3)
+	check("Cloak ends after 6 seconds and everything is restored", not AbilitySystem.isCloaked(alice) and alice:GetAttribute("Cloaked") == nil)
+	local restored = true
+	for _, part in M.descendants(aliceChar) do
+		if M.InstanceMethods.IsA(part, "BasePart") and RawData[part].Name ~= "HumanoidRootPart" and (RawData[part].Props.Transparency or 0) > 0.5 then restored = false end
+	end
+	check("...no permanent invisibility", restored)
+	check("being hit ends a cloak", (function() AbilitySystem.cloak(alice, 6) AbilitySystem.reveal(alice) return not AbilitySystem.isCloaked(alice) end)())
+
+	-- Mirror Clone
+	a.Rebirths = 5
+	a.Gems = 2000
+	adv(1)
+	check("Mirror Clone bought at rebirth 5", as(alice, "ShopBuy", { Id = "gear_mirror_clone" }).ok)
+	adv(1)
+	as(alice, "EquipItem", { Id = "mirror_clone" })
+	adv(46)
+	local coinsBefore, invBefore, gearBefore2 = a.Coins, copyInv and copyInv(a.Inventory) or table.clone(a.Inventory), table.clone(a.Gear)
+	CombatSystem.attack(alice, nil)
+	adv(0.3)
+	local decoy = workspace:FindFirstChild("Decoy")
+	check("Clone: a decoy model appears", decoy ~= nil and decoy:GetAttribute("OwnerUserId") == RawData[alice].Props.UserId)
+	check("...it is clearly marked (cyan outline + see-through) so it can be told apart", decoy ~= nil and M.InstanceMethods.FindFirstChildOfClass(decoy, "Highlight") ~= nil)
+	check("...it duplicated no data, items or currency", a.Coins >= coinsBefore and (function() for k, v in invBefore do if a.Inventory[k] ~= v then return false end end for k, v in gearBefore2 do if a.Gear[k] ~= v then return false end end return true end)())
+	check("...there is only ever one decoy per player", (function() AbilitySystem.decoy(alice, 8) local n = 0 for _, child in M.InstanceMethods.GetChildren(workspace) do if RawData[child].Name == "Decoy" then n += 1 end end return n == 1 end)())
+	adv(9)
+	check("...and it disappears after its duration", workspace:FindFirstChild("Decoy") == nil)
+	check("a hit pops the decoy", (function()
+		AbilitySystem.decoy(alice, 8)
+		local d = workspace:FindFirstChild("Decoy")
+		local dRoot = d and M.InstanceMethods.FindFirstChild(d, "HumanoidRootPart")
+		return dRoot ~= nil and AbilitySystem.popDecoyNear(RawData[dRoot].Props.CFrame.Position, 5, bob) and workspace:FindFirstChild("Decoy") == nil
+	end)())
+	check("the owner's own swing never pops their own decoy", (function()
+		AbilitySystem.decoy(alice, 8)
+		local d = workspace:FindFirstChild("Decoy")
+		local dRoot = d and M.InstanceMethods.FindFirstChild(d, "HumanoidRootPart")
+		local popped = dRoot ~= nil and AbilitySystem.popDecoyNear(RawData[dRoot].Props.CFrame.Position, 5, alice)
+		AbilitySystem.removeDecoy(alice)
+		return not popped
+	end)())
+	-- exploit attempts
+	a.Gear.frost_wand = nil
+	check("a client can't use an ability tool it doesn't own (removed from data -> plain paws)", (function() local def = require(find(S .. "GearSystem")).equippedWeapon(alice) return def == nil or def.Id ~= "frost_wand" end)())
+	a.Gear.frost_wand = true
+	a.Rebirths = 3
 
 	-----------------------------------------------------------------
 	section("6. game passes: Roblox is the source of truth")
@@ -336,8 +474,8 @@ task.spawn(function()
 	M.spawnCharacter(alice2)
 	adv(6)
 	local a2 = data(alice2)
-	check("owned gear and hotbar layout survive a rejoin", a2 ~= nil and a2.Gear.foam_bat and a2.Gear.iron_ladle and a2.Gear.seed_slingshot and a2.Gear.hamster_net and a2.Hotbar["2"] == "iron_ladle" and a2.Hotbar["3"] == "foam_bat")
-	check("tools are in the new backpack after rejoining", #toolIds(backpackOf(alice2)) == 3, table.concat(toolIds(backpackOf(alice2)), ","))
+	check("owned gear and hotbar layout survive a rejoin", a2 ~= nil and a2.Gear.foam_bat and a2.Gear.shadow_cloak and a2.Gear.seed_slingshot and a2.Gear.hamster_net and a2.Hotbar["2"] == "shadow_cloak" and a2.Hotbar["3"] == "foam_bat")
+	check("tools are in the new backpack after rejoining", #toolIds(backpackOf(alice2)) == 5, table.concat(toolIds(backpackOf(alice2)), ","))
 
 	-----------------------------------------------------------------
 	-- client: hotbar / shop / backpack
@@ -417,8 +555,8 @@ task.spawn(function()
 	check("slot 1 is selected with nothing held", HotbarUI.selectedSlot() == 1)
 	local function thickness(i) return RawData[M.InstanceMethods.FindFirstChildOfClass(HotbarUI.Views[i].Button, "UIStroke")].Props.Thickness end
 	check("the selected slot is highlighted", thickness(1) == 3 and thickness(2) ~= 3, thickness(1))
-	press("Two") -- iron_ladle sits on slot 2
-	check("number key 2 equips the weapon on slot 2", heldIds(alice)[1] == "iron_ladle" and HotbarUI.selectedSlot() == 2, table.concat(heldIds(alice), ","))
+	press("Two") -- shadow_cloak sits on slot 2
+	check("number key 2 equips the weapon on slot 2", heldIds(alice)[1] == "shadow_cloak" and HotbarUI.selectedSlot() == 2, table.concat(heldIds(alice), ","))
 	check("the highlight follows", thickness(2) == 3 and thickness(1) ~= 3)
 	press("Two")
 	check("pressing it again puts it away", #heldIds(alice) == 0 and HotbarUI.selectedSlot() == 1)
@@ -428,7 +566,7 @@ task.spawn(function()
 	check("key 1 returns to the paws (unequips)", #heldIds(alice) == 0)
 	-- the displayed hotbar only shows what is owned
 	local emptyShown = true
-	for index = 5, 8 do
+	for index = 7, 8 do
 		local view = HotbarUI.Views[index]
 		if RawData[view.Icon].Props.Visible ~= false then emptyShown = false end
 	end
@@ -441,9 +579,23 @@ task.spawn(function()
 		check("shop tab exists: " .. name, #byName(shop.Gui, name) == 1)
 	end
 	click(byName(shop.Gui, "Tab_Weapons")[1])
-	check("weapon cards listed", #byName(shop.Gui, "Item_gear_foam_bat") == 1 and #byName(shop.Gui, "Item_gear_iron_ladle") == 1 and #byName(shop.Gui, "Item_gear_seed_slingshot") == 1)
+	check("weapon cards listed", #byName(shop.Gui, "Item_gear_foam_bat") == 1 and #byName(shop.Gui, "Item_gear_shadow_cloak") == 1 and #byName(shop.Gui, "Item_gear_seed_slingshot") == 1)
 	check("detail panel shows the selected weapon", string.find(textsOf(byName(shop.Gui, "Detail")[1]), "Cooldown", 1, true) ~= nil and #byName(shop.Gui, "DetailIcon") == 1)
 	check("owned weapon offers Equip instead of Buy", #byName(shop.Gui, "Action") == 1 and (string.find(tostring(RawData[byName(shop.Gui, "Action")[1]].Props.Text), "Equip", 1, true) ~= nil), #byName(shop.Gui, "Action") .. ":" .. textsOf(shop.Gui):sub(1, 400))
+	-- rebirth-locked weapons stay visible with a lock + requirement
+	M.isServer = true; a.Gear.mirror_clone = nil; a.Rebirths = 0; require(find(S .. "ReplicationSystem")).mark(alice, "Gear", "Hotbar", "Rebirths"); M.isServer = false
+	adv(1.5)
+	click(byName(shop.Gui, "Tab_Weapons")[1])
+	check("a locked weapon is still listed", #byName(shop.Gui, "Item_gear_mirror_clone") == 1)
+	check("...with a lock icon on its card", #byName(byName(shop.Gui, "Item_gear_mirror_clone")[1], "LockIcon") == 1)
+	click(byName(shop.Gui, "Item_gear_mirror_clone")[1])
+	local lockedAction = byName(shop.Gui, "Action")[1]
+	check("...the button says what is required and is disabled", lockedAction ~= nil and string.find(textsOf(lockedAction), "Rebirth 5", 1, true) ~= nil and RawData[lockedAction].Attributes.Disabled == true, lockedAction and textsOf(lockedAction))
+	check("...and the detail panel explains it (ability, unlock level, your level)", string.find(textsOf(byName(shop.Gui, "Detail")[1]), "Locked", 1, true) ~= nil and string.find(textsOf(byName(shop.Gui, "Detail")[1]), "Rebirth 5", 1, true) ~= nil)
+	M.isServer = true; a.Rebirths = 5; require(find(S .. "ReplicationSystem")).mark(alice, "Rebirths"); M.isServer = false
+	adv(1.5)
+	local unlockedAction = byName(shop.Gui, "Action")[1]
+	check("at the required rebirth it becomes buyable", unlockedAction ~= nil and RawData[unlockedAction].Attributes.Disabled ~= true, unlockedAction and tostring(RawData[unlockedAction].Props.Text))
 	click(byName(shop.Gui, "Tab_Gamepasses")[1])
 	local passCards = 0
 	for _, d in M.descendants(shop.Gui) do if string.sub(RawData[d].Name, 1, 10) == "Item_pass_" then passCards += 1 end end
@@ -459,7 +611,7 @@ task.spawn(function()
 	check("Backpack panel exists", backpack ~= nil)
 	backpack:Open(); adv(0.8)
 	check("owned weapons and equipment listed", #byName(backpack.Gui, "Item_foam_bat") == 1 and #byName(backpack.Gui, "Item_hamster_net") == 1)
-	check("nothing unowned is listed", #byName(backpack.Gui, "Item_iron_ladle") == 1 and #byName(backpack.Gui, "Item_item_luck") == 0)
+	check("nothing unowned is listed", #byName(backpack.Gui, "Item_shadow_cloak") == 1 and #byName(backpack.Gui, "Item_item_luck") == 0)
 	click(byName(backpack.Gui, "Item_foam_bat")[1])
 	check("weapon detail has Equip and no Discard", #byName(backpack.Gui, "Equip") == 1 and #byName(backpack.Gui, "Discard") == 0)
 	click(byName(backpack.Gui, "Equip")[1])

@@ -478,6 +478,29 @@ draw.paint = function(c)
 	shape(c, 0.3, 0.34, 0.16, 0.16, WHITE, { Circle = true, Alpha = 0.4, Z = 3 })
 end
 
+-- Frost Wand: silver shaft with an ice crystal.
+draw.wand = function(c)
+	shape(c, 0.2, 0.46, 0.1, 0.56, rgb(136, 144, 164), { Radius = 0.5, Rot = 45, Stroke = rgb(80, 88, 110), Z = 1 })
+	shape(c, 0.5, 0.06, 0.34, 0.34, tint(c, rgb(150, 214, 255)), { Rot = 45, Radius = 0.12, Top = rgb(226, 246, 255), Stroke = rgb(70, 140, 200), Z = 3 })
+	shape(c, 0.6, 0.16, 0.14, 0.14, rgb(255, 255, 255), { Circle = true, Alpha = 0.5, Z = 4 })
+	shape(c, 0.1, 0.12, 0.08, 0.08, rgb(200, 236, 255), { Rot = 45, Radius = 0.1, Z = 2 })
+end
+
+-- Shadow Cloak: a violet orb in a bracket.
+draw.cloak = function(c)
+	shape(c, 0.14, 0.5, 0.72, 0.36, tint(c, rgb(59, 47, 102)), { Radius = 0.3, Top = rgb(100, 82, 160), Stroke = rgb(30, 24, 60), Z = 1 })
+	shape(c, 0.28, 0.1, 0.44, 0.44, rgb(176, 112, 255), { Circle = true, Top = rgb(224, 190, 255), Stroke = rgb(110, 60, 190), Z = 2 })
+	shape(c, 0.4, 0.2, 0.12, 0.12, rgb(255, 255, 255), { Circle = true, Alpha = 0.55, Z = 3 })
+end
+
+-- Mirror Clone: gold hand mirror.
+draw.mirror = function(c)
+	shape(c, 0.44, 0.52, 0.12, 0.44, rgb(240, 190, 70), { Radius = 0.5, Rot = -30, Stroke = rgb(160, 110, 30), Z = 1 })
+	shape(c, 0.14, 0.06, 0.58, 0.58, rgb(255, 211, 90), { Circle = true, Top = rgb(255, 236, 160), Stroke = rgb(160, 110, 30), Z = 2 })
+	shape(c, 0.22, 0.14, 0.42, 0.42, rgb(205, 239, 255), { Circle = true, Top = rgb(240, 252, 255), Z = 3 })
+	shape(c, 0.3, 0.22, 0.12, 0.12, rgb(255, 255, 255), { Circle = true, Alpha = 0.4, Z = 4 })
+end
+
 -- A banknote (income per second uses this next to "$X/s", the coin is the balance).
 draw.cash = function(c)
 	local green = tint(c, rgb(86, 200, 120))

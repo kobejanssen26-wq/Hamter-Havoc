@@ -1,6 +1,7 @@
 --[[
 	PlayerState: short-lived per-player combat/carry state that changes how a player moves.
 	  - stun:   knocked down by a slap or a security zap (no walking for a moment)
+	  - freeze: frozen solid by the Frost Wand (stands still, can't act) for a couple of seconds
 	  - carry:  holding a hamster ball slows you down a little (rarer = heavier)
 	WalkSpeed is always recomputed from the profile (upgrades, boosts) times these factors.
 ]]
@@ -16,6 +17,7 @@ local PlayerState = {}
 
 local stunnedUntil: { [Player]: number } = {}
 local immuneUntil: { [Player]: number } = {}
+local frozenUntil: { [Player]: number } = {}
 local carryFactor: { [Player]: number? } = {}
 
 -- Humanoid + root of a living character, or nil.
@@ -32,8 +34,13 @@ function PlayerState.character(player: Player): (Humanoid?, BasePart?)
 	return nil, nil
 end
 
+-- Frozen = can't move, jump, attack, steal or emote (like stunned) but stays standing.
+function PlayerState.isFrozen(player: Player): boolean
+	return (frozenUntil[player] or 0) > os.clock()
+end
+
 function PlayerState.isStunned(player: Player): boolean
-	return (stunnedUntil[player] or 0) > os.clock()
+	return (stunnedUntil[player] or 0) > os.clock() or PlayerState.isFrozen(player)
 end
 
 function PlayerState.isImmune(player: Player): boolean
@@ -48,7 +55,16 @@ function PlayerState.apply(player: Player)
 	end
 	local data = DataSystem.get(player)
 	local speed = if data then EconomyMath.walkSpeed(data, os.time()) else EconomyMath.BaseWalkSpeed
-	if PlayerState.isStunned(player) then
+	if PlayerState.isFrozen(player) then
+		humanoid.WalkSpeed = 0
+		humanoid.JumpPower = 0
+		humanoid.JumpHeight = 0 -- R15 characters use JumpHeight, R6 use JumpPower
+		humanoid.PlatformStand = false
+		return
+	end
+	humanoid.JumpPower = 50
+	humanoid.JumpHeight = 7.2
+	if (stunnedUntil[player] or 0) > os.clock() then
 		humanoid.WalkSpeed = 0
 		humanoid.PlatformStand = true
 		return
@@ -69,6 +85,18 @@ function PlayerState.stun(player: Player, seconds: number, immunity: number?)
 	end)
 end
 
+-- Freeze for `seconds`; the player is immune to being frozen again for `immunity` seconds afterwards (no chain-freezing).
+function PlayerState.freeze(player: Player, seconds: number, immunity: number?)
+	frozenUntil[player] = os.clock() + seconds
+	immuneUntil[player] = math.max(immuneUntil[player] or 0, os.clock() + seconds + (immunity or 0))
+	PlayerState.apply(player)
+	task.delay(seconds + 0.05, function()
+		if player.Parent == Players and not PlayerState.isFrozen(player) then
+			PlayerState.apply(player)
+		end
+	end)
+end
+
 function PlayerState.setCarry(player: Player, factor: number?)
 	carryFactor[player] = factor
 	PlayerState.apply(player)
@@ -76,6 +104,7 @@ end
 
 function PlayerState.forget(player: Player)
 	stunnedUntil[player] = nil
+	frozenUntil[player] = nil
 	immuneUntil[player] = nil
 	carryFactor[player] = nil
 end

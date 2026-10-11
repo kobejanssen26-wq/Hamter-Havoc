@@ -95,6 +95,47 @@ STYLES.slingshot = function(tool: Tool, look: any)
 	tool.Grip = CFrame.new(0, 0, 0.6)
 end
 
+-- Frost Wand: a slim silver shaft, a faceted ice crystal on top, tiny snow-flake fins.
+STYLES.wand = function(tool: Tool, look: any)
+	local ice = color(look.Color, Color3.fromRGB(154, 216, 255))
+	local frost = color(look.Accent, Color3.fromRGB(232, 247, 255))
+	handle(tool, Vector3.new(0.35, 0.35, 2.6), Color3.fromRGB(122, 130, 150), Enum.Material.Metal)
+	part(tool, "Grip", Vector3.new(0.5, 0.5, 0.8), CFrame.new(0, 0, 0.7), Color3.fromRGB(70, 78, 100), Enum.Material.Leather)
+	part(tool, "Collar", Vector3.new(0.7, 0.7, 0.25), CFrame.new(0, 0, -1.35), frost, Enum.Material.Metal)
+	local crystal = part(tool, "Crystal", Vector3.new(0.9, 0.9, 1.5), CFrame.new(0, 0, -2.25) * CFrame.Angles(0, 0, math.rad(45)), ice, Enum.Material.Ice)
+	crystal.Transparency = 0.15
+	part(tool, "CrystalCore", Vector3.new(0.5, 0.5, 1.1), CFrame.new(0, 0, -2.25) * CFrame.Angles(0, 0, 0), frost, Enum.Material.Neon).Transparency = 0.2
+	part(tool, "FinL", Vector3.new(0.12, 0.7, 0.6), CFrame.new(-0.55, 0, -1.75) * CFrame.Angles(0, 0, math.rad(25)), ice, Enum.Material.Ice)
+	part(tool, "FinR", Vector3.new(0.12, 0.7, 0.6), CFrame.new(0.55, 0, -1.75) * CFrame.Angles(0, 0, math.rad(-25)), ice, Enum.Material.Ice)
+	tool.Grip = CFrame.new(0, 0, 0.8)
+end
+
+-- Shadow Cloak: a small violet gadget (a lantern-like orb in a bracket) that is held in front of the body.
+STYLES.cloak = function(tool: Tool, look: any)
+	local cloth = color(look.Color, Color3.fromRGB(59, 47, 102))
+	local glow = color(look.Accent, Color3.fromRGB(176, 112, 255))
+	handle(tool, Vector3.new(0.4, 0.4, 1.4), Color3.fromRGB(70, 74, 92), Enum.Material.Metal)
+	part(tool, "Bracket", Vector3.new(1.3, 0.25, 0.25), CFrame.new(0, 0, -0.9), Color3.fromRGB(122, 130, 150), Enum.Material.Metal)
+	part(tool, "OrbL", Vector3.new(0.25, 0.9, 0.25), CFrame.new(-0.6, 0.35, -0.9), Color3.fromRGB(122, 130, 150), Enum.Material.Metal)
+	part(tool, "OrbR", Vector3.new(0.25, 0.9, 0.25), CFrame.new(0.6, 0.35, -0.9), Color3.fromRGB(122, 130, 150), Enum.Material.Metal)
+	local orb = part(tool, "Orb", Vector3.new(1.1, 1.1, 1.1), CFrame.new(0, 0.45, -0.9), glow, Enum.Material.Neon, Enum.PartType.Ball)
+	orb.Transparency = 0.25
+	part(tool, "Veil", Vector3.new(1.5, 1.2, 0.08), CFrame.new(0, -0.2, -0.9), cloth, Enum.Material.Fabric).Transparency = 0.15
+	tool.Grip = CFrame.new(0, 0, 0.6)
+end
+
+-- Mirror Clone: a hand mirror with a gold frame.
+STYLES.mirror = function(tool: Tool, look: any)
+	local glass = color(look.Color, Color3.fromRGB(205, 239, 255))
+	local gold = color(look.Accent, Color3.fromRGB(255, 211, 90))
+	handle(tool, Vector3.new(0.4, 0.4, 1.8), gold, Enum.Material.Metal)
+	part(tool, "Frame", Vector3.new(0.25, 1.9, 1.9), CFrame.new(0, 0, -1.55) * CFrame.Angles(0, math.rad(90), 0), gold, Enum.Material.Metal, Enum.PartType.Cylinder)
+	local face = part(tool, "Glass", Vector3.new(0.18, 1.55, 1.55), CFrame.new(0, 0, -1.55) * CFrame.Angles(0, math.rad(90), 0), glass, Enum.Material.Glass, Enum.PartType.Cylinder)
+	face.Reflectance = 0.45
+	part(tool, "Gem", Vector3.new(0.4, 0.4, 0.3), CFrame.new(0, 1.05, -1.55), Color3.fromRGB(255, 100, 140), Enum.Material.Neon, Enum.PartType.Ball)
+	tool.Grip = CFrame.new(0, 0, 0.8)
+end
+
 function ToolBuilder.build(def: any): Tool
 	local tool: Tool
 	local custom = nil

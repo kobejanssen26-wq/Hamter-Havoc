@@ -82,12 +82,32 @@ function ItemView.stats(def: any): { { string } }
 	local lines = {}
 	if equip.Kind == "Tool" then
 		local w = equip.Weapon
-		table.insert(lines, { "Type", if w.Type == "Ranged" then "Ranged" else "Melee" })
-		table.insert(lines, { "Range", string.format("%d studs", w.Range) })
-		table.insert(lines, { "Cooldown", string.format("%.1fs", w.Cooldown) })
-		table.insert(lines, { "Knockback", tostring(math.floor(w.Knockback)) })
-		table.insert(lines, { "Stun", string.format("%.1fs", w.Stun) })
-		table.insert(lines, { "Drop chance", string.format("%d%%", math.floor(w.DropChance * 100 + 0.5)) })
+		if w.Type == "Freeze" then
+			table.insert(lines, { "Ability", "Freeze a player" })
+			table.insert(lines, { "Frozen for", string.format("%.1f s", w.Duration) })
+			table.insert(lines, { "Range", string.format("%d studs", w.Range) })
+			table.insert(lines, { "Cooldown", string.format("%d s", w.Cooldown) })
+		elseif w.Type == "Cloak" then
+			table.insert(lines, { "Ability", "Near invisibility" })
+			table.insert(lines, { "Lasts", string.format("%d s", w.Duration) })
+			table.insert(lines, { "Cooldown", string.format("%d s", w.Cooldown) })
+			table.insert(lines, { "Counter", "Sparkle trail, ends on hit" })
+		elseif w.Type == "Decoy" then
+			table.insert(lines, { "Ability", "See-through decoy" })
+			table.insert(lines, { "Lasts", string.format("%d s", w.Duration) })
+			table.insert(lines, { "Cooldown", string.format("%d s", w.Cooldown) })
+			table.insert(lines, { "Counter", "Cyan outline, pops on hit" })
+		else
+			table.insert(lines, { "Type", if w.Type == "Ranged" then "Ranged" else "Melee" })
+			table.insert(lines, { "Range", string.format("%d studs", w.Range) })
+			table.insert(lines, { "Cooldown", string.format("%.1fs", w.Cooldown) })
+			table.insert(lines, { "Knockback", tostring(math.floor(w.Knockback)) })
+			table.insert(lines, { "Stun", string.format("%.1fs", w.Stun) })
+			table.insert(lines, { "Drop chance", string.format("%d%%", math.floor(w.DropChance * 100 + 0.5)) })
+		end
+		if def.MinRebirth and def.MinRebirth > 0 then
+			table.insert(lines, { "Unlocks at", string.format("Rebirth %d", def.MinRebirth) })
+		end
 	elseif equip.Kind == "Passive" then
 		if equip.Stats.CollectRange then
 			table.insert(lines, { "Collect range", string.format("+%s studs", tostring(equip.Stats.CollectRange)) })

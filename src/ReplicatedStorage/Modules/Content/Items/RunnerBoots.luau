@@ -6,6 +6,7 @@ return {
 	Icon = "boots",
 	Rarity = "Shiny",
 	Currency = "Coins",
-	Price = 20000,
+	Price = 40000,
+	MinRebirth = 1,
 	Equip = { Kind = "Passive", Stats = { WalkSpeed = 2 } },
 }
