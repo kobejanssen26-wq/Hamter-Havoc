@@ -27,6 +27,7 @@ export type Animator = typeof(setmetatable({} :: {
 	OnStep: (() -> ())?,
 	StepSign: number,
 	HasWings: boolean,
+	Lean: number,
 }, HamsterAnimator))
 
 function HamsterAnimator.new(model: Model): Animator
@@ -42,6 +43,7 @@ function HamsterAnimator.new(model: Model): Animator
 		OnStep = nil,
 		StepSign = 1,
 		HasWings = false,
+		Lean = 0,
 	}, HamsterAnimator)
 
 	for _, name in JOINT_NAMES do
@@ -65,8 +67,11 @@ local function envelope(t: number, duration: number): number
 end
 
 -- moveSpeed: studs per second the hamster is travelling (0 = standing still).
-function HamsterAnimator.Update(self: Animator, dt: number, moveSpeed: number)
+-- turnRate: radians per second the hamster is turning (positive = to the left); it leans into the turn.
+function HamsterAnimator.Update(self: Animator, dt: number, moveSpeed: number, turnRate: number?)
 	self.Time += dt
+	local wantedLean = if moveSpeed > 0.5 then math.clamp((turnRate or 0) / 3, -1, 1) else 0
+	self.Lean += (wantedLean - self.Lean) * math.min(1, dt * 8)
 	local scale = self.Scale
 	local time = self.Time
 	local pose: { [string]: CFrame } = {}
@@ -90,6 +95,10 @@ function HamsterAnimator.Update(self: Animator, dt: number, moveSpeed: number)
 		add("EarLJ", ANG(0, 0, math.sin(phase * 2 + 0.3) * 0.2))
 		add("EarRJ", ANG(0, 0, -math.sin(phase * 2 + 0.3) * 0.2))
 		add("TailJ", ANG(0, math.sin(phase) * 0.5, 0))
+		-- lean into the turn: body rolls, head looks where it is going, tail swings out
+		add("BodyJ", ANG(0, 0, -self.Lean * 0.2))
+		add("HeadJ", ANG(0, self.Lean * 0.3, 0))
+		add("TailJ", ANG(0, -self.Lean * 0.35, 0))
 		local flap = math.sin(phase * 1.4) * 0.45
 		add("WingRJ", ANG(0, 0, flap))
 		add("WingLJ", ANG(0, 0, -flap))

@@ -23,12 +23,12 @@ Run `python3 tools/ExportModels/export_models.py --update` to rebuild the files;
 
 | Asset | Category | File | Instances | Dependencies | Reusable |
 |---|---|---|---|---|---|
-| Complete Hamster Wheel Assembly | Assemblies | [`Hamster_Wheel_Complete.rbxm`](Assemblies/Hamster_Wheel_Complete.rbxm) | 104 | None - WheelSpin + HamsterAutoAnimate + HamsterAnimator are bundled (client scripts) | Yes |
-| Hamster Apartment Tower (5 floors, full lot) | Buildings | [`Hamster_Apartment_5F.rbxm`](Buildings/Hamster_Apartment_5F.rbxm) | 1914 | Visual only. Prompts / labels / wheels need the game's HouseSystem (see README); delete floors you don't need | Yes |
+| Complete Hamster Wheel Assembly | Assemblies | [`Hamster_Wheel_Complete.rbxm`](Assemblies/Hamster_Wheel_Complete.rbxm) | 117 | None - WheelSpin + HamsterAutoAnimate + HamsterAnimator are bundled (client scripts) | Yes |
+| Hamster Apartment Tower (5 floors, full lot) | Buildings | [`Hamster_Apartment_5F.rbxm`](Buildings/Hamster_Apartment_5F.rbxm) | 1927 | Visual only. Prompts / labels / wheels need the game's HouseSystem (see README); delete floors you don't need | Yes |
 | Street Furniture Pack (bench, lamp, sign, barrel, crate, flag, balloon, fence, pond, windmill) | Decorations | [`Street_Furniture_Pack.rbxm`](Decorations/Street_Furniture_Pack.rbxm) | 80 | Optional: flag/windmill/balloon carry Sway/SpinModel/Bob tags and a bundled client script animates them | Yes |
 | Nature Pack (trees, bushes, rocks, flowers) | Environment | [`Nature_Pack.rbxm`](Environment/Nature_Pack.rbxm) | 97 | None (static models; trees carry the CollectionService tag TreeSway, optional) | Yes |
-| Hamster Builder Package (builds all 172 hamster species in code) | Hamsters | [`HamsterBuilder_Package.rbxm`](Hamsters/HamsterBuilder_Package.rbxm) | 9 | None - 8 ModuleScripts that reference each other (keep the folder together) | Yes |
-| Default Hamster (Brownie) | Hamsters | [`Hamster_Default.rbxm`](Hamsters/Hamster_Default.rbxm) | 86 | None to display. HamsterAutoAnimate + HamsterAnimator (bundled) animate it on the client | Yes |
+| Hamster Builder Package (builds all 172 hamster species in code) | Hamsters | [`HamsterBuilder_Package.rbxm`](Hamsters/HamsterBuilder_Package.rbxm) | 10 | None - 9 ModuleScripts that reference each other (keep the folder together) | Yes |
+| Default Hamster (Brownie) | Hamsters | [`Hamster_Default.rbxm`](Hamsters/Hamster_Default.rbxm) | 99 | None to display. HamsterAutoAnimate + HamsterAnimator (bundled) animate it on the client | Yes |
 | Upgrade Stations (8 pedestal machines) | Machines | [`Upgrade_Stations.rbxm`](Machines/Upgrade_Stations.rbxm) | 118 | Optional: bundled client script AnimateTaggedProps spins the training wheel / gear props | Yes |
 | Hamster Icons (48 drawn UI icons, no emoji) | UI_Assets | [`Hamster_Icons.rbxm`](UI_Assets/Hamster_Icons.rbxm) | 1 | None - self-contained ModuleScript | Yes |
 | Hamster Wheel | Wheels | [`Hamster_Wheel.rbxm`](Wheels/Hamster_Wheel.rbxm) | 18 | WheelSpin script (bundled) turns it; without a controller it is a static model | Yes |

@@ -10,6 +10,7 @@ Open `HamsterPlaza.rbxl` in Roblox Studio → **View → Explorer**. Je ziet de 
 | Explorer-pad | Wat is het |
 |---|---|
 | `Workspace/HamsterPlaza` | Het plein: boog met gouden hamster (`PlazaArch`), `ShopStall`, `HamsterLibrary` (Index), bord met recente vondsten |
+| `Workspace/LeaderboardHall` | De prikbord-hal achter de bibliotheek met 3 leaderboards (Most Hamsters / Most Steals / Most Money) en een kiosk die het volledige scherm opent |
 | `Workspace/HamsterPath` | De weg met pijlen (`Road`, `Arrow`), het hol waar hamsters beginnen (`BurrowHill`, `BurrowHole`) en de uitgangstunnel (`ExitHill`) |
 | `Workspace/PlayerHouses/House1 … House8` | De 8 appartementen-torens. 1-4 = noordrij, 5-8 = zuidrij. In de voorbeeldkopie hebben ze 1,2,3,4,5,3,2,1 verdiepingen zodat je ziet hoe het gebouw groeit (bij Play start iedereen met 1 verdieping) |
 | `Workspace/Environment` | Grond (`Ground`), looppaden (`Promenades`), paden naar de poort (`GatePath`), lantaarns/banken (`Props`), bos (`Forest`), `Beyond` (buitenwereld), **`Backdrop`** (bergen `Mountain`, heuvels `Hill`, meren `Lake`, kliffen `Cliff`, wolken `Clouds`), onzichtbare muren (`Boundary`) |
@@ -60,6 +61,7 @@ Open `HamsterPlaza.rbxl` in Roblox Studio → **View → Explorer**. Je ziet de 
 | de hotbar (slots, items) | `ReplicatedStorage/Modules/HotbarConfig` |
 | de tutorial-stappen | `ReplicatedStorage/Modules/TutorialConfig` |
 | de zichtbare namen van hamsters (ids blijven gelijk) | `ReplicatedStorage/Modules/HamsterNames` |
+| hamsters/emotes/animaties toevoegen, UI-knoppen, verdiepingen | `docs/CONTENT_GUIDE.md` (map `ReplicatedStorage/Modules/Content/`) |
 | een icoon toevoegen | `StarterPlayer/StarterPlayerScripts/UI/Icons.luau` |
 | het plein aanpassen | `…/WorldBuilder/PlazaBuilder` |
 | aantal/ligging van huizen | `ReplicatedStorage/Modules/WorldLayout` (`HouseColumns`) |

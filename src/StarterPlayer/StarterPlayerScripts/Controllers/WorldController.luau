@@ -64,6 +64,7 @@ export type Ball = {
 	Target: Vector3,
 	Yaw: number,
 	RenderYaw: number,
+	PrevRenderYaw: number?,
 	Speed: number,
 	SnapAt: number,
 	Roll: CFrame,
@@ -618,7 +619,9 @@ local function step(dt: number)
 		local hamsterCFrame = CFrame.new(ball.Pos.X, ball.Pos.Y + 0.2 * ball.Scale + hop, ball.Pos.Z) * CFrame.Angles(0, ball.RenderYaw, 0)
 		ball.Hamster:PivotTo(hamsterCFrame)
 		local moving = ball.Speed > 0.6 or distance / math.max(dt, 1e-3) > 0.6
-		ball.Animator:Update(dt, if moving then math.max(ball.Speed, 6) else 0)
+		local turn = math.atan2(math.sin(ball.RenderYaw - (ball.PrevRenderYaw or ball.RenderYaw)), math.cos(ball.RenderYaw - (ball.PrevRenderYaw or ball.RenderYaw))) / math.max(dt, 1e-3)
+		ball.PrevRenderYaw = ball.RenderYaw
+		ball.Animator:Update(dt, if moving then math.max(ball.Speed, 6) else 0, turn)
 
 		-- who can I interact with right now?
 		if rootPosition and not ball.Removing and not carrying then

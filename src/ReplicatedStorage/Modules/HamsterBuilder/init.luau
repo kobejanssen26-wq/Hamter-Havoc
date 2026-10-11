@@ -89,6 +89,23 @@ function HamsterBuilder.signature(species: any): string
 	}, "|")
 end
 
+-- Stable per-species body proportions in a narrow range (so they stay hamster-like), from the species id.
+function HamsterBuilder.proportions(id: string): { Width: number, Height: number, Length: number, Head: number }
+	local hash = 5381
+	for index = 1, #id do
+		hash = (hash * 33 + string.byte(id, index)) % 2147483647
+	end
+	local function unit(shift: number): number
+		return ((hash // shift) % 1000) / 999 * 2 - 1 -- -1 .. 1
+	end
+	return {
+		Width = 1 + unit(1) * 0.1,
+		Height = 1 + unit(7) * 0.08,
+		Length = 1 + unit(31) * 0.1,
+		Head = 1 + unit(127) * 0.07,
+	}
+end
+
 function HamsterBuilder.build(species: any, options: BuildOptions?): Model
 	local opts = options or {}
 	-- a hamster with its own Studio model (Content/Hamsters ModelName) uses it; a missing/invalid model falls back below
@@ -134,8 +151,11 @@ function HamsterBuilder.build(species: any, options: BuildOptions?): Model
 	local spec: any = species
 
 	-- core body ---------------------------------------------------------
-	T.limb(ctx, "Body", "Root", V3(0, 0.5, 0.3), V3(2.7, 2.2, 2.6), CF(0, 1.3, 0.3), fur, Enum.MeshType.Sphere, { Cast = true })
-	T.limb(ctx, "Head", "Body", V3(0, 1.8, -0.4), V3(2.6, 2.2, 2.3), CF(0, 2.3, -0.7), fur, Enum.MeshType.Sphere, { Cast = true })
+	-- every species gets its own stable proportions (plumper, longer, bigger head ...), so hamsters are not just recolours.
+	-- Derived from the id, so a species always looks the same; `species.Build = { Width, Height, Length, Head }` overrides it.
+	local build = species.Build or HamsterBuilder.proportions(species.Id or species.Name or "")
+	T.limb(ctx, "Body", "Root", V3(0, 0.5, 0.3), V3(2.7 * build.Width, 2.2 * build.Height, 2.6 * build.Length), CF(0, 1.3, 0.3), fur, Enum.MeshType.Sphere, { Cast = true })
+	T.limb(ctx, "Head", "Body", V3(0, 1.8, -0.4), V3(2.6 * build.Head, 2.2 * build.Head, 2.3 * build.Head), CF(0, 2.3, -0.7), fur, Enum.MeshType.Sphere, { Cast = true })
 
 	local pawColor = species.PawColor or (if species.Pattern == "socks" then ctx.Color2 else T.mix(fur, PINK, 0.25))
 	local paws = {
@@ -164,6 +184,14 @@ function HamsterBuilder.build(species: any, options: BuildOptions?): Model
 			T.block(ctx, "Whisker", V3(0.8, 0.03, 0.03), CF(side * 1.55, 2.05 + index * 0.1, -1.55) * ANG(0, rad(-side * 12), rad(side * index * 8)), Color3.fromRGB(240, 235, 230), { Attach = "Head", Minor = true })
 		end
 	end)
+
+	-- small realistic details (skipped in low detail): front teeth and a few fur tufts
+	T.both(function(side)
+		T.block(ctx, "Incisor", V3(0.16, 0.2, 0.08), CF(side * 0.1, 1.68, -1.8), Color3.fromRGB(252, 248, 236), { Attach = "Head", Minor = true })
+	end)
+	for index, offset in { V3(-0.28, 3.4, -0.55), V3(0.05, 3.48, -0.7), V3(0.3, 3.38, -0.5) } do
+		T.blob(ctx, "FurTuft", V3(0.34, 0.5, 0.3), CF(offset) * ANG(rad(-14), 0, rad((index - 2) * 22)), T.mix(fur, WHITE, 0.2), { Attach = "Head", Minor = true })
+	end
 
 	-- variants ----------------------------------------------------------
 	local patternBuilder = Faces.Patterns[species.Pattern or "none"]

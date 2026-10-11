@@ -207,11 +207,16 @@ function HotbarUI.start()
 		end
 	end)
 
-	-- the Slap slot shows its cooldown
+	-- the Slap slot shows its cooldown (only touches the UI while the cooldown is running or just ended)
+	local lastReady = 1
 	RunService.Heartbeat:Connect(function()
 		local view = views[1]
 		if view and view.Config.Id == "slap" then
 			local ready = CombatController.ready()
+			if ready >= 1 and lastReady >= 1 then
+				return
+			end
+			lastReady = ready
 			view.Cooldown.Visible = ready < 1
 			view.Cooldown.Size = UDim2.fromScale(1, 1 - ready)
 		end
