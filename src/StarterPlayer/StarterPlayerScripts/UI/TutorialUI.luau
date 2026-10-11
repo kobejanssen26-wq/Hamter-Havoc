@@ -24,52 +24,27 @@ local C = UIKit.Colors
 local player = Players.LocalPlayer
 
 function TutorialUI.start()
-	local gui = UIKit.new("ScreenGui", {
-		Name = "TutorialUI",
-		ResetOnSpawn = false,
-		DisplayOrder = 8,
-		IgnoreGuiInset = true,
-		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
-	}, player:WaitForChild("PlayerGui"))
-
-	local inset = UIKit.GuiService:GetGuiInset().Y
-	local card = UIKit.frame(gui, {
-		Name = "Card",
-		Size = UDim2.fromOffset(330, 150),
-		Position = UDim2.new(0, 14, 0.5, 0),
-		AnchorPoint = Vector2.new(0, 0.5),
+	local left = require(script.Parent.MainUI).region("LeftColumn")
+	if not left then
+		warn("[TutorialUI] LeftColumn region missing (MainUI must start first)")
+		return
+	end
+	local card = UIKit.frame(left, {
+		Name = "TutorialCard",
+		Size = UDim2.fromOffset(300, 150),
+		LayoutOrder = 5,
 		BackgroundColor3 = C.Cream,
 		BackgroundTransparency = 0.03,
 		Visible = false,
 	})
 	UIKit.corner(card, 10)
-	UIKit.stroke(card, C.GoldLine, 1.5)
-	local scale = UIKit.new("UIScale", { Scale = 1 }, card)
+	UIKit.stroke(card, C.Line, 1.5)
 	local step = UIKit.label(card, { Size = UDim2.new(1, -20, 0, 16), Position = UDim2.fromOffset(14, 10), Font = UIKit.Fonts.Title, TextSize = 12, TextColor3 = C.Gold })
 	local title = UIKit.label(card, { Size = UDim2.new(1, -28, 0, 24), Position = UDim2.fromOffset(14, 28), Font = UIKit.Fonts.Title, TextSize = 18, TextColor3 = C.Ink, TextTruncate = Enum.TextTruncate.AtEnd })
 	local text = UIKit.label(card, { Size = UDim2.new(1, -28, 0, 56), Position = UDim2.fromOffset(14, 54), Font = UIKit.Fonts.Soft, TextSize = 13, TextColor3 = C.Muted, TextWrapped = true, TextYAlignment = Enum.TextYAlignment.Top })
 	local action = UIKit.button(card, { Text = "Next", Size = UDim2.fromOffset(120, 32), Position = UDim2.new(1, -14, 1, -12), AnchorPoint = Vector2.new(1, 1), Color = C.Green, TextSize = 14, Name = "Next" })
 	local skip = UIKit.button(card, { Text = "Skip tutorial", Size = UDim2.fromOffset(110, 28), Position = UDim2.new(0, 14, 1, -14), AnchorPoint = Vector2.new(0, 1), Color = C.Card, TextSize = 12, Name = "Skip" })
 	local progress = UIKit.frame(card, { Size = UDim2.new(1, 0, 0, 3), Position = UDim2.new(0, 0, 0, 0), BackgroundColor3 = C.Gold })
-
-	local function fit()
-		local camera = Workspace.CurrentCamera
-		local viewport = if camera then camera.ViewportSize else Vector2.new(1280, 720)
-		scale.Scale = math.clamp(viewport.X / 900, 0.7, 1.05)
-		-- big screens: right side, below the shortcut buttons; small screens: top centre so it never covers the controls
-		if viewport.X < 900 or viewport.Y < 600 then
-			card.AnchorPoint = Vector2.new(0.5, 0)
-			card.Position = UDim2.new(0.5, 0, 0, inset + 96)
-		else
-			card.AnchorPoint = Vector2.new(1, 0.5)
-			card.Position = UDim2.new(1, -14, 0.6, 0)
-		end
-	end
-	fit()
-	local camera = Workspace.CurrentCamera
-	if camera then
-		camera:GetPropertyChangedSignal("ViewportSize"):Connect(fit)
-	end
 
 	-- the arrow: one billboard, moved between targets (never recreated)
 	local arrowPart = Instance.new("Part")
@@ -145,10 +120,7 @@ function TutorialUI.start()
 			UIKit.tween(progress, 0.3, { Size = UDim2.new((tutorial.Step - 1) / #TutorialConfig.Steps + 0.08, 0, 0, 3) })
 			action.Visible = def.Kind == "Ack"
 			UIKit.setButtonContent(action, nil, def.Button or "Next", C.White)
-			if not card.Visible then
-				card.Visible = true
-				fit()
-			end
+			card.Visible = true
 			pointer = def.Target or def.Pointer
 		end
 	end

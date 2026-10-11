@@ -9,11 +9,9 @@
 	displayed counts always come from the server.
 ]]
 
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
-local Workspace = game:GetService("Workspace")
 
 local Modules = ReplicatedStorage:WaitForChild("Modules")
 local HotbarConfig = require(Modules:WaitForChild("HotbarConfig"))
@@ -21,12 +19,12 @@ local HotbarConfig = require(Modules:WaitForChild("HotbarConfig"))
 local CombatController = require(script.Parent.Parent.Controllers.CombatController)
 local DataController = require(script.Parent.Parent.Controllers.DataController)
 local AudioController = require(script.Parent.Parent.Controllers.AudioController)
+local Theme = require(script.Parent.Theme)
 local UIKit = require(script.Parent.UIKit)
 
 local HotbarUI = {}
 
 local C = UIKit.Colors
-local player = Players.LocalPlayer
 
 local KEYS = {
 	Enum.KeyCode.One,
@@ -144,44 +142,28 @@ local function pick(index: number)
 end
 
 function HotbarUI.start()
-	local gui = UIKit.new("ScreenGui", {
-		Name = "HotbarUI",
-		ResetOnSpawn = false,
-		DisplayOrder = 2,
-		IgnoreGuiInset = true,
-		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
-	}, player:WaitForChild("PlayerGui"))
-
-	local slotSize = if UIKit.isTouch() then 54 else 60
+	local region = require(script.Parent.MainUI).region("BottomColumn")
+	if not region then
+		warn("[HotbarUI] BottomColumn region missing (MainUI must start first)")
+		return
+	end
+	local slotSize = if UIKit.isTouch() then Theme.Size.SlotTouch else Theme.Size.Slot
 	local gap = 6
 	local count = #HotbarConfig.Slots
 	local width = count * slotSize + (count - 1) * gap
-	local bar = UIKit.frame(gui, {
-		Name = "Bar",
-		Size = UDim2.fromOffset(width, slotSize),
-		Position = UDim2.new(0.5, 0, 1, -12),
-		AnchorPoint = Vector2.new(0.5, 1),
-		BackgroundTransparency = 1,
-	})
-	UIKit.list(bar, Enum.FillDirection.Horizontal, gap, Enum.HorizontalAlignment.Center)
-	local scale = UIKit.new("UIScale", { Scale = 1 }, bar)
-	local function fit()
-		local camera = Workspace.CurrentCamera
-		local viewport = if camera then camera.ViewportSize else Vector2.new(1280, 720)
-		scale.Scale = math.clamp(viewport.X / (width + 40), 0.6, 1.1)
-	end
-	fit()
-	local camera = Workspace.CurrentCamera
-	if camera then
-		camera:GetPropertyChangedSignal("ViewportSize"):Connect(fit)
-	end
 
-	-- tooltip card above the bar (selected slot)
-	tip = UIKit.frame(gui, { Name = "Tip", Size = UDim2.fromOffset(260, 52), Position = UDim2.new(0.5, 0, 1, -(slotSize + 22)), AnchorPoint = Vector2.new(0.5, 1), BackgroundColor3 = C.Cream, Visible = false })
+	-- one block: the tooltip card of the selected slot on top, the slots below (a list layout keeps them apart)
+	local block = UIKit.frame(region, { Name = "Hotbar", Size = UDim2.fromOffset(width, slotSize + 58), BackgroundTransparency = 1, LayoutOrder = 10 })
+	UIKit.list(block, Enum.FillDirection.Vertical, 6, Enum.HorizontalAlignment.Center, Enum.VerticalAlignment.Bottom)
+
+	tip = UIKit.frame(block, { Name = "Tip", Size = UDim2.fromOffset(260, 52), LayoutOrder = 1, BackgroundColor3 = C.Cream, Visible = false })
 	UIKit.corner(tip, 8)
-	UIKit.stroke(tip, C.GoldLine, 1.5)
+	UIKit.stroke(tip, C.Line, 1.5)
 	tipName = UIKit.label(tip, { Size = UDim2.new(1, -20, 0, 22), Position = UDim2.fromOffset(10, 5), Font = UIKit.Fonts.Title, TextSize = 15, TextColor3 = C.Ink })
 	tipDesc = UIKit.label(tip, { Size = UDim2.new(1, -20, 0, 20), Position = UDim2.fromOffset(10, 27), Font = UIKit.Fonts.Soft, TextSize = 12, TextColor3 = C.Muted, TextTruncate = Enum.TextTruncate.AtEnd })
+
+	local bar = UIKit.frame(block, { Name = "Bar", Size = UDim2.fromOffset(width, slotSize), LayoutOrder = 2, BackgroundTransparency = 1 })
+	UIKit.list(bar, Enum.FillDirection.Horizontal, gap, Enum.HorizontalAlignment.Center)
 
 	for index, config in HotbarConfig.Slots do
 		local button = UIKit.new("TextButton", {

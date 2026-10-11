@@ -34,18 +34,55 @@ AudioConfig.Sfx = {
 	-- claim / steal loop
 	Claim = { Id = "rbxasset://sounds/electronicpingshort.wav", Volume = 0.6, Pitch = 1.3 },
 	Steal = { Id = "rbxasset://sounds/bass.wav", Volume = 0.7, Pitch = 1.5 },
-	Alarm = { Id = "rbxasset://sounds/electronicpingshort.wav", Volume = 0.55, Pitch = 0.6 },
+	Alarm = { Id = "rbxasset://sounds/electronicpingshort.wav", Volume = 0.4, Pitch = 0.8 },
 	Drop = { Id = "rbxasset://sounds/action_jump_land.mp3", Volume = 0.7, Pitch = 0.8 },
 	Recover = { Id = "rbxasset://sounds/victory.wav", Volume = 0.5, Pitch = 1.6 },
 	Secure = { Id = "rbxasset://sounds/victory.wav", Volume = 0.65, Pitch = 1.15 },
 	Channel = { Id = "rbxasset://sounds/clickfast.wav", Volume = 0.25, Pitch = 1.1 },
-	SecurityOn = { Id = "rbxasset://sounds/switch.wav", Volume = 0.6, Pitch = 0.8 },
-	SecurityOff = { Id = "rbxasset://sounds/bass.wav", Volume = 0.6, Pitch = 0.7 },
-	Zap = { Id = "rbxasset://sounds/electronicpingshort.wav", Volume = 0.8, Pitch = 0.5 },
+	SecurityOn = { Id = "rbxasset://sounds/switch.wav", Volume = 0.5, Pitch = 0.9 },
+	SecurityOff = { Id = "rbxasset://sounds/switch.wav", Volume = 0.45, Pitch = 0.7 },
+	Zap = { Id = "rbxasset://sounds/electronicpingshort.wav", Volume = 0.6, Pitch = 0.7 },
 	Slap = { Id = "rbxasset://sounds/swoosh.wav", Volume = 0.5, Pitch = 1.7 },
 	Hit = { Id = "rbxasset://sounds/kickhurt.wav", Volume = 0.7, Pitch = 1.1 },
 	WheelTick = { Id = "rbxasset://sounds/clickfast.wav", Volume = 0.05, Pitch = 2.2 },
 }
+
+-- One quiet tick for the last seconds of your gate timer (replaces the old repeating beeps).
+AudioConfig.Sfx.GateTick = { Id = "rbxasset://sounds/clickfast.wav", Volume = 0.3, Pitch = 1.3 }
+
+-- Category volumes (multiplied with each sound's own Volume, the player's Effects volume and, for gate sounds,
+-- the "Gate sounds" setting). Change a number here to rebalance a whole group.
+AudioConfig.Categories = {
+	UI = 1, -- clicks, hovers, panels
+	Purchase = 1,
+	Movement = 0.8, -- footsteps, wheel ticks
+	Gate = 0.4, -- security on/off, alarms, zaps, ticks
+	Steal = 0.8,
+	Escape = 1, -- secure / recover fanfares
+	Failed = 0.9, -- drops, errors, failed thefts
+	Rebirth = 1,
+	Emote = 0.8,
+	Notification = 0.8,
+}
+
+-- Sound name -> category (anything not listed is "UI").
+AudioConfig.CategoryOf = {
+	Click = "UI", Hover = "UI", Open = "UI", Close = "UI",
+	Coin = "Purchase", Upgrade = "Purchase", Reward = "Notification",
+	Footstep = "Movement", WheelTick = "Movement", Splash = "Movement",
+	SecurityOn = "Gate", SecurityOff = "Gate", Alarm = "Gate", Zap = "Gate", GateTick = "Gate",
+	Steal = "Steal", Slap = "Steal", Hit = "Steal", Channel = "Steal", Claim = "Steal",
+	Secure = "Escape", Recover = "Escape", Collect = "Escape",
+	Drop = "Failed", Error = "Failed", TheftFailed = "Failed",
+	Rebirth = "Rebirth",
+	Emote = "Emote",
+}
+
+-- Minimum seconds between two plays of the same sound (stops stacking from busy loops / duplicate events).
+AudioConfig.MinInterval = { Default = 0.05, SecurityOn = 1.5, SecurityOff = 1.5, Alarm = 0.6, Zap = 0.8, GateTick = 0.8, Footstep = 0.12 }
+
+AudioConfig.Sfx.TheftFailed = { Id = "rbxasset://sounds/bass.wav", Volume = 0.5, Pitch = 0.9 }
+AudioConfig.Sfx.Emote = { Id = "rbxasset://sounds/electronicpingshort.wav", Volume = 0.3, Pitch = 1.7 }
 
 -- Higher tier = bigger layered fanfare. `Layers` play together with rising pitch.
 AudioConfig.RarityFanfare = {

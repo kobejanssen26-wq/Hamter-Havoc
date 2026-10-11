@@ -5,7 +5,6 @@
 	  - a "NEW HAMSTER" reveal card with a spinning 3D model for big finds and capsules
 ]]
 
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Modules = ReplicatedStorage:WaitForChild("Modules")
@@ -23,7 +22,6 @@ local UIKit = require(script.Parent.UIKit)
 local AnnouncementUI = {}
 
 local C = UIKit.Colors
-local player = Players.LocalPlayer
 
 local gui: ScreenGui
 local flash: Frame
@@ -73,7 +71,7 @@ local function showBanner(text: string, rarityId: string, subtitle: string?)
 		})
 	end
 
-	UIKit.tween(banner, 0.4, { Position = UDim2.new(0.5, 0, 0, 80) }, Enum.EasingStyle.Back)
+	UIKit.tween(banner, 0.4, { Position = UDim2.new(0.5, 0, 0.3, 0) }, Enum.EasingStyle.Back)
 	if rank >= 8 then
 		doFlash(color, 0.35)
 	end
@@ -157,13 +155,7 @@ function AnnouncementUI.reveal(speciesId: string, isNew: boolean)
 end
 
 function AnnouncementUI.start()
-	gui = UIKit.new("ScreenGui", {
-		Name = "AnnouncementUI",
-		ResetOnSpawn = false,
-		DisplayOrder = 30,
-		IgnoreGuiInset = true,
-		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
-	}, player:WaitForChild("PlayerGui"))
+	gui = UIKit.screenGui("AnnouncementUI", { Layer = "Toast", Insets = "None" })
 	flash = UIKit.frame(gui, { Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1, ZIndex = 0 })
 	flash.Active = false
 	bannerHolder = UIKit.frame(gui, { Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1 })

@@ -1,16 +1,22 @@
 --[[
-	MainUI: the always-visible HUD (dark graphite style, see Theme.luau).
-	  top-centre     four indicators below the Roblox top bar: Cash, Cash/s, Diamonds, Rebirths
-	  top-right      small icon buttons with tooltips: Quests (+ daily reward), Hamsters, Shop, Settings
-	  under the bar  active boost chips, then toast messages
-	  bottom-centre  the hotbar (HotbarUI), the "grab this hamster" prompt, an occasional event strip
-	Everything else (Upgrades, Rebirth, Index, Daily mailbox...) is opened from objects in your own plot.
+	MainUI: the always-visible HUD, built from four REGIONS so nothing can overlap by construction.
+	Each region is one responsive box (UIKit.responsive: positioned wrapper + scaled content) whose children are
+	laid out by UIListLayouts, never by hand-picked offsets:
+
+	  TopColumn     top centre, below the Roblox top bar: [Cash | Cash/s | Diamonds | Rebirths], status row
+	                (gate state + active boosts), toasts
+	  Rail          top right: small icon buttons built from UIRegistry (Quests, Hamsters, Shop, ...)
+	  LeftColumn    top left: hamster transport tracker, tutorial card (other modules parent into it)
+	  BottomColumn  bottom centre: hint strip, grab prompt, steal progress, hotbar
+
+	Other modules get a region with MainUI.region("LeftColumn") etc. Everything is in ONE ScreenGui
+	(Insets = Topbar, so the origin is already below the Roblox top bar and phone notches).
+	Adding a button = UIRegistry.register(...), see UIRegistry.luau.
 ]]
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
-local Workspace = game:GetService("Workspace")
 
 local Modules = ReplicatedStorage:WaitForChild("Modules")
 local AchievementConfig = require(Modules:WaitForChild("AchievementConfig"))
@@ -23,11 +29,13 @@ local ShopConfig = require(Modules:WaitForChild("ShopConfig"))
 local Remotes = require(ReplicatedStorage:WaitForChild("Remotes"))
 
 local AudioController = require(script.Parent.Parent.Controllers.AudioController)
-local DataController = require(script.Parent.Parent.Controllers.DataController)
-local WorldController = require(script.Parent.Parent.Controllers.WorldController)
 local CursorController = require(script.Parent.Parent.Controllers.CursorController)
+local DataController = require(script.Parent.Parent.Controllers.DataController)
+local SecurityController = require(script.Parent.Parent.Controllers.SecurityController)
+local WorldController = require(script.Parent.Parent.Controllers.WorldController)
 local Theme = require(script.Parent.Theme)
 local UIKit = require(script.Parent.UIKit)
+local UIRegistry = require(script.Parent.UIRegistry)
 
 local MainUI = {}
 
@@ -62,11 +70,23 @@ local TIPS = {
 	"Use the elevator in your tower to reach upper floors.",
 }
 
-local openButtons: { [string]: TextButton } = {}
-local dots: { [string]: Frame } = {}
 
--- Layout numbers shared with the hotbar so nothing overlaps.
-MainUI.HotbarClearance = 88 -- pixels the bottom of the screen reserves for the hotbar
+local regions: { [string]: UIKit.Responsive } = {}
+
+-- Region content frames for other HUD modules ("TopColumn", "Rail", "LeftColumn", "BottomColumn").
+function MainUI.region(name: string): Frame?
+	local region = regions[name]
+	return if region then region.Content else nil
+end
+
+-- All region wrappers (used by the layout tests).
+function MainUI.regionWrappers(): { [string]: Frame }
+	local result = {}
+	for name, region in regions do
+		result[name] = region.Wrapper
+	end
+	return result
+end
 
 local function openPanel(name: string, focus: string?)
 	local panel = UIKit.getPanel(name)
@@ -97,75 +117,111 @@ function MainUI.open(name: string, focus: string?)
 	end
 end
 
+-- Toast placeholder until MainUI.start has built the holder.
+function MainUI.toast(_text: string, _kind: string?) end
+
+local function questsBadge(): boolean
+	local data = DataController.Data
+	local now = DataController.now()
+	if data.Daily then
+		local _, canClaim = DailyRewardConfig.state(data.Daily, now)
+		if canClaim then
+			return true
+		end
+	end
+	if data.Quests and data.Achievements and data.Stats and data.Index then
+		for _, quest in QuestConfig.Quests do
+			if not data.Quests.Claimed[quest.Id] and QuestConfig.isComplete(data, quest) then
+				return true
+			end
+		end
+		for _, achievement in AchievementConfig.List do
+			if not data.Achievements.Claimed[achievement.Id] and QuestConfig.getStat(data, achievement.Stat) >= achievement.Target then
+				return true
+			end
+		end
+	end
+	return false
+end
+
+local function registerCore()
+	local core = {
+		{ Id = "Quests", Order = 10, Icon = "scroll", Tooltip = "Daily Quests", Panel = "Quests", Badge = questsBadge },
+		{ Id = "Inventory", Order = 20, Icon = "hamster", Tooltip = "Hamsters", Panel = "Inventory" },
+		{ Id = "Shop", Order = 30, Icon = "bag", Tooltip = "Shop", Panel = "Shop" },
+		{ Id = "Settings", Order = 90, Icon = "gear", Tooltip = "Settings", Panel = "Settings" },
+	}
+	for _, entry in core do
+		if not UIRegistry.get(entry.Id) then
+			entry.Kind = "IconButton"
+			entry.Slot = "RightRail"
+			entry.Core = true
+			UIRegistry.register(entry)
+		end
+	end
+end
+
 ---------------------------------------------------------------------------
 
 function MainUI.start()
-	local gui = UIKit.new("ScreenGui", {
-		Name = "MainUI",
-		ResetOnSpawn = false,
-		DisplayOrder = 1,
-		IgnoreGuiInset = true,
-		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
-	}, player:WaitForChild("PlayerGui"))
-
-	local scales: { UIScale } = {}
-	local function addScale(parent: Instance): UIScale
-		local scale = UIKit.new("UIScale", { Scale = 1 }, parent)
-		table.insert(scales, scale)
-		return scale
-	end
-	local function updateScales()
-		local camera = Workspace.CurrentCamera
-		local viewport = if camera then camera.ViewportSize else Vector2.new(1280, 720)
-		local value = math.clamp(math.min(viewport.X / 1180, viewport.Y / 660), 0.5, 1.1)
-		for _, scale in scales do
-			scale.Scale = value
-		end
-	end
-
-	local inset = UIKit.GuiService:GetGuiInset().Y
-	local topY = inset + Theme.Hud.TopMargin
+	registerCore()
+	local gui = UIKit.screenGui("MainUI", { Layer = "Hud", Insets = "Topbar" })
 	local touch = UIKit.isTouch()
-
-	-- active boosts: small chips centred under the indicator bar
-	local boostRow = UIKit.frame(gui, { Name = "Boosts", Size = UDim2.fromOffset(520, 30), Position = UDim2.new(0.5, 0, 0, topY + 44), AnchorPoint = Vector2.new(0.5, 0), BackgroundTransparency = 1 })
-	addScale(boostRow)
-	UIKit.list(boostRow, Enum.FillDirection.Horizontal, 6, Enum.HorizontalAlignment.Center)
+	local margin = Theme.Hud.SideMargin
 
 	-----------------------------------------------------------------------
-	-- bottom-centre: occasional event strip + toasts
+	-- regions
 	-----------------------------------------------------------------------
-	local center = UIKit.frame(gui, {
-		Name = "Center",
-		Size = UDim2.fromOffset(560, 36),
-		Position = UDim2.new(0.5, 0, 1, -(MainUI.HotbarClearance + 126)),
-		AnchorPoint = Vector2.new(0.5, 1),
-		BackgroundColor3 = C.Cream,
-		BackgroundTransparency = 0.1,
-	})
-	UIKit.corner(center, 8)
-	UIKit.stroke(center, C.Line, 1.5)
-	addScale(center)
-	local stripLabel = UIKit.label(center, {
-		Size = UDim2.new(1, -24, 1, 0),
-		Position = UDim2.fromOffset(12, 0),
-		TextXAlignment = Enum.TextXAlignment.Center,
-		TextSize = 14,
-		TextColor3 = C.Ink,
-		Font = UIKit.Fonts.Soft,
-		Text = TIPS[1],
-		TextWrapped = true,
-	})
+	local TOP_DESIGN = Vector2.new(470, 250)
+	local top = UIKit.responsive(gui, { Name = "TopColumn", Design = TOP_DESIGN, Position = UDim2.new(0.5, 0, 0, Theme.Hud.TopMargin), AnchorPoint = Vector2.new(0.5, 0) })
+	regions.TopColumn = top
+	UIKit.list(top.Content, Enum.FillDirection.Vertical, 6, Enum.HorizontalAlignment.Center, Enum.VerticalAlignment.Top)
 
-	local toastHolder = UIKit.frame(gui, {
-		Name = "Toasts",
-		Size = UDim2.fromOffset(520, 200),
-		Position = UDim2.new(0.5, 0, 0, topY + 84),
-		AnchorPoint = Vector2.new(0.5, 0),
-		BackgroundTransparency = 1,
+	local railButton = if touch then Theme.Hud.IconButtonTouch else Theme.Hud.IconButton
+	local railSlots = UIRegistry.Slots.RightRail.Capacity
+	local rail = UIKit.responsive(gui, {
+		Name = "Rail",
+		Design = Vector2.new(railButton, railSlots * railButton + (railSlots - 1) * 8),
+		Position = UDim2.new(1, -margin, 0, Theme.Hud.TopMargin),
+		AnchorPoint = Vector2.new(1, 0),
 	})
-	addScale(toastHolder)
-	UIKit.list(toastHolder, Enum.FillDirection.Vertical, 6, Enum.HorizontalAlignment.Center)
+	regions.Rail = rail
+	UIKit.list(rail.Content, Enum.FillDirection.Vertical, 8, Enum.HorizontalAlignment.Right)
+
+	local left = UIKit.responsive(gui, { Name = "LeftColumn", Design = Vector2.new(300, 420), Position = UDim2.new(0, margin, 0, Theme.Hud.TopMargin) })
+	regions.LeftColumn = left
+	UIKit.list(left.Content, Enum.FillDirection.Vertical, 10, Enum.HorizontalAlignment.Left, Enum.VerticalAlignment.Top)
+
+	local bottom = UIKit.responsive(gui, { Name = "BottomColumn", Design = Vector2.new(440, 310), Position = UDim2.new(0.5, 0, 1, -10), AnchorPoint = Vector2.new(0.5, 1) })
+	regions.BottomColumn = bottom
+	UIKit.list(bottom.Content, Enum.FillDirection.Vertical, 8, Enum.HorizontalAlignment.Center, Enum.VerticalAlignment.Bottom)
+
+	-----------------------------------------------------------------------
+	-- top column: indicators
+	-----------------------------------------------------------------------
+	local topBar = UIKit.frame(top.Content, { Name = "TopBar", Size = UDim2.fromOffset(TOP_DESIGN.X, Theme.Size.Pill), BackgroundTransparency = 1, LayoutOrder = 1 })
+	UIKit.list(topBar, Enum.FillDirection.Horizontal, 8, Enum.HorizontalAlignment.Center, Enum.VerticalAlignment.Center)
+	local coinsPill = UIKit.pill(topBar, { Icon = "coin", Color = C.Cash, Size = UDim2.fromOffset(130, Theme.Size.Pill), LayoutOrder = 1 })
+	local incomePill = UIKit.pill(topBar, { Icon = "bolt", Color = C.Gold, Size = UDim2.fromOffset(102, Theme.Size.Pill), LayoutOrder = 2 })
+	local gemsPill = UIKit.pill(topBar, { Icon = "gem", Color = C.Purple, Size = UDim2.fromOffset(116, Theme.Size.Pill), LayoutOrder = 3, OnPlus = function() MainUI.open("Shop", "Diamonds") end })
+	local rebirthPill = UIKit.pill(topBar, { Icon = "rebirth", Color = C.Bronze, Size = UDim2.fromOffset(98, Theme.Size.Pill), LayoutOrder = 4 })
+	UIKit.tooltip(coinsPill.Frame, "Cash", "Below")
+	UIKit.tooltip(incomePill.Frame, "Cash per second", "Below")
+	UIKit.tooltip(gemsPill.Frame, "Diamonds", "Below")
+	UIKit.tooltip(rebirthPill.Frame, "Rebirths completed", "Below")
+
+	-- status row: gate state + active boosts
+	local statusRow = UIKit.frame(top.Content, { Name = "StatusRow", Size = UDim2.fromOffset(TOP_DESIGN.X, 30), BackgroundTransparency = 1, LayoutOrder = 2 })
+	UIKit.list(statusRow, Enum.FillDirection.Horizontal, 6, Enum.HorizontalAlignment.Center, Enum.VerticalAlignment.Center)
+
+	local gateChip = UIKit.frame(statusRow, { Name = "GateChip", Size = UDim2.fromOffset(150, 28), LayoutOrder = 0, Visible = false })
+	UIKit.vivid(gateChip, C.Green, { Corner = 8, Outline = 1.5 })
+	UIKit.icon(gateChip, "shield", { Size = UDim2.fromOffset(18, 18), Position = UDim2.fromOffset(7, 5), ZIndex = 3 })
+	local gateText = UIKit.label(gateChip, { Size = UDim2.new(1, -32, 1, 0), Position = UDim2.fromOffset(30, 0), Font = UIKit.Fonts.Title, TextSize = 13, TextColor3 = C.Ink, ZIndex = 3, TextTruncate = Enum.TextTruncate.AtEnd })
+	UIKit.tooltip(gateChip, "Your base gate", "Below")
+
+	local toastHolder = UIKit.frame(top.Content, { Name = "Toasts", Size = UDim2.fromOffset(TOP_DESIGN.X, 170), BackgroundTransparency = 1, LayoutOrder = 3 })
+	UIKit.list(toastHolder, Enum.FillDirection.Vertical, 6, Enum.HorizontalAlignment.Center, Enum.VerticalAlignment.Top)
 	local toastCount = 0
 
 	function MainUI.toast(text: string, kind: string?)
@@ -174,35 +230,33 @@ function MainUI.start()
 			return
 		end
 		toastCount += 1
-		local order = toastCount
 		local accent = TOAST_COLORS[kind or "info"] or C.Ink
 		local frame = UIKit.frame(toastHolder, {
-			Size = UDim2.fromOffset(0, 36),
+			Size = UDim2.fromOffset(0, 34),
 			AutomaticSize = Enum.AutomaticSize.X,
 			BackgroundColor3 = C.Cream,
 			BackgroundTransparency = 0.04,
-			LayoutOrder = order,
+			LayoutOrder = toastCount,
 		})
 		UIKit.corner(frame, 8)
-		UIKit.stroke(frame, UIKit.Colors.Line, 1.5)
+		UIKit.stroke(frame, accent, 1.5, 0.35)
 		UIKit.padding(frame, 12, 0)
 		UIKit.list(frame, Enum.FillDirection.Horizontal, 8, Enum.HorizontalAlignment.Left, Enum.VerticalAlignment.Center)
 		UIKit.icon(frame, TOAST_ICONS[kind or "info"] or "star", { Size = UDim2.fromOffset(18, 18), LayoutOrder = 1 })
 		local label = UIKit.label(frame, {
 			LayoutOrder = 2,
-			Size = UDim2.fromOffset(0, 36),
+			Size = UDim2.fromOffset(0, 34),
 			AutomaticSize = Enum.AutomaticSize.X,
 			Text = text,
-			TextSize = 15,
+			TextSize = 14,
 			TextColor3 = accent,
 			TextXAlignment = Enum.TextXAlignment.Center,
 		})
-		frame.Position = UDim2.fromOffset(0, -10)
 		label.TextTransparency = 1
 		frame.BackgroundTransparency = 1
 		UIKit.tween(frame, 0.2, { BackgroundTransparency = 0.04 })
 		UIKit.tween(label, 0.2, { TextTransparency = 0 })
-		-- keep at most 4 toasts
+		-- at most 4 toasts: the oldest goes
 		local children = {}
 		for _, child in toastHolder:GetChildren() do
 			if child:IsA("Frame") then
@@ -236,88 +290,68 @@ function MainUI.start()
 	end)
 
 	-----------------------------------------------------------------------
-	-- top-centre: the four indicators
+	-- rail: icon buttons from the registry
 	-----------------------------------------------------------------------
-	local topBar = UIKit.frame(gui, {
-		Name = "TopBar",
-		Size = UDim2.fromOffset(500, 36),
-		Position = UDim2.new(0.5, 0, 0, topY),
-		AnchorPoint = Vector2.new(0.5, 0),
-		BackgroundTransparency = 1,
-	})
-	addScale(topBar)
-	UIKit.list(topBar, Enum.FillDirection.Horizontal, 8, Enum.HorizontalAlignment.Center, Enum.VerticalAlignment.Center)
-	local coinsPill = UIKit.pill(topBar, { Icon = "coin", Color = C.Cash, Size = UDim2.fromOffset(142, 34), LayoutOrder = 1 })
-	local incomePill = UIKit.pill(topBar, { Icon = "bolt", Color = C.Gold, Size = UDim2.fromOffset(112, 34), LayoutOrder = 2 })
-	local gemsPill = UIKit.pill(topBar, { Icon = "gem", Color = C.Purple, Size = UDim2.fromOffset(124, 34), LayoutOrder = 3, OnPlus = function() MainUI.open("Shop", "Diamonds") end })
-	local rebirthPill = UIKit.pill(topBar, { Icon = "rebirth", Color = Color3.fromRGB(236, 168, 70), Size = UDim2.fromOffset(104, 34), LayoutOrder = 4 })
-	UIKit.tooltip(coinsPill.Frame, "Cash", "Below")
-	UIKit.tooltip(incomePill.Frame, "Cash per second", "Below")
-	UIKit.tooltip(gemsPill.Frame, "Diamonds", "Below")
-	UIKit.tooltip(rebirthPill.Frame, "Rebirths completed", "Below")
-
-	-----------------------------------------------------------------------
-	-- top-right: small icon buttons (Quests, Hamsters, Shop, Settings)
-	-----------------------------------------------------------------------
-	local buttonSize = if touch then Theme.Hud.IconButtonTouch else Theme.Hud.IconButton
-	local cluster = UIKit.frame(gui, {
-		Name = "Shortcuts",
-		Size = UDim2.fromOffset(buttonSize, 4 * buttonSize + 3 * 8),
-		Position = UDim2.new(1, -Theme.Hud.SideMargin, 0, topY),
-		AnchorPoint = Vector2.new(1, 0),
-		BackgroundTransparency = 1,
-	})
-	UIKit.list(cluster, Enum.FillDirection.Vertical, 8)
-	local clusterScale = addScale(cluster)
-	clusterScale.Name = "ClusterScale"
-
-	local function iconButton(icon: string, tip: string, panelName: string, order: number, focus: string?)
-		local button = UIKit.button(cluster, {
-			Text = "",
-			Size = UDim2.fromOffset(buttonSize, buttonSize),
-			Color = C.Cream,
-			Corner = 99,
-			LayoutOrder = order,
-			Name = panelName .. "Button",
-			OnClick = function()
-				openPanel(panelName, focus)
-			end,
-		})
-		button.BackgroundTransparency = 0.06
-		UIKit.icon(button, icon, { Size = UDim2.fromOffset(buttonSize * 0.58, buttonSize * 0.58), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5), ZIndex = 3 })
-		dots[panelName] = UIKit.notifyDot(button)
-		openButtons[panelName] = button
-		UIKit.tooltip(button, tip, "Left")
+	local railViews: { [string]: { Button: TextButton, Dot: Frame, Def: UIRegistry.Definition } } = {}
+	local function rebuildRail()
+		for _, view in railViews do
+			view.Button:Destroy()
+		end
+		table.clear(railViews)
+		for _, def in UIRegistry.list("RightRail") do
+			local button = UIKit.button(rail.Content, {
+				Text = "",
+				Size = UDim2.fromOffset(railButton, railButton),
+				Color = C.Cream,
+				Corner = 99,
+				LayoutOrder = def.Order,
+				Name = def.Id .. "Button",
+				OnClick = function()
+					if def.OnActivate then
+						def.OnActivate()
+					elseif def.Panel then
+						openPanel(def.Panel, def.Focus)
+					end
+				end,
+			})
+			button.BackgroundTransparency = 0.06
+			UIKit.icon(button, def.Icon :: string, { Size = UDim2.fromOffset(railButton * 0.58, railButton * 0.58), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5), ZIndex = 3 })
+			local dot = UIKit.notifyDot(button)
+			UIKit.tooltip(button, def.Tooltip or def.Id, "Left")
+			railViews[def.Id] = { Button = button, Dot = dot, Def = def }
+		end
 	end
-	iconButton("scroll", "Daily Quests", "Quests", 1)
-	iconButton("hamster", "Hamsters", "Inventory", 2)
-	iconButton("bag", "Shop", "Shop", 3)
-	iconButton("gear", "Settings", "Settings", 4)
+	rebuildRail()
+	UIRegistry.onChanged(rebuildRail)
 
-	-- the button of the open menu is highlighted
+	-- selected state + badges + visibility (twice a second is plenty)
 	task.spawn(function()
 		while true do
-			for name, button in openButtons do
-				local panel = UIKit.getPanel(name)
-				UIKit.setButtonColor(button, if panel and panel.IsOpen then C.Peach else C.Cream)
+			for id, view in railViews do
+				local def = view.Def
+				local panel = if def.Panel then UIKit.getPanel(def.Panel) else nil
+				UIKit.setButtonColor(view.Button, if panel and panel.IsOpen then C.Peach else C.Cream)
+				view.Button.Visible = def.Visible == nil or def.Visible()
+				view.Dot.Visible = def.Badge ~= nil and DataController.Ready and def.Badge()
+				railViews[id] = view
 			end
-			task.wait(0.25)
+			task.wait(0.5)
 		end
 	end)
 
-	-- first person: the mouse is locked, so tell the player how to reach the buttons
-	local fpHint = UIKit.label(gui, {
-		Size = UDim2.fromOffset(300, 20),
-		Position = UDim2.new(0, 14, 1, -14),
-		AnchorPoint = Vector2.new(0, 1),
+	-----------------------------------------------------------------------
+	-- bottom column: hint strip, grab prompt (the hotbar and steal bar join later)
+	-----------------------------------------------------------------------
+	local fpHint = UIKit.label(bottom.Content, {
+		Name = "FirstPersonHint",
+		Size = UDim2.fromOffset(300, 18),
+		LayoutOrder = 0,
 		Text = "Hold ALT to use the mouse",
-		TextSize = 13,
-		TextColor3 = C.White,
-		TextTransparency = 0.15,
-		TextXAlignment = Enum.TextXAlignment.Left,
+		TextSize = 12,
+		TextColor3 = C.Muted,
+		TextXAlignment = Enum.TextXAlignment.Center,
 		Visible = false,
 	})
-	UIKit.new("UIStroke", { Color = C.Dim, Thickness = 1.5 }, fpHint)
 	task.spawn(function()
 		while true do
 			fpHint.Visible = not UIKit.isTouch() and CursorController.isFirstPerson() and not CursorController.isHolding()
@@ -325,21 +359,23 @@ function MainUI.start()
 		end
 	end)
 
-	-----------------------------------------------------------------------
-	-- grab prompt
-	-----------------------------------------------------------------------
-	local prompt = UIKit.frame(gui, {
-		Name = "GrabPrompt",
-		Size = UDim2.fromOffset(420, 52),
-		Position = UDim2.new(0.5, 0, 1, -(MainUI.HotbarClearance + 66)), -- above the hotbar's tooltip card
-		AnchorPoint = Vector2.new(0.5, 1),
-		BackgroundColor3 = C.Cream,
-		BackgroundTransparency = 0.04,
-		Visible = false,
+	local strip = UIKit.frame(bottom.Content, { Name = "Strip", Size = UDim2.fromOffset(440, 34), LayoutOrder = 1, BackgroundColor3 = C.Cream, BackgroundTransparency = 0.1, Visible = false })
+	UIKit.corner(strip, 8)
+	UIKit.stroke(strip, C.Line, 1.5)
+	local stripLabel = UIKit.label(strip, {
+		Size = UDim2.new(1, -20, 1, 0),
+		Position = UDim2.fromOffset(10, 0),
+		TextXAlignment = Enum.TextXAlignment.Center,
+		TextSize = 13,
+		TextColor3 = C.Ink,
+		Font = UIKit.Fonts.Soft,
+		Text = TIPS[1],
+		TextWrapped = true,
 	})
+
+	local prompt = UIKit.frame(bottom.Content, { Name = "GrabPrompt", Size = UDim2.fromOffset(420, 52), LayoutOrder = 2, BackgroundColor3 = C.Cream, BackgroundTransparency = 0.04, Visible = false })
 	UIKit.corner(prompt, 10)
 	local promptStroke = UIKit.stroke(prompt, C.Gold, 2)
-	addScale(prompt)
 	local keyLabel = UIKit.label(prompt, {
 		Size = UDim2.fromOffset(38, 38),
 		Position = UDim2.fromOffset(8, 7),
@@ -352,7 +388,7 @@ function MainUI.start()
 		TextXAlignment = Enum.TextXAlignment.Center,
 	})
 	UIKit.corner(keyLabel, 8)
-	UIKit.stroke(keyLabel, C.GoldLine, 1.5)
+	UIKit.stroke(keyLabel, C.Line, 1.5)
 	local priceChip = UIKit.frame(prompt, { Size = UDim2.fromOffset(104, 34), Position = UDim2.new(1, -9, 0.5, 0), AnchorPoint = Vector2.new(1, 0.5), BackgroundColor3 = C.CreamDark, Visible = false })
 	UIKit.corner(priceChip, 8)
 	UIKit.stroke(priceChip, C.Line, 1.5)
@@ -388,7 +424,7 @@ function MainUI.start()
 		if info.Action == "Claim" then
 			promptText.Text = string.format("Claim %s", colored)
 			priceLabel.Text = Format.short(info.Price)
-			priceLabel.TextColor3 = if info.Affordable then C.Cash else Color3.fromRGB(226, 106, 104)
+			priceLabel.TextColor3 = if info.Affordable then C.Cash else C.Red
 		elseif info.Action == "Steal" then
 			promptStroke.Color = C.Red
 			promptText.Text = string.format("Steal %s  from %s", colored, info.OwnerName)
@@ -396,108 +432,113 @@ function MainUI.start()
 			promptText.Text = string.format("%s %s", info.Action, colored)
 		end
 		prompt.Visible = true
-		prompt.Size = UDim2.fromOffset(340, 46)
-		UIKit.tween(prompt, 0.16, { Size = UDim2.fromOffset(420, 52) })
 	end)
 
-	updateScales()
-	local camera = Workspace.CurrentCamera
-	if camera then
-		camera:GetPropertyChangedSignal("ViewportSize"):Connect(updateScales)
-	end
-
 	-----------------------------------------------------------------------
-	-- live updates
+	-- live numbers
 	-----------------------------------------------------------------------
 	local shown = { Coins = 0, Gems = 0 }
 	local actual = { Coins = 0, Gems = 0 }
 	local pills = { Coins = coinsPill, Gems = gemsPill }
-
-	local function readAttributes()
-		actual.Coins = DataController.coins()
-		actual.Gems = DataController.gems()
-	end
-	readAttributes()
+	actual.Coins, actual.Gems = DataController.coins(), DataController.gems()
 	shown.Coins, shown.Gems = actual.Coins, actual.Gems
 	for _, name in { "Coins", "Gems" } do
 		player:GetAttributeChangedSignal(name):Connect(function()
 			local before = actual[name]
 			actual[name] = player:GetAttribute(name) or 0
 			if name ~= "Coins" and actual[name] > before then
-				local value = pills[name].Value
-				value.TextColor3 = C.White
-				UIKit.tween(value, 0.5, { TextColor3 = C.Purple })
+				pills[name].Value.TextColor3 = C.White
+				UIKit.tween(pills[name].Value, 0.5, { TextColor3 = C.Purple })
 			end
 		end)
 	end
 
+	-- the numbers glide to their target; the connection lives for the whole session (created once)
 	RunService.RenderStepped:Connect(function(dt)
 		for name, pill in pills do
-			local target = actual[name]
-			local current = shown[name]
+			local target, current = actual[name], shown[name]
 			if current ~= target then
 				local nextValue = current + (target - current) * math.min(1, dt * 9)
 				if math.abs(target - nextValue) < 0.5 then
 					nextValue = target
 				end
 				shown[name] = nextValue
+				pill.Value.Text = Format.short(nextValue)
 			end
-			pill.Value.Text = Format.short(shown[name])
 		end
 	end)
 
 	local function refreshStatic()
 		local derived = DataController.derived()
-		local rebirths = DataController.get("Rebirths") or 0
-		rebirthPill.Value.Text = "Rebirth " .. rebirths
+		coinsPill.Value.Text = Format.short(shown.Coins)
+		gemsPill.Value.Text = Format.short(shown.Gems)
+		rebirthPill.Value.Text = "Rebirth " .. (DataController.get("Rebirths") or 0)
 		incomePill.Value.Text = Format.short(derived.IncomePerSecond or 0) .. "/s"
 	end
 
-	-- boosts + strip + notification dots (once per second)
-	local tipIndex = 1
-	local lastTip = os.clock() - 40
+	-- gate chip + boost chips + hint strip (once per second)
+	local tipIndex, lastTip = 1, os.clock() - 40
+	local boostChips: { Frame } = {}
+	local lastTick = -1
+	local function refreshGate()
+		local houseId = player:GetAttribute("HouseId")
+		local houses = workspace:FindFirstChild("PlayerHouses")
+		local house = if type(houseId) == "number" and houses then houses:FindFirstChild("House" .. houseId) else nil
+		if not house or not house:IsA("Model") then
+			gateChip.Visible = false
+			return
+		end
+		local status = SecurityController.status(house)
+		gateChip.Visible = status.Owned
+		local color = SecurityController.color(status)
+		local edge = gateChip:FindFirstChild("AccentEdge") :: UIStroke?
+		if edge then
+			edge.Color = color
+		end
+		gateText.TextColor3 = color
+		if status.State == "Active" then
+			gateText.Text = "LOCKED  " .. Format.clock(math.ceil(status.Seconds))
+			local whole = math.ceil(status.Seconds)
+			if whole <= 3 and whole ~= lastTick then
+				lastTick = whole
+				AudioController.play("GateTick")
+			end
+		elseif status.State == "Recharging" then
+			gateText.Text = string.format("OPEN  %ds", math.ceil(status.Seconds))
+			lastTick = -1
+		else
+			gateText.Text = "OPEN - use the panel"
+			lastTick = -1
+		end
+	end
 	local function refreshDynamic()
 		local now = DataController.now()
 		local boosts = DataController.get("Boosts") or {}
-
-		for _, child in boostRow:GetChildren() do
-			if child:IsA("Frame") then
-				child:Destroy()
-			end
+		for _, chip in boostChips do
+			chip:Destroy()
 		end
-		local order = 0
-		local firstBoostText = nil
+		table.clear(boostChips)
+		local order, firstBoostText = 0, nil
 		for boostId, info in ShopConfig.Boosts do
 			local expires = boosts[boostId]
 			if expires and expires > now then
 				order += 1
-				local chip = UIKit.frame(boostRow, { Size = UDim2.fromOffset(92, 28), LayoutOrder = order })
+				local chip = UIKit.frame(statusRow, { Size = UDim2.fromOffset(92, 28), LayoutOrder = order })
 				UIKit.vivid(chip, C.Green, { Corner = 8, Outline = 1.5 })
 				UIKit.icon(chip, info.Icon, { Size = UDim2.fromOffset(18, 18), Position = UDim2.fromOffset(7, 5), ZIndex = 3 })
-				UIKit.label(chip, {
-					Size = UDim2.new(1, -32, 1, 0),
-					Position = UDim2.fromOffset(30, 0),
-					Text = Format.clock(expires - now),
-					Font = UIKit.Fonts.Title,
-					TextSize = 14,
-					TextColor3 = C.Ink,
-					TextXAlignment = Enum.TextXAlignment.Left,
-					ZIndex = 3,
-				})
+				UIKit.label(chip, { Size = UDim2.new(1, -32, 1, 0), Position = UDim2.fromOffset(30, 0), Text = Format.clock(expires - now), Font = UIKit.Fonts.Title, TextSize = 14, TextColor3 = C.Ink, TextXAlignment = Enum.TextXAlignment.Left, ZIndex = 3 })
+				table.insert(boostChips, chip)
 				firstBoostText = firstBoostText or string.format("%s active: %s left", info.Name, Format.clock(expires - now))
 			end
 		end
-
-		-- strip text: boost > rebirth ready > rotating tips
 		local rebirths = DataController.get("Rebirths") or 0
 		local text = nil
 		if firstBoostText then
 			text = firstBoostText
 		elseif rebirths < RebirthConfig.MaxRebirths and DataController.rebirthCheck(rebirths + 1) then
-			text = "You can REBIRTH! Visit the Rebirth altar in your plot."
+			text = "You can REBIRTH! Visit the Rebirth altar in your yard."
 		end
 		if not text then
-			-- a tip pops up for 8 seconds, then the bar disappears for 40 seconds (less clutter)
 			local sinceTip = os.clock() - lastTip
 			if sinceTip > 48 then
 				lastTip = os.clock()
@@ -508,40 +549,14 @@ function MainUI.start()
 				text = TIPS[tipIndex]
 			end
 		end
-		center.Visible = text ~= nil
+		strip.Visible = text ~= nil
 		if text then
 			stripLabel.Text = text
 		end
-
-		-- notification dots: Quests (daily reward or a quest / achievement ready), Hamsters (nothing), Shop (nothing)
-		local data = DataController.Data
-		local claimable = false
-		if data.Daily then
-			local _, canClaim = DailyRewardConfig.state(data.Daily, now)
-			claimable = canClaim
-		end
-		if not claimable and data.Quests and data.Achievements and data.Stats and data.Index then
-			for _, quest in QuestConfig.Quests do
-				if not data.Quests.Claimed[quest.Id] and QuestConfig.isComplete(data, quest) then
-					claimable = true
-					break
-				end
-			end
-			if not claimable then
-				for _, achievement in AchievementConfig.List do
-					if not data.Achievements.Claimed[achievement.Id] and QuestConfig.getStat(data, achievement.Stat) >= achievement.Target then
-						claimable = true
-						break
-					end
-				end
-			end
-		end
-		dots.Quests.Visible = claimable
 	end
 
 	DataController.onChanged(function()
 		refreshStatic()
-		refreshDynamic()
 	end)
 	task.spawn(function()
 		while true do
@@ -550,6 +565,12 @@ function MainUI.start()
 				refreshDynamic()
 			end
 			task.wait(1)
+		end
+	end)
+	task.spawn(function()
+		while true do
+			refreshGate()
+			task.wait(0.25)
 		end
 	end)
 

@@ -91,15 +91,11 @@ local function publish(house: HouseBuilder.House)
 		HouseBuilder.setSecurity(house, status, tier)
 		local owner = house.Owner
 		if owner and before ~= status then
-			-- banners only for REAL transitions of an owned base (never when it is first claimed / freed)
+			-- gate state is shown by the gate itself, the HUD gate chip and a quiet sound (no big banner)
 			if status == "Active" then
 				Remotes.event("Fx"):FireAllClients("SecurityOn", "", house.GatePosition, house.Index)
-				if before ~= "None" then
-					Remotes.event("Banner"):FireClient(owner, "BaseLocked")
-				end
 			elseif before == "Active" then
 				Remotes.event("Fx"):FireAllClients("SecurityOff", "", house.GatePosition, house.Index)
-				Remotes.event("Banner"):FireClient(owner, "BaseOpen")
 			elseif status == "Ready" then
 				Notifier.send(owner, "Security recharged. Press E at the gate panel to switch it on.", "info")
 			end

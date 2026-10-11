@@ -260,6 +260,72 @@ function UIKit.fitScale(designSize: Vector2, margin: number?): number
 end
 
 ---------------------------------------------------------------------------
+-- screens, safe areas and responsive boxes
+---------------------------------------------------------------------------
+
+-- The one way to create a HUD / panel ScreenGui, so every screen follows the same rules:
+--   Insets "Topbar"  content starts BELOW the Roblox top bar (and phone notches): HUD, status, toasts
+--   Insets "Device"  only the hardware safe area (notch, home indicator): hotbar, bottom prompts
+--   Insets "None"    the full screen: modal panels and dimmers
+-- `Layer` is a key of Theme.Layers (explicit front-to-back order).
+function UIKit.screenGui(name: string, options: { Layer: string?, Insets: string?, Enabled: boolean? }?): ScreenGui
+	local opts = options or {}
+	local insets = opts.Insets or "None"
+	local gui = UIKit.new("ScreenGui", {
+		Name = name,
+		ResetOnSpawn = false,
+		DisplayOrder = Theme.Layers[opts.Layer or "Hud"] or Theme.Layers.Hud,
+		IgnoreGuiInset = insets ~= "Topbar",
+		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+		Enabled = opts.Enabled ~= false,
+	}, player:WaitForChild("PlayerGui"))
+	gui:SetAttribute("Insets", insets)
+	local mode = if insets == "Topbar" then Enum.ScreenInsets.TopbarSafeInsets elseif insets == "Device" then Enum.ScreenInsets.DeviceSafeInsets else Enum.ScreenInsets.None
+	pcall(function()
+		gui.ScreenInsets = mode
+	end)
+	return gui
+end
+
+-- A positioned, sized element whose CONTENT is scaled with a UIScale.
+-- The UIScale lives on an inner frame, never on the positioned one, so the position is exactly what you wrote
+-- (a UIScale on a positioned frame also scales its position offset, which is how HUD pieces drift on other
+-- resolutions). The wrapper's size is kept equal to design size * scale, so layout and hit-testing stay correct.
+--   wrapper  anchored/positioned by you (any UDim2)
+--   content  fixed design-size frame; build your UI in here
+export type Responsive = { Wrapper: Frame, Content: Frame, Scale: UIScale, Refit: () -> () }
+function UIKit.responsive(parent: Instance, props: { Name: string?, Design: Vector2, Position: UDim2?, AnchorPoint: Vector2?, Min: number?, Max: number?, Reference: Vector2?, Visible: boolean?, ZIndex: number? }): Responsive
+	local reference = props.Reference or Vector2.new(1180, 660)
+	local wrapper = UIKit.new("Frame", {
+		Name = props.Name or "Responsive",
+		BackgroundTransparency = 1,
+		BorderSizePixel = 0,
+		Position = props.Position or UDim2.new(),
+		AnchorPoint = props.AnchorPoint or Vector2.zero,
+		Size = UDim2.fromOffset(props.Design.X, props.Design.Y),
+		Visible = props.Visible ~= false,
+		ZIndex = props.ZIndex or 1,
+	}, parent)
+	local content = UIKit.new("Frame", { Name = "Content", BackgroundTransparency = 1, BorderSizePixel = 0, Size = UDim2.fromOffset(props.Design.X, props.Design.Y) }, wrapper)
+	local scale = UIKit.new("UIScale", { Scale = 1 }, content)
+	local function refit()
+		local camera = Workspace.CurrentCamera
+		local viewport = if camera then camera.ViewportSize else Vector2.new(1280, 720)
+		local value = math.clamp(math.min(viewport.X / reference.X, viewport.Y / reference.Y), props.Min or 0.5, props.Max or 1.1)
+		value = math.min(value, viewport.X * 0.96 / props.Design.X) -- never wider than the screen
+		scale.Scale = value
+		wrapper.Size = UDim2.fromOffset(math.ceil(props.Design.X * value), math.ceil(props.Design.Y * value))
+	end
+	refit()
+	local camera = Workspace.CurrentCamera
+	if camera then
+		camera:GetPropertyChangedSignal("ViewportSize"):Connect(refit)
+	end
+	wrapper:SetAttribute("Responsive", true)
+	return { Wrapper = wrapper, Content = content, Scale = scale, Refit = refit }
+end
+
+---------------------------------------------------------------------------
 -- buttons
 ---------------------------------------------------------------------------
 
@@ -667,16 +733,8 @@ local SUBTITLES = {
 function UIKit.panel(options: { Name: string, Title: string, Subtitle: string?, Icon: string?, Design: Vector2?, Accent: Color3? }): Panel
 	local design = options.Design or Vector2.new(860, 560)
 	local accent = options.Accent or C.Peach
-	local playerGui = player:WaitForChild("PlayerGui")
 
-	local gui = UIKit.new("ScreenGui", {
-		Name = options.Name .. "UI",
-		ResetOnSpawn = false,
-		DisplayOrder = 10,
-		Enabled = false,
-		IgnoreGuiInset = true,
-		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
-	}, playerGui)
+	local gui = UIKit.screenGui(options.Name .. "UI", { Layer = "Panels", Insets = "None", Enabled = false })
 
 	-- Modal = true frees the mouse in first person so the buttons can be clicked
 	local dim = UIKit.new("TextButton", {
@@ -901,7 +959,7 @@ local tipFrame: Frame? = nil
 local tipLabel: TextLabel? = nil
 function UIKit.tooltip(target: GuiObject, text: string | (() -> string), side: string?)
 	if not tipGui then
-		local gui = UIKit.new("ScreenGui", { Name = "Tooltips", DisplayOrder = 60, ResetOnSpawn = false, IgnoreGuiInset = true, ZIndexBehavior = Enum.ZIndexBehavior.Sibling }, player:WaitForChild("PlayerGui"))
+		local gui = UIKit.screenGui("Tooltips", { Layer = "Tooltip", Insets = "None" })
 		local frame = UIKit.frame(gui, { Name = "Tip", AutomaticSize = Enum.AutomaticSize.XY, Size = UDim2.fromOffset(0, 28), Visible = false, BackgroundColor3 = C.CreamDark })
 		UIKit.corner(frame, 6)
 		UIKit.stroke(frame, C.GoldLine, 1)

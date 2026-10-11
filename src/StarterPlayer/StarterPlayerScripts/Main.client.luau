@@ -45,7 +45,6 @@ local screens = {
 	"HamsterHUD",
 	"AnnouncementUI",
 	"HotbarUI",
-	"BannerUI",
 	"TutorialUI",
 }
 for _, name in screens do

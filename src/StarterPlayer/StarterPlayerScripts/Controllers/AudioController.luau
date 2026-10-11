@@ -36,14 +36,24 @@ function AudioController.play(name: string, options: { Pitch: number?, Volume: n
 		return
 	end
 	local now = os.clock()
-	if lastPlayed[name] and now - lastPlayed[name] < 0.05 then
+	local interval = AudioConfig.MinInterval[name] or AudioConfig.MinInterval.Default
+	if lastPlayed[name] and now - lastPlayed[name] < interval then
 		return
 	end
 	lastPlayed[name] = now
 
+	local category = AudioConfig.CategoryOf[name] or "UI"
+	local categoryVolume = AudioConfig.Categories[category] or 1
+	if category == "Gate" then
+		categoryVolume *= DataController.setting("GateVolume") or 1
+	end
+	if categoryVolume <= 0 then
+		return
+	end
+
 	local sound = Instance.new("Sound")
 	sound.SoundId = config.Id
-	sound.Volume = config.Volume * ((options and options.Volume) or 1)
+	sound.Volume = config.Volume * categoryVolume * ((options and options.Volume) or 1)
 	sound.PlaybackSpeed = config.Pitch * ((options and options.Pitch) or 1)
 	sound.SoundGroup = sfxGroup
 	sound.RollOffMaxDistance = 80

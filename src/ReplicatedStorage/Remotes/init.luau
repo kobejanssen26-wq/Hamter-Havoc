@@ -17,7 +17,6 @@
 	  Knockback      you were slapped or zapped: apply this velocity
 	  Announce       server-wide rare event banners
 	  Notify         small toast messages
-	  Banner         big centred banner ("YOUR BASE IS NOW OPEN!")
 	  OpenUI         opens a menu (from world prompts)
 	  Fx             one-off effects (rare spawn alert, claim, steal, drop, secure, zap, rebirth ...)
 ]]
@@ -40,7 +39,6 @@ local EVENTS = {
 	"Knockback",
 	"Announce",
 	"Notify",
-	"Banner",
 	"OpenUI",
 	"Fx",
 }

@@ -3,23 +3,20 @@
 	  - transport tracker (left): every ball you paid for or carry, with its status
 	      "LEGENDARY HAMSTER  Transporting to: Kobe" / "STOLEN by Alex!" / "Dropped - grab it!"
 	  - progress bar while you steal / pick up
-	  - security pill (top right): your gate timer "SECURITY 00:47", then "SECURITY OFF" + what to do
+	  (your gate timer is a chip in the HUD status row, see MainUI)
 	Clear but small: nothing here is shown when it does not apply.
 ]]
 
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
-local Workspace = game:GetService("Workspace")
 
 local Modules = ReplicatedStorage:WaitForChild("Modules")
-local Format = require(Modules:WaitForChild("Format"))
 local HamsterStates = require(Modules:WaitForChild("HamsterStates"))
 local RarityConfig = require(Modules:WaitForChild("RarityConfig"))
 
 local AudioController = require(script.Parent.Parent.Controllers.AudioController)
 local DataController = require(script.Parent.Parent.Controllers.DataController)
-local SecurityController = require(script.Parent.Parent.Controllers.SecurityController)
 local WorldController = require(script.Parent.Parent.Controllers.WorldController)
 local UIKit = require(script.Parent.UIKit)
 
@@ -46,51 +43,36 @@ local function ballStatus(ball: WorldController.Ball): (string, Color3)
 end
 
 function HamsterHUD.start()
-	local gui = UIKit.new("ScreenGui", {
-		Name = "HamsterHUD",
-		ResetOnSpawn = false,
-		DisplayOrder = 2,
-		IgnoreGuiInset = true,
-		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
-	}, player:WaitForChild("PlayerGui"))
-
-	-- same responsive scaling as the main HUD
-	local scales: { UIScale } = {}
-	local function addScale(parent: Instance)
-		table.insert(scales, UIKit.new("UIScale", { Scale = 1 }, parent))
-	end
-	local function updateScale()
-		local camera = Workspace.CurrentCamera
-		local viewport = if camera then camera.ViewportSize else Vector2.new(1280, 720)
-		local value = math.clamp(math.min(viewport.X / 1180, viewport.Y / 660), 0.5, 1.1)
-		for _, scale in scales do
-			scale.Scale = value
-		end
+	local MainUI = require(script.Parent.MainUI)
+	local leftColumn = MainUI.region("LeftColumn")
+	local bottomColumn = MainUI.region("BottomColumn")
+	if not leftColumn or not bottomColumn then
+		warn("[HamsterHUD] HUD regions missing (MainUI must start first)")
+		return
 	end
 
 	-----------------------------------------------------------------------
-	-- transport tracker
+	-- transport tracker (top-left region)
 	-----------------------------------------------------------------------
-	local tracker = UIKit.frame(gui, {
+	local tracker = UIKit.frame(leftColumn, {
 		Name = "Tracker",
-		Size = UDim2.fromOffset(300, 200),
-		Position = UDim2.fromOffset(14, 156),
+		Size = UDim2.fromOffset(300, MAX_ROWS * 52 + (MAX_ROWS - 1) * 6),
 		BackgroundTransparency = 1,
+		LayoutOrder = 1,
 	})
-	addScale(tracker)
 	UIKit.list(tracker, Enum.FillDirection.Vertical, 6)
 
 	local rows: { { Frame: Frame, Rarity: TextLabel, Status: TextLabel, Stroke: UIStroke } } = {}
 	for index = 1, MAX_ROWS do
 		local row = UIKit.frame(tracker, {
 			Size = UDim2.fromOffset(300, 52),
-			BackgroundColor3 = C.Dim,
-			BackgroundTransparency = 0.18,
+			BackgroundColor3 = C.Cream,
+			BackgroundTransparency = 0.1,
 			LayoutOrder = index,
 			Visible = false,
 		})
-		UIKit.corner(row, 14)
-		local stroke = UIKit.stroke(row, C.Gold, 2.5)
+		UIKit.corner(row, 8)
+		local stroke = UIKit.stroke(row, C.Gold, 1.5)
 		local rarity = UIKit.label(row, {
 			Position = UDim2.fromOffset(12, 5),
 			Size = UDim2.new(1, -20, 0, 22),
@@ -139,18 +121,16 @@ function HamsterHUD.start()
 	-----------------------------------------------------------------------
 	-- steal / pick-up progress bar
 	-----------------------------------------------------------------------
-	local barFrame = UIKit.frame(gui, {
+	local barFrame = UIKit.frame(bottomColumn, {
 		Name = "ChannelBar",
 		Size = UDim2.fromOffset(320, 46),
-		Position = UDim2.new(0.5, 0, 1, -250),
-		AnchorPoint = Vector2.new(0.5, 1),
-		BackgroundColor3 = C.Dim,
-		BackgroundTransparency = 0.12,
+		LayoutOrder = 5,
+		BackgroundColor3 = C.Cream,
+		BackgroundTransparency = 0.08,
 		Visible = false,
 	})
-	addScale(barFrame)
-	UIKit.corner(barFrame, 23)
-	UIKit.stroke(barFrame, C.Red, 3)
+	UIKit.corner(barFrame, 10)
+	UIKit.stroke(barFrame, C.Red, 2)
 	local barText = UIKit.label(barFrame, {
 		Size = UDim2.new(1, 0, 0, 22),
 		Position = UDim2.fromOffset(0, 3),
@@ -163,7 +143,7 @@ function HamsterHUD.start()
 	local barBack = UIKit.frame(barFrame, {
 		Size = UDim2.new(1, -28, 0, 10),
 		Position = UDim2.fromOffset(14, 28),
-		BackgroundColor3 = Color3.fromRGB(70, 56, 66),
+		BackgroundColor3 = C.CreamDark,
 	})
 	UIKit.corner(barBack, 5)
 	local barFill = UIKit.frame(barBack, { Size = UDim2.fromScale(0, 1), BackgroundColor3 = C.Gold })
@@ -179,76 +159,12 @@ function HamsterHUD.start()
 		end
 	end)
 
-	-----------------------------------------------------------------------
-	-- security pill (my own gate)
-	-----------------------------------------------------------------------
-	local pill = UIKit.frame(gui, {
-		Name = "Security",
-		Size = UDim2.fromOffset(268, 42),
-		Position = UDim2.new(1, -84, 0, UIKit.GuiService:GetGuiInset().Y + 8), -- left of the shortcut buttons
-		AnchorPoint = Vector2.new(1, 0),
-		BackgroundColor3 = C.Dim,
-		BackgroundTransparency = 0.15,
-		Visible = false,
-	})
-	addScale(pill)
-	UIKit.corner(pill, 21)
-	local pillStroke = UIKit.stroke(pill, C.Green, 3)
-	local pillText = UIKit.label(pill, {
-		Size = UDim2.new(1, -20, 1, 0),
-		Position = UDim2.fromOffset(10, 0),
-		TextXAlignment = Enum.TextXAlignment.Center,
-		TextSize = 17,
-		Font = UIKit.Fonts.Title,
-		TextColor3 = C.White,
-		Text = "",
-	})
-
-	local lastBeep = -1
-	local function refreshSecurity()
-		local houseId = player:GetAttribute("HouseId")
-		local houses = Workspace:FindFirstChild("PlayerHouses")
-		local house = if type(houseId) == "number" and houses then houses:FindFirstChild("House" .. houseId) else nil
-		if not house or not house:IsA("Model") then
-			pill.Visible = false
-			return
-		end
-		local status = SecurityController.status(house)
-		pill.Visible = status.Owned
-		local color = SecurityController.color(status)
-		pillStroke.Color = color
-		pillText.TextColor3 = color
-		if status.State == "Active" then
-			pillText.Text = "SECURITY  " .. Format.clock(math.ceil(status.Seconds))
-			local whole = math.ceil(status.Seconds)
-			if whole <= 5 and whole ~= lastBeep then
-				lastBeep = whole
-				AudioController.play("Alarm", { Pitch = 1 + (5 - whole) * 0.12 })
-			end
-		elseif status.State == "Recharging" then
-			pillText.Text = string.format("SECURITY OFF  (%ds)", math.ceil(status.Seconds))
-			lastBeep = -1
-		else
-			pillText.Text = "OFF - press E at the gate panel"
-			lastBeep = -1
-		end
-	end
-
 	RunService.RenderStepped:Connect(function()
 		if channel then
 			local fraction = math.clamp((os.clock() - channel.Start) / math.max(channel.Duration, 0.05), 0, 1)
 			barFill.Size = UDim2.fromScale(fraction, 1)
 		end
 	end)
-	task.spawn(function()
-		while true do
-			refreshSecurity()
-			task.wait(0.2)
-		end
-	end)
-
-	updateScale()
-
 	-- first minutes: explain the loop in four short messages
 	DataController.onReady(function()
 		local stats = DataController.get("Stats") or {}
@@ -270,10 +186,6 @@ function HamsterHUD.start()
 		end)
 	end)
 
-	local camera = Workspace.CurrentCamera
-	if camera then
-		camera:GetPropertyChangedSignal("ViewportSize"):Connect(updateScale)
-	end
 end
 
 return HamsterHUD

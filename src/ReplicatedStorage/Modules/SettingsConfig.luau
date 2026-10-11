@@ -10,6 +10,7 @@ SettingsConfig.Defaults = {
 	MusicVolume = 0.4,
 	SFX = true,
 	SFXVolume = 0.8,
+	GateVolume = 0.5, -- security beeps / alarms (multiplied with the Gate category)
 	Particles = true,
 	LowGraphics = false,
 	ShowOtherPlayers = true,
@@ -26,6 +27,7 @@ SettingsConfig.List = {
 	{ Key = "MusicVolume", Label = "Music volume", Type = "slider", Min = 0, Max = 1, Icon = "speaker" },
 	{ Key = "SFX", Label = "Sound effects", Type = "toggle", Icon = "speaker" },
 	{ Key = "SFXVolume", Label = "Effects volume", Type = "slider", Min = 0, Max = 1, Icon = "speaker" },
+	{ Key = "GateVolume", Label = "Gate & alarm sounds", Type = "slider", Min = 0, Max = 1, Icon = "speaker" },
 	{ Key = "Particles", Label = "Particle effects", Type = "toggle", Icon = "sparkle" },
 	{ Key = "LowGraphics", Label = "Low graphics mode", Type = "toggle", Icon = "monitor" },
 	{ Key = "ShowOtherPlayers", Label = "Show other players", Type = "toggle", Icon = "people" },
