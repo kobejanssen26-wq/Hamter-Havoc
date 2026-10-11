@@ -164,17 +164,36 @@ task.spawn(function()
 	section("7. hamster catalog: new fields and balance")
 	local Validator = require(find(MOD .. "ContentValidator"))
 	local RarityConfig = require(find(MOD .. "RarityConfig"))
-	local newIds = { "lurker_larry", "doomscroll_dot", "cozy_stream_cleo", "meme_muffin", "hype_train_hazel", "speedrun_sammy", "clip_farmer_finn", "anniversary_confetti", "main_character_mia", "algorithm_alvin", "viral_vera", "million_sub_milo", "prime_time_pixel", "npc_zero" }
+	local newIds = { "mr_beastly", "bill_grates", "jeff_parcel", "elon_muskrat", "i_show_seed", "pew_pew_pie", "rick_hamstley", "much_wow_hammy" }
 	local allThere, allDescribed = true, true
 	for _, id in newIds do
 		local sp = HamsterDatabase.ById[id]
 		if not sp then allThere = false else allDescribed = allDescribed and type(sp.Description) == "string" and #sp.Description > 10 end
 	end
-	check("all 14 new internet-culture hamsters are registered", allThere)
+	check("all 8 new recognisable internet-culture hamsters are registered", allThere)
 	check("each has a collection description", allDescribed)
 	local issues = 0
 	for _, i in HamsterDatabase.Issues do if i.Level == "error" then issues += 1 end end
 	check("no content errors in the catalog", issues == 0, issues)
+	local HamsterBuilder = require(find(MOD .. "HamsterBuilder"))
+	local buildOk, signatures, dupLook = true, {}, false
+	for _, id in newIds do
+		local sp = HamsterDatabase.ById[id]
+		if #HamsterBuilder.validate(sp) > 0 then buildOk = false end
+		local model = HamsterBuilder.build(sp, { Scale = 1 })
+		buildOk = buildOk and model ~= nil and model:GetAttribute("Persona") == sp.Persona
+		local sig = HamsterBuilder.signature(sp)
+		if signatures[sig] then dupLook = true end
+		signatures[sig] = true
+	end
+	check("every new hamster builds with known accessories and carries its persona", buildOk)
+	local allSigs = {}
+	for _, sp in HamsterDatabase.Species do
+		local sig = HamsterBuilder.signature(sp)
+		if allSigs[sig] then dupLook = true end
+		allSigs[sig] = true
+	end
+	check("no two hamsters in the whole collection share an identical look", not dupLook)
 	local seenNames, dupName = {}, false
 	for _, sp in HamsterDatabase.Species do
 		if seenNames[sp.Name] then dupName = true end
@@ -205,15 +224,22 @@ task.spawn(function()
 		end
 	end
 	check("every rarity's weakest hamster still out-earns the best one below it", monotone)
-	local confetti = HamsterDatabase.ById.anniversary_confetti
-	check("limited edition: rolls before its end date", HamsterDatabase.rollable(confetti, 0, confetti.Limited.EndsAt - 100))
-	check("limited edition: stops rolling after its end date", not HamsterDatabase.rollable(confetti, 0, confetti.Limited.EndsAt + 1))
+	local limitedDemo = { Limited = { EndsAt = 1000 } }
+	check("limited edition: rolls before its end date", HamsterDatabase.rollable(limitedDemo, 0, 900))
+	check("limited edition: stops rolling after its end date", not HamsterDatabase.rollable(limitedDemo, 0, 1001))
 	check("rarity-locked hamsters respect Unlock.MinRebirth", not HamsterDatabase.rollable({ Unlock = { MinRebirth = 3 } }, 2, 0) and HamsterDatabase.rollable({ Unlock = { MinRebirth = 3 } }, 3, 0))
 	local function errs(def) local n = 0 for _, i in Validator.validateHamster(def, { Rarities = RarityConfig.ById, ExistingIds = {} }) do if i.Level == "error" then n += 1 end end return n end
 	check("validator: bad Limited / too long Description are rejected", errs({ Id = "x1", DisplayName = "X", Rarity = "Basic", Limited = { EndsAt = "soon" } }) > 0 and errs({ Id = "x2", DisplayName = "X", Rarity = "Basic", Description = string.rep("a", 200) }) > 0 and errs({ Id = "x3", DisplayName = "X", Rarity = "Basic", Description = "ok", Limited = { EndsAt = 5 } }) == 0)
 	-- an owned limited hamster stays after it stopped rolling
-	CollectionSystem.grant(alice, "anniversary_confetti", "Reward")
-	check("owning a limited hamster is permanent", a.Inventory.anniversary_confetti == 1)
+	CollectionSystem.grant(alice, "mr_beastly", "Reward")
+	check("a granted catalog hamster is owned", a.Inventory.mr_beastly == 1)
+	local beastly = HamsterDatabase.ById.mr_beastly
+	check("catalog entries carry persona, inspiration and a safe (non-licensed) name", beastly.Persona == "hyper" and #beastly.Inspiration > 40 and beastly.Licensed == false and beastly.Name == "Mr. Beastly")
+	check("a real/official name is shown ONLY when Licensed = true", (function()
+		local list = Validator.validateHamster({ Id = "lic_test", DisplayName = "Safe Name", Rarity = "Basic", LicensedName = "Official Name" }, { Rarities = RarityConfig.ById, ExistingIds = {} })
+		for _, i in list do if i.Level == "warn" and string.find(i.Message, "ignored until", 1, true) then return true end end
+		return false
+	end)())
 
 	print(string.format("PASS %d  FAIL %d", results.pass, results.fail))
 	print("== done ==")

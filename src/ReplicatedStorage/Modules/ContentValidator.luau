@@ -50,6 +50,8 @@ local function isStableId(id: any): boolean
 end
 
 -- context: { Rarities: {[string]: any}, ExistingIds: {[string]: any}?, ModelExists: ((string) -> boolean)? }
+local PERSONAS = { hyper = true, smug = true, scheming = true, mischievous = true, screamer = true, dancer = true, sleepy = true, confused = true, rich = true, calm = true }
+
 function ContentValidator.validateHamster(def: any, context: any): { Issue }
 	local list: { Issue } = {}
 	local id = if type(def) == "table" and type(def.Id) == "string" then def.Id else "?"
@@ -87,6 +89,21 @@ function ContentValidator.validateHamster(def: any, context: any): { Issue }
 	checkAsset(list, "Hamster", id, "Icon", def.Icon)
 	if def.Description ~= nil and (type(def.Description) ~= "string" or #def.Description > 140) then
 		err("Description must be a text of at most 140 characters (shown in the Hamster Index)")
+	end
+	if def.Persona ~= nil and not PERSONAS[def.Persona] then
+		err("Persona must be one of: hyper, smug, scheming, mischievous, screamer, dancer, sleepy, confused, rich, calm")
+	end
+	if def.Inspiration ~= nil and (type(def.Inspiration) ~= "string" or #def.Inspiration > 400) then
+		err("Inspiration must be a text (who/what the joke is about and why it is recognisable), at most 400 characters")
+	end
+	if def.LicensedName ~= nil then
+		if type(def.LicensedName) ~= "string" or #def.LicensedName > 28 then
+			err("LicensedName must be a text of at most 28 characters")
+		elseif def.Licensed ~= true then
+			issue(list, "warn", "Hamster", id, "LicensedName is ignored until you set Licensed = true (only do that if you hold written permission / the rights)")
+		else
+			issue(list, "warn", "Hamster", id, "Licensed = true: the real name is shown. You are responsible for holding the rights (Roblox IP guidelines)")
+		end
 	end
 	if def.Limited ~= nil then
 		if type(def.Limited) ~= "table" or type(def.Limited.EndsAt) ~= "number" or def.Limited.EndsAt ~= def.Limited.EndsAt then

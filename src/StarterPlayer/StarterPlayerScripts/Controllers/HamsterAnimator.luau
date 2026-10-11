@@ -15,6 +15,56 @@ local JOINT_NAMES = { "BodyJ", "HeadJ", "EarLJ", "EarRJ", "PawFLJ", "PawFRJ", "P
 local BEHAVIORS = { "look", "look", "sniff", "sniff", "jump", "roll", "scratch", "eat", "wave" }
 local DURATIONS = { look = 1.8, sniff = 1.5, jump = 0.7, roll = 1.0, scratch = 1.4, eat = 2.4, wave = 1.9 }
 
+-- Personality idles: small continuous motions layered on the normal idle so every character carries itself differently.
+-- Set per hamster with Persona = "..." in its Content/Hamsters file (see HamsterBuilder / docs/CONTENT_GUIDE.md).
+local PERSONA_IDLE: { [string]: (number, (string, CFrame) -> ()) -> () } = {
+	hyper = function(t, add)
+		add("BodyJ", CF(0, math.abs(math.sin(t * 7)) * 0.07, 0))
+		add("HeadJ", ANG(math.sin(t * 5) * 0.08, math.sin(t * 3.1) * 0.16, 0))
+		add("PawFLJ", ANG(math.sin(t * 8) * 0.3, 0, 0))
+		add("PawFRJ", ANG(-math.sin(t * 8) * 0.3, 0, 0))
+	end,
+	smug = function(t, add)
+		add("BodyJ", ANG(-0.06, 0, 0))
+		add("HeadJ", ANG(-0.14 + math.sin(t * 0.6) * 0.04, math.sin(t * 0.4) * 0.25, math.sin(t * 0.4) * 0.08))
+	end,
+	scheming = function(t, add)
+		local rub = math.sin(t * 9) * 0.25
+		add("PawFLJ", ANG(-0.5 + rub, 0, 0.2))
+		add("PawFRJ", ANG(-0.5 - rub, 0, -0.2))
+		add("HeadJ", ANG(0.05, math.sin(t * 0.7) * 0.35, 0))
+	end,
+	mischievous = function(t, add)
+		local glance = math.max(0, math.sin(t * 0.8)) ^ 6
+		add("HeadJ", ANG(0, glance * 0.7 * (if math.sin(t * 0.4) > 0 then 1 else -1), glance * 0.15))
+		add("TailJ", ANG(0, math.sin(t * 3) * 0.3, 0))
+	end,
+	screamer = function(t, add)
+		local burst = math.max(0, math.sin(t * 1.4)) ^ 12 -- every few seconds: a short loud fit
+		add("HeadJ", ANG(-0.25 * burst, math.sin(t * 38) * 0.18 * burst, 0))
+		add("BodyJ", CF(math.sin(t * 41) * 0.06 * burst, burst * 0.12, 0) * ANG(0, 0, math.sin(t * 33) * 0.1 * burst))
+		add("PawFLJ", ANG(-0.9 * burst, 0, 0))
+		add("PawFRJ", ANG(-0.9 * burst, 0, 0))
+	end,
+	dancer = function(t, add)
+		add("BodyJ", CF(0, math.abs(math.sin(t * 4)) * 0.05, 0) * ANG(0, 0, math.sin(t * 4) * 0.12))
+		add("HeadJ", ANG(0, 0, -math.sin(t * 4) * 0.1))
+		add("PawFLJ", ANG(math.sin(t * 4) * 0.5, 0, 0))
+		add("PawFRJ", ANG(-math.sin(t * 4) * 0.5, 0, 0))
+	end,
+	sleepy = function(t, add)
+		add("HeadJ", ANG(0.28 + math.sin(t * 0.7) * 0.12, 0, math.sin(t * 0.5) * 0.06))
+		add("BodyJ", ANG(0.05, 0, 0))
+	end,
+	confused = function(t, add)
+		add("HeadJ", ANG(0, math.sin(t * 0.9) * 0.3, math.sin(t * 0.9 + 1) * 0.25))
+	end,
+	rich = function(t, add)
+		add("HeadJ", ANG(-0.28, math.sin(t * 0.5) * 0.12, 0))
+		add("BodyJ", ANG(-0.05, 0, 0))
+	end,
+}
+
 export type Animator = typeof(setmetatable({} :: {
 	Model: Model,
 	Joints: { [string]: Motor6D },
@@ -28,6 +78,7 @@ export type Animator = typeof(setmetatable({} :: {
 	StepSign: number,
 	HasWings: boolean,
 	Lean: number,
+	Persona: string?,
 }, HamsterAnimator))
 
 function HamsterAnimator.new(model: Model): Animator
@@ -44,6 +95,7 @@ function HamsterAnimator.new(model: Model): Animator
 		StepSign = 1,
 		HasWings = false,
 		Lean = 0,
+		Persona = model:GetAttribute("Persona"),
 	}, HamsterAnimator)
 
 	for _, name in JOINT_NAMES do
@@ -122,6 +174,10 @@ function HamsterAnimator.Update(self: Animator, dt: number, moveSpeed: number, t
 		local flap = math.sin(time * 1.8) * 0.14
 		add("WingRJ", ANG(0, 0, flap))
 		add("WingLJ", ANG(0, 0, -flap))
+		local persona = if self.Persona then PERSONA_IDLE[self.Persona] else nil
+		if persona then
+			persona(time, add)
+		end
 
 		-- random behaviours
 		if not self.Behavior and not self.OneShot and time >= self.NextBehavior then

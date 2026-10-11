@@ -15,6 +15,7 @@ local Faces = require(script.Faces)
 local Hats = require(script.Hats)
 local Gear = require(script.Gear)
 local Wings = require(script.Wings)
+local Characters = require(script.Characters)
 
 local T = Toolkit
 local CF = CFrame.new
@@ -25,7 +26,7 @@ local V3 = Vector3.new
 local HamsterBuilder = {}
 
 local Accessories: { [string]: (Toolkit.Ctx, any) -> () } = {}
-for _, library in { Hats, Gear, Wings } do
+for _, library in { Hats, Gear, Wings, Characters } do
 	for id, builder in library :: any do
 		Accessories[id] = builder
 	end
@@ -242,6 +243,7 @@ function HamsterBuilder.build(species: any, options: BuildOptions?): Model
 	end
 
 	model:SetAttribute("SpeciesId", species.Id)
+	model:SetAttribute("Persona", species.Persona)
 	model:SetAttribute("Rarity", species.Rarity)
 	model:SetAttribute("Height", 3.4 * scale)
 	return model

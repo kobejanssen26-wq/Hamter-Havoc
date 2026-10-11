@@ -343,7 +343,7 @@ end
 
 HamsterDatabase.Issues = {} :: { any }
 
-local COLOR_LOOK = { Fur = "Fur", Belly = "Belly", Color2 = "Color2", Accent = "Accent", EyeColor = "EyeColor", HatColor = "HatColor", EarInner = "EarInner", EarColor = "EarColor", PawColor = "PawColor", TailColor = "TailColor", TailTip = "TailTip" }
+local COLOR_LOOK = { HairColor = "HairColor", Fur = "Fur", Belly = "Belly", Color2 = "Color2", Accent = "Accent", EyeColor = "EyeColor", HatColor = "HatColor", EarInner = "EarInner", EarColor = "EarColor", PawColor = "PawColor", TailColor = "TailColor", TailTip = "TailTip" }
 local PLAIN_LOOK = { "Ears", "Eyes", "Mouth", "Pattern", "Tail", "Size", "NoBlush" }
 
 local function loadCustomHamsters()
@@ -380,7 +380,8 @@ local function loadCustomHamsters()
 			local rarityId = def.Rarity
 			local species: any = {
 				Id = def.Id,
-				Name = def.DisplayName,
+				-- the real/official name is only ever shown when the owner states they hold the rights (Licensed = true)
+				Name = if def.Licensed == true and def.LicensedName then def.LicensedName else def.DisplayName,
 				OriginalName = def.DisplayName,
 				Custom = true,
 				Rarity = rarityId,
@@ -403,6 +404,9 @@ local function loadCustomHamsters()
 				Unlock = def.Unlock,
 				Description = def.Description,
 				Limited = def.Limited,
+				Persona = def.Persona,
+				Inspiration = def.Inspiration,
+				Licensed = def.Licensed == true,
 				PriceOverride = def.Price,
 				IncomeOverride = def.IncomePerSecond,
 				SpawnWeight = def.SpawnWeight,
