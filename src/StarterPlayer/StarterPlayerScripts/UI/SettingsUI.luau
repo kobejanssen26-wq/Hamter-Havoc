@@ -26,18 +26,29 @@ function SettingsUI.start()
 
 	local controls: { [string]: { Set: (any) -> () } } = {}
 
-	for order, entry in SettingsConfig.List do
-		local row = UIKit.frame(scroll, { Size = UDim2.new(1, -10, 0, 54), LayoutOrder = order })
-		UIKit.corner(row, 14)
-		UIKit.stroke(row, C.Line, 2)
-		UIKit.icon(row, entry.Icon, { Size = UDim2.fromOffset(34, 34), Position = UDim2.fromOffset(12, 10) })
+	-- flat list: group headings, one hairline between rows (no box around every setting)
+	local lastGroup = nil
+	local order = 0
+	for _, entry in SettingsConfig.List do
+		if entry.Group ~= lastGroup then
+			lastGroup = entry.Group
+			order += 1
+			UIKit.label(scroll, { Size = UDim2.new(1, -10, 0, 30), LayoutOrder = order, Text = string.upper(entry.Group or "General"), Font = UIKit.Fonts.Title, TextSize = UIKit.Type.Caption, TextColor3 = C.Muted })
+		end
+		order += 1
+		local row = UIKit.frame(scroll, { Size = UDim2.new(1, -10, 0, if entry.Desc then 62 else 48), LayoutOrder = order, BackgroundTransparency = 1 })
+		UIKit.frame(row, { Size = UDim2.new(1, 0, 0, 1), Position = UDim2.new(0, 0, 1, -1), BackgroundColor3 = C.Line })
+		UIKit.icon(row, entry.Icon, { Size = UDim2.fromOffset(24, 24), Position = UDim2.new(0, 4, 0.5, 0), AnchorPoint = Vector2.new(0, 0.5) })
 		UIKit.label(row, {
-			Position = UDim2.fromOffset(56, 0),
-			Size = UDim2.new(0.55, -42, 1, 0),
+			Position = UDim2.fromOffset(40, if entry.Desc then 8 else 0),
+			Size = UDim2.new(0.55, -42, 0, if entry.Desc then 22 else 48),
 			Text = entry.Label,
-			TextSize = 17,
+			TextSize = UIKit.Type.Heading,
 			Font = UIKit.Fonts.Title,
 		})
+		if entry.Desc then
+			UIKit.label(row, { Position = UDim2.fromOffset(40, 30), Size = UDim2.new(0.62, -42, 0, 28), Text = entry.Desc, TextSize = UIKit.Type.Caption, TextColor3 = C.Muted, Font = UIKit.Fonts.Soft, TextWrapped = true, TextYAlignment = Enum.TextYAlignment.Top })
+		end
 
 		local current = DataController.setting(entry.Key)
 		if entry.Type == "toggle" then
@@ -99,11 +110,9 @@ function SettingsUI.start()
 
 	-- promo codes live here (they used to be a separate HUD button)
 	do
-		local row = UIKit.frame(scroll, { Size = UDim2.new(1, -10, 0, 54), LayoutOrder = #SettingsConfig.List + 1 })
-		UIKit.corner(row, 14)
-		UIKit.stroke(row, C.Line, 2)
-		UIKit.icon(row, "gift", { Size = UDim2.fromOffset(34, 34), Position = UDim2.fromOffset(12, 10) })
-		UIKit.label(row, { Position = UDim2.fromOffset(56, 0), Size = UDim2.new(0.55, -42, 1, 0), Text = "Promo codes", TextSize = 17, Font = UIKit.Fonts.Title })
+		local row = UIKit.frame(scroll, { Size = UDim2.new(1, -10, 0, 48), LayoutOrder = 999, BackgroundTransparency = 1 })
+		UIKit.icon(row, "gift", { Size = UDim2.fromOffset(24, 24), Position = UDim2.new(0, 4, 0.5, 0), AnchorPoint = Vector2.new(0, 0.5) })
+		UIKit.label(row, { Position = UDim2.fromOffset(40, 0), Size = UDim2.new(0.55, -42, 1, 0), Text = "Promo codes", TextSize = UIKit.Type.Heading, Font = UIKit.Fonts.Title })
 		UIKit.button(row, {
 			Text = "Enter code",
 			Size = UDim2.fromOffset(170, 38),

@@ -239,9 +239,9 @@ function IndexUI.start()
 			end
 		end
 		inspectFacts.Text = string.format(
-			"Status: %s\nIncome: %s cash / second\nPrice when rolling past: %s cash\nOwned now: %d   Working in wheels: %d\nBest rarity you found so far: %s",
+			"Status: %s\nIncome: %s\nPrice when rolling past: %s cash\nOwned now: %d   Working in wheels: %d\nBest rarity you found so far: %s",
 			if working > 0 then "Working in a wheel" elseif owned > 0 then "Owned" elseif found then "Discovered (not owned right now)" else "Missing - not found yet",
-			if hidden then "???" else Format.short(HamsterDatabase.income(species)),
+			if hidden then "???" else Format.rate(HamsterDatabase.income(species)),
 			if hidden then "???" else Format.short(HamsterDatabase.price(species)),
 			owned,
 			working,
@@ -403,7 +403,7 @@ function IndexUI.start()
 
 		if mode == "Rarity" and entry.Rarity then
 			local definition = RarityConfig.ById[entry.Rarity]
-			headerInfo.Text = string.format("Speed %g studs/s  -  %s  -  Income %s/s%s", definition.Speed, definition.Difficulty, Format.short(definition.Income), if definition.MinRebirth > 0 then "  -  Unlocks at Rebirth " .. definition.MinRebirth else "")
+			headerInfo.Text = string.format("Speed %g studs/s  -  %s  -  Income %s%s", definition.Speed, definition.Difficulty, Format.rate(definition.Income), if definition.MinRebirth > 0 then "  -  Unlocks at Rebirth " .. definition.MinRebirth else "")
 			local spawnableTotal = #HamsterDatabase.Spawnable[entry.Rarity]
 			local spawnableHave = 0
 			for _, species in HamsterDatabase.ByRarity[entry.Rarity] do
@@ -505,7 +505,7 @@ function IndexUI.start()
 			}), 2.5)
 			local incomeRow = UIKit.iconText(card, {
 				Icon = "coin",
-				Text = if found or not hiddenRarity then Format.short(HamsterDatabase.income(species)) .. "/s" else "???",
+				Text = if found or not hiddenRarity then Format.rate(HamsterDatabase.income(species)) else "???",
 				Size = UDim2.new(1, -10, 0, 20),
 				Position = UDim2.fromOffset(5, 146),
 				TextSize = 14,

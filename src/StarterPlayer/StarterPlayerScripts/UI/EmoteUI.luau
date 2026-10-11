@@ -20,7 +20,6 @@ local DataController = require(script.Parent.Parent.Controllers.DataController)
 local EmoteController = require(script.Parent.Parent.Controllers.EmoteController)
 local Icons = require(script.Parent.Icons)
 local UIKit = require(script.Parent.UIKit)
-local UIRegistry = require(script.Parent.UIRegistry)
 
 local EmoteUI = {}
 
@@ -193,7 +192,7 @@ function EmoteUI.start()
 	task.spawn(function()
 		while true do
 			if isOpen then
-				for _, panelName in { "Shop", "Inventory", "Quests", "Settings", "Index", "Rebirth", "Upgrades", "Daily", "Leaderboards" } do
+				for _, panelName in { "Shop", "Backpack", "Quests", "Settings", "Index", "Rebirth", "Upgrades", "Daily", "Leaderboards" } do
 					local panel = UIKit.getPanel(panelName)
 					if panel and panel.IsOpen then
 						close()
@@ -205,16 +204,6 @@ function EmoteUI.start()
 		end
 	end)
 
-	UIRegistry.tryRegister({
-		Id = "Emotes",
-		Kind = "IconButton",
-		Slot = "RightRail",
-		Order = 50,
-		Icon = "people",
-		Tooltip = "Emotes (" .. EmoteController.keyName() .. ")",
-		OnActivate = EmoteUI.toggle,
-		Core = true,
-	})
 end
 
 return EmoteUI

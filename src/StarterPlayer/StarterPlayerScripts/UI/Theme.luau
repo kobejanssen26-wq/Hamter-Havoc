@@ -8,12 +8,12 @@ local Theme = {}
 
 Theme.Colors = {
 	-- surfaces: deep midnight indigo, lifted by a few vivid accents
-	Window = Color3.fromRGB(28, 31, 54),
-	Inset = Color3.fromRGB(20, 22, 40),
-	Card = Color3.fromRGB(43, 47, 78),
-	CardHover = Color3.fromRGB(58, 63, 102),
-	Header = Color3.fromRGB(36, 39, 68),
-	Line = Color3.fromRGB(78, 84, 132),
+	Window = Color3.fromRGB(26, 29, 42),
+	Inset = Color3.fromRGB(19, 21, 31),
+	Card = Color3.fromRGB(37, 41, 58),
+	CardHover = Color3.fromRGB(49, 54, 76),
+	Header = Color3.fromRGB(30, 33, 48),
+	Line = Color3.fromRGB(62, 68, 94),
 	-- text
 	Text = Color3.fromRGB(247, 247, 253),
 	TextMuted = Color3.fromRGB(165, 171, 205),
@@ -33,14 +33,18 @@ Theme.Colors = {
 	Scrim = Color3.fromRGB(8, 9, 20),
 }
 
+-- Typography: two weights only. Titles/numbers/prices are Bold, every sentence is Medium.
 Theme.Fonts = {
 	Title = Enum.Font.GothamBold,
-	Big = Enum.Font.GothamBlack,
-	Body = Enum.Font.GothamBold,
+	Big = Enum.Font.GothamBold,
+	Body = Enum.Font.GothamMedium,
 	Soft = Enum.Font.GothamMedium,
 }
+-- Size scale (px at design scale). Use these instead of ad-hoc numbers: Display (big numbers), Title (window titles),
+-- Heading (item names, values), Body (descriptions), Caption (hints, tags).
+Theme.Type = { Display = 28, Title = 20, Heading = 16, Body = 14, Caption = 12 }
 
-Theme.Radius = { Window = 10, Card = 8, Button = 8, Pill = 99 }
+Theme.Radius = { Window = 8, Card = 6, Button = 6, Pill = 99 }
 Theme.Motion = { Open = 0.2, Close = 0.14, Hover = 0.1 }
 
 -- Spacing / sizing tokens (pixels at design scale).

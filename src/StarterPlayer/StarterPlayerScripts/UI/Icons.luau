@@ -478,6 +478,15 @@ draw.paint = function(c)
 	shape(c, 0.3, 0.34, 0.16, 0.16, WHITE, { Circle = true, Alpha = 0.4, Z = 3 })
 end
 
+-- A banknote (income per second uses this next to "$X/s", the coin is the balance).
+draw.cash = function(c)
+	local green = tint(c, rgb(86, 200, 120))
+	shape(c, 0.04, 0.22, 0.92, 0.56, green, { Radius = 0.14, Top = rgb(150, 232, 170), Stroke = rgb(40, 130, 74) })
+	shape(c, 0.34, 0.32, 0.32, 0.36, rgb(40, 130, 74), { Circle = true, Alpha = 0.35, Z = 2 })
+	shape(c, 0.1, 0.34, 0.1, 0.1, rgb(40, 130, 74), { Circle = true, Alpha = 0.5, Z = 2 })
+	shape(c, 0.8, 0.56, 0.1, 0.1, rgb(40, 130, 74), { Circle = true, Alpha = 0.5, Z = 2 })
+end
+
 -- Weapons and equipment (items from Content/Items). All drawn diagonally so they read well at 30 px.
 draw.bat = function(c)
 	local wood = tint(c, rgb(232, 176, 112))

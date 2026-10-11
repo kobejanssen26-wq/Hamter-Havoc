@@ -158,7 +158,7 @@ end
 -- built once per ball and afterwards only its texts change (never per frame).
 --   [ RARITY ]
 --   Name
---   [coin] price      [bolt] +income/s
+--   [coin] price      [cash] +$income/s
 local TAG_WIDTH, TAG_HEIGHT = 158, 66
 local TAG_MAX_DISTANCE = 120
 
@@ -245,7 +245,7 @@ local function createTag(species: any, anchor: BasePart, id: string): (Billboard
 	row.Parent = frame
 	local coin = Icons.create(row, "coin", { Size = UDim2.fromOffset(16, 16), Position = UDim2.fromOffset(0, 2) })
 	local priceLabel = label(row, 19, 0, 62, 20, Enum.Font.GothamBold, 14, Color3.fromRGB(104, 206, 126), "", Enum.TextXAlignment.Left)
-	local bolt = Icons.create(row, "bolt", { Size = UDim2.fromOffset(14, 14), Position = UDim2.fromOffset(78, 3) })
+	local bolt = Icons.create(row, "cash", { Size = UDim2.fromOffset(14, 14), Position = UDim2.fromOffset(78, 3) })
 	local incomeLabel = label(row, 94, 0, TAG_WIDTH - 12 - 94, 20, Enum.Font.GothamBold, 13, Color3.fromRGB(226, 184, 84), "", Enum.TextXAlignment.Left)
 
 	local button = Instance.new("TextButton")
@@ -661,7 +661,7 @@ local function step(dt: number)
 				ball.PriceRow.Frame.Visible = forSale and DataController.setting("ShowValues") == true
 				ball.PriceRow.Label.Text = Format.short(ball.Price)
 				ball.PriceRow.Label.TextColor3 = if coins >= ball.Price then Color3.fromRGB(104, 206, 126) else Color3.fromRGB(226, 106, 104)
-				ball.PriceRow.Income.Text = "+" .. Format.short(incomeOf(ball.Species)) .. "/s"
+				ball.PriceRow.Income.Text = "+" .. Format.rate(incomeOf(ball.Species))
 				ball.Frame.BackgroundTransparency = if isTarget then 0.02 else 0.14
 				-- my own stolen / dropped hamsters stay visible from far away
 				ball.Gui.AlwaysOnTop = ball.PayerUserId == player.UserId and (ball.State == S.Carried or ball.State == S.Dropped or ball.State == S.Recoverable) and ball.HolderUserId ~= player.UserId

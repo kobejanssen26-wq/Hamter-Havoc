@@ -89,7 +89,14 @@ function MainUI.regionWrappers(): { [string]: Frame }
 	return result
 end
 
+-- Panels that live inside another one now (the old "My Hamsters" window is the Backpack's Hamsters tab).
+local PANEL_ALIAS = { Inventory = { "Backpack", "Hamsters" } }
+
 local function openPanel(name: string, focus: string?)
+	local alias = PANEL_ALIAS[name]
+	if alias then
+		name, focus = alias[1], alias[2]
+	end
 	local panel = UIKit.getPanel(name)
 	if panel then
 		panel.Focus = focus
@@ -105,6 +112,10 @@ local function openPanel(name: string, focus: string?)
 end
 
 function MainUI.open(name: string, focus: string?)
+	local alias = PANEL_ALIAS[name]
+	if alias then
+		name, focus = alias[1], alias[2]
+	end
 	local panel = UIKit.getPanel(name)
 	if panel then
 		panel.Focus = focus
@@ -148,9 +159,8 @@ end
 local function registerCore()
 	local core = {
 		{ Id = "Quests", Order = 10, Icon = "scroll", Tooltip = "Daily Quests", Panel = "Quests", Badge = questsBadge },
-		{ Id = "Inventory", Order = 20, Icon = "hamster", Tooltip = "Hamsters", Panel = "Inventory" },
-		{ Id = "Backpack", Order = 25, Icon = "bat", Tooltip = "Backpack (I)", Panel = "Backpack" },
-		{ Id = "Shop", Order = 30, Icon = "bag", Tooltip = "Shop", Panel = "Shop" },
+		{ Id = "Backpack", Order = 20, Icon = "bag", Tooltip = "Backpack (I): items, hamsters, index, emotes", Panel = "Backpack" },
+		{ Id = "Shop", Order = 30, Icon = "gift", Tooltip = "Shop", Panel = "Shop" },
 		{ Id = "Settings", Order = 90, Icon = "gear", Tooltip = "Settings", Panel = "Settings" },
 	}
 	for _, entry in core do
@@ -204,11 +214,11 @@ function MainUI.start()
 	local topBar = UIKit.frame(top.Content, { Name = "TopBar", Size = UDim2.fromOffset(TOP_DESIGN.X, Theme.Size.Pill), BackgroundTransparency = 1, LayoutOrder = 1 })
 	UIKit.list(topBar, Enum.FillDirection.Horizontal, 8, Enum.HorizontalAlignment.Center, Enum.VerticalAlignment.Center)
 	local coinsPill = UIKit.pill(topBar, { Icon = "coin", Color = C.Cash, Size = UDim2.fromOffset(130, Theme.Size.Pill), LayoutOrder = 1 })
-	local incomePill = UIKit.pill(topBar, { Icon = "bolt", Color = C.Gold, Size = UDim2.fromOffset(102, Theme.Size.Pill), LayoutOrder = 2 })
+	local incomePill = UIKit.pill(topBar, { Icon = "cash", Color = C.Cash, Size = UDim2.fromOffset(112, Theme.Size.Pill), LayoutOrder = 2 })
 	local gemsPill = UIKit.pill(topBar, { Icon = "gem", Color = C.Purple, Size = UDim2.fromOffset(116, Theme.Size.Pill), LayoutOrder = 3, OnPlus = function() MainUI.open("Shop", "Diamonds") end })
 	local rebirthPill = UIKit.pill(topBar, { Icon = "rebirth", Color = C.Bronze, Size = UDim2.fromOffset(98, Theme.Size.Pill), LayoutOrder = 4 })
 	UIKit.tooltip(coinsPill.Frame, "Cash", "Below")
-	UIKit.tooltip(incomePill.Frame, "Cash per second", "Below")
+	UIKit.tooltip(incomePill.Frame, "Money per second (all hamsters working on your bench)", "Below")
 	UIKit.tooltip(gemsPill.Frame, "Diamonds", "Below")
 	UIKit.tooltip(rebirthPill.Frame, "Rebirths completed", "Below")
 
@@ -478,7 +488,7 @@ function MainUI.start()
 		coinsPill.Value.Text = Format.short(shown.Coins)
 		gemsPill.Value.Text = Format.short(shown.Gems)
 		rebirthPill.Value.Text = "Rebirth " .. (DataController.get("Rebirths") or 0)
-		incomePill.Value.Text = Format.short(derived.IncomePerSecond or 0) .. "/s"
+		incomePill.Value.Text = Format.rate(derived.IncomePerSecond or 0)
 	end
 
 	-- gate chip + boost chips + hint strip (once per second)

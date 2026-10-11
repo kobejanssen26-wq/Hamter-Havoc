@@ -46,6 +46,11 @@ function Format.commas(value: number): string
 	return result
 end
 
+-- Income rate: always "$1.2K/s" (money per second), never a lightning bolt.
+function Format.rate(value: number): string
+	return "$" .. Format.short(value) .. "/s"
+end
+
 function Format.coins(value: number): string
 	return "$" .. Format.short(value)
 end

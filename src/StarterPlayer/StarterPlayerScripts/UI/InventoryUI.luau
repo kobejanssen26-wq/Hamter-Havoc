@@ -17,9 +17,9 @@ local InventoryUI = {}
 
 local C = UIKit.Colors
 
-function InventoryUI.start()
-	local panel = UIKit.panel({ Name = "Inventory", Title = "My Hamsters", Icon = "hamster", Design = Vector2.new(940, 640), Accent = C.Peach })
-	local body = panel.Body
+-- Builds the hamster collection into `body` (the "Hamsters" tab of the Backpack). Returns the render function; the caller
+-- decides when the tab is visible. `isVisible` lets this module skip rendering while the tab is hidden.
+function InventoryUI.mount(body: GuiObject, isVisible: () -> boolean): () -> ()
 
 	local top = UIKit.frame(body, { Size = UDim2.new(1, 0, 0, 52), BackgroundColor3 = C.Card })
 	UIKit.corner(top, 14)
@@ -146,7 +146,7 @@ function InventoryUI.start()
 			}), 2.5)
 			local incomeRow = UIKit.iconText(card, {
 				Icon = "coin",
-				Text = string.format("+%s/s each", Format.short(HamsterDatabase.income(species) * multiplier)),
+				Text = Format.rate(HamsterDatabase.income(species) * multiplier) .. " each",
 				Size = UDim2.new(1, -10, 0, 18),
 				Position = UDim2.fromOffset(5, 123),
 				TextSize = 13,
@@ -211,14 +211,12 @@ function InventoryUI.start()
 		end
 	end
 
-	panel.OnOpen[1] = function()
-		render()
-	end
 	DataController.onChanged(function(keys)
-		if panel.IsOpen and (keys.Inventory or keys.Equipped or keys.Derived) then
+		if isVisible() and (keys.Inventory or keys.Equipped or keys.Derived) then
 			render()
 		end
 	end)
+	return render
 end
 
 return InventoryUI

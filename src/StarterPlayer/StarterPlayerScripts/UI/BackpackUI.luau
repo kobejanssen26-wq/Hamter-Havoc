@@ -44,11 +44,78 @@ function BackpackUI.ownedItems(): { any }
 end
 
 function BackpackUI.start()
-	local panel = UIKit.panel({ Name = "Backpack", Title = "Backpack", Icon = "bat", Design = Vector2.new(920, 620), Accent = C.Blue, Subtitle = "Weapons, equipment and items you own" })
-	local body = panel.Body
+	local panel = UIKit.panel({ Name = "Backpack", Title = "Backpack", Icon = "bat", Design = Vector2.new(920, 620), Accent = C.Blue, Subtitle = "Your items, hamsters, index and emotes" })
+
+	-- two tabs: Items (weapons, equipment, consumables) and Hamsters (the collection + working bench). The tab bar also
+	-- holds the shortcuts to the Hamster Index and the Emote wheel, so those need no buttons of their own on the HUD.
+	local tabBar = UIKit.frame(panel.Body, { Name = "Tabs", Size = UDim2.new(1, 0, 0, 38), BackgroundTransparency = 1 })
+	UIKit.list(tabBar, Enum.FillDirection.Horizontal, 6, Enum.HorizontalAlignment.Left, Enum.VerticalAlignment.Center)
+	local body = UIKit.frame(panel.Body, { Name = "ItemsTab", Size = UDim2.new(1, 0, 1, -46), Position = UDim2.fromOffset(0, 46), BackgroundTransparency = 1 })
+	local hamstersBody = UIKit.frame(panel.Body, { Name = "HamstersTab", Size = UDim2.new(1, 0, 1, -46), Position = UDim2.fromOffset(0, 46), BackgroundTransparency = 1, Visible = false })
+	local activeTab = "Items"
+	local renderHamsters = require(script.Parent.InventoryUI).mount(hamstersBody, function()
+		return panel.IsOpen and activeTab == "Hamsters"
+	end)
+	local tabButtons: { [string]: TextButton } = {}
+	local setTab
+	local function addTab(id: string, text: string)
+		tabButtons[id] = UIKit.button(tabBar, {
+			Name = "Tab_" .. id,
+			Text = text,
+			Size = UDim2.fromOffset(120, 34),
+			Color = C.Card,
+			TextSize = 15,
+			LayoutOrder = if id == "Items" then 1 else 2,
+			OnClick = function()
+				setTab(id)
+			end,
+		})
+	end
+	addTab("Items", "Items")
+	addTab("Hamsters", "Hamsters")
+	UIKit.button(tabBar, {
+		Name = "OpenIndex",
+		Text = "Hamster Index",
+		Size = UDim2.fromOffset(140, 34),
+		Color = C.Card,
+		TextSize = 15,
+		LayoutOrder = 3,
+		OnClick = function()
+			local index = UIKit.getPanel("Index")
+			if index then
+				index:Open()
+			end
+		end,
+	})
+	UIKit.button(tabBar, {
+		Name = "OpenEmotes",
+		Text = "Emotes",
+		Size = UDim2.fromOffset(110, 34),
+		Color = C.Card,
+		TextSize = 15,
+		LayoutOrder = 4,
+		OnClick = function()
+			panel:Close()
+			require(script.Parent.EmoteUI).toggle()
+		end,
+	})
 	local selectedId: string? = nil
 	local confirmDiscard = false
 	local render
+
+	setTab = function(id: string)
+		activeTab = id
+		body.Visible = id == "Items"
+		hamstersBody.Visible = id == "Hamsters"
+		for tabId, button in tabButtons do
+			UIKit.setButtonColor(button, if tabId == id then C.Blue else C.Card)
+		end
+		if id == "Hamsters" then
+			renderHamsters()
+		else
+			render()
+		end
+	end
 
 	local function toast(text: string, kind: string)
 		require(script.Parent.MainUI).toast(text, kind)
@@ -255,7 +322,9 @@ function BackpackUI.start()
 
 	panel.OnOpen[1] = function()
 		confirmDiscard = false
-		render()
+		local focus = panel.Focus
+		panel.Focus = nil
+		setTab(if focus == "Hamsters" then "Hamsters" else activeTab)
 	end
 	DataController.onChanged(function(keys)
 		if panel.IsOpen and (keys.Items or keys.Gear or keys.Hotbar) then

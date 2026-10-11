@@ -60,7 +60,7 @@ task.spawn(function()
 	check("every shop item has a drawn icon", missingIcon == 0, missingIcon .. " missing")
 
 	-- every panel opens and closes
-	for _, name in { "Inventory", "Index", "Rebirth", "Upgrades", "Daily", "Quests", "Shop", "Settings", "Codes" } do
+	for _, name in { "Backpack", "Index", "Rebirth", "Upgrades", "Daily", "Quests", "Shop", "Settings", "Codes" } do
 		local panel = UIKit.getPanel(name)
 		check("panel exists: " .. name, panel ~= nil)
 		if panel then
@@ -126,11 +126,20 @@ task.spawn(function()
 		end
 		return table.concat(list, "|")
 	end
+	do
+		local UIRegistry = require(find("StarterPlayer.StarterPlayerScripts.UI.UIRegistry"))
+		local ids = {}
+		for _, def in UIRegistry.list("RightRail") do table.insert(ids, def.Id) end
+		check("the right rail holds ONLY Quests, Backpack, Shop, Leaderboards, Settings", table.concat(ids, ",") == "Quests,Backpack,Shop,Leaderboards,Settings", table.concat(ids, ","))
+		local backpack = UIKit.getPanel("Backpack")
+		check("Hamsters, Hamster Index and Emotes moved into the Backpack", #byName(backpack.Gui, "Tab_Hamsters") == 1 and #byName(backpack.Gui, "OpenIndex") == 1 and #byName(backpack.Gui, "OpenEmotes") == 1)
+		check("the old 'My Hamsters' window is gone (alias opens the Backpack tab)", UIKit.getPanel("Inventory") == nil)
+	end
 	check("old left sidebar is gone", #byName(gui, "Sidebar") == 0)
-	for _, name in { "QuestsButton", "InventoryButton", "ShopButton", "SettingsButton" } do
+	for _, name in { "QuestsButton", "BackpackButton", "ShopButton", "LeaderboardsButton", "SettingsButton" } do
 		check("HUD shortcut exists: " .. name, #byName(gui, name) == 1)
 	end
-	for _, name in { "UpgradesButton", "RebirthButton", "IndexButton", "DailyButton" } do
+	for _, name in { "InventoryButton", "EmotesButton", "UpgradesButton", "RebirthButton", "IndexButton", "DailyButton" } do
 		check("no redundant HUD button: " .. name, #byName(gui, name) == 0)
 	end
 	local topBar = byName(gui, "TopBar")[1]
@@ -146,7 +155,7 @@ task.spawn(function()
 	-- hotbar
 	local HotbarConfig = require(find("ReplicatedStorage.Modules.HotbarConfig"))
 	local slots = 0
-	for _, d in M.descendants(gui) do if string.sub(RawData[d].Name, 1, 5) == "Slot_" then slots += 1 end end
+	for _, d in M.descendants(byName(gui, "Hotbar")[1]) do if string.sub(RawData[d].Name, 1, 5) == "Slot_" then slots += 1 end end
 	check("hotbar has every configured slot", slots == HotbarConfig.SlotCount, slots)
 	local DataSystem = require(find("ServerScriptService.Systems.DataSystem"))
 	local ReplicationSystem = require(find("ServerScriptService.Systems.ReplicationSystem"))

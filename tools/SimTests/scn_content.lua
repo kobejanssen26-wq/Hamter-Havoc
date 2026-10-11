@@ -147,7 +147,7 @@ task.spawn(function()
 	RawData[byName(wheel, "Emote_wave")[1]].Signals.Activated:Fire()
 	adv(0.6)
 	check("choosing an emote plays it and closes the wheel", played[#played] == "wave" and RawData[wheel].Props.Enabled == false, tostring(played[#played]))
-	check("the Emotes button exists in the HUD rail (mobile access)", #byName(gui, "EmotesButton") == 1)
+	check("Emotes are reachable from the Backpack (mobile access) and not from the rail", #byName(gui, "EmotesButton") == 0 and #byName(gui, "OpenEmotes") == 1)
 	data.Rebirths = 0
 	local EmoteController = require(find("StarterPlayer.StarterPlayerScripts.Controllers.EmoteController"))
 	adv(1.6)
