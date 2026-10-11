@@ -149,6 +149,7 @@ local function registerCore()
 	local core = {
 		{ Id = "Quests", Order = 10, Icon = "scroll", Tooltip = "Daily Quests", Panel = "Quests", Badge = questsBadge },
 		{ Id = "Inventory", Order = 20, Icon = "hamster", Tooltip = "Hamsters", Panel = "Inventory" },
+		{ Id = "Backpack", Order = 25, Icon = "bat", Tooltip = "Backpack (I)", Panel = "Backpack" },
 		{ Id = "Shop", Order = 30, Icon = "bag", Tooltip = "Shop", Panel = "Shop" },
 		{ Id = "Settings", Order = 90, Icon = "gear", Tooltip = "Settings", Panel = "Settings" },
 	}
@@ -193,7 +194,7 @@ function MainUI.start()
 	regions.LeftColumn = left
 	UIKit.list(left.Content, Enum.FillDirection.Vertical, 10, Enum.HorizontalAlignment.Left, Enum.VerticalAlignment.Top)
 
-	local bottom = UIKit.responsive(gui, { Name = "BottomColumn", Design = Vector2.new(440, 310), Position = UDim2.new(0.5, 0, 1, -10), AnchorPoint = Vector2.new(0.5, 1) })
+	local bottom = UIKit.responsive(gui, { Name = "BottomColumn", Design = Vector2.new(522, 310), Position = UDim2.new(0.5, 0, 1, -10), AnchorPoint = Vector2.new(0.5, 1) })
 	regions.BottomColumn = bottom
 	UIKit.list(bottom.Content, Enum.FillDirection.Vertical, 8, Enum.HorizontalAlignment.Center, Enum.VerticalAlignment.Bottom)
 

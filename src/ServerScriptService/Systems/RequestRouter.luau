@@ -19,6 +19,7 @@ local Rewards = require(script.Parent.Rewards)
 local SettingsSystem = require(script.Parent.SettingsSystem)
 local ShopSystem = require(script.Parent.ShopSystem)
 local ItemSystem = require(script.Parent.ItemSystem)
+local GearSystem = require(script.Parent.GearSystem)
 local EmoteSystem = require(script.Parent.EmoteSystem)
 local LeaderboardService = require(script.Parent.LeaderboardService)
 local TutorialSystem = require(script.Parent.TutorialSystem)
@@ -173,6 +174,39 @@ end
 actions.UseItem = function(player, payload)
 	local ok, message = ItemSystem.use(player, payload.Id)
 	return result(ok, message)
+end
+
+actions.EquipItem = function(player, payload)
+	local id = str(payload.Id)
+	if not id then
+		return result(false, "Invalid item")
+	end
+	local ok, message = GearSystem.equip(player, id)
+	return result(ok, message)
+end
+
+actions.UnequipItem = function(player)
+	local ok, message = GearSystem.unequip(player)
+	return result(ok, message)
+end
+
+actions.HotbarMove = function(player, payload)
+	local ok, message = GearSystem.moveSlot(player, payload.Id, payload.Slot)
+	return result(ok, message)
+end
+
+actions.DiscardItem = function(player, payload)
+	local ok, message = GearSystem.discard(player, payload.Id, payload.Amount)
+	return result(ok, message)
+end
+
+actions.PassRefresh = function(player)
+	local ok, message = ShopSystem.refreshPasses(player)
+	return result(ok, message)
+end
+
+actions.PassPrices = function()
+	return result(true, "", ShopSystem.passPrices())
 end
 
 actions.TutorialAck = function(player, payload)

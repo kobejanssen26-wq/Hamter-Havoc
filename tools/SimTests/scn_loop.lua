@@ -648,9 +648,9 @@ task.spawn(function()
 	local names = {}
 	for _, c in cats do table.insert(names, c.Id .. ":" .. #c.Items) end
 	print("  shop categories:", table.concat(names, ", "))
-	local hasEquipment, hasLimited = false, false
-	for _, c in cats do hasEquipment = hasEquipment or c.Id == "Equipment"; hasLimited = hasLimited or c.Id == "Limited" end
-	check("empty categories (Equipment, Limited) are hidden", not hasEquipment and not hasLimited)
+	local hasEquipment, hasLimited, hasPasses = false, false, false
+	for _, c in cats do hasEquipment = hasEquipment or c.Id == "Equipment"; hasLimited = hasLimited or c.Id == "Limited"; hasPasses = hasPasses or c.Id == "Gamepasses" end
+	check("empty Limited category is hidden, Equipment (real items) and Game Passes shown", hasEquipment and not hasLimited and hasPasses)
 	-- tutorial
 	d.Tutorial = { Step = 1, Done = false, Skipped = false }
 	check("ack of a later step is refused", not req("TutorialAck", { Step = "plot" }).ok and d.Tutorial.Step == 1)

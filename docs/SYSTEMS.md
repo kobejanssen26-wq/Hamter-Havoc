@@ -45,6 +45,13 @@
 * Display: the *Leaderboards* screen (rail button / kiosk) with metric tabs, period selector, avatars, top-3 styling, loading/empty/error states; and three boards in the **Leaderboard Hall** behind the library (`WorldBuilder/LeaderboardBuilder`) cycling through the periods every 30 s.
 * Rewards: none yet (build them server-side with a claim flag if you add them).
 
+## Items, hotbar, weapons, shop, passes
+* `ItemRegistry` (Content/Items) is the single source for weapons, equipment and consumables. `ShopConfig` generates its Weapons/Equipment entries from it, `GamepassConfig` generates the Game Pass entries.
+* Ownership lives in the profile: `Gear[id]` (weapons/equipment), `Items[id]` (consumable counts), `Hotbar["2".."8"]` (layout; slot 1 is the built-in paws). `GearSystem` owns all changes (grant, equip, move, discard, tools), `ShopSystem` charges first-validated-then-atomically.
+* Purchases: the client sends only an item id. Price, currency, ownership, stack limits and double-click protection are server side. Owned gear can't be bought twice.
+* Hotbar UI (`HotbarUI`) is the **only** hotbar (Roblox's own backpack bar is switched off). Slot parts come from `HotbarConfig.layout` so number/icon/count can't overlap. Backpack (`BackpackUI`, key `I`) manages owned items; hamsters stay in *My Hamsters* (the chest) — all owned hamsters are listed, with *Work +* / *Rest −* per species.
+* Passes: see CONTENT_GUIDE §7c.
+
 ## Audio
 `AudioConfig.Categories` (UI, Purchase, Movement, Gate, Steal, Escape, Failed, Rebirth, Emote, Notification) × each sound's own volume × the player's *Effects volume*; gate sounds additionally × the player's *Gate & alarm sounds* slider. `AudioConfig.MinInterval` stops repeats (gate on/off 1.5 s, alarm 0.6 s ...). The big "base open/locked" banner is gone; gate state = gate visuals + HUD gate chip + one quiet sound.
 
@@ -55,4 +62,7 @@
 4. Emote wheel with B, with the Emotes button on touch, with each default emote (R15 avatar with the standard Animate script); a custom animation emote after you uploaded one.
 5. Leaderboards need **Studio → Game Settings → Security → Enable Studio Access to API Services**; check each period after a session, and the hall boards.
 6. Elevators: unlock floors with rebirths (or set `data.Rebirths` in the command bar) and walk through 1 → 2 → 3 floors.
-7. Hamster look/feel (proportions, tufts, teeth, turn lean), audio levels, and performance with a full server (8 players).
+7. **Weapons and shop (not testable offline):** buy each weapon in the Shop (check cash/diamonds drop once), see it appear on the hotbar, equip with its number key, and check the Tool in your hand looks right (bat/ladle/slingshot are built from parts — grip angle may need a tweak in `ToolBuilder`). Swing at another player while a thief carries a hamster (valid) and while nothing is going on (must do nothing). Respawn: tools come back. Rejoin: owned items and hotbar order persist.
+8. **Game passes:** with a real PassId in `GamepassConfig`: prompt appears, benefit appears only after the purchase finishes, *Refresh purchases* works, an unconfigured pass is greyed out and cannot be bought.
+9. Hotbar/Shop/Backpack on phone landscape + portrait and 1080p: hotbar bottom-centre, nothing overlapping, number keys 1–8 and touch taps both work.
+10. Hamster look/feel (proportions, tufts, teeth, turn lean), audio levels, and performance with a full server (8 players).

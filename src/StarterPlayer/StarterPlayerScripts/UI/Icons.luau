@@ -478,6 +478,45 @@ draw.paint = function(c)
 	shape(c, 0.3, 0.34, 0.16, 0.16, WHITE, { Circle = true, Alpha = 0.4, Z = 3 })
 end
 
+-- Weapons and equipment (items from Content/Items). All drawn diagonally so they read well at 30 px.
+draw.bat = function(c)
+	local wood = tint(c, rgb(232, 176, 112))
+	shape(c, 0.46, 0.04, 0.2, 0.62, wood, { Radius = 0.5, Rot = 40, Top = rgb(255, 214, 160), Stroke = rgb(150, 98, 52), Z = 2 })
+	shape(c, 0.22, 0.5, 0.1, 0.4, rgb(255, 107, 107), { Radius = 0.4, Rot = 40, Stroke = rgb(150, 60, 60), Z = 1 })
+	shape(c, 0.14, 0.78, 0.14, 0.14, rgb(255, 107, 107), { Circle = true, Stroke = rgb(150, 60, 60), Z = 3 })
+end
+
+draw.ladle = function(c)
+	local metal = tint(c, rgb(176, 186, 204))
+	shape(c, 0.44, 0.34, 0.1, 0.62, rgb(138, 90, 58), { Radius = 0.5, Rot = 45, Stroke = rgb(90, 56, 34), Z = 1 })
+	shape(c, 0.1, 0.08, 0.5, 0.5, metal, { Circle = true, Top = rgb(228, 234, 246), Stroke = rgb(91, 100, 117), Z = 2 })
+	shape(c, 0.22, 0.2, 0.26, 0.26, rgb(91, 100, 117), { Circle = true, Alpha = 0.35, Z = 3 })
+end
+
+draw.slingshot = function(c)
+	local wood = tint(c, rgb(150, 100, 64))
+	shape(c, 0.44, 0.5, 0.14, 0.44, wood, { Radius = 0.5, Stroke = rgb(90, 56, 34), Z = 1 })
+	shape(c, 0.26, 0.1, 0.13, 0.5, wood, { Radius = 0.5, Rot = 28, Stroke = rgb(90, 56, 34), Z = 2 })
+	shape(c, 0.62, 0.1, 0.13, 0.5, wood, { Radius = 0.5, Rot = -28, Stroke = rgb(90, 56, 34), Z = 2 })
+	shape(c, 0.3, 0.2, 0.4, 0.07, rgb(242, 193, 78), { Radius = 0.5, Z = 3 })
+	shape(c, 0.43, 0.14, 0.14, 0.14, rgb(120, 120, 130), { Circle = true, Z = 4 })
+end
+
+draw.net = function(c)
+	shape(c, 0.46, 0.46, 0.09, 0.52, rgb(150, 100, 64), { Radius = 0.5, Rot = -40, Stroke = rgb(90, 56, 34), Z = 1 })
+	shape(c, 0.1, 0.06, 0.58, 0.58, tint(c, rgb(190, 232, 255)), { Circle = true, Alpha = 0.25, Stroke = rgb(80, 120, 168), StrokeScale = 0.07, Z = 2 })
+	shape(c, 0.22, 0.34, 0.34, 0.05, rgb(80, 120, 168), { Radius = 0.5, Alpha = 0.3, Z = 3 })
+	shape(c, 0.36, 0.2, 0.05, 0.34, rgb(80, 120, 168), { Radius = 0.5, Alpha = 0.3, Z = 3 })
+end
+
+draw.boots = function(c)
+	local leather = tint(c, rgb(176, 112, 70))
+	shape(c, 0.22, 0.12, 0.28, 0.58, leather, { Radius = 0.2, Top = rgb(216, 156, 108), Stroke = rgb(100, 60, 36), Z = 1 })
+	shape(c, 0.18, 0.56, 0.68, 0.3, leather, { Radius = 0.45, Top = rgb(216, 156, 108), Stroke = rgb(100, 60, 36), Z = 2 })
+	shape(c, 0.16, 0.8, 0.72, 0.08, rgb(74, 52, 44), { Radius = 0.5, Z = 3 })
+	shape(c, 0.2, 0.14, 0.3, 0.08, rgb(255, 250, 220), { Radius = 0.5, Z = 3 })
+end
+
 -- Fallback for ids that don't have an icon (and the old emoji ids): a neutral rounded badge.
 draw.dot = function(c)
 	shape(c, 0.2, 0.2, 0.6, 0.6, tint(c, rgb(190, 176, 168)), { Circle = true, Top = rgb(224, 214, 208) })

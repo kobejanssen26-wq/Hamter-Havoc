@@ -1,5 +1,7 @@
 --[[
-	CombatSystem: one simple verb - the SLAP. Short range, short cooldown, small knockback and a brief stun.
+	CombatSystem: one simple verb - the hit. Bare paws = the SLAP; a held, owned weapon (Content/Items) swaps in its own
+	range / arc / cooldown / knockback / stun / drop chance, and a Ranged weapon fires along a validated aim direction.
+	The SLAP: Short range, short cooldown, small knockback and a brief stun.
 	It exists to protect / steal / recover hamsters, not to be a fighting game:
 	  - the server picks the target (nearest player in front of you), the client only says "slap"
 	  - it only lands when a fight-able hamster (rolling home, carried, dropped) is near
@@ -15,6 +17,7 @@ local HamsterStates = require(ReplicatedStorage.Modules.HamsterStates)
 local Remotes = require(ReplicatedStorage.Remotes)
 
 local DataSystem = require(script.Parent.DataSystem)
+local GearSystem = require(script.Parent.GearSystem)
 local HamsterSystem = require(script.Parent.HamsterSystem)
 local Notifier = require(script.Parent.Notifier)
 local PlayerState = require(script.Parent.PlayerState)
@@ -31,22 +34,27 @@ local CONTEXT_RADIUS = 34
 local lastSlap: { [Player]: number } = {}
 local random = Random.new()
 
-local function findTarget(attacker: Player, root: BasePart): (Player?, BasePart?)
-	local look = Vector3.new(root.CFrame.LookVector.X, 0, root.CFrame.LookVector.Z)
+local function flat(v: Vector3): Vector3
+	return Vector3.new(v.X, 0, v.Z)
+end
+
+-- Melee: the nearest other player inside `range` and in front of you (dot(look, toTarget) >= arc).
+local function findTarget(attacker: Player, root: BasePart, range: number, arc: number): (Player?, BasePart?)
+	local look = flat(root.CFrame.LookVector)
 	if look.Magnitude < 0.01 then
 		return nil, nil
 	end
 	look = look.Unit
 	local best: Player? = nil
 	local bestRoot: BasePart? = nil
-	local bestDistance = Config.SlapRange
+	local bestDistance = range
 	for _, other in Players:GetPlayers() do
 		if other ~= attacker then
 			local _, otherRoot = PlayerState.character(other)
 			if otherRoot then
-				local delta = Vector3.new(otherRoot.Position.X - root.Position.X, 0, otherRoot.Position.Z - root.Position.Z)
+				local delta = flat(otherRoot.Position - root.Position)
 				local distance = delta.Magnitude
-				if distance <= bestDistance and (distance < 1.5 or delta.Unit:Dot(look) >= Config.SlapArc) then
+				if distance <= bestDistance and (distance < 1.5 or delta.Unit:Dot(look) >= arc) then
 					best, bestRoot, bestDistance = other, otherRoot, distance
 				end
 			end
@@ -55,19 +63,94 @@ local function findTarget(attacker: Player, root: BasePart): (Player?, BasePart?
 	return best, bestRoot
 end
 
-function CombatSystem.slap(attacker: Player)
+-- Ranged: a straight shot along the (server-validated) aim direction. Hits the first player within `range` whose body
+-- is close to the line and not behind a wall. The client only supplies a direction, never a target or a position.
+local HIT_RADIUS = 3.2
+local function findShotTarget(attacker: Player, root: BasePart, aim: Vector3, range: number): (Player?, BasePart?)
+	local origin = root.Position + Vector3.new(0, 1.5, 0)
+	local best: Player? = nil
+	local bestRoot: BasePart? = nil
+	local bestAlong = math.huge
+	for _, other in Players:GetPlayers() do
+		if other ~= attacker then
+			local character, otherRoot = nil, nil
+			local _, r = PlayerState.character(other)
+			otherRoot = r
+			character = other.Character
+			if otherRoot and character then
+				local toTarget = otherRoot.Position - origin
+				local along = toTarget:Dot(aim)
+				if along > 0 and along <= range and along < bestAlong then
+					local off = (toTarget - aim * along).Magnitude
+					if off <= HIT_RADIUS then
+						local params = RaycastParams.new()
+						params.FilterType = Enum.RaycastFilterType.Exclude
+						params.FilterDescendantsInstances = { attacker.Character, character }
+						params.IgnoreWater = true
+						local blocked = workspace:Raycast(origin, aim * along, params)
+						if not blocked then
+							best, bestRoot, bestAlong = other, otherRoot, along
+						end
+					end
+				end
+			end
+		end
+	end
+	return best, bestRoot
+end
+
+-- Stats of whatever the player is attacking with right now: an owned, held weapon, or the bare-paw slap.
+local function currentAttack(attacker: Player): (any?, any)
+	local def = GearSystem.equippedWeapon(attacker)
+	if def then
+		return def, def.Equip.Weapon
+	end
+	return nil, {
+		Type = "Melee",
+		Range = Config.SlapRange,
+		Arc = Config.SlapArc,
+		Cooldown = Config.SlapCooldown,
+		Knockback = Config.KnockbackPower,
+		Stun = Config.StunSeconds,
+		DropChance = Config.DropChance,
+	}
+end
+
+function CombatSystem.attack(attacker: Player, rawAim: any)
+	local def, stats = currentAttack(attacker)
 	local clock = os.clock()
-	if (lastSlap[attacker] or 0) + Config.SlapCooldown > clock then
+	if (lastSlap[attacker] or 0) + stats.Cooldown > clock then
 		return
 	end
 	local _, root = PlayerState.character(attacker)
 	if not root or PlayerState.isStunned(attacker) then
 		return
 	end
-	lastSlap[attacker] = clock
-	Remotes.event("Fx"):FireAllClients("Slap", "", root.Position, attacker.UserId)
 
-	local target, targetRoot = findTarget(attacker, root)
+	-- aim: only ranged weapons use it; it must be a real direction (client data is never trusted)
+	local aim: Vector3? = nil
+	if stats.Type == "Ranged" then
+		if typeof(rawAim) == "Vector3" and rawAim.Magnitude > 0.5 and rawAim.Magnitude < 1.5 and rawAim.X == rawAim.X and rawAim.Y == rawAim.Y and rawAim.Z == rawAim.Z then
+			aim = rawAim.Unit
+		else
+			aim = root.CFrame.LookVector -- missing / bad aim: shoot where the character looks
+		end
+	end
+	lastSlap[attacker] = clock
+
+	if def then
+		local direction = aim or root.CFrame.LookVector
+		Remotes.event("Fx"):FireAllClients("WeaponUse", def.Id, root.Position, attacker.UserId, direction)
+	else
+		Remotes.event("Fx"):FireAllClients("Slap", "", root.Position, attacker.UserId)
+	end
+
+	local target, targetRoot
+	if aim then
+		target, targetRoot = findShotTarget(attacker, root, aim, stats.Range)
+	else
+		target, targetRoot = findTarget(attacker, root, stats.Range, stats.Arc)
+	end
 	if not target or not targetRoot then
 		return
 	end
@@ -78,19 +161,19 @@ function CombatSystem.slap(attacker: Player)
 		or HamsterSystem.hamsterNear(targetRoot.Position, CONTEXT_RADIUS)
 		or HamsterSystem.hamsterNear(root.Position, CONTEXT_RADIUS)
 	if not fight then
-		Notifier.send(attacker, "Slaps only work near a hamster that's rolling home, carried or dropped.", "info")
+		Notifier.send(attacker, "Attacks only work near a hamster that's rolling home, carried or dropped.", "info")
 		return
 	end
 	if PlayerState.isImmune(target) then
 		return
 	end
 
-	local direction = Vector3.new(targetRoot.Position.X - root.Position.X, 0, targetRoot.Position.Z - root.Position.Z)
-	direction = if direction.Magnitude > 0.1 then direction.Unit else Vector3.new(root.CFrame.LookVector.X, 0, root.CFrame.LookVector.Z).Unit
+	local direction = flat(targetRoot.Position - root.Position)
+	direction = if direction.Magnitude > 0.1 then direction.Unit else flat(root.CFrame.LookVector).Unit
 
-	PlayerState.stun(target, Config.StunSeconds, Config.StunImmunitySeconds)
+	PlayerState.stun(target, stats.Stun, Config.StunImmunitySeconds)
 	HamsterSystem.interrupt(target)
-	Remotes.event("Knockback"):FireClient(target, direction * Config.KnockbackPower + Vector3.new(0, 18, 0))
+	Remotes.event("Knockback"):FireClient(target, direction * stats.Knockback + Vector3.new(0, 18, 0))
 	Remotes.event("Fx"):FireAllClients("Hit", "", targetRoot.Position, target.UserId)
 
 	local data = DataSystem.get(attacker)
@@ -104,16 +187,21 @@ function CombatSystem.slap(attacker: Player)
 		if CombatSystem.theftHook(attacker, target) then
 			Notifier.send(attacker, "You stopped the theft!", "success")
 		end
-	elseif carried and random:NextNumber() < Config.DropChance then
+	elseif carried and random:NextNumber() < stats.DropChance then
 		HamsterSystem.dropCarried(target, "Slap", Config.DropBanSeconds)
 		Notifier.send(attacker, "You knocked the hamster loose!", "success")
 	end
-	Notifier.send(target, string.format("%s slapped you!", attacker.DisplayName), "error")
+	Notifier.send(target, string.format("%s hit you!", attacker.DisplayName), "error")
+end
+
+-- kept for callers / tests that mean "bare-paw or held weapon, no aim"
+function CombatSystem.slap(attacker: Player)
+	CombatSystem.attack(attacker, nil)
 end
 
 function CombatSystem.start()
-	Remotes.event("Attack").OnServerEvent:Connect(function(player)
-		CombatSystem.slap(player)
+	Remotes.event("Attack").OnServerEvent:Connect(function(player, aim)
+		CombatSystem.attack(player, aim)
 	end)
 end
 

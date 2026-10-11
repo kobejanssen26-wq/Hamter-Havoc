@@ -147,21 +147,25 @@ task.spawn(function()
 	local HotbarConfig = require(find("ReplicatedStorage.Modules.HotbarConfig"))
 	local slots = 0
 	for _, d in M.descendants(gui) do if string.sub(RawData[d].Name, 1, 5) == "Slot_" then slots += 1 end end
-	check("hotbar has every configured slot", slots == #HotbarConfig.Slots, slots)
+	check("hotbar has every configured slot", slots == HotbarConfig.SlotCount, slots)
 	local DataSystem = require(find("ServerScriptService.Systems.DataSystem"))
 	local ReplicationSystem = require(find("ServerScriptService.Systems.ReplicationSystem"))
+	local GearSystem = require(find("ServerScriptService.Systems.GearSystem"))
 	local data = DataSystem.get(p)
 	local function pressKey(code)
 		local input = { KeyCode = M.Enum.KeyCode[code], UserInputType = M.Enum.UserInputType.Keyboard, UserInputState = M.Enum.UserInputState.Begin }
 		RawData[UIS].Signals.InputBegan:Fire(input, false)
 		adv(0.5)
 	end
-	data.Items = {}
+	data.Items = {}; data.Gear = {}; data.Hotbar = {}
+	M.isServer = true; ReplicationSystem.mark(p, "Items", "Gear", "Hotbar"); M.isServer = false
+	adv(1.5)
 	pressKey("Two"); pressKey("Two")
 	check("empty slot cannot be used", data.Items.item_coins == nil and (data.Boosts.Coins2x or 0) <= os.time())
 	data.Items.item_coins = 2
-	M.isServer = true; ReplicationSystem.mark(p, "Items"); M.isServer = false
+	M.isServer = true; GearSystem.fill(data); ReplicationSystem.mark(p, "Items", "Hotbar"); M.isServer = false
 	adv(1.5)
+	check("owned consumable got hotbar slot 2", data.Hotbar["2"] == "item_coins", data.Hotbar["2"])
 	pressKey("Three") -- moves the selection elsewhere
 	pressKey("Two") -- select
 	check("first press only selects", data.Items.item_coins == 2, data.Items.item_coins)
@@ -172,9 +176,8 @@ task.spawn(function()
 	-- shop
 	local shop = UIKit.getPanel("Shop")
 	shop:Open(); adv(0.6)
-	check("shop shows Boosts / Hamsters / Cosmetics categories", #byName(shop.Gui, "Category_Boosts") == 1 and #byName(shop.Gui, "Category_Hamsters") == 1 and #byName(shop.Gui, "Category_Cosmetics") == 1)
-	check("empty categories are not shown", #byName(shop.Gui, "Category_Equipment") == 0 and #byName(shop.Gui, "Category_Limited") == 0 and #byName(shop.Gui, "Category_Diamonds") == 0)
-	check("cash-priced and diamond-priced items both listed", #byName(shop.Gui, "Buy_tonic_cash") == 1 and #byName(shop.Gui, "Buy_boost_coins") == 1)
+	check("shop has category tabs: Weapons / Equipment / Boosts / Hamsters / Cosmetics / Game Passes", #byName(shop.Gui, "Tab_Weapons") == 1 and #byName(shop.Gui, "Tab_Equipment") == 1 and #byName(shop.Gui, "Tab_Boosts") == 1 and #byName(shop.Gui, "Tab_Hamsters") == 1 and #byName(shop.Gui, "Tab_Cosmetics") == 1 and #byName(shop.Gui, "Tab_Gamepasses") == 1)
+	check("empty categories are not shown", #byName(shop.Gui, "Tab_Limited") == 0 and #byName(shop.Gui, "Tab_Diamonds") == 0)
 	shop:Close(); adv(0.4)
 
 	-----------------------------------------------------------------

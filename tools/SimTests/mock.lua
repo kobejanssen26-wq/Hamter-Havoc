@@ -506,6 +506,8 @@ local function setParent(inst, newParent)
 	if newParent then
 		table.insert(RawData[newParent].Children, inst)
 	end
+	if old and RawData[old].Signals.ChildRemoved then RawData[old].Signals.ChildRemoved:Fire(inst) end
+	if newParent and RawData[newParent].Signals.ChildAdded then RawData[newParent].Signals.ChildAdded:Fire(inst) end
 	local nowIn = isInGame(inst)
 	if nowIn and not wasIn then
 		fireDescendantsEntered(inst)
@@ -903,6 +905,9 @@ function M.newPlayer(name)
 		end,
 	})
 	setParent(player, Players)
+	local backpack = newInstance("Backpack", true)
+	RawData[backpack].Name = "Backpack"
+	setParent(backpack, player)
 	table.insert(players, player)
 	return player
 end
@@ -925,6 +930,26 @@ function M.spawnCharacter(player)
 	RawData[root].Props.Size = v3(2, 2, 1)
 	setParent(root, character)
 	local humanoid = newInstance("Humanoid", true)
+	setMethods(humanoid, {
+		EquipTool = function(self, tool)
+			if InstanceMethods.IsA(tool, "Tool") then
+				-- like Roblox: whatever is held goes back to the backpack first
+				self:UnequipTools()
+				setParent(tool, RawData[self].Parent)
+			end
+		end,
+		UnequipTools = function(self)
+			local char = RawData[self].Parent
+			local owner
+			for _, p in players do if RawData[p].Props.Character == char then owner = p end end
+			local pack = owner and InstanceMethods.FindFirstChildOfClass(owner, "Backpack")
+			if char and pack then
+				for _, child in table.clone(RawData[char].Children) do
+					if InstanceMethods.IsA(child, "Tool") then setParent(child, pack) end
+				end
+			end
+		end,
+	})
 	RawData[humanoid].Props.Health = 100
 	RawData[humanoid].Props.MaxHealth = 100
 	RawData[humanoid].Props.WalkSpeed = 16
@@ -935,6 +960,11 @@ function M.spawnCharacter(player)
 	RawData[character].Props.PrimaryPart = root
 	setParent(character, workspace_ref)
 	RawData[player].Props.Character = character
+	-- like Roblox: a respawn empties the Backpack (tools must be handed out again)
+	local pack = InstanceMethods.FindFirstChildOfClass(player, "Backpack")
+	if pack then
+		for _, child in table.clone(RawData[pack].Children) do setParent(child, nil) end
+	end
 	local sig = RawData[player].Signals.CharacterAdded
 	if not sig then sig = newSignal() RawData[player].Signals.CharacterAdded = sig end
 	sig:Fire(character)
@@ -947,7 +977,10 @@ workspace_ref = Workspace
 M.workspace = Workspace
 setMethods(Workspace, {
 	GetServerTimeNow = function() return Sim.now end,
+	Raycast = function() return M.rayResult end,
 })
+M.rayResult = nil -- tests set this to simulate a wall in the way
+M.RaycastParams = { new = function() return { FilterDescendantsInstances = {}, FilterType = 0, IgnoreWater = false } end }
 local camera = newInstance("Camera", true)
 RawData[camera].Props.ViewportSize = v2(1280, 720)
 RawData[camera].Props.CFrame = CFrame.new(0, 30, -60)
@@ -1108,9 +1141,20 @@ setMethods(DataStoreService, {
 	end,
 })
 local MarketplaceService = service("MarketplaceService")
+M.ownedPasses = {} -- [userId] = { [passId] = true } : what "Roblox" says the player owns
+M.prompted = {} -- { {Player, PassId} } every official purchase prompt that was opened
+M.passPrice = {} -- [passId] = robux
+M.passCheckFail = false
 setMethods(MarketplaceService, {
-	UserOwnsGamePassAsync = function() return false end,
-	PromptGamePassPurchase = function() end,
+	UserOwnsGamePassAsync = function(_, userId, passId)
+		if M.passCheckFail then error("HTTP 503 (simulated)") end
+		return (M.ownedPasses[userId] and M.ownedPasses[userId][passId]) == true
+	end,
+	GetProductInfo = function(_, passId)
+		if not M.passPrice[passId] then error("no such pass") end
+		return { PriceInRobux = M.passPrice[passId], IsForSale = true }
+	end,
+	PromptGamePassPurchase = function(_, player, passId) table.insert(M.prompted, { Player = player, PassId = passId }) end,
 	PromptProductPurchase = function() end,
 })
 RawData[MarketplaceService].Signals.PromptGamePassPurchaseFinished = newSignal()

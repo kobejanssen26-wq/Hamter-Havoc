@@ -11,6 +11,7 @@ local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 
 local Modules = ReplicatedStorage:WaitForChild("Modules")
+local ItemRegistry = require(Modules:WaitForChild("ItemRegistry"))
 local RarityConfig = require(Modules:WaitForChild("RarityConfig"))
 local Remotes = require(ReplicatedStorage:WaitForChild("Remotes"))
 
@@ -387,7 +388,55 @@ local function distanceToMe(position: Vector3): number
 	return math.huge
 end
 
-function FxController.worldEvent(kind: string, rarityId: string, position: Vector3?, extra: any)
+-- A weapon swing / shot, drawn on every client from the server's broadcast (cosmetic only: damage is server-side).
+function FxController.weaponUse(itemId: string, position: Vector3, userId: any, direction: any)
+	local def = ItemRegistry.get(itemId)
+	if not def or def.Equip.Kind ~= "Tool" then
+		return
+	end
+	local stats = def.Equip.Weapon
+	local player = if type(userId) == "number" then Players:GetPlayerByUserId(userId) else nil
+	local character = player and player.Character
+	local tool = nil
+	if character then
+		for _, child in character:GetChildren() do
+			if child:IsA("Tool") and child:GetAttribute("ItemId") == itemId then
+				tool = child
+			end
+		end
+	end
+	AudioController.play("Slap", { Position = position, Pitch = if stats.Type == "Ranged" then 1.5 else 0.75 + math.random() * 0.2 })
+	if tool then
+		local grip = tool.Grip
+		local pull = if stats.Type == "Ranged" then CFrame.new(0, 0, 0.5) else CFrame.Angles(math.rad(-85), 0, 0)
+		local out = TweenService:Create(tool, TweenInfo.new(0.09, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Grip = grip * pull })
+		out:Play()
+		out.Completed:Once(function()
+			if tool.Parent then
+				TweenService:Create(tool, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Grip = grip }):Play()
+			end
+		end)
+	end
+	if stats.Type == "Ranged" and typeof(direction) == "Vector3" and direction.Magnitude > 0.1 then
+		local look = stats.Look or {}
+		local shot = Instance.new("Part")
+		shot.Shape = Enum.PartType.Ball
+		shot.Size = Vector3.new(0.7, 0.7, 0.7)
+		shot.Material = Enum.Material.SmoothPlastic
+		shot.Color = if type(look.Accent) == "string" and #look.Accent == 6 then Color3.fromHex(look.Accent) else Color3.fromRGB(242, 193, 78)
+		shot.Anchored = true
+		shot.CanCollide = false
+		shot.CanQuery = false
+		shot.CanTouch = false
+		shot.Position = position + Vector3.new(0, 1.5, 0) + direction.Unit * 2
+		shot.Parent = workspace
+		local travel = math.min(stats.Range, 70)
+		TweenService:Create(shot, TweenInfo.new(travel / 90, Enum.EasingStyle.Linear), { Position = shot.Position + direction.Unit * travel, Transparency = 1 }):Play()
+		Debris:AddItem(shot, travel / 90 + 0.1)
+	end
+end
+
+function FxController.worldEvent(kind: string, rarityId: string, position: Vector3?, extra: any, direction: any?)
 	if not position then
 		return
 	end
@@ -449,6 +498,8 @@ function FxController.worldEvent(kind: string, rarityId: string, position: Vecto
 		end
 	elseif kind == "Slap" then
 		AudioController.play("Slap", { Position = position, Pitch = 0.9 + math.random() * 0.3 })
+	elseif kind == "WeaponUse" then
+		FxController.weaponUse(rarityId, position, extra, direction)
 	elseif kind == "Hit" then
 		FxController.burst(lifted, WORLD_COLORS.Hit, 4)
 		AudioController.play("Hit", { Position = position })
@@ -461,7 +512,7 @@ end
 function FxController.start()
 	RunService.RenderStepped:Connect(step)
 
-	Remotes.event("Fx").OnClientEvent:Connect(function(kind: string, argument: any, position: Vector3?, extra: any)
+	Remotes.event("Fx").OnClientEvent:Connect(function(kind: string, argument: any, position: Vector3?, extra: any, direction: any?)
 		if kind == "RareSpawn" then
 			AudioController.playRareAlert(argument)
 			if FxController.OnRareAlert then
@@ -479,7 +530,7 @@ function FxController.start()
 				FxController.OnQuestDone()
 			end
 		else
-			FxController.worldEvent(kind, if type(argument) == "string" then argument else "", position, extra)
+			FxController.worldEvent(kind, if type(argument) == "string" then argument else "", position, extra, direction)
 		end
 	end)
 end

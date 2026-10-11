@@ -16,7 +16,7 @@ local UIKit = require(script.Parent.UIKit)
 local InventoryUI = {}
 
 local C = UIKit.Colors
-local 
+
 function InventoryUI.start()
 	local panel = UIKit.panel({ Name = "Inventory", Title = "My Hamsters", Icon = "hamster", Design = Vector2.new(940, 640), Accent = C.Peach })
 	local body = panel.Body

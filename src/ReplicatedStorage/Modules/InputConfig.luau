@@ -14,7 +14,8 @@ InputConfig.Bindings = {
 	Slap = "Q",
 	WorldMenu = "F", -- proximity prompts: shops, upgrades, theft hold, elevator
 	FreeMouse = "LeftAlt", -- first person: hold to use the mouse
-	Hotbar1 = "One", Hotbar2 = "Two", Hotbar3 = "Three", Hotbar4 = "Four", Hotbar5 = "Five", Hotbar6 = "Six",
+	Hotbar1 = "One", Hotbar2 = "Two", Hotbar3 = "Three", Hotbar4 = "Four", Hotbar5 = "Five", Hotbar6 = "Six", Hotbar7 = "Seven", Hotbar8 = "Eight",
+	Backpack = "I", -- opens the Backpack (weapons, equipment, consumables)
 	Emote = EmoteConfig.DefaultKey, -- overridden by the player's setting
 }
 

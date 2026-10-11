@@ -10,6 +10,7 @@ src/ReplicatedStorage/Modules/Content/
   Hamsters/    one .luau file per custom hamster       (_Template.luau = copy me)
   Emotes/      one .luau file per emote                (Wave, Point, Cheer, Laugh, Dance, Dance2 + _Template)
   Animations/  one .luau file per registered animation (_Template.luau)
+  Items/       one .luau file per weapon / equipment / consumable (_Template.luau = copy me)
 src/ReplicatedStorage/Assets/HamsterModels/   your own hamster models (.rbxm / .rbxmx)
 src/StarterPlayer/StarterPlayerScripts/UI/    Theme.luau (look), UIRegistry.luau (buttons), UIKit.luau (components)
 src/ReplicatedStorage/Modules/                FloorConfig, ShopConfig, AudioConfig, TheftConfig, LeaderboardConfig, EmoteConfig ...
@@ -100,10 +101,40 @@ Rack theft only reaches floors listed in `TheftConfig.StealableFloors` (default:
 * Gate time: `SecurityConfig.BaseDuration + PerRebirthSeconds * rebirths` (45 s, +10 s per rebirth). Theft rules: `TheftConfig`.
 * Leaderboards: `LeaderboardConfig` (metrics, periods, cache/flush times).
 
+## 7b. Items: weapons, equipment, boosts (one file each)
+Copy `Content/Items/_Template.luau`, rename it and fill it in. The item then appears **everywhere it belongs** with no UI code:
+Shop (Weapons / Equipment / Boosts tab), Backpack, hotbar, and (weapons) as a real `Tool` in the player's Backpack.
+
+| Category | `Equip.Kind` | What it does |
+|---|---|---|
+| `Weapon` | `Tool` | a real Tool. `Weapon = { Type = "Melee" or "Ranged", Range, Arc, Cooldown, Knockback, Stun, DropChance, Look = { Style = "bat" / "ladle" / "slingshot", Color, Accent } }` |
+| `Equipment` | `Passive` | works while owned. Supported `Stats`: `CollectRange`, `WalkSpeed` (a new stat needs code in `EconomyMath` first) |
+| `Consumable` | `Consume` | counted; `Effect = "Boost"` (+`BoostId`, `Seconds`) or `"Pouch"` (+`Minutes`) |
+
+Required: `Id` (lowercase letters/digits/underscore, **never change it later**), `DisplayName`, `Description`, `Category`, `Icon` (a drawn icon id from `UI/Icons.luau`, or a real `rbxassetid://<number>`), `Equip`.
+For sale: `Currency` (`"Coins"` or `"Gems"`) **and** `Price` together. Without them the item is not in the shop. Optional: `Rarity`, `ModelName`
+(your own Tool in `ReplicatedStorage/Assets/Tools/<ModelName>`; it needs a part called `Handle`, scripts inside it are ignored. If it is missing the built-in look is used and you get a warning).
+Invalid files are skipped and listed by the content check (§8); a typo never crashes the game. Limits are enforced (range ≤ 60, cooldown ≥ 0.3 s ...), so no file can make a "spam" weapon.
+
+**How weapons behave (all decided on the server, `CombatSystem`):** the client only says "attack" (+ an aim direction for ranged weapons). The server checks that you really own and hold the weapon, applies its own range/arc/cooldown,
+picks the target (melee: nearest player in front; ranged: a ray along your aim, blocked by walls) and only lands the hit near a hamster that is rolling home, carried or dropped — weapons can't be used to grief people for fun and never take health.
+A valid hit by the **owner** on a thief carrying a hamster uses the existing failed-theft path (`CombatSystem.theftHook` → `TheftSystem.ownerHit`); a hit by anybody else makes the carrier drop it with the weapon's `DropChance`.
+
+**Hotbar:** slot 1 is always the paws (slap). Owned weapons/consumables fill slots 2–8 in the order you got them (`profile.Hotbar`); re-order in the Backpack. Keys 1–8, `I` opens the Backpack. Pressing a weapon's key equips it, pressing again puts it away.
+
+## 7c. Game passes (Robux) — `GamepassConfig.luau`
+1. Creator Dashboard → your experience → Monetization → Passes → create the pass, copy its numeric **PassId**.
+2. In `Modules/GamepassConfig.luau` set `PassId` on an existing entry or add one: `{ Key = "VIP", PassId = 123456, Name = ..., Description = ..., Icon = ..., Order = 60, Benefit = { CoinMult = 1.5 } }`.
+   `Key` is permanent (it is stored in saves). Optional `Category` (default `Gamepasses`). Supported `Benefit` stats: `CoinMult`, `Luck`, `WalkSpeed`, `Slots`, `AutoCollect`.
+3. `PassId = 0` means **not configured**: the pass is never purchasable, and it is only *listed* (greyed, "Not configured") while you test in Studio. In a live game players do not see it at all.
+4. The Robux price is **not** in the config: the server asks Roblox (`MarketplaceService:GetProductInfo`), so it can't be out of date. There is no fake Robux balance anywhere; paying always goes through Roblox's own purchase prompt.
+5. The benefit is granted only when `UserOwnsGamePassAsync` says the player owns the pass (checked on join, after the prompt closes, and with the *Refresh purchases* button). A client report of "I bought it" is never trusted.
+6. Test in Studio: Game Settings → Avatar/Monetization → the pass must be on-sale or owned by your account; open the Shop → *Game Passes* → buy (Studio shows the official prompt; testing purchases of your own passes is free for the creator account). Then check the benefit (e.g. cash multiplier in the HUD) and rejoin to see it persist.
+
 ## 8. Validate before testing
 * In Studio (server command bar):
   `for _, i in require(game.ReplicatedStorage.Modules.ContentCheck).run() do print(i.Level, i.Kind, i.Id, i.Message) end`
-  Errors (the item is skipped): duplicate ids, unknown rarity, bad price/income, invalid or placeholder asset ids, emote with no/two animation sources.
+  Errors (the item is skipped): duplicate ids, bad item/weapon stats, price without currency, duplicate PassIds, unknown rarity, bad price/income, invalid or placeholder asset ids, emote with no/two animation sources.
   Warnings: model not found (procedural look used), animation without `AssetId`.
   The server prints the same summary at every start: `[Content] checked N hamsters: X error(s), Y warning(s)`.
 * Offline, without Studio: `tools/SimTests/run.sh --all` (needs the `luau` binary) — includes the content validator tests (`scn_content`).

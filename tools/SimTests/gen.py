@@ -1,7 +1,6 @@
 import os, sys, json
-ROOT=os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-SRC=os.path.join(ROOT, "src")
-PROJECT=json.load(open(os.path.join(ROOT, "default.project.json")))
+SRC="/home/user/hamter-havoc/src"
+PROJECT=json.load(open("/home/user/hamter-havoc/default.project.json"))
 out=[]
 counter=[0]
 def nid():
@@ -13,6 +12,7 @@ local M = require("./mock")
 local Instance, Vector2, Vector3, CFrame, Color3, UDim, UDim2 = M.Instance, M.Vector2, M.Vector3, M.CFrame, M.Color3, M.UDim, M.UDim2
 local NumberRange, NumberSequence, NumberSequenceKeypoint, ColorSequence, ColorSequenceKeypoint, TweenInfo, Random, Enum, Rect = M.NumberRange, M.NumberSequence, M.NumberSequenceKeypoint, M.ColorSequence, M.ColorSequenceKeypoint, M.TweenInfo, M.Random, M.Enum, M.Rect
 local task, os, game, workspace = M.task, M.os, M.game, M.workspace
+local RaycastParams = M.RaycastParams
 local function warn(...) print("[warn]", ...) end
 local rawtypeof = typeof
 local function typeof(v)
@@ -86,7 +86,7 @@ def walk(node, name, parent_id):
     cls=node.get("$className")
     path=node.get("$path")
     if path:
-        full=os.path.join(ROOT,path)
+        full=os.path.join("/home/user/hamter-havoc",path)
         if os.path.isdir(full):
             # service with a path -> service + children from dir ; or folder module
             if parent_id==0 and cls:
@@ -125,5 +125,5 @@ local function find(path)
 end
 ''')
 out.append(open(sys.argv[1]).read())
-open(os.path.join(os.getcwd(),"run.lua"),"w").write("\n".join(out))
+open("run.lua","w").write("\n".join(out))
 print("generated run.lua with", counter[0], "nodes")

@@ -25,6 +25,8 @@ function ContentCheck.run(): { any }
 	add(HamsterDatabase.Issues)
 	add(require(modules.EmoteConfig).Issues)
 	add(require(modules.AnimationRegistry).Issues)
+	add(require(modules.ItemRegistry).Issues)
+	add(require(modules.GamepassConfig).Issues)
 
 	local seen: { [string]: boolean } = {}
 	for _, species in HamsterDatabase.Species do

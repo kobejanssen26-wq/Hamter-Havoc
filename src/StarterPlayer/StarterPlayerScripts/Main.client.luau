@@ -38,6 +38,7 @@ local screens = {
 	"MainUI",
 	"IndexUI",
 	"InventoryUI",
+	"BackpackUI",
 	"UpgradeUI",
 	"RebirthUI",
 	"ShopUI",
