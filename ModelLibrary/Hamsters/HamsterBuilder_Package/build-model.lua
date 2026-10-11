@@ -1,4 +1,4 @@
--- The game's hamster generator: HamsterBuilder (+ Toolkit, Faces, Hats, Gear, Wings), HamsterDatabase (172 species), HamsterNames (display names) and RarityConfig.
+-- The game's hamster generator: HamsterBuilder (+ Toolkit, Faces, Hats, Gear, Wings, Characters), HamsterDatabase (172 species), HamsterNames (display names) and RarityConfig.
 -- Sources are the CURRENT files of the game. Usage is documented in the README next to this file.
 return function(ctx)
 	local package = ctx.new("Folder", ctx.Config.Name, ctx.Scratch)
@@ -8,6 +8,7 @@ return function(ctx)
 	ctx.gameModule(builder, "src/ReplicatedStorage/Modules/HamsterBuilder/Hats.luau", "Hats")
 	ctx.gameModule(builder, "src/ReplicatedStorage/Modules/HamsterBuilder/Gear.luau", "Gear")
 	ctx.gameModule(builder, "src/ReplicatedStorage/Modules/HamsterBuilder/Wings.luau", "Wings")
+	ctx.gameModule(builder, "src/ReplicatedStorage/Modules/HamsterBuilder/Characters.luau", "Characters")
 	ctx.gameModule(package, "src/ReplicatedStorage/Modules/HamsterDatabase.luau", "HamsterDatabase")
 	ctx.gameModule(package, "src/ReplicatedStorage/Modules/HamsterNames.luau", "HamsterNames")
 	ctx.gameModule(package, "src/ReplicatedStorage/Modules/RarityConfig.luau", "RarityConfig")
