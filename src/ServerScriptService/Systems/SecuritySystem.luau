@@ -31,6 +31,7 @@ local HouseBuilder = require(script.Parent.WorldBuilder.HouseBuilder)
 local HouseSystem = require(script.Parent.HouseSystem)
 local Notifier = require(script.Parent.Notifier)
 local PlayerState = require(script.Parent.PlayerState)
+local TheftState = require(script.Parent.TheftState)
 
 local SecuritySystem = {}
 
@@ -90,6 +91,9 @@ local function publish(house: HouseBuilder.House)
 		entry.Tier = tier.Name
 		HouseBuilder.setSecurity(house, status, tier)
 		local owner = house.Owner
+		if before ~= status then
+			Events.GateChanged:Fire(house, status, before)
+		end
 		if owner and before ~= status then
 			-- gate state is shown by the gate itself, the HUD gate chip and a quiet sound (no big banner)
 			if status == "Active" then
@@ -109,8 +113,10 @@ function SecuritySystem.activate(house: HouseBuilder.House): boolean
 	end
 	local entry = timersOf(house)
 	local tier = tierOf(house)
+	local owner = house.Owner :: Player
+	local data = DataSystem.get(owner)
 	local time = now()
-	entry.Until = time + tier.Duration
+	entry.Until = time + SecurityConfig.duration(if data then data.Rebirths else 0)
 	entry.ReadyAt = entry.Until + tier.Recharge
 	publish(house)
 	return true
@@ -147,7 +153,8 @@ end
 
 local function scanZaps(house: HouseBuilder.House)
 	for _, player in Players:GetPlayers() do
-		if player ~= house.Owner then
+		-- a thief carrying the owner's hamster is trapped INSIDE by the closed gate (TheftSystem), not thrown out
+		if player ~= house.Owner and not TheftState.isTrapped(player, house.Index) then
 			local _, root = PlayerState.character(player)
 			if root and WorldLayout.inLot(house.CFrame, root.Position, 0) then
 				zap(player, house)

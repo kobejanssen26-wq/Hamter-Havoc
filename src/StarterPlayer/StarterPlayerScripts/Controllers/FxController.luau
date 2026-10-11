@@ -429,6 +429,10 @@ function FxController.worldEvent(kind: string, rarityId: string, position: Vecto
 		if extra ~= me then
 			AudioController.play("Secure", { Position = position, Volume = 0.7 })
 		end
+	elseif kind == "TheftFailed" then
+		if near < 90 then
+			AudioController.play("TheftFailed", { Position = position })
+		end
 	elseif kind == "Emote" then
 		if type(extra) == "string" and near < 70 then
 			AudioController.play(extra, { Position = position })

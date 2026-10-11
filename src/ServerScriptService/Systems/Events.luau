@@ -31,5 +31,9 @@ Events.RoofChanged = Signal.new() -- (player)
 Events.StatsChanged = Signal.new() -- (player)
 Events.HouseClaimed = Signal.new() -- (house, player)
 Events.HouseFreed = Signal.new() -- (house)
+Events.GateChanged = Signal.new() -- (house, newStatus, oldStatus)
+Events.TheftCompleted = Signal.new() -- (thief, owner, speciesId)  a rack theft was really completed
+Events.TheftFailed = Signal.new() -- (thief, owner, speciesId, reason)
+Events.LeaderboardStat = Signal.new() -- (player, metric, amount) reserved for the leaderboard service
 
 return Events

@@ -19,6 +19,7 @@ export type Floor = {
 	LuckBonus: number, -- +x luck
 	Perk: string, -- one-line description shown in the Rebirth UI
 	Feature: string?, -- "Storage" | "Console" | nil
+	Elevator: { Visible: boolean?, Up: boolean?, Down: boolean? }?, -- optional per-floor elevator switches (default: all true)
 }
 
 FloorConfig.Floors = {
@@ -30,6 +31,26 @@ FloorConfig.Floors = {
 } :: { Floor }
 
 FloorConfig.MaxFloors = #FloorConfig.Floors
+
+-- State of the elevator on floor `index` in a building with `built` floors (all configuration-driven):
+--   Visible  the shaft and doors exist (never in a one-floor building)
+--   Up       an UP call button exists (only when the next floor is really unlocked)
+--   Down     a DOWN call button exists (every floor above the first)
+-- A floor can opt out through its own `Elevator = { Visible = false }` / `{ Up = false }` / `{ Down = false }` entry.
+function FloorConfig.elevator(index: number, built: number): { Visible: boolean, Up: boolean, Down: boolean, UpTo: number?, DownTo: number? }
+	local floor = FloorConfig.Floors[index]
+	if not floor or index > built or built < 2 then
+		return { Visible = false, Up = false, Down = false }
+	end
+	local config = floor.Elevator or {}
+	local up = config.Up ~= false and index < built
+	local down = config.Down ~= false and index > 1
+	local visible = config.Visible ~= false and (up or down)
+	if not visible then
+		return { Visible = false, Up = false, Down = false }
+	end
+	return { Visible = true, Up = up, Down = down, UpTo = if up then index + 1 else nil, DownTo = if down then index - 1 else nil }
+end
 
 -- How many floors the player's building has after `rebirths` rebirths.
 function FloorConfig.count(rebirths: number): number

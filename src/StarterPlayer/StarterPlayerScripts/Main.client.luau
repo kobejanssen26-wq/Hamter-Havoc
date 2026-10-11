@@ -23,6 +23,7 @@ local order = {
 	"AmbientController",
 	"NatureController",
 	"EmoteController",
+	"TheftController",
 }
 for _, name in order do
 	local ok, err = pcall(function()

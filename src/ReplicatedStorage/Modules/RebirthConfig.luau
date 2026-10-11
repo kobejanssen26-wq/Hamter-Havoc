@@ -176,9 +176,10 @@ function RebirthConfig.rewards(n: number, boostLevel: number?): { Reward }
 	end
 	for _, tier in SecurityConfig.Tiers do
 		if tier.MinRebirth == n and n > 0 then
-			table.insert(list, { Icon = "security", Text = string.format("Better gate: %s (%ds)", tier.Name, tier.Duration) })
+			table.insert(list, { Icon = "security", Text = string.format("Stronger gate: %s", tier.Name) })
 		end
 	end
+	table.insert(list, { Icon = "security", Text = string.format("Gate stays on +%d s longer (%d s > %d s)", SecurityConfig.PerRebirthSeconds, SecurityConfig.duration(n - 1), SecurityConfig.duration(n)) })
 	for _, id in RarityConfig.Order do
 		local definition = RarityConfig.ById[id]
 		if definition.MinRebirth == n then

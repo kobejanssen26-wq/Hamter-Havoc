@@ -50,6 +50,10 @@ local HamsterSystem = {}
 -- Natural spawning can be paused (events, tests).
 HamsterSystem.AutoSpawn = true
 
+-- Set by TheftSystem (rack thefts): Settle(e, player) -> "Stolen" | "Returned" ; Aborted(e, reason) when the entity
+-- disappears without being secured. HamsterSystem never requires TheftSystem (no circular dependency).
+HamsterSystem.Hooks = {} :: { Settle: ((Entity, Player) -> string)?, Aborted: ((Entity, string) -> ())? }
+
 local S = HamsterStates
 local Config = HamsterStates.Config
 
@@ -93,6 +97,7 @@ export type Entity = {
 	LastSent: Vector3,
 	SentSpeed: number,
 	StolenFrom: Player?,
+	Theft: any?, -- set for a hamster taken from a wheel (rack theft): { Id, Owner, Slot, SpeciesId, HouseIndex, Settled }
 }
 
 local random = Random.new()
@@ -191,7 +196,7 @@ end
 local function pendingCount(player: Player): number
 	local count = 0
 	for _, e in entities do
-		if e.Payer == player and e.State ~= S.Travelling and e.State ~= S.Spawning then
+		if e.Payer == player and not e.Theft and e.State ~= S.Travelling and e.State ~= S.Spawning then
 			count += 1
 		end
 	end
@@ -244,6 +249,12 @@ local function remove(e: Entity, reason: string, extra: any?)
 	if entities[e.Id] ~= e then
 		return
 	end
+	if e.Theft and not e.Theft.Settled and HamsterSystem.Hooks.Aborted then
+		local ok, err = pcall(HamsterSystem.Hooks.Aborted, e, e.Theft.EndReason or reason)
+		if not ok then
+			warn("[HamsterSystem] theft abort hook failed: " .. tostring(err))
+		end
+	end
 	release(e)
 	entities[e.Id] = nil
 	Remotes.event("HamsterRemove"):FireAllClients(e.Id, reason, extra)
@@ -292,6 +303,7 @@ local function newEntity(species: any, lane: number): Entity
 		LastSent = spawn,
 		SentSpeed = 0,
 		StolenFrom = nil,
+		Theft = nil,
 	}
 end
 
@@ -696,6 +708,10 @@ local function returnToPayer(e: Entity)
 	end
 	e.Resets += 1
 	if e.Resets > Config.MaxResets then
+		if e.Theft then
+			remove(e, "Lost") -- the abort hook gives the hamster back (nothing was paid for it, nothing is refunded)
+			return
+		end
 		refund(payer, e.Price * 0.5)
 		Notifier.send(payer, "Your hamster ran away. You got half of its price back.", "info")
 		remove(e, "Lost")
@@ -715,6 +731,17 @@ end
 
 local function secure(e: Entity, player: Player)
 	if entities[e.Id] ~= e then
+		return
+	end
+	if e.Theft then
+		-- a hamster taken from a wheel: TheftSystem decides (transfer to the thief, or back to its owner)
+		local settle = HamsterSystem.Hooks.Settle
+		local outcome = if settle then settle(e, player) else "Returned"
+		local position = e.Position
+		remove(e, if outcome == "Stolen" then "Secured" else "Returned", player.UserId)
+		if outcome == "Stolen" then
+			Remotes.event("Fx"):FireAllClients("Secure", e.Rarity, position, player.UserId)
+		end
 		return
 	end
 	local payer = e.Payer
@@ -766,7 +793,14 @@ local function takePossession(e: Entity, player: Player, kind: string)
 	PlayerState.setCarry(player, carryFactor(e.Rank))
 	setState(e, S.Carried)
 
-	if kind == "steal" and payer and payer ~= player then
+	if kind == "rack" then
+		e.StolenFrom = payer
+		fx("Steal", e)
+		-- messages are sent by TheftSystem (it knows the wheel); only the alarm sound is here
+		if payer and payer.Parent == Players then
+			Remotes.event("Fx"):FireClient(payer, "Alarm", e.Rarity, e.Position, nil)
+		end
+	elseif kind == "steal" and payer and payer ~= player then
 		e.StolenFrom = payer
 		fx("Steal", e)
 		Notifier.send(player, "You stole " .. e.Species.Name .. "! Run it to YOUR house!", "success")
@@ -902,6 +936,37 @@ function HamsterSystem.interact(player: Player, id: any)
 end
 
 -- A slap (or a zap) interrupts what the player is doing.
+-- Creates the carried ball of a rack theft: the hamster of `owner` (still in the owner's data) taken from the wheel at
+-- `position` by `thief`. Returns the entity, or nil when the thief cannot carry it.
+function HamsterSystem.spawnStolen(species: any, owner: Player, thief: Player, position: Vector3, theft: any): Entity?
+	if carrying[thief] then
+		return nil
+	end
+	local e = newEntity(species, 0)
+	e.Static = true
+	e.Route = nil
+	e.Position = position
+	e.Payer = owner
+	e.PayerName = owner.DisplayName
+	e.Theft = theft
+	e.State = S.Carried
+	entities[e.Id] = e
+	Remotes.event("HamsterAdd"):FireAllClients({ packet(e) })
+	takePossession(e, thief, "rack")
+	return e
+end
+
+-- Ends a rack theft right now (the owner hit the thief, the timeout ran out ...): the ball disappears and the hamster
+-- is simply still the owner's. `outcome` is told to the abort hook as the reason.
+function HamsterSystem.endTheft(e: Entity, reason: string)
+	if entities[e.Id] == e then
+		if e.Theft then
+			e.Theft.EndReason = reason
+		end
+		remove(e, "Returned", reason)
+	end
+end
+
 function HamsterSystem.interrupt(player: Player)
 	cancelChannel(player)
 end
@@ -967,7 +1032,7 @@ local function updateCarried(e: Entity, dt: number)
 		return
 	end
 	local position = root.Position
-	if math.abs(position.X) > WorldLayout.GroundHalfX or math.abs(position.Z) > WorldLayout.GroundHalfZ or position.Y < -15 or position.Y > 120 then
+	if math.abs(position.X) > WorldLayout.GroundHalfX or math.abs(position.Z) > WorldLayout.GroundHalfZ or position.Y < -15 or position.Y > 220 then
 		Notifier.send(holder, "You left the playing field - the ball rolled back!", "error")
 		dropEntity(e, "OutOfBounds", Config.TimeoutBanSeconds)
 		return
@@ -1145,7 +1210,7 @@ function HamsterSystem.onPlayerRemoving(player: Player)
 		if e.Payer == player then
 			-- they leave, the ball goes away and the price comes back before the profile is saved
 			local data = DataSystem.get(player)
-			if data then
+			if data and not e.Theft then
 				data.Coins += e.Price * Config.VanishRefund
 				DataSystem.markDirty(player)
 			end

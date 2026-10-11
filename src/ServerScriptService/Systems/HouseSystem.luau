@@ -35,6 +35,7 @@ local Build = require(script.Parent.WorldBuilder.Build)
 local HouseBuilder = require(script.Parent.WorldBuilder.HouseBuilder)
 local Notifier = require(script.Parent.Notifier)
 local PlayerState = require(script.Parent.PlayerState)
+local TheftState = require(script.Parent.TheftState)
 
 local HouseSystem = {}
 
@@ -168,7 +169,9 @@ local function refreshDisplay(house: HouseBuilder.House, data: any?)
 	for index, slot in house.Slots do
 		local unlocked = index <= slots
 		HouseBuilder.setWheel(house, index, unlocked)
-		local speciesId = if unlocked then equipped[index] else nil
+		-- a hamster that is being stolen right now is not on its wheel
+		local beingStolen = house.Owner ~= nil and TheftState.slotLocked(house.Owner.UserId, index)
+		local speciesId = if unlocked and not beingStolen then equipped[index] else nil
 		local species = if speciesId then HamsterDatabase.ById[speciesId] else nil
 		if species and data then
 			local model = nil
@@ -300,6 +303,11 @@ function HouseSystem.getHouse(player: Player): HouseBuilder.House?
 	return houseByPlayer[player]
 end
 
+-- Re-draws the wheel hamsters of a player's house (merged with other changes of the same frame).
+function HouseSystem.queueDisplay(player: Player)
+	queueDisplay(player)
+end
+
 function HouseSystem.all(): { HouseBuilder.House }
 	return houses
 end
@@ -323,7 +331,15 @@ function HouseSystem.useElevator(player: Player, houseIndex: any, floor: any, di
 		Notifier.send(player, "That elevator belongs to another player's house.", "error")
 		return
 	end
-	local target = floor + (if direction == "Up" then 1 else -1)
+	if direction ~= "Up" and direction ~= "Down" then
+		return
+	end
+	-- the unlocked floors decide where the elevator may go (the owner's building, never the client's claim)
+	local state = FloorConfig.elevator(floor, house.FloorCount)
+	local target = if direction == "Up" then state.UpTo else state.DownTo
+	if not target or not state.Visible then
+		return
+	end
 	local landing = house.Landing[target]
 	if not landing or not house.Landing[floor] then
 		return

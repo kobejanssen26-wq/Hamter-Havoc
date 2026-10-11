@@ -17,6 +17,7 @@ local DataSystem = require(script.Parent.DataSystem)
 local EconomySystem = require(script.Parent.EconomySystem)
 local Events = require(script.Parent.Events)
 local ReplicationSystem = require(script.Parent.ReplicationSystem)
+local TheftState = require(script.Parent.TheftState)
 
 local CollectionSystem = {}
 
@@ -37,8 +38,8 @@ end
 -- Fills the display slots with the highest-income hamsters you own.
 function CollectionSystem.equipBest(player: Player)
 	local data = DataSystem.get(player)
-	if not data then
-		return
+	if not data or TheftState.anyLocked(player.UserId) then
+		return -- re-ordering the wheels while a hamster is being carried off would confuse the theft
 	end
 	local entries = {}
 	for speciesId, count in data.Inventory do
@@ -94,6 +95,9 @@ function CollectionSystem.unequip(player: Player, speciesId: string): (boolean, 
 	local position = table.find(data.Equipped, speciesId)
 	if not position then
 		return false, "That hamster isn't equipped"
+	end
+	if TheftState.lockedCount(player.UserId, speciesId) > 0 then
+		return false, "Somebody is stealing that hamster right now!"
 	end
 	table.remove(data.Equipped, position)
 	ReplicationSystem.mark(player, "Equipped")

@@ -22,6 +22,9 @@ local ReplicationSystem = require(script.Parent.ReplicationSystem)
 
 local CombatSystem = {}
 
+-- Set by TheftSystem (ownerHit): returns true when a rack theft was ended by this hit.
+CombatSystem.theftHook = nil :: ((Player, Player) -> boolean)?
+
 local Config = HamsterStates.Config
 local CONTEXT_RADIUS = 34
 
@@ -95,7 +98,13 @@ function CombatSystem.slap(attacker: Player)
 		data.Stats.Slaps = (data.Stats.Slaps or 0) + 1
 		ReplicationSystem.mark(attacker, "Stats")
 	end
-	if carried and random:NextNumber() < Config.DropChance then
+	-- the OWNER of a hamster that is being carried off hits the thief: the theft fails for sure (server decides)
+	local theft = carried and carried.Theft
+	if theft and theft.Owner == attacker and CombatSystem.theftHook then
+		if CombatSystem.theftHook(attacker, target) then
+			Notifier.send(attacker, "You stopped the theft!", "success")
+		end
+	elseif carried and random:NextNumber() < Config.DropChance then
 		HamsterSystem.dropCarried(target, "Slap", Config.DropBanSeconds)
 		Notifier.send(attacker, "You knocked the hamster loose!", "success")
 	end

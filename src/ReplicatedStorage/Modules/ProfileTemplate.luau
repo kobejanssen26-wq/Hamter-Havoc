@@ -41,6 +41,9 @@ return {
 		Stolen = 0, -- stolen balls that were secured (counts for the thief)
 		Recovered = 0, -- own balls taken back
 		Slaps = 0,
+		TheftsStopped = 0, -- thefts of MY hamsters that I stopped by hitting the thief
+		TheftsFailed = 0, -- thefts I attempted that failed
+		TimesRobbed = 0, -- my hamsters that were stolen for good
 	},
 
 	Quests = { Claimed = {} },

@@ -11,6 +11,7 @@
 	Local frame: origin = middle of the gate line, +Z into the lot (see WorldLayout). Every floor is FloorHeight tall.
 ]]
 
+local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Build = require(script.Parent.Parent.Build)
@@ -19,6 +20,7 @@ local Props = require(script.Parent.Props)
 local Wheels = require(script.Parent.Wheels)
 
 local FloorConfig = require(ReplicatedStorage.Modules.FloorConfig)
+local TheftConfig = require(ReplicatedStorage.Modules.TheftConfig)
 local UpgradeConfig = require(ReplicatedStorage.Modules.UpgradeConfig)
 local WorldLayout = require(ReplicatedStorage.Modules.WorldLayout)
 
@@ -199,6 +201,25 @@ local function buildStations(house: any, floorModel: Model, f: number)
 			local center = L(house, x, y0 + Wheels.CenterAboveFloor, z)
 			local ring = Build.pillar(interior, "SlotRing", 4.4, 0.06, L(house, x, y0 + 0.04, z), Color3.fromRGB(90, 80, 90), NEON, { CanCollide = false, Transparency = 0.7 })
 			local labelAnchor = Build.deco(interior, "WheelLabelAnchor", Vector3.one * 0.2, L(house, x, y0 + Wheels.CenterAboveFloor + Wheels.Radius + 1.2, z), Color3.new(1, 1, 1), PLASTIC, { Transparency = 1 })
+			if TheftConfig.floorStealable(f) then
+				-- rack theft: held by a thief on an OPEN base (enabled/disabled by TheftSystem, validated again on the server)
+				local prompt = Instance.new("ProximityPrompt")
+				prompt.ObjectText = "Wheel"
+				prompt.ActionText = "Steal hamster"
+				prompt.KeyboardKeyCode = Enum.KeyCode.F
+				prompt.HoldDuration = TheftConfig.HoldSeconds
+				prompt.MaxActivationDistance = TheftConfig.PromptDistance
+				prompt.RequiresLineOfSight = false
+				prompt.Exclusivity = Enum.ProximityPromptExclusivity.OnePerButton
+				prompt.Enabled = false
+				prompt:SetAttribute("TheftSlot", index)
+				prompt:SetAttribute("HouseIndex", house.Index)
+				prompt:SetAttribute("Available", false)
+				prompt:SetAttribute("OwnerUserId", 0)
+				CollectionService:AddTag(prompt, "TheftPrompt")
+				prompt.Parent = ring
+				house.TheftPrompts[index] = prompt
+			end
 			house.Slots[index] = {
 				Index = index,
 				Floor = f,
@@ -223,44 +244,82 @@ local function buildLamps(house: any, floorModel: Model, f: number)
 	end
 end
 
-local function buildElevator(house: any, floorModel: Model, f: number)
-	local interior = floorModel:FindFirstChild("Interior") :: Model
-	local y0 = WorldLayout.floorY(f)
-	local doorZ = 63.2
-	-- shaft glass + doors
-	for _, side in { -1, 1 } do
-		glassPart(interior, Vector3.new(0.25, WALL_H - 1, 6.2), L(house, side * 3.4, y0 + WALL_H / 2, 66.3))
-	end
-	Build.part(interior, "ElevatorFrame", Vector3.new(7.2, WALL_H - 0.6, 0.5), L(house, 0, y0 + (WALL_H - 0.6) / 2, doorZ + 0.1), FRAME, PLASTIC)
-	for _, side in { -1, 1 } do
-		Build.part(interior, "ElevatorDoor", Vector3.new(3, WALL_H - 3.4, 0.35), L(house, side * 1.6, y0 + (WALL_H - 3.4) / 2 + 0.2, doorZ - 0.2), Color3.fromRGB(190, 196, 208), METAL, { CanCollide = false })
-	end
-	Build.deco(interior, "ElevatorLamp", Vector3.new(1.4, 0.5, 0.2), L(house, 0, y0 + WALL_H - 1.3, doorZ - 0.45), Color3.fromRGB(110, 230, 140), NEON)
-	local plate = Build.part(interior, "FloorNumber", Vector3.new(1.8, 1.8, 0.2), L(house, 0, y0 + WALL_H - 3, doorZ - 0.4), Palette.Ink, PLASTIC, { CanCollide = false })
-	Build.surfaceText(plate, Enum.NormalId.Front, tostring(f), { TextColor = Palette.Gold, PixelsPerStud = 60 })
+-- Elevators exist ONLY where they are needed (FloorConfig.elevator): a one-floor tower has none; with two or more floors
+-- every floor gets a shaft, a call button UP only when the next floor is unlocked and a call button DOWN above floor 1.
+-- Everything lives in a model "Elevator" (+ "CallUp" / "CallDown") so it can be added/removed when floors change.
+local ELEVATOR_DOOR_Z = 63.2
 
-	-- call buttons (down on the left, up on the right): the prompt closest to you is the one shown
-	local buttons = {}
-	for _, entry in { { "Down", -5.6 }, { "Up", 5.6 } } do
-		local post = Build.part(interior, "Call" .. entry[1], Vector3.new(0.8, 3.4, 0.8), L(house, entry[2], y0 + 1.7, doorZ - 0.6), FRAME, PLASTIC)
-		Build.blob(interior, "CallLamp", Vector3.new(0.7, 0.7, 0.4), L(house, entry[2], y0 + 3.2, doorZ - 1.05), if entry[1] == "Up" then Color3.fromRGB(110, 230, 140) else Color3.fromRGB(255, 190, 90), NEON, { CanCollide = false })
-		local prompt = Instance.new("ProximityPrompt")
-		prompt.ObjectText = "Elevator"
-		prompt.ActionText = if entry[1] == "Up" then "Go up" else "Go down"
-		prompt.KeyboardKeyCode = Enum.KeyCode.F
-		prompt.HoldDuration = 0
-		prompt.MaxActivationDistance = 5
-		prompt.RequiresLineOfSight = false
-		prompt.Exclusivity = Enum.ProximityPromptExclusivity.OnePerButton
-		prompt.Enabled = false
-		prompt:SetAttribute("Elevator", entry[1])
-		prompt:SetAttribute("HouseIndex", house.Index)
-		prompt:SetAttribute("Floor", f)
-		prompt.Parent = post
-		buttons[entry[1]] = prompt
+local function buildShaft(house: any, interior: Instance, f: number)
+	local y0 = WorldLayout.floorY(f)
+	local doorZ = ELEVATOR_DOOR_Z
+	local shaft = Build.model(interior, "Elevator")
+	for _, side in { -1, 1 } do
+		glassPart(shaft, Vector3.new(0.25, WALL_H - 1, 6.2), L(house, side * 3.4, y0 + WALL_H / 2, 66.3))
 	end
-	house.Elevator[f] = buttons
-	house.Landing[f] = L(house, 0, y0 + 3.2, 58.8) -- faces -Z, i.e. out towards the street
+	Build.part(shaft, "ElevatorFrame", Vector3.new(7.2, WALL_H - 0.6, 0.5), L(house, 0, y0 + (WALL_H - 0.6) / 2, doorZ + 0.1), FRAME, PLASTIC)
+	for _, side in { -1, 1 } do
+		Build.part(shaft, "ElevatorDoor", Vector3.new(3, WALL_H - 3.4, 0.35), L(house, side * 1.6, y0 + (WALL_H - 3.4) / 2 + 0.2, doorZ - 0.2), Color3.fromRGB(190, 196, 208), METAL, { CanCollide = false })
+	end
+	Build.deco(shaft, "ElevatorLamp", Vector3.new(1.4, 0.5, 0.2), L(house, 0, y0 + WALL_H - 1.3, doorZ - 0.45), Color3.fromRGB(110, 230, 140), NEON)
+	local plate = Build.part(shaft, "FloorNumber", Vector3.new(1.8, 1.8, 0.2), L(house, 0, y0 + WALL_H - 3, doorZ - 0.4), Palette.Ink, PLASTIC, { CanCollide = false })
+	Build.surfaceText(plate, Enum.NormalId.Front, tostring(f), { TextColor = Palette.Gold, PixelsPerStud = 60 })
+	return shaft
+end
+
+local function buildCall(house: any, shaft: Model, f: number, direction: string, targetName: string): ProximityPrompt
+	local y0 = WorldLayout.floorY(f)
+	local x = if direction == "Up" then 5.6 else -5.6
+	local group = Build.model(shaft, "Call" .. direction)
+	local post = Build.part(group, "Call" .. direction .. "Post", Vector3.new(0.8, 3.4, 0.8), L(house, x, y0 + 1.7, ELEVATOR_DOOR_Z - 0.6), FRAME, PLASTIC)
+	Build.blob(group, "CallLamp", Vector3.new(0.7, 0.7, 0.4), L(house, x, y0 + 3.2, ELEVATOR_DOOR_Z - 1.05), if direction == "Up" then Color3.fromRGB(110, 230, 140) else Color3.fromRGB(255, 190, 90), NEON, { CanCollide = false })
+	local prompt = Instance.new("ProximityPrompt")
+	prompt.ObjectText = "Elevator"
+	prompt.ActionText = (if direction == "Up" then "Go up: " else "Go down: ") .. targetName
+	prompt.KeyboardKeyCode = Enum.KeyCode.F
+	prompt.HoldDuration = 0
+	prompt.MaxActivationDistance = 5
+	prompt.RequiresLineOfSight = false
+	prompt.Exclusivity = Enum.ProximityPromptExclusivity.OnePerButton
+	prompt:SetAttribute("Elevator", direction)
+	prompt:SetAttribute("HouseIndex", house.Index)
+	prompt:SetAttribute("Floor", f)
+	prompt.Parent = post
+	return prompt
+end
+
+-- Makes the elevators match the unlocked floors. Cheap when nothing changed.
+local function syncElevators(house: any, count: number)
+	for f = 1, FloorConfig.MaxFloors do
+		local entry = house.Elevator[f]
+		local state = FloorConfig.elevator(f, count)
+		local floorModel = house.FloorModels[f]
+		local interior = floorModel and floorModel:FindFirstChild("Interior")
+		if not floorModel or f > count or not state.Visible or not interior then
+			if entry then
+				entry.Shaft:Destroy()
+				house.Elevator[f] = nil
+			end
+		else
+			if not entry then
+				entry = { Shaft = buildShaft(house, interior, f) }
+				house.Elevator[f] = entry
+			end
+			for _, direction in { "Up", "Down" } do
+				local wanted = if direction == "Up" then state.Up else state.Down
+				local targetFloor = if direction == "Up" then state.UpTo else state.DownTo
+				local existing = entry[direction]
+				if wanted and not existing then
+					entry[direction] = buildCall(house, entry.Shaft, f, direction, FloorConfig.Floors[targetFloor].Name)
+				elseif not wanted and existing then
+					local group = entry.Shaft:FindFirstChild("Call" .. direction)
+					if group then
+						group:Destroy()
+					end
+					entry[direction] = nil
+				end
+			end
+		end
+	end
 end
 
 ---------------------------------------------------------------------------
@@ -451,7 +510,7 @@ local function buildFloor(house: any, f: number, rng: Random)
 	local interior = Build.model(floorModel, "Interior")
 	buildStations(house, floorModel, f)
 	buildLamps(house, floorModel, f)
-	buildElevator(house, floorModel, f)
+	house.Landing[f] = L(house, 0, WorldLayout.floorY(f) + 3.2, 58.8) -- faces -Z, i.e. out towards the street (every floor, elevator or not)
 	FURNISH[f](house, interior, rng)
 	if f == 1 then
 		buildEntrance(house, floorModel)
@@ -617,6 +676,7 @@ function Tower.setFloors(house: any, count: number, rng: Random)
 			local slot = house.Slots[index]
 			if slot then
 				slot.Frame:Destroy()
+				house.TheftPrompts[index] = nil
 				house.Slots[index] = nil
 				for slotIndex, entry in house.DisplayModels do
 					if slotIndex == index then
@@ -626,7 +686,10 @@ function Tower.setFloors(house: any, count: number, rng: Random)
 				end
 			end
 		end
-		house.Elevator[f] = nil
+		if house.Elevator[f] then
+			house.Elevator[f].Shaft:Destroy()
+			house.Elevator[f] = nil
+		end
 		house.Landing[f] = nil
 	end
 	-- add missing floors
@@ -637,13 +700,7 @@ function Tower.setFloors(house: any, count: number, rng: Random)
 	end
 	house.FloorCount = count
 	rebuildRoof(house, count, rng)
-	-- elevator buttons: up everywhere but the top floor, down everywhere but the first
-	for f, buttons in house.Elevator do
-		buttons.Up.Enabled = f < count
-		buttons.Down.Enabled = f > 1
-		buttons.Up.ActionText = if f < count then "Go up: " .. FloorConfig.Floors[f + 1].Name else "Go up"
-		buttons.Down.ActionText = if f > 1 then "Go down: " .. FloorConfig.Floors[f - 1].Name else "Go down"
-	end
+	syncElevators(house, count)
 	local owner = house.Model:GetAttribute("OwnerUserId")
 	for _, prompt in house.Prompts do
 		prompt:SetAttribute("OwnerUserId", owner)
