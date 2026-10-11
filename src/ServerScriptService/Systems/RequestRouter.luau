@@ -19,6 +19,7 @@ local Rewards = require(script.Parent.Rewards)
 local SettingsSystem = require(script.Parent.SettingsSystem)
 local ShopSystem = require(script.Parent.ShopSystem)
 local ItemSystem = require(script.Parent.ItemSystem)
+local EmoteSystem = require(script.Parent.EmoteSystem)
 local TutorialSystem = require(script.Parent.TutorialSystem)
 local UpgradeSystem = require(script.Parent.UpgradeSystem)
 
@@ -155,6 +156,11 @@ end
 
 actions.ShopBuy = function(player, payload)
 	local ok, message, extra = ShopSystem.buy(player, payload.Id)
+	return result(ok, message, extra)
+end
+
+actions.Emote = function(player, payload)
+	local ok, message, extra = EmoteSystem.request(player, payload.Id)
 	return result(ok, message, extra)
 end
 

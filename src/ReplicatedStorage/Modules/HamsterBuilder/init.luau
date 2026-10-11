@@ -91,6 +91,16 @@ end
 
 function HamsterBuilder.build(species: any, options: BuildOptions?): Model
 	local opts = options or {}
+	-- a hamster with its own Studio model (Content/Hamsters ModelName) uses it; a missing/invalid model falls back below
+	if species.ModelName then
+		local modelsModule = script.Parent:FindFirstChild("HamsterModels")
+		if modelsModule then
+			local custom = (require(modelsModule) :: any).instantiate(species, opts.Scale or 1)
+			if custom then
+				return custom
+			end
+		end
+	end
 	local fur: Color3 = species.Fur
 	local belly: Color3 = species.Belly or T.mix(fur, WHITE, 0.55)
 

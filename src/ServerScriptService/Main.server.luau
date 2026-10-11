@@ -28,8 +28,12 @@ local RequestRouter = require(Systems.RequestRouter)
 local SecuritySystem = require(Systems.SecuritySystem)
 local ShopSystem = require(Systems.ShopSystem)
 local ItemSystem = require(Systems.ItemSystem)
+local EmoteSystem = require(Systems.EmoteSystem)
 local TutorialSystem = require(Systems.TutorialSystem)
 local WorldBuilder = require(Systems.WorldBuilder)
+
+-- content problems (a typo in a hamster/emote/animation file) are reported at start and never stop the game
+require(ReplicatedStorage.Modules.ContentCheck).report()
 
 -- world first, so houses exist before anybody joins
 local world = WorldBuilder.build()
@@ -89,6 +93,7 @@ local function onPlayerRemoving(player: Player)
 	RequestRouter.forget(player)
 	ShopSystem.forget(player)
 	ItemSystem.forget(player)
+	EmoteSystem.forget(player)
 	ReplicationSystem.clear(player)
 	DataSystem.release(player)
 end

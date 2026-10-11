@@ -22,6 +22,7 @@ local order = {
 	"SettingsController",
 	"AmbientController",
 	"NatureController",
+	"EmoteController",
 }
 for _, name in order do
 	local ok, err = pcall(function()
@@ -45,6 +46,7 @@ local screens = {
 	"HamsterHUD",
 	"AnnouncementUI",
 	"HotbarUI",
+	"EmoteUI",
 	"TutorialUI",
 }
 for _, name in screens do

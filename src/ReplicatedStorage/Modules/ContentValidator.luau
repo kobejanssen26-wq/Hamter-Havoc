@@ -1,0 +1,188 @@
+--[[
+	ContentValidator: checks content definitions (hamsters, emotes, animations) and returns a list of issues instead of
+	letting a typo break the game. Pure functions: no side effects, easy to run in Studio's command bar:
+
+	    local V = require(game.ReplicatedStorage.Modules.ContentValidator)
+	    for _, issue in V.validateAll() do print(issue.Level, issue.Kind, issue.Id, issue.Message) end
+
+	Level "error"  the definition is NOT loaded (the game skips it and warns)
+	Level "warn"   loaded, but something is probably unintended
+	Asset ids must be real: "rbxassetid://<number>" with a number > 0. Placeholders such as REPLACE_WITH_VALID_ASSET_ID
+	or rbxassetid://0 are reported (an empty/missing Icon or AssetId is fine - it just means "not set up yet").
+]]
+
+local ContentValidator = {}
+
+export type Issue = { Level: string, Kind: string, Id: string, Message: string }
+
+local RIG_TYPES = { R15 = true, R6 = true, Hamster = true, Any = true }
+local ANIMATION_USES = { Idle = true, Walk = true, Run = true, Emote = true, Action = true, Hamster = true, Cosmetic = true }
+local PRIORITIES = { Core = true, Idle = true, Movement = true, Action = true, Action2 = true, Action3 = true, Action4 = true }
+
+local function issue(list: { Issue }, level: string, kind: string, id: string, message: string)
+	table.insert(list, { Level = level, Kind = kind, Id = id, Message = message })
+end
+
+-- true when `value` is a usable asset id; nil/"" count as "not set" (second return value false).
+function ContentValidator.assetIdState(value: any): (boolean, boolean)
+	if value == nil or value == "" then
+		return true, false
+	end
+	if type(value) ~= "string" then
+		return false, true
+	end
+	local digits = string.match(value, "^rbxassetid://(%d+)$")
+	if not digits or tonumber(digits) == nil or tonumber(digits) <= 0 then
+		return false, true
+	end
+	return true, true
+end
+
+local function checkAsset(list: { Issue }, kind: string, id: string, field: string, value: any)
+	local ok = ContentValidator.assetIdState(value)
+	if not ok then
+		issue(list, "error", kind, id, string.format("%s '%s' is not a valid asset id (expected \"rbxassetid://<number>\")", field, tostring(value)))
+	end
+end
+
+local function isStableId(id: any): boolean
+	return type(id) == "string" and string.match(id, "^[a-z][a-z0-9_]*$") ~= nil and #id <= 40
+end
+
+-- context: { Rarities: {[string]: any}, ExistingIds: {[string]: any}?, ModelExists: ((string) -> boolean)? }
+function ContentValidator.validateHamster(def: any, context: any): { Issue }
+	local list: { Issue } = {}
+	local id = if type(def) == "table" and type(def.Id) == "string" then def.Id else "?"
+	local function err(message: string)
+		issue(list, "error", "Hamster", id, message)
+	end
+	if type(def) ~= "table" then
+		err("definition must be a table")
+		return list
+	end
+	if not isStableId(def.Id) then
+		err("Id must be lowercase letters, digits and underscores, starting with a letter (e.g. \"silver_hamster\")")
+	elseif context.ExistingIds and context.ExistingIds[def.Id] then
+		err("duplicate hamster Id (already used by another hamster)")
+	end
+	if type(def.DisplayName) ~= "string" or def.DisplayName == "" or #def.DisplayName > 28 then
+		err("DisplayName must be a text of 1-28 characters")
+	end
+	if type(def.Rarity) ~= "string" or not context.Rarities[def.Rarity] then
+		err(string.format("Rarity '%s' does not exist", tostring(def.Rarity)))
+	end
+	if def.Price ~= nil and (type(def.Price) ~= "number" or def.Price ~= def.Price or def.Price < 1 or def.Price > 1e15) then
+		err("Price must be a number >= 1 (leave it out to use the rarity formula)")
+	end
+	if def.IncomePerSecond ~= nil and (type(def.IncomePerSecond) ~= "number" or def.IncomePerSecond ~= def.IncomePerSecond or def.IncomePerSecond < 0 or def.IncomePerSecond > 1e15) then
+		err("IncomePerSecond must be a number >= 0 (leave it out to use the rarity formula)")
+	end
+	if def.ModelName ~= nil then
+		if type(def.ModelName) ~= "string" or def.ModelName == "" then
+			err("ModelName must be the name of a model in ReplicatedStorage/Assets/HamsterModels")
+		elseif context.ModelExists and not context.ModelExists(def.ModelName) then
+			issue(list, "warn", "Hamster", id, string.format("model '%s' not found in ReplicatedStorage/Assets/HamsterModels - the procedural hamster is used instead", def.ModelName))
+		end
+	end
+	checkAsset(list, "Hamster", id, "Icon", def.Icon)
+	if def.Animation ~= nil and type(def.Animation) ~= "table" then
+		err("Animation must be a table like { Idle = \"name\", Walk = \"name\" } (names from Content/Animations)")
+	end
+	if def.Sound ~= nil and type(def.Sound) ~= "table" then
+		err("Sound must be a table like { Spawn = \"SoundName\" } (names from AudioConfig.Sfx)")
+	end
+	if def.Unlock ~= nil then
+		if type(def.Unlock) ~= "table" then
+			err("Unlock must be a table like { MinRebirth = 2 }")
+		elseif def.Unlock.MinRebirth ~= nil and (type(def.Unlock.MinRebirth) ~= "number" or def.Unlock.MinRebirth < 0) then
+			err("Unlock.MinRebirth must be a number >= 0")
+		end
+	end
+	return list
+end
+
+-- context: { Animations: {[string]: any}?, Builtin: {[string]: boolean} }
+function ContentValidator.validateEmote(def: any, context: any, seen: { [string]: boolean }?): { Issue }
+	local list: { Issue } = {}
+	local id = if type(def) == "table" and type(def.Id) == "string" then def.Id else "?"
+	local function err(message: string)
+		issue(list, "error", "Emote", id, message)
+	end
+	if type(def) ~= "table" then
+		err("definition must be a table")
+		return list
+	end
+	if not isStableId(def.Id) then
+		err("Id must be lowercase letters, digits and underscores")
+	elseif seen and seen[def.Id] then
+		err("duplicate emote Id")
+	end
+	if type(def.DisplayName) ~= "string" or def.DisplayName == "" or #def.DisplayName > 20 then
+		err("DisplayName must be a text of 1-20 characters")
+	end
+	if type(def.Icon) ~= "string" or def.Icon == "" then
+		err("Icon must be a drawn icon id from UI/Icons.luau")
+	end
+	local hasBuiltin = def.Builtin ~= nil
+	local hasAnimation = def.AnimationId ~= nil or def.Animation ~= nil
+	if hasBuiltin == hasAnimation then
+		err("set exactly one of Builtin (Roblox default emote name), AnimationId (rbxassetid) or Animation (registry name)")
+	end
+	if hasBuiltin and (type(def.Builtin) ~= "string" or not context.Builtin[def.Builtin]) then
+		err(string.format("Builtin '%s' is not a Roblox default emote (wave, point, dance, dance2, dance3, laugh, cheer)", tostring(def.Builtin)))
+	end
+	if def.AnimationId ~= nil then
+		local ok, set = ContentValidator.assetIdState(def.AnimationId)
+		if not ok or not set then
+			err("AnimationId must be \"rbxassetid://<number>\"")
+		end
+	end
+	if def.Animation ~= nil and (type(def.Animation) ~= "string" or (context.Animations and not context.Animations[def.Animation])) then
+		err(string.format("Animation '%s' is not in Content/Animations", tostring(def.Animation)))
+	end
+	if def.Unlock ~= nil and (type(def.Unlock) ~= "table" or (def.Unlock.MinRebirth ~= nil and type(def.Unlock.MinRebirth) ~= "number")) then
+		err("Unlock must be a table like { MinRebirth = 1 }")
+	end
+	if def.Default ~= nil and type(def.Default) ~= "boolean" then
+		err("Default must be true or false")
+	end
+	return list
+end
+
+function ContentValidator.validateAnimation(def: any, seen: { [string]: boolean }?): { Issue }
+	local list: { Issue } = {}
+	local id = if type(def) == "table" and type(def.Name) == "string" then def.Name else "?"
+	local function err(message: string)
+		issue(list, "error", "Animation", id, message)
+	end
+	if type(def) ~= "table" then
+		err("definition must be a table")
+		return list
+	end
+	if type(def.Name) ~= "string" or string.match(def.Name, "^[%w_]+$") == nil then
+		err("Name must be letters, digits and underscores")
+	elseif seen and seen[def.Name] then
+		err("duplicate animation Name")
+	end
+	local ok, set = ContentValidator.assetIdState(def.AssetId)
+	if not ok then
+		err(string.format("AssetId '%s' is not valid (expected \"rbxassetid://<number>\")", tostring(def.AssetId)))
+	elseif not set then
+		issue(list, "warn", "Animation", id, "AssetId is not set - the animation is skipped until you upload it and paste the id")
+	end
+	if not RIG_TYPES[def.Rig] then
+		err("Rig must be R15, R6, Hamster or Any")
+	end
+	if not ANIMATION_USES[def.Use] then
+		err("Use must be Idle, Walk, Run, Emote, Action, Hamster or Cosmetic")
+	end
+	if def.Priority ~= nil and not PRIORITIES[def.Priority] then
+		err("Priority must be a name of Enum.AnimationPriority (Core, Idle, Movement, Action, Action2 ...)")
+	end
+	if def.Speed ~= nil and (type(def.Speed) ~= "number" or def.Speed <= 0 or def.Speed > 5) then
+		err("Speed must be a number between 0 and 5")
+	end
+	return list
+end
+
+return ContentValidator

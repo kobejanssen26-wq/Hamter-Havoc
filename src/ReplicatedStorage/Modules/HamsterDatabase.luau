@@ -337,6 +337,102 @@ for _, rarityId in RarityConfig.Order do
 	end
 end
 
+---------------------------------------------------------------------------
+-- custom hamsters: one file per hamster in Modules/Content/Hamsters (see _Template.luau and docs/CONTENT_GUIDE.md)
+---------------------------------------------------------------------------
+
+HamsterDatabase.Issues = {} :: { any }
+
+local COLOR_LOOK = { Fur = "Fur", Belly = "Belly", Color2 = "Color2", Accent = "Accent", EyeColor = "EyeColor", HatColor = "HatColor", EarInner = "EarInner", EarColor = "EarColor", PawColor = "PawColor", TailColor = "TailColor", TailTip = "TailTip" }
+local PLAIN_LOOK = { "Ears", "Eyes", "Mouth", "Pattern", "Tail", "Size", "NoBlush" }
+
+local function loadCustomHamsters()
+	local registryScript = script.Parent:FindFirstChild("ContentRegistry")
+	local validatorScript = script.Parent:FindFirstChild("ContentValidator")
+	if not registryScript or not validatorScript then
+		return -- trimmed copy (for example the exported HamsterBuilder package): built-in hamsters only
+	end
+	local ContentRegistry = require(registryScript)
+	local ContentValidator = require(validatorScript)
+	local loaded, problems = ContentRegistry.load("Hamsters")
+	for _, message in problems do
+		table.insert(HamsterDatabase.Issues, { Level = "error", Kind = "Hamster", Id = "?", Message = message })
+	end
+	local assets = game:GetService("ReplicatedStorage"):FindFirstChild("Assets")
+	local context = {
+		Rarities = RarityConfig.ById,
+		ExistingIds = HamsterDatabase.ById,
+		ModelExists = function(name: string): boolean
+			local folder = assets and assets:FindFirstChild("HamsterModels")
+			return folder ~= nil and folder:FindFirstChild(name) ~= nil
+		end,
+	}
+	for _, entry in loaded do
+		local def = entry.Def
+		local found = ContentValidator.validateHamster(def, context)
+		local fatal = false
+		for _, problem in found do
+			table.insert(HamsterDatabase.Issues, problem)
+			fatal = fatal or problem.Level == "error"
+		end
+		if not fatal then
+			local look = def.Look or {}
+			local rarityId = def.Rarity
+			local species: any = {
+				Id = def.Id,
+				Name = def.DisplayName,
+				OriginalName = def.DisplayName,
+				Custom = true,
+				Rarity = rarityId,
+				Fur = hex(look.Fur or "C99A62"),
+				Belly = hex(look.Belly),
+				Color2 = hex(look.Color2),
+				Accent = hex(look.Accent) or RarityConfig.ById[rarityId].Accent,
+				Ears = "round",
+				Eyes = "dot",
+				Mouth = "smile",
+				Pattern = "none",
+				Tail = "nub",
+				Acc = look.Acc or {},
+				Fx = {},
+				Size = 1,
+				ModelName = def.ModelName,
+				Icon = if def.Icon ~= "" then def.Icon else nil,
+				Animation = def.Animation,
+				Sound = def.Sound,
+				Unlock = def.Unlock,
+				PriceOverride = def.Price,
+				IncomeOverride = def.IncomePerSecond,
+				SpawnWeight = def.SpawnWeight,
+				Exclusive = def.Spawnable == false,
+			}
+			for field, key in COLOR_LOOK do
+				if look[key] then
+					species[field] = hex(look[key])
+				end
+			end
+			for _, key in PLAIN_LOOK do
+				if look[key] ~= nil then
+					species[key] = look[key]
+				end
+			end
+			for _, effect in def.Effects or {} do
+				table.insert(species.Fx, { effect[1], Color3.fromHex(effect[2]) })
+			end
+			if species.Exclusive then
+				species.ValueMult = 1.5
+			else
+				species.ValueMult = 1 + RarityConfig.ValueSpread * #HamsterDatabase.Spawnable[rarityId]
+				table.insert(HamsterDatabase.Spawnable[rarityId], species)
+			end
+			table.insert(HamsterDatabase.Species, species)
+			table.insert(HamsterDatabase.ByRarity[rarityId], species)
+			HamsterDatabase.ById[species.Id] = species
+		end
+	end
+end
+loadCustomHamsters()
+
 HamsterDatabase.Total = #HamsterDatabase.Species
 
 function HamsterDatabase.get(id: string)
@@ -345,11 +441,17 @@ end
 
 -- What it costs to claim the hamster when it rolls by.
 function HamsterDatabase.price(species: any): number
+	if species.PriceOverride then
+		return math.floor(species.PriceOverride + 0.5)
+	end
 	return math.floor(RarityConfig.ById[species.Rarity].BasePrice * species.ValueMult + 0.5)
 end
 
 -- Income per second of one hamster (before player multipliers) = price / payback time of its rarity.
 function HamsterDatabase.income(species: any): number
+	if species.IncomeOverride then
+		return species.IncomeOverride
+	end
 	return HamsterDatabase.price(species) / RarityConfig.ById[species.Rarity].Payback
 end
 

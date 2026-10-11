@@ -3,6 +3,8 @@
 	The server validates every change against this schema (clients can't store junk).
 ]]
 
+local EmoteConfig = require(script.Parent.EmoteConfig)
+
 local SettingsConfig = {}
 
 SettingsConfig.Defaults = {
@@ -18,6 +20,7 @@ SettingsConfig.Defaults = {
 	Notifications = true,
 	CameraShake = true,
 	AutoEquip = true,
+	EmoteKey = "B", -- key that opens the emote wheel (EmoteConfig.KeyChoices)
 	AutoDelete = 0, -- 0 = off, otherwise auto-sell duplicates up to this rarity rank
 }
 
@@ -35,6 +38,19 @@ SettingsConfig.List = {
 	{ Key = "Notifications", Label = "Notifications", Type = "toggle", Icon = "bell" },
 	{ Key = "CameraShake", Label = "Camera shake", Type = "toggle", Icon = "bolt" },
 	{ Key = "AutoEquip", Label = "Auto-equip best hamsters", Type = "toggle", Icon = "star" },
+	{
+		Key = "EmoteKey",
+		Label = "Emote wheel key",
+		Type = "choice",
+		Icon = "people",
+		Options = (function()
+			local options = {}
+			for _, key in EmoteConfig.KeyChoices do
+				table.insert(options, { Value = key, Text = "Key " .. key })
+			end
+			return options
+		end)(),
+	},
 	{
 		Key = "AutoDelete",
 		Label = "Auto-delete duplicates",

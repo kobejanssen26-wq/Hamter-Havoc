@@ -656,6 +656,13 @@ function UIKit.hamsterIcon(parent: Instance, species: any, props: { Size: UDim2?
 		ZIndex = opts.ZIndex or 1,
 	}, parent)
 
+	-- a hamster with its own uploaded icon (Content/Hamsters Icon) shows that image instead of a 3D snapshot
+	if type(species.Icon) == "string" and species.Icon ~= "" and not opts.Spin then
+		local image = UIKit.new("ImageLabel", { BackgroundTransparency = 1, Size = UDim2.fromScale(1, 1), Image = species.Icon, ImageColor3 = if opts.Silhouette then Color3.new(0, 0, 0) else Color3.new(1, 1, 1), ScaleType = Enum.ScaleType.Fit }, viewport)
+		image.ZIndex = opts.ZIndex or 1
+		return viewport
+	end
+
 	local model = HamsterBuilder.build(species, { LowDetail = true, Particles = false })
 	model:PivotTo(CFrame.new(0, 0, 0))
 	model.Parent = viewport
