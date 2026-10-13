@@ -73,7 +73,8 @@ De winkel heeft twee delen: **Cash Shop** (cash en diamanten) en **Robux Shop** 
 Diamantpakketten: `ShopConfig` (`ProductId`). `0` = niet ingesteld = niet te koop. Betalen gaat altijd via de officiële Roblox-aankoop; het spel geeft het voordeel pas als de server de aankoop bevestigt. Er is geen nep-Robux-saldo.
 
 ## 8. Veilige zones (geen gevechten)
-Elk onzichtbaar deel met de tag `SafeZone` is een veilige zone: daarin kun je niet aanvallen en niet geraakt worden. De Leaderboard-hal heeft er één (`LeaderboardHall/SafeZone`); verplaats, schaal of dupliceer hem in Studio, of tag een ander onzichtbaar deel (Tag-editor in Studio: **View → Tag Editor**).
+Elk onzichtbaar deel met de tag `SafeZone` is een veilige zone: daarin kun je niet aanvallen en niet geraakt worden. De Leaderboard-hal heeft er één (die wordt bij elke Play opnieuw gebouwd door `LeaderboardBuilder`; maat aanpassen doe je daar).
+Eigen zones: maak in Studio een onzichtbaar Part (Anchored aan, CanCollide uit, Transparency 1) in je **eigen map** (bv. `Workspace/MijnZones`, niet in een gegenereerde map) en geef het de tag `SafeZone` (**View → Tag Editor**). Die blijft staan bij Play.
 
 ## 9. Wat ik niet kon testen
 Alles is getest in een simulatie van Roblox (`tools/SimTests/run.sh --all`), niet in echte Roblox Studio. Zie het eindrapport voor de lijst van wat jij nog moet bekijken (uiterlijk van wapens, HUD, bergen, animaties, echte Robux-aankopen, meerdere echte spelers).

@@ -60,7 +60,7 @@ Open `HamsterPlaza.rbxl` in Roblox Studio → **View → Explorer**. Je ziet de 
 | je admin-UserId en rollen | `ServerScriptService/Config/AdminConfig` (paneel openen met F10 of /admin) |
 | de HUD (geld, knoppen, hotbar) | `StarterGui/MainUI` en `StarterGui/HotbarUI` (visueel bewerken in Studio) |
 | Robux-passes / diamantpakketten | `GamepassConfig` / `ShopConfig` |
-| een veilige zone (geen gevechten) | geef een onzichtbaar deel de tag `SafeZone` (voorbeeld: `LeaderboardHall/SafeZone`) |
+| een veilige zone (geen gevechten) | geef een onzichtbaar deel in je eigen map de tag `SafeZone` (voorbeeld: `LeaderboardHall/SafeZone`, wordt bij Play opnieuw gebouwd) |
 | het appartement aanpassen | `…/WorldBuilder/HouseBuilder/Tower.luau` (verdiepingen) en `Yard.luau` (voortuin/poort) |
 | verdiepingen en wat ze geven | `ReplicatedStorage/Modules/FloorConfig` |
 | wedergeboorte: eisen, beloningen, wat reset | `ReplicatedStorage/Modules/RebirthConfig` |
