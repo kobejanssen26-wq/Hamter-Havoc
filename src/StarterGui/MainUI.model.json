@@ -1,0 +1,4747 @@
+{
+ "ClassName": "ScreenGui",
+ "Properties": {
+  "DisplayOrder": 1,
+  "Enabled": true,
+  "IgnoreGuiInset": false,
+  "ResetOnSpawn": false,
+  "ScreenInsets": "TopbarSafeInsets",
+  "ZIndexBehavior": "Sibling"
+ },
+ "Attributes": {
+  "CodeProps": "DisplayOrder=1.000\nEnabled=true\nIgnoreGuiInset=false\nResetOnSpawn=false\nZIndexBehavior=e:Sibling",
+  "Insets": "Topbar"
+ },
+ "Children": [
+  {
+   "ClassName": "Frame",
+   "Name": "TopColumn",
+   "Properties": {
+    "AnchorPoint": [
+     0.5,
+     0
+    ],
+    "BackgroundTransparency": 1,
+    "BorderSizePixel": 0,
+    "Position": {
+     "UDim2": [
+      [
+       0.5,
+       0
+      ],
+      [
+       0,
+       8
+      ]
+     ]
+    },
+    "Size": {
+     "UDim2": [
+      [
+       0,
+       543
+      ],
+      [
+       0,
+       217
+      ]
+     ]
+    },
+    "Visible": true,
+    "ZIndex": 1
+   },
+   "Attributes": {
+    "CodeProps": "AnchorPoint=v2:0.500,0.000\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nPosition=u2:0.500,0,0.000,8\nSize=u2:0.000,543,0.000,217\nVisible=true\nZIndex=1.000",
+    "Responsive": true
+   },
+   "Children": [
+    {
+     "ClassName": "Frame",
+     "Name": "Content",
+     "Properties": {
+      "BackgroundTransparency": 1,
+      "BorderSizePixel": 0,
+      "Size": {
+       "UDim2": [
+        [
+         0,
+         500
+        ],
+        [
+         0,
+         200
+        ]
+       ]
+      }
+     },
+     "Attributes": {
+      "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nSize=u2:0.000,500,0.000,200"
+     },
+     "Children": [
+      {
+       "ClassName": "UIScale",
+       "Name": "UIScale",
+       "Properties": {
+        "Scale": 1.08475
+       },
+       "Attributes": {
+        "CodeProps": "Scale=1.085"
+       }
+      },
+      {
+       "ClassName": "UIListLayout",
+       "Name": "UIListLayout",
+       "Properties": {
+        "FillDirection": "Vertical",
+        "HorizontalAlignment": "Center",
+        "Padding": {
+         "UDim": [
+          0,
+          6
+         ]
+        },
+        "SortOrder": "LayoutOrder",
+        "VerticalAlignment": "Top"
+       },
+       "Attributes": {
+        "CodeProps": "FillDirection=e:Vertical\nHorizontalAlignment=e:Center\nPadding=u:0.000,6\nSortOrder=e:LayoutOrder\nVerticalAlignment=e:Top"
+       }
+      },
+      {
+       "ClassName": "Frame",
+       "Name": "TopBar",
+       "Properties": {
+        "BackgroundColor3": [
+         0.145098,
+         0.160784,
+         0.227451
+        ],
+        "BackgroundTransparency": 1,
+        "BorderSizePixel": 0,
+        "LayoutOrder": 1,
+        "Size": {
+         "UDim2": [
+          [
+           0,
+           500
+          ],
+          [
+           0,
+           44
+          ]
+         ]
+        }
+       },
+       "Attributes": {
+        "CodeProps": "BackgroundColor3=c3:0.145,0.161,0.227\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nLayoutOrder=1.000\nSize=u2:0.000,500,0.000,44"
+       },
+       "Children": [
+        {
+         "ClassName": "UIListLayout",
+         "Name": "UIListLayout",
+         "Properties": {
+          "FillDirection": "Horizontal",
+          "HorizontalAlignment": "Center",
+          "Padding": {
+           "UDim": [
+            0,
+            8
+           ]
+          },
+          "SortOrder": "LayoutOrder",
+          "VerticalAlignment": "Center"
+         },
+         "Attributes": {
+          "CodeProps": "FillDirection=e:Horizontal\nHorizontalAlignment=e:Center\nPadding=u:0.000,8\nSortOrder=e:LayoutOrder\nVerticalAlignment=e:Center"
+         }
+        },
+        {
+         "ClassName": "Frame",
+         "Name": "Frame",
+         "Properties": {
+          "BackgroundColor3": [
+           0.145098,
+           0.160784,
+           0.227451
+          ],
+          "BackgroundTransparency": 0.05,
+          "BorderSizePixel": 0,
+          "ClipsDescendants": true,
+          "LayoutOrder": 1,
+          "Size": {
+           "UDim2": [
+            [
+             0,
+             140
+            ],
+            [
+             0,
+             44
+            ]
+           ]
+          }
+         },
+         "Attributes": {
+          "CodeProps": "BackgroundColor3=c3:0.145,0.161,0.227\nBackgroundTransparency=0.050\nBorderSizePixel=0.000\nClipsDescendants=true\nLayoutOrder=1.000\nSize=u2:0.000,140,0.000,44"
+         },
+         "Children": [
+          {
+           "ClassName": "UICorner",
+           "Name": "UICorner",
+           "Properties": {
+            "CornerRadius": {
+             "UDim": [
+              0,
+              8
+             ]
+            }
+           },
+           "Attributes": {
+            "CodeProps": "CornerRadius=u:0.000,8"
+           }
+          },
+          {
+           "ClassName": "UIStroke",
+           "Name": "UIStroke",
+           "Properties": {
+            "ApplyStrokeMode": "Border",
+            "Color": [
+             0.296471,
+             0.523922,
+             0.443922
+            ],
+            "Thickness": 1,
+            "Transparency": 0
+           },
+           "Attributes": {
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.296,0.524,0.444\nThickness=1.000\nTransparency=0.000"
+           }
+          },
+          {
+           "ClassName": "Frame",
+           "Name": "AccentEdge",
+           "Properties": {
+            "BackgroundColor3": [
+             0.376471,
+             0.909804,
+             0.556863
+            ],
+            "BorderSizePixel": 0,
+            "Size": {
+             "UDim2": [
+              [
+               0,
+               4
+              ],
+              [
+               1,
+               0
+              ]
+             ]
+            },
+            "ZIndex": 2
+           },
+           "Attributes": {
+            "CodeProps": "BackgroundColor3=c3:0.376,0.910,0.557\nBorderSizePixel=0.000\nSize=u2:0.000,4,1.000,0\nZIndex=2.000"
+           }
+          },
+          {
+           "ClassName": "Frame",
+           "Name": "Icon_coin",
+           "Properties": {
+            "AnchorPoint": [
+             0,
+             0.5
+            ],
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
+            "ClipsDescendants": false,
+            "LayoutOrder": 0,
+            "Position": {
+             "UDim2": [
+              [
+               0,
+               12
+              ],
+              [
+               0.5,
+               0
+              ]
+             ]
+            },
+            "Size": {
+             "UDim2": [
+              [
+               0,
+               30
+              ],
+              [
+               0,
+               30
+              ]
+             ]
+            },
+            "ZIndex": 3
+           },
+           "Attributes": {
+            "CodeProps": "AnchorPoint=v2:0.000,0.500\nLayoutOrder=0.000\nPosition=u2:0.000,12,0.500,0\nSize=u2:0.000,30,0.000,30\nZIndex=3.000",
+            "IconId": "coin"
+           }
+          },
+          {
+           "ClassName": "TextLabel",
+           "Name": "TextLabel",
+           "Properties": {
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
+            "Font": "GothamBold",
+            "Position": {
+             "UDim2": [
+              [
+               0,
+               48
+              ],
+              [
+               0,
+               0
+              ]
+             ]
+            },
+            "RichText": true,
+            "Size": {
+             "UDim2": [
+              [
+               1,
+               -52
+              ],
+              [
+               1,
+               0
+              ]
+             ]
+            },
+            "Text": "254",
+            "TextColor3": [
+             0.968627,
+             0.968627,
+             0.992157
+            ],
+            "TextSize": 22,
+            "TextTruncate": "AtEnd",
+            "TextXAlignment": "Left",
+            "ZIndex": 3
+           },
+           "Attributes": {
+            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,48,0.000,0\nRichText=true\nSize=u2:1.000,-52,1.000,0\nText=254\nTextColor3=c3:0.969,0.969,0.992\nTextSize=22.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Left\nZIndex=3.000"
+           }
+          }
+         ]
+        },
+        {
+         "ClassName": "Frame",
+         "Name": "Frame",
+         "Properties": {
+          "BackgroundColor3": [
+           0.145098,
+           0.160784,
+           0.227451
+          ],
+          "BackgroundTransparency": 0.05,
+          "BorderSizePixel": 0,
+          "ClipsDescendants": true,
+          "LayoutOrder": 2,
+          "Size": {
+           "UDim2": [
+            [
+             0,
+             116
+            ],
+            [
+             0,
+             44
+            ]
+           ]
+          }
+         },
+         "Attributes": {
+          "CodeProps": "BackgroundColor3=c3:0.145,0.161,0.227\nBackgroundTransparency=0.050\nBorderSizePixel=0.000\nClipsDescendants=true\nLayoutOrder=2.000\nSize=u2:0.000,116,0.000,44"
+         },
+         "Children": [
+          {
+           "ClassName": "UICorner",
+           "Name": "UICorner",
+           "Properties": {
+            "CornerRadius": {
+             "UDim": [
+              0,
+              8
+             ]
+            }
+           },
+           "Attributes": {
+            "CodeProps": "CornerRadius=u:0.000,8"
+           }
+          },
+          {
+           "ClassName": "UIStroke",
+           "Name": "UIStroke",
+           "Properties": {
+            "ApplyStrokeMode": "Border",
+            "Color": [
+             0.296471,
+             0.523922,
+             0.443922
+            ],
+            "Thickness": 1,
+            "Transparency": 0
+           },
+           "Attributes": {
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.296,0.524,0.444\nThickness=1.000\nTransparency=0.000"
+           }
+          },
+          {
+           "ClassName": "Frame",
+           "Name": "AccentEdge",
+           "Properties": {
+            "BackgroundColor3": [
+             0.376471,
+             0.909804,
+             0.556863
+            ],
+            "BorderSizePixel": 0,
+            "Size": {
+             "UDim2": [
+              [
+               0,
+               4
+              ],
+              [
+               1,
+               0
+              ]
+             ]
+            },
+            "ZIndex": 2
+           },
+           "Attributes": {
+            "CodeProps": "BackgroundColor3=c3:0.376,0.910,0.557\nBorderSizePixel=0.000\nSize=u2:0.000,4,1.000,0\nZIndex=2.000"
+           }
+          },
+          {
+           "ClassName": "Frame",
+           "Name": "Icon_cash",
+           "Properties": {
+            "AnchorPoint": [
+             0,
+             0.5
+            ],
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
+            "ClipsDescendants": false,
+            "LayoutOrder": 0,
+            "Position": {
+             "UDim2": [
+              [
+               0,
+               12
+              ],
+              [
+               0.5,
+               0
+              ]
+             ]
+            },
+            "Size": {
+             "UDim2": [
+              [
+               0,
+               26
+              ],
+              [
+               0,
+               26
+              ]
+             ]
+            },
+            "ZIndex": 3
+           },
+           "Attributes": {
+            "CodeProps": "AnchorPoint=v2:0.000,0.500\nLayoutOrder=0.000\nPosition=u2:0.000,12,0.500,0\nSize=u2:0.000,26,0.000,26\nZIndex=3.000",
+            "IconId": "cash"
+           }
+          },
+          {
+           "ClassName": "TextLabel",
+           "Name": "TextLabel",
+           "Properties": {
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
+            "Font": "GothamBold",
+            "Position": {
+             "UDim2": [
+              [
+               0,
+               44
+              ],
+              [
+               0,
+               0
+              ]
+             ]
+            },
+            "RichText": true,
+            "Size": {
+             "UDim2": [
+              [
+               1,
+               -52
+              ],
+              [
+               1,
+               0
+              ]
+             ]
+            },
+            "Text": "$0.5/s",
+            "TextColor3": [
+             0.968627,
+             0.968627,
+             0.992157
+            ],
+            "TextSize": 17,
+            "TextTruncate": "AtEnd",
+            "TextXAlignment": "Left",
+            "ZIndex": 3
+           },
+           "Attributes": {
+            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,44,0.000,0\nRichText=true\nSize=u2:1.000,-52,1.000,0\nText=$0.5/s\nTextColor3=c3:0.969,0.969,0.992\nTextSize=17.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Left\nZIndex=3.000"
+           }
+          }
+         ]
+        },
+        {
+         "ClassName": "Frame",
+         "Name": "Frame",
+         "Properties": {
+          "BackgroundColor3": [
+           0.145098,
+           0.160784,
+           0.227451
+          ],
+          "BackgroundTransparency": 0.05,
+          "BorderSizePixel": 0,
+          "ClipsDescendants": true,
+          "LayoutOrder": 3,
+          "Size": {
+           "UDim2": [
+            [
+             0,
+             112
+            ],
+            [
+             0,
+             44
+            ]
+           ]
+          }
+         },
+         "Attributes": {
+          "CodeProps": "BackgroundColor3=c3:0.145,0.161,0.227\nBackgroundTransparency=0.050\nBorderSizePixel=0.000\nClipsDescendants=true\nLayoutOrder=3.000\nSize=u2:0.000,112,0.000,44"
+         },
+         "Children": [
+          {
+           "ClassName": "UICorner",
+           "Name": "UICorner",
+           "Properties": {
+            "CornerRadius": {
+             "UDim": [
+              0,
+              8
+             ]
+            }
+           },
+           "Attributes": {
+            "CodeProps": "CornerRadius=u:0.000,8"
+           }
+          },
+          {
+           "ClassName": "UIStroke",
+           "Name": "UIStroke",
+           "Properties": {
+            "ApplyStrokeMode": "Border",
+            "Color": [
+             0.425098,
+             0.351373,
+             0.621176
+            ],
+            "Thickness": 1,
+            "Transparency": 0
+           },
+           "Attributes": {
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.425,0.351,0.621\nThickness=1.000\nTransparency=0.000"
+           }
+          },
+          {
+           "ClassName": "Frame",
+           "Name": "AccentEdge",
+           "Properties": {
+            "BackgroundColor3": [
+             0.698039,
+             0.478431,
+             1
+            ],
+            "BorderSizePixel": 0,
+            "Size": {
+             "UDim2": [
+              [
+               0,
+               4
+              ],
+              [
+               1,
+               0
+              ]
+             ]
+            },
+            "ZIndex": 2
+           },
+           "Attributes": {
+            "CodeProps": "BackgroundColor3=c3:0.698,0.478,1.000\nBorderSizePixel=0.000\nSize=u2:0.000,4,1.000,0\nZIndex=2.000"
+           }
+          },
+          {
+           "ClassName": "Frame",
+           "Name": "Icon_gem",
+           "Properties": {
+            "AnchorPoint": [
+             0,
+             0.5
+            ],
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
+            "ClipsDescendants": false,
+            "LayoutOrder": 0,
+            "Position": {
+             "UDim2": [
+              [
+               0,
+               12
+              ],
+              [
+               0.5,
+               0
+              ]
+             ]
+            },
+            "Size": {
+             "UDim2": [
+              [
+               0,
+               26
+              ],
+              [
+               0,
+               26
+              ]
+             ]
+            },
+            "ZIndex": 3
+           },
+           "Attributes": {
+            "CodeProps": "AnchorPoint=v2:0.000,0.500\nLayoutOrder=0.000\nPosition=u2:0.000,12,0.500,0\nSize=u2:0.000,26,0.000,26\nZIndex=3.000",
+            "IconId": "gem"
+           }
+          },
+          {
+           "ClassName": "TextLabel",
+           "Name": "TextLabel",
+           "Properties": {
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
+            "Font": "GothamBold",
+            "Position": {
+             "UDim2": [
+              [
+               0,
+               44
+              ],
+              [
+               0,
+               0
+              ]
+             ]
+            },
+            "RichText": true,
+            "Size": {
+             "UDim2": [
+              [
+               1,
+               -84
+              ],
+              [
+               1,
+               0
+              ]
+             ]
+            },
+            "Text": "25",
+            "TextColor3": [
+             0.968627,
+             0.968627,
+             0.992157
+            ],
+            "TextSize": 17,
+            "TextTruncate": "AtEnd",
+            "TextXAlignment": "Left",
+            "ZIndex": 3
+           },
+           "Attributes": {
+            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,44,0.000,0\nRichText=true\nSize=u2:1.000,-84,1.000,0\nText=25\nTextColor3=c3:0.969,0.969,0.992\nTextSize=17.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Left\nZIndex=3.000"
+           }
+          },
+          {
+           "ClassName": "TextButton",
+           "Name": "Plus",
+           "Properties": {
+            "AnchorPoint": [
+             1,
+             0.5
+            ],
+            "AutoButtonColor": false,
+            "BackgroundColor3": [
+             0.227451,
+             0.815686,
+             0.486275
+            ],
+            "BorderSizePixel": 0,
+            "Font": "GothamBold",
+            "LayoutOrder": 0,
+            "Position": {
+             "UDim2": [
+              [
+               1,
+               -6
+              ],
+              [
+               0.5,
+               0
+              ]
+             ]
+            },
+            "RichText": true,
+            "Size": {
+             "UDim2": [
+              [
+               0,
+               24
+              ],
+              [
+               0,
+               24
+              ]
+             ]
+            },
+            "Text": "",
+            "TextColor3": [
+             1,
+             1,
+             1
+            ],
+            "TextSize": 16,
+            "ZIndex": 4
+           },
+           "Attributes": {
+            "CodeProps": "AnchorPoint=v2:1.000,0.500\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.816,0.486\nBorderSizePixel=0.000\nFont=e:GothamBold\nLayoutOrder=0.000\nPosition=u2:1.000,-6,0.500,0\nRichText=true\nSize=u2:0.000,24,0.000,24\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
+           },
+           "Children": [
+            {
+             "ClassName": "UICorner",
+             "Name": "UICorner",
+             "Properties": {
+              "CornerRadius": {
+               "UDim": [
+                0,
+                99
+               ]
+              }
+             },
+             "Attributes": {
+              "CodeProps": "CornerRadius=u:0.000,99"
+             }
+            },
+            {
+             "ClassName": "UIStroke",
+             "Name": "Edge",
+             "Properties": {
+              "ApplyStrokeMode": "Border",
+              "Color": [
+               0.125098,
+               0.448627,
+               0.267451
+              ],
+              "Thickness": 1,
+              "Transparency": 0
+             },
+             "Attributes": {
+              "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.125,0.449,0.267\nThickness=1.000\nTransparency=0.000"
+             }
+            },
+            {
+             "ClassName": "UIScale",
+             "Name": "UIScale",
+             "Properties": {
+              "Scale": 1
+             },
+             "Attributes": {
+              "CodeProps": "Scale=1.000"
+             }
+            },
+            {
+             "ClassName": "Frame",
+             "Name": "Frame",
+             "Properties": {
+              "AnchorPoint": [
+               0.5,
+               0.5
+              ],
+              "BackgroundColor3": [
+               1,
+               1,
+               1
+              ],
+              "BorderSizePixel": 0,
+              "Position": {
+               "UDim2": [
+                [
+                 0.5,
+                 0
+                ],
+                [
+                 0.5,
+                 0
+                ]
+               ]
+              },
+              "Rotation": 0,
+              "Size": {
+               "UDim2": [
+                [
+                 0,
+                 12
+                ],
+                [
+                 0,
+                 3
+                ]
+               ]
+              },
+              "ZIndex": 5
+             },
+             "Attributes": {
+              "CodeProps": "AnchorPoint=v2:0.500,0.500\nBackgroundColor3=c3:1.000,1.000,1.000\nBorderSizePixel=0.000\nPosition=u2:0.500,0,0.500,0\nRotation=0.000\nSize=u2:0.000,12,0.000,3\nZIndex=5.000"
+             },
+             "Children": [
+              {
+               "ClassName": "UICorner",
+               "Name": "UICorner",
+               "Properties": {
+                "CornerRadius": {
+                 "UDim": [
+                  0,
+                  4
+                 ]
+                }
+               },
+               "Attributes": {
+                "CodeProps": "CornerRadius=u:0.000,4"
+               }
+              }
+             ]
+            },
+            {
+             "ClassName": "Frame",
+             "Name": "Frame",
+             "Properties": {
+              "AnchorPoint": [
+               0.5,
+               0.5
+              ],
+              "BackgroundColor3": [
+               1,
+               1,
+               1
+              ],
+              "BorderSizePixel": 0,
+              "Position": {
+               "UDim2": [
+                [
+                 0.5,
+                 0
+                ],
+                [
+                 0.5,
+                 0
+                ]
+               ]
+              },
+              "Rotation": 90,
+              "Size": {
+               "UDim2": [
+                [
+                 0,
+                 12
+                ],
+                [
+                 0,
+                 3
+                ]
+               ]
+              },
+              "ZIndex": 5
+             },
+             "Attributes": {
+              "CodeProps": "AnchorPoint=v2:0.500,0.500\nBackgroundColor3=c3:1.000,1.000,1.000\nBorderSizePixel=0.000\nPosition=u2:0.500,0,0.500,0\nRotation=90.000\nSize=u2:0.000,12,0.000,3\nZIndex=5.000"
+             },
+             "Children": [
+              {
+               "ClassName": "UICorner",
+               "Name": "UICorner",
+               "Properties": {
+                "CornerRadius": {
+                 "UDim": [
+                  0,
+                  4
+                 ]
+                }
+               },
+               "Attributes": {
+                "CodeProps": "CornerRadius=u:0.000,4"
+               }
+              }
+             ]
+            }
+           ]
+          }
+         ]
+        },
+        {
+         "ClassName": "Frame",
+         "Name": "Frame",
+         "Properties": {
+          "BackgroundColor3": [
+           0.145098,
+           0.160784,
+           0.227451
+          ],
+          "BackgroundTransparency": 0.05,
+          "BorderSizePixel": 0,
+          "ClipsDescendants": true,
+          "LayoutOrder": 4,
+          "Size": {
+           "UDim2": [
+            [
+             0,
+             104
+            ],
+            [
+             0,
+             44
+            ]
+           ]
+          }
+         },
+         "Attributes": {
+          "CodeProps": "BackgroundColor3=c3:0.145,0.161,0.227\nBackgroundTransparency=0.050\nBorderSizePixel=0.000\nClipsDescendants=true\nLayoutOrder=4.000\nSize=u2:0.000,104,0.000,44"
+         },
+         "Children": [
+          {
+           "ClassName": "UICorner",
+           "Name": "UICorner",
+           "Properties": {
+            "CornerRadius": {
+             "UDim": [
+              0,
+              8
+             ]
+            }
+           },
+           "Attributes": {
+            "CodeProps": "CornerRadius=u:0.000,8"
+           }
+          },
+          {
+           "ClassName": "UIStroke",
+           "Name": "UIStroke",
+           "Properties": {
+            "ApplyStrokeMode": "Border",
+            "Color": [
+             0.545882,
+             0.481569,
+             0.334118
+            ],
+            "Thickness": 1,
+            "Transparency": 0
+           },
+           "Attributes": {
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.546,0.482,0.334\nThickness=1.000\nTransparency=0.000"
+           }
+          },
+          {
+           "ClassName": "Frame",
+           "Name": "AccentEdge",
+           "Properties": {
+            "BackgroundColor3": [
+             1,
+             0.803922,
+             0.282353
+            ],
+            "BorderSizePixel": 0,
+            "Size": {
+             "UDim2": [
+              [
+               0,
+               4
+              ],
+              [
+               1,
+               0
+              ]
+             ]
+            },
+            "ZIndex": 2
+           },
+           "Attributes": {
+            "CodeProps": "BackgroundColor3=c3:1.000,0.804,0.282\nBorderSizePixel=0.000\nSize=u2:0.000,4,1.000,0\nZIndex=2.000"
+           }
+          },
+          {
+           "ClassName": "Frame",
+           "Name": "Icon_rebirth",
+           "Properties": {
+            "AnchorPoint": [
+             0,
+             0.5
+            ],
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
+            "ClipsDescendants": false,
+            "LayoutOrder": 0,
+            "Position": {
+             "UDim2": [
+              [
+               0,
+               12
+              ],
+              [
+               0.5,
+               0
+              ]
+             ]
+            },
+            "Size": {
+             "UDim2": [
+              [
+               0,
+               26
+              ],
+              [
+               0,
+               26
+              ]
+             ]
+            },
+            "ZIndex": 3
+           },
+           "Attributes": {
+            "CodeProps": "AnchorPoint=v2:0.000,0.500\nLayoutOrder=0.000\nPosition=u2:0.000,12,0.500,0\nSize=u2:0.000,26,0.000,26\nZIndex=3.000",
+            "IconId": "rebirth"
+           }
+          },
+          {
+           "ClassName": "TextLabel",
+           "Name": "TextLabel",
+           "Properties": {
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
+            "Font": "GothamBold",
+            "Position": {
+             "UDim2": [
+              [
+               0,
+               44
+              ],
+              [
+               0,
+               0
+              ]
+             ]
+            },
+            "RichText": true,
+            "Size": {
+             "UDim2": [
+              [
+               1,
+               -52
+              ],
+              [
+               1,
+               0
+              ]
+             ]
+            },
+            "Text": "Rebirth 0",
+            "TextColor3": [
+             0.968627,
+             0.968627,
+             0.992157
+            ],
+            "TextSize": 17,
+            "TextTruncate": "AtEnd",
+            "TextXAlignment": "Left",
+            "ZIndex": 3
+           },
+           "Attributes": {
+            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,44,0.000,0\nRichText=true\nSize=u2:1.000,-52,1.000,0\nText=Rebirth 0\nTextColor3=c3:0.969,0.969,0.992\nTextSize=17.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Left\nZIndex=3.000"
+           }
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "ClassName": "Frame",
+       "Name": "StatusRow",
+       "Properties": {
+        "BackgroundColor3": [
+         0.145098,
+         0.160784,
+         0.227451
+        ],
+        "BackgroundTransparency": 1,
+        "BorderSizePixel": 0,
+        "LayoutOrder": 2,
+        "Size": {
+         "UDim2": [
+          [
+           0,
+           500
+          ],
+          [
+           0,
+           30
+          ]
+         ]
+        }
+       },
+       "Attributes": {
+        "CodeProps": "BackgroundColor3=c3:0.145,0.161,0.227\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nLayoutOrder=2.000\nSize=u2:0.000,500,0.000,30"
+       },
+       "Children": [
+        {
+         "ClassName": "UIListLayout",
+         "Name": "UIListLayout",
+         "Properties": {
+          "FillDirection": "Horizontal",
+          "HorizontalAlignment": "Center",
+          "Padding": {
+           "UDim": [
+            0,
+            6
+           ]
+          },
+          "SortOrder": "LayoutOrder",
+          "VerticalAlignment": "Center"
+         },
+         "Attributes": {
+          "CodeProps": "FillDirection=e:Horizontal\nHorizontalAlignment=e:Center\nPadding=u:0.000,6\nSortOrder=e:LayoutOrder\nVerticalAlignment=e:Center"
+         }
+        },
+        {
+         "ClassName": "Frame",
+         "Name": "GateChip",
+         "Properties": {
+          "BackgroundColor3": [
+           0.151686,
+           0.213176,
+           0.248157
+          ],
+          "BackgroundTransparency": 0,
+          "BorderSizePixel": 0,
+          "ClipsDescendants": true,
+          "LayoutOrder": 0,
+          "Size": {
+           "UDim2": [
+            [
+             0,
+             150
+            ],
+            [
+             0,
+             28
+            ]
+           ]
+          },
+          "Visible": true
+         },
+         "Attributes": {
+          "CodeProps": "BackgroundColor3=c3:0.152,0.213,0.248\nBorderSizePixel=0.000\nLayoutOrder=0.000\nSize=u2:0.000,150,0.000,28\nVisible=true"
+         },
+         "Children": [
+          {
+           "ClassName": "UICorner",
+           "Name": "UICorner",
+           "Properties": {
+            "CornerRadius": {
+             "UDim": [
+              0,
+              8
+             ]
+            }
+           },
+           "Attributes": {
+            "CodeProps": "CornerRadius=u:0.000,8"
+           }
+          },
+          {
+           "ClassName": "UIStroke",
+           "Name": "AccentEdge",
+           "Properties": {
+            "ApplyStrokeMode": "Border",
+            "Color": [
+             0.509804,
+             1,
+             0.627451
+            ],
+            "Thickness": 1.5,
+            "Transparency": 0
+           },
+           "Attributes": {
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.510,1.000,0.627\nThickness=1.500\nTransparency=0.000"
+           }
+          },
+          {
+           "ClassName": "Frame",
+           "Name": "Icon_shield",
+           "Properties": {
+            "AnchorPoint": [
+             0,
+             0
+            ],
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
+            "ClipsDescendants": false,
+            "LayoutOrder": 0,
+            "Position": {
+             "UDim2": [
+              [
+               0,
+               7
+              ],
+              [
+               0,
+               5
+              ]
+             ]
+            },
+            "Size": {
+             "UDim2": [
+              [
+               0,
+               18
+              ],
+              [
+               0,
+               18
+              ]
+             ]
+            },
+            "ZIndex": 3
+           },
+           "Attributes": {
+            "CodeProps": "AnchorPoint=v2:0.000,0.000\nLayoutOrder=0.000\nPosition=u2:0.000,7,0.000,5\nSize=u2:0.000,18,0.000,18\nZIndex=3.000",
+            "IconId": "shield"
+           }
+          },
+          {
+           "ClassName": "TextLabel",
+           "Name": "TextLabel",
+           "Properties": {
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
+            "Font": "GothamBold",
+            "Position": {
+             "UDim2": [
+              [
+               0,
+               30
+              ],
+              [
+               0,
+               0
+              ]
+             ]
+            },
+            "RichText": true,
+            "Size": {
+             "UDim2": [
+              [
+               1,
+               -32
+              ],
+              [
+               1,
+               0
+              ]
+             ]
+            },
+            "Text": "LOCKED  0:36",
+            "TextColor3": [
+             0.509804,
+             1,
+             0.627451
+            ],
+            "TextSize": 13,
+            "TextTruncate": "AtEnd",
+            "TextXAlignment": "Left",
+            "ZIndex": 3
+           },
+           "Attributes": {
+            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,30,0.000,0\nRichText=true\nSize=u2:1.000,-32,1.000,0\nText=LOCKED  0:36\nTextColor3=c3:0.510,1.000,0.627\nTextSize=13.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Left\nZIndex=3.000"
+           }
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "ClassName": "Frame",
+       "Name": "Toasts",
+       "Properties": {
+        "BackgroundColor3": [
+         0.145098,
+         0.160784,
+         0.227451
+        ],
+        "BackgroundTransparency": 1,
+        "BorderSizePixel": 0,
+        "LayoutOrder": 3,
+        "Size": {
+         "UDim2": [
+          [
+           0,
+           500
+          ],
+          [
+           0,
+           108
+          ]
+         ]
+        }
+       },
+       "Attributes": {
+        "CodeProps": "BackgroundColor3=c3:0.145,0.161,0.227\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nLayoutOrder=3.000\nSize=u2:0.000,500,0.000,108"
+       },
+       "Children": [
+        {
+         "ClassName": "UIListLayout",
+         "Name": "UIListLayout",
+         "Properties": {
+          "FillDirection": "Vertical",
+          "HorizontalAlignment": "Center",
+          "Padding": {
+           "UDim": [
+            0,
+            6
+           ]
+          },
+          "SortOrder": "LayoutOrder",
+          "VerticalAlignment": "Top"
+         },
+         "Attributes": {
+          "CodeProps": "FillDirection=e:Vertical\nHorizontalAlignment=e:Center\nPadding=u:0.000,6\nSortOrder=e:LayoutOrder\nVerticalAlignment=e:Top"
+         }
+        },
+        {
+         "ClassName": "Frame",
+         "Name": "Frame",
+         "Properties": {
+          "AutomaticSize": "X",
+          "BackgroundColor3": [
+           0.101961,
+           0.113725,
+           0.164706
+          ],
+          "BackgroundTransparency": 0.04,
+          "BorderSizePixel": 0,
+          "LayoutOrder": 1,
+          "Size": {
+           "UDim2": [
+            [
+             0,
+             0
+            ],
+            [
+             0,
+             34
+            ]
+           ]
+          }
+         },
+         "Attributes": {
+          "CodeProps": "AutomaticSize=e:X\nBackgroundColor3=c3:0.102,0.114,0.165\nBackgroundTransparency=0.040\nBorderSizePixel=0.000\nLayoutOrder=1.000\nSize=u2:0.000,0,0.000,34"
+         },
+         "Children": [
+          {
+           "ClassName": "UICorner",
+           "Name": "UICorner",
+           "Properties": {
+            "CornerRadius": {
+             "UDim": [
+              0,
+              8
+             ]
+            }
+           },
+           "Attributes": {
+            "CodeProps": "CornerRadius=u:0.000,8"
+           }
+          },
+          {
+           "ClassName": "UIStroke",
+           "Name": "UIStroke",
+           "Properties": {
+            "ApplyStrokeMode": "Border",
+            "Color": [
+             0.968627,
+             0.968627,
+             0.992157
+            ],
+            "Thickness": 1.5,
+            "Transparency": 0.35
+           },
+           "Attributes": {
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.969,0.969,0.992\nThickness=1.500\nTransparency=0.350"
+           }
+          },
+          {
+           "ClassName": "UIPadding",
+           "Name": "UIPadding",
+           "Properties": {
+            "PaddingBottom": {
+             "UDim": [
+              0,
+              0
+             ]
+            },
+            "PaddingLeft": {
+             "UDim": [
+              0,
+              12
+             ]
+            },
+            "PaddingRight": {
+             "UDim": [
+              0,
+              12
+             ]
+            },
+            "PaddingTop": {
+             "UDim": [
+              0,
+              0
+             ]
+            }
+           },
+           "Attributes": {
+            "CodeProps": "PaddingBottom=u:0.000,0\nPaddingLeft=u:0.000,12\nPaddingRight=u:0.000,12\nPaddingTop=u:0.000,0"
+           }
+          },
+          {
+           "ClassName": "UIListLayout",
+           "Name": "UIListLayout",
+           "Properties": {
+            "FillDirection": "Horizontal",
+            "HorizontalAlignment": "Left",
+            "Padding": {
+             "UDim": [
+              0,
+              8
+             ]
+            },
+            "SortOrder": "LayoutOrder",
+            "VerticalAlignment": "Center"
+           },
+           "Attributes": {
+            "CodeProps": "FillDirection=e:Horizontal\nHorizontalAlignment=e:Left\nPadding=u:0.000,8\nSortOrder=e:LayoutOrder\nVerticalAlignment=e:Center"
+           }
+          },
+          {
+           "ClassName": "Frame",
+           "Name": "Icon_star",
+           "Properties": {
+            "AnchorPoint": [
+             0,
+             0
+            ],
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
+            "ClipsDescendants": false,
+            "LayoutOrder": 1,
+            "Position": {
+             "UDim2": [
+              [
+               0,
+               0
+              ],
+              [
+               0,
+               0
+              ]
+             ]
+            },
+            "Size": {
+             "UDim2": [
+              [
+               0,
+               18
+              ],
+              [
+               0,
+               18
+              ]
+             ]
+            },
+            "ZIndex": 1
+           },
+           "Attributes": {
+            "CodeProps": "AnchorPoint=v2:0.000,0.000\nLayoutOrder=1.000\nPosition=u2:0.000,0,0.000,0\nSize=u2:0.000,18,0.000,18\nZIndex=1.000",
+            "IconId": "star"
+           }
+          },
+          {
+           "ClassName": "TextLabel",
+           "Name": "TextLabel",
+           "Properties": {
+            "AutomaticSize": "X",
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
+            "Font": "GothamMedium",
+            "LayoutOrder": 2,
+            "RichText": true,
+            "Size": {
+             "UDim2": [
+              [
+               0,
+               0
+              ],
+              [
+               0,
+               34
+              ]
+             ]
+            },
+            "Text": "Hamster balls roll down the road in the middle. Walk close and press [E] to CLAIM one.",
+            "TextColor3": [
+             0.968627,
+             0.968627,
+             0.992157
+            ],
+            "TextSize": 14,
+            "TextTransparency": 0,
+            "TextXAlignment": "Center"
+           },
+           "Attributes": {
+            "CodeProps": "AutomaticSize=e:X\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamMedium\nLayoutOrder=2.000\nRichText=true\nSize=u2:0.000,0,0.000,34\nText=Hamster balls roll down the road in the middle. Walk close and press [E] to CLAIM one.\nTextColor3=c3:0.969,0.969,0.992\nTextSize=14.000\nTextXAlignment=e:Center"
+           }
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ClassName": "Frame",
+   "Name": "Rail",
+   "Properties": {
+    "AnchorPoint": [
+     1,
+     0
+    ],
+    "BackgroundTransparency": 1,
+    "BorderSizePixel": 0,
+    "Position": {
+     "UDim2": [
+      [
+       1,
+       -12
+      ],
+      [
+       0,
+       8
+      ]
+     ]
+    },
+    "Size": {
+     "UDim2": [
+      [
+       0,
+       50
+      ],
+      [
+       0,
+       460
+      ]
+     ]
+    },
+    "Visible": true,
+    "ZIndex": 1
+   },
+   "Attributes": {
+    "CodeProps": "AnchorPoint=v2:1.000,0.000\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nPosition=u2:1.000,-12,0.000,8\nSize=u2:0.000,50,0.000,460\nVisible=true\nZIndex=1.000",
+    "Responsive": true
+   },
+   "Children": [
+    {
+     "ClassName": "Frame",
+     "Name": "Content",
+     "Properties": {
+      "BackgroundTransparency": 1,
+      "BorderSizePixel": 0,
+      "Size": {
+       "UDim2": [
+        [
+         0,
+         46
+        ],
+        [
+         0,
+         424
+        ]
+       ]
+      }
+     },
+     "Attributes": {
+      "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nSize=u2:0.000,46,0.000,424"
+     },
+     "Children": [
+      {
+       "ClassName": "UIScale",
+       "Name": "UIScale",
+       "Properties": {
+        "Scale": 1.08475
+       },
+       "Attributes": {
+        "CodeProps": "Scale=1.085"
+       }
+      },
+      {
+       "ClassName": "UIListLayout",
+       "Name": "UIListLayout",
+       "Properties": {
+        "FillDirection": "Vertical",
+        "HorizontalAlignment": "Right",
+        "Padding": {
+         "UDim": [
+          0,
+          8
+         ]
+        },
+        "SortOrder": "LayoutOrder",
+        "VerticalAlignment": "Top"
+       },
+       "Attributes": {
+        "CodeProps": "FillDirection=e:Vertical\nHorizontalAlignment=e:Right\nPadding=u:0.000,8\nSortOrder=e:LayoutOrder\nVerticalAlignment=e:Top"
+       }
+      },
+      {
+       "ClassName": "TextButton",
+       "Name": "QuestsButton",
+       "Properties": {
+        "AnchorPoint": [
+         0,
+         0
+        ],
+        "AutoButtonColor": false,
+        "BackgroundColor3": [
+         0.101961,
+         0.113725,
+         0.164706
+        ],
+        "BackgroundTransparency": 0.06,
+        "BorderSizePixel": 0,
+        "Font": "GothamBold",
+        "LayoutOrder": 10,
+        "Position": {
+         "UDim2": [
+          [
+           0,
+           0
+          ],
+          [
+           0,
+           0
+          ]
+         ]
+        },
+        "RichText": true,
+        "Size": {
+         "UDim2": [
+          [
+           0,
+           46
+          ],
+          [
+           0,
+           46
+          ]
+         ]
+        },
+        "Text": "",
+        "TextColor3": [
+         1,
+         1,
+         1
+        ],
+        "TextSize": 16,
+        "Visible": true
+       },
+       "Attributes": {
+        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.102,0.114,0.165\nBorderSizePixel=0.000\nFont=e:GothamBold\nLayoutOrder=10.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,46,0.000,46\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
+       },
+       "Children": [
+        {
+         "ClassName": "UICorner",
+         "Name": "UICorner",
+         "Properties": {
+          "CornerRadius": {
+           "UDim": [
+            0,
+            99
+           ]
+          }
+         },
+         "Attributes": {
+          "CodeProps": "CornerRadius=u:0.000,99"
+         }
+        },
+        {
+         "ClassName": "UIStroke",
+         "Name": "Edge",
+         "Properties": {
+          "ApplyStrokeMode": "Border",
+          "Color": [
+           0.0458824,
+           0.0511765,
+           0.0741176
+          ],
+          "Thickness": 1,
+          "Transparency": 0
+         },
+         "Attributes": {
+          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.046,0.051,0.074\nThickness=1.000\nTransparency=0.000"
+         }
+        },
+        {
+         "ClassName": "UIScale",
+         "Name": "UIScale",
+         "Properties": {
+          "Scale": 1
+         },
+         "Attributes": {
+          "CodeProps": "Scale=1.000"
+         }
+        },
+        {
+         "ClassName": "Frame",
+         "Name": "Icon_scroll",
+         "Properties": {
+          "AnchorPoint": [
+           0.5,
+           0.5
+          ],
+          "BackgroundTransparency": 1,
+          "BorderSizePixel": 0,
+          "ClipsDescendants": false,
+          "LayoutOrder": 0,
+          "Position": {
+           "UDim2": [
+            [
+             0.5,
+             0
+            ],
+            [
+             0.5,
+             0
+            ]
+           ]
+          },
+          "Size": {
+           "UDim2": [
+            [
+             0,
+             26
+            ],
+            [
+             0,
+             26
+            ]
+           ]
+          },
+          "ZIndex": 3
+         },
+         "Attributes": {
+          "CodeProps": "AnchorPoint=v2:0.500,0.500\nLayoutOrder=0.000\nPosition=u2:0.500,0,0.500,0\nSize=u2:0.000,26,0.000,26\nZIndex=3.000",
+          "IconId": "scroll"
+         }
+        },
+        {
+         "ClassName": "Frame",
+         "Name": "NotifyDot",
+         "Properties": {
+          "AnchorPoint": [
+           1,
+           0
+          ],
+          "BackgroundColor3": [
+           1,
+           0.345098,
+           0.384314
+          ],
+          "BorderSizePixel": 0,
+          "Position": {
+           "UDim2": [
+            [
+             1,
+             -1
+            ],
+            [
+             0,
+             1
+            ]
+           ]
+          },
+          "Size": {
+           "UDim2": [
+            [
+             0,
+             14
+            ],
+            [
+             0,
+             14
+            ]
+           ]
+          },
+          "Visible": false,
+          "ZIndex": 10
+         },
+         "Attributes": {
+          "CodeProps": "AnchorPoint=v2:1.000,0.000\nBackgroundColor3=c3:1.000,0.345,0.384\nBorderSizePixel=0.000\nPosition=u2:1.000,-1,0.000,1\nSize=u2:0.000,14,0.000,14\nVisible=false\nZIndex=10.000"
+         },
+         "Children": [
+          {
+           "ClassName": "UICorner",
+           "Name": "UICorner",
+           "Properties": {
+            "CornerRadius": {
+             "UDim": [
+              0,
+              99
+             ]
+            }
+           },
+           "Attributes": {
+            "CodeProps": "CornerRadius=u:0.000,99"
+           }
+          },
+          {
+           "ClassName": "UIStroke",
+           "Name": "UIStroke",
+           "Properties": {
+            "ApplyStrokeMode": "Border",
+            "Color": [
+             0.101961,
+             0.113725,
+             0.164706
+            ],
+            "Thickness": 1.5,
+            "Transparency": 0
+           },
+           "Attributes": {
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.102,0.114,0.165\nThickness=1.500\nTransparency=0.000"
+           }
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "ClassName": "TextButton",
+       "Name": "BackpackButton",
+       "Properties": {
+        "AnchorPoint": [
+         0,
+         0
+        ],
+        "AutoButtonColor": false,
+        "BackgroundColor3": [
+         0.101961,
+         0.113725,
+         0.164706
+        ],
+        "BackgroundTransparency": 0.06,
+        "BorderSizePixel": 0,
+        "Font": "GothamBold",
+        "LayoutOrder": 20,
+        "Position": {
+         "UDim2": [
+          [
+           0,
+           0
+          ],
+          [
+           0,
+           0
+          ]
+         ]
+        },
+        "RichText": true,
+        "Size": {
+         "UDim2": [
+          [
+           0,
+           46
+          ],
+          [
+           0,
+           46
+          ]
+         ]
+        },
+        "Text": "",
+        "TextColor3": [
+         1,
+         1,
+         1
+        ],
+        "TextSize": 16,
+        "Visible": true
+       },
+       "Attributes": {
+        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.102,0.114,0.165\nBorderSizePixel=0.000\nFont=e:GothamBold\nLayoutOrder=20.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,46,0.000,46\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
+       },
+       "Children": [
+        {
+         "ClassName": "UICorner",
+         "Name": "UICorner",
+         "Properties": {
+          "CornerRadius": {
+           "UDim": [
+            0,
+            99
+           ]
+          }
+         },
+         "Attributes": {
+          "CodeProps": "CornerRadius=u:0.000,99"
+         }
+        },
+        {
+         "ClassName": "UIStroke",
+         "Name": "Edge",
+         "Properties": {
+          "ApplyStrokeMode": "Border",
+          "Color": [
+           0.0458824,
+           0.0511765,
+           0.0741176
+          ],
+          "Thickness": 1,
+          "Transparency": 0
+         },
+         "Attributes": {
+          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.046,0.051,0.074\nThickness=1.000\nTransparency=0.000"
+         }
+        },
+        {
+         "ClassName": "UIScale",
+         "Name": "UIScale",
+         "Properties": {
+          "Scale": 1
+         },
+         "Attributes": {
+          "CodeProps": "Scale=1.000"
+         }
+        },
+        {
+         "ClassName": "Frame",
+         "Name": "Icon_bag",
+         "Properties": {
+          "AnchorPoint": [
+           0.5,
+           0.5
+          ],
+          "BackgroundTransparency": 1,
+          "BorderSizePixel": 0,
+          "ClipsDescendants": false,
+          "LayoutOrder": 0,
+          "Position": {
+           "UDim2": [
+            [
+             0.5,
+             0
+            ],
+            [
+             0.5,
+             0
+            ]
+           ]
+          },
+          "Size": {
+           "UDim2": [
+            [
+             0,
+             26
+            ],
+            [
+             0,
+             26
+            ]
+           ]
+          },
+          "ZIndex": 3
+         },
+         "Attributes": {
+          "CodeProps": "AnchorPoint=v2:0.500,0.500\nLayoutOrder=0.000\nPosition=u2:0.500,0,0.500,0\nSize=u2:0.000,26,0.000,26\nZIndex=3.000",
+          "IconId": "bag"
+         }
+        },
+        {
+         "ClassName": "Frame",
+         "Name": "NotifyDot",
+         "Properties": {
+          "AnchorPoint": [
+           1,
+           0
+          ],
+          "BackgroundColor3": [
+           1,
+           0.345098,
+           0.384314
+          ],
+          "BorderSizePixel": 0,
+          "Position": {
+           "UDim2": [
+            [
+             1,
+             -1
+            ],
+            [
+             0,
+             1
+            ]
+           ]
+          },
+          "Size": {
+           "UDim2": [
+            [
+             0,
+             14
+            ],
+            [
+             0,
+             14
+            ]
+           ]
+          },
+          "Visible": false,
+          "ZIndex": 10
+         },
+         "Attributes": {
+          "CodeProps": "AnchorPoint=v2:1.000,0.000\nBackgroundColor3=c3:1.000,0.345,0.384\nBorderSizePixel=0.000\nPosition=u2:1.000,-1,0.000,1\nSize=u2:0.000,14,0.000,14\nVisible=false\nZIndex=10.000"
+         },
+         "Children": [
+          {
+           "ClassName": "UICorner",
+           "Name": "UICorner",
+           "Properties": {
+            "CornerRadius": {
+             "UDim": [
+              0,
+              99
+             ]
+            }
+           },
+           "Attributes": {
+            "CodeProps": "CornerRadius=u:0.000,99"
+           }
+          },
+          {
+           "ClassName": "UIStroke",
+           "Name": "UIStroke",
+           "Properties": {
+            "ApplyStrokeMode": "Border",
+            "Color": [
+             0.101961,
+             0.113725,
+             0.164706
+            ],
+            "Thickness": 1.5,
+            "Transparency": 0
+           },
+           "Attributes": {
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.102,0.114,0.165\nThickness=1.500\nTransparency=0.000"
+           }
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "ClassName": "TextButton",
+       "Name": "ShopButton",
+       "Properties": {
+        "AnchorPoint": [
+         0,
+         0
+        ],
+        "AutoButtonColor": false,
+        "BackgroundColor3": [
+         0.101961,
+         0.113725,
+         0.164706
+        ],
+        "BackgroundTransparency": 0.06,
+        "BorderSizePixel": 0,
+        "Font": "GothamBold",
+        "LayoutOrder": 30,
+        "Position": {
+         "UDim2": [
+          [
+           0,
+           0
+          ],
+          [
+           0,
+           0
+          ]
+         ]
+        },
+        "RichText": true,
+        "Size": {
+         "UDim2": [
+          [
+           0,
+           46
+          ],
+          [
+           0,
+           46
+          ]
+         ]
+        },
+        "Text": "",
+        "TextColor3": [
+         1,
+         1,
+         1
+        ],
+        "TextSize": 16,
+        "Visible": true
+       },
+       "Attributes": {
+        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.102,0.114,0.165\nBorderSizePixel=0.000\nFont=e:GothamBold\nLayoutOrder=30.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,46,0.000,46\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
+       },
+       "Children": [
+        {
+         "ClassName": "UICorner",
+         "Name": "UICorner",
+         "Properties": {
+          "CornerRadius": {
+           "UDim": [
+            0,
+            99
+           ]
+          }
+         },
+         "Attributes": {
+          "CodeProps": "CornerRadius=u:0.000,99"
+         }
+        },
+        {
+         "ClassName": "UIStroke",
+         "Name": "Edge",
+         "Properties": {
+          "ApplyStrokeMode": "Border",
+          "Color": [
+           0.0458824,
+           0.0511765,
+           0.0741176
+          ],
+          "Thickness": 1,
+          "Transparency": 0
+         },
+         "Attributes": {
+          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.046,0.051,0.074\nThickness=1.000\nTransparency=0.000"
+         }
+        },
+        {
+         "ClassName": "UIScale",
+         "Name": "UIScale",
+         "Properties": {
+          "Scale": 1
+         },
+         "Attributes": {
+          "CodeProps": "Scale=1.000"
+         }
+        },
+        {
+         "ClassName": "Frame",
+         "Name": "Icon_gift",
+         "Properties": {
+          "AnchorPoint": [
+           0.5,
+           0.5
+          ],
+          "BackgroundTransparency": 1,
+          "BorderSizePixel": 0,
+          "ClipsDescendants": false,
+          "LayoutOrder": 0,
+          "Position": {
+           "UDim2": [
+            [
+             0.5,
+             0
+            ],
+            [
+             0.5,
+             0
+            ]
+           ]
+          },
+          "Size": {
+           "UDim2": [
+            [
+             0,
+             26
+            ],
+            [
+             0,
+             26
+            ]
+           ]
+          },
+          "ZIndex": 3
+         },
+         "Attributes": {
+          "CodeProps": "AnchorPoint=v2:0.500,0.500\nLayoutOrder=0.000\nPosition=u2:0.500,0,0.500,0\nSize=u2:0.000,26,0.000,26\nZIndex=3.000",
+          "IconId": "gift"
+         }
+        },
+        {
+         "ClassName": "Frame",
+         "Name": "NotifyDot",
+         "Properties": {
+          "AnchorPoint": [
+           1,
+           0
+          ],
+          "BackgroundColor3": [
+           1,
+           0.345098,
+           0.384314
+          ],
+          "BorderSizePixel": 0,
+          "Position": {
+           "UDim2": [
+            [
+             1,
+             -1
+            ],
+            [
+             0,
+             1
+            ]
+           ]
+          },
+          "Size": {
+           "UDim2": [
+            [
+             0,
+             14
+            ],
+            [
+             0,
+             14
+            ]
+           ]
+          },
+          "Visible": false,
+          "ZIndex": 10
+         },
+         "Attributes": {
+          "CodeProps": "AnchorPoint=v2:1.000,0.000\nBackgroundColor3=c3:1.000,0.345,0.384\nBorderSizePixel=0.000\nPosition=u2:1.000,-1,0.000,1\nSize=u2:0.000,14,0.000,14\nVisible=false\nZIndex=10.000"
+         },
+         "Children": [
+          {
+           "ClassName": "UICorner",
+           "Name": "UICorner",
+           "Properties": {
+            "CornerRadius": {
+             "UDim": [
+              0,
+              99
+             ]
+            }
+           },
+           "Attributes": {
+            "CodeProps": "CornerRadius=u:0.000,99"
+           }
+          },
+          {
+           "ClassName": "UIStroke",
+           "Name": "UIStroke",
+           "Properties": {
+            "ApplyStrokeMode": "Border",
+            "Color": [
+             0.101961,
+             0.113725,
+             0.164706
+            ],
+            "Thickness": 1.5,
+            "Transparency": 0
+           },
+           "Attributes": {
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.102,0.114,0.165\nThickness=1.500\nTransparency=0.000"
+           }
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "ClassName": "TextButton",
+       "Name": "SettingsButton",
+       "Properties": {
+        "AnchorPoint": [
+         0,
+         0
+        ],
+        "AutoButtonColor": false,
+        "BackgroundColor3": [
+         0.101961,
+         0.113725,
+         0.164706
+        ],
+        "BackgroundTransparency": 0.06,
+        "BorderSizePixel": 0,
+        "Font": "GothamBold",
+        "LayoutOrder": 90,
+        "Position": {
+         "UDim2": [
+          [
+           0,
+           0
+          ],
+          [
+           0,
+           0
+          ]
+         ]
+        },
+        "RichText": true,
+        "Size": {
+         "UDim2": [
+          [
+           0,
+           46
+          ],
+          [
+           0,
+           46
+          ]
+         ]
+        },
+        "Text": "",
+        "TextColor3": [
+         1,
+         1,
+         1
+        ],
+        "TextSize": 16,
+        "Visible": true
+       },
+       "Attributes": {
+        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.102,0.114,0.165\nBorderSizePixel=0.000\nFont=e:GothamBold\nLayoutOrder=90.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,46,0.000,46\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
+       },
+       "Children": [
+        {
+         "ClassName": "UICorner",
+         "Name": "UICorner",
+         "Properties": {
+          "CornerRadius": {
+           "UDim": [
+            0,
+            99
+           ]
+          }
+         },
+         "Attributes": {
+          "CodeProps": "CornerRadius=u:0.000,99"
+         }
+        },
+        {
+         "ClassName": "UIStroke",
+         "Name": "Edge",
+         "Properties": {
+          "ApplyStrokeMode": "Border",
+          "Color": [
+           0.0458824,
+           0.0511765,
+           0.0741176
+          ],
+          "Thickness": 1,
+          "Transparency": 0
+         },
+         "Attributes": {
+          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.046,0.051,0.074\nThickness=1.000\nTransparency=0.000"
+         }
+        },
+        {
+         "ClassName": "UIScale",
+         "Name": "UIScale",
+         "Properties": {
+          "Scale": 1
+         },
+         "Attributes": {
+          "CodeProps": "Scale=1.000"
+         }
+        },
+        {
+         "ClassName": "Frame",
+         "Name": "Icon_gear",
+         "Properties": {
+          "AnchorPoint": [
+           0.5,
+           0.5
+          ],
+          "BackgroundTransparency": 1,
+          "BorderSizePixel": 0,
+          "ClipsDescendants": false,
+          "LayoutOrder": 0,
+          "Position": {
+           "UDim2": [
+            [
+             0.5,
+             0
+            ],
+            [
+             0.5,
+             0
+            ]
+           ]
+          },
+          "Size": {
+           "UDim2": [
+            [
+             0,
+             26
+            ],
+            [
+             0,
+             26
+            ]
+           ]
+          },
+          "ZIndex": 3
+         },
+         "Attributes": {
+          "CodeProps": "AnchorPoint=v2:0.500,0.500\nLayoutOrder=0.000\nPosition=u2:0.500,0,0.500,0\nSize=u2:0.000,26,0.000,26\nZIndex=3.000",
+          "IconId": "gear"
+         }
+        },
+        {
+         "ClassName": "Frame",
+         "Name": "NotifyDot",
+         "Properties": {
+          "AnchorPoint": [
+           1,
+           0
+          ],
+          "BackgroundColor3": [
+           1,
+           0.345098,
+           0.384314
+          ],
+          "BorderSizePixel": 0,
+          "Position": {
+           "UDim2": [
+            [
+             1,
+             -1
+            ],
+            [
+             0,
+             1
+            ]
+           ]
+          },
+          "Size": {
+           "UDim2": [
+            [
+             0,
+             14
+            ],
+            [
+             0,
+             14
+            ]
+           ]
+          },
+          "Visible": false,
+          "ZIndex": 10
+         },
+         "Attributes": {
+          "CodeProps": "AnchorPoint=v2:1.000,0.000\nBackgroundColor3=c3:1.000,0.345,0.384\nBorderSizePixel=0.000\nPosition=u2:1.000,-1,0.000,1\nSize=u2:0.000,14,0.000,14\nVisible=false\nZIndex=10.000"
+         },
+         "Children": [
+          {
+           "ClassName": "UICorner",
+           "Name": "UICorner",
+           "Properties": {
+            "CornerRadius": {
+             "UDim": [
+              0,
+              99
+             ]
+            }
+           },
+           "Attributes": {
+            "CodeProps": "CornerRadius=u:0.000,99"
+           }
+          },
+          {
+           "ClassName": "UIStroke",
+           "Name": "UIStroke",
+           "Properties": {
+            "ApplyStrokeMode": "Border",
+            "Color": [
+             0.101961,
+             0.113725,
+             0.164706
+            ],
+            "Thickness": 1.5,
+            "Transparency": 0
+           },
+           "Attributes": {
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.102,0.114,0.165\nThickness=1.500\nTransparency=0.000"
+           }
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "ClassName": "TextButton",
+       "Name": "LeaderboardsButton",
+       "Properties": {
+        "AnchorPoint": [
+         0,
+         0
+        ],
+        "AutoButtonColor": false,
+        "BackgroundColor3": [
+         0.101961,
+         0.113725,
+         0.164706
+        ],
+        "BackgroundTransparency": 0.06,
+        "BorderSizePixel": 0,
+        "Font": "GothamBold",
+        "LayoutOrder": 40,
+        "Position": {
+         "UDim2": [
+          [
+           0,
+           0
+          ],
+          [
+           0,
+           0
+          ]
+         ]
+        },
+        "RichText": true,
+        "Size": {
+         "UDim2": [
+          [
+           0,
+           46
+          ],
+          [
+           0,
+           46
+          ]
+         ]
+        },
+        "Text": "",
+        "TextColor3": [
+         1,
+         1,
+         1
+        ],
+        "TextSize": 16,
+        "Visible": true
+       },
+       "Attributes": {
+        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.102,0.114,0.165\nBorderSizePixel=0.000\nFont=e:GothamBold\nLayoutOrder=40.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,46,0.000,46\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
+       },
+       "Children": [
+        {
+         "ClassName": "UICorner",
+         "Name": "UICorner",
+         "Properties": {
+          "CornerRadius": {
+           "UDim": [
+            0,
+            99
+           ]
+          }
+         },
+         "Attributes": {
+          "CodeProps": "CornerRadius=u:0.000,99"
+         }
+        },
+        {
+         "ClassName": "UIStroke",
+         "Name": "Edge",
+         "Properties": {
+          "ApplyStrokeMode": "Border",
+          "Color": [
+           0.0458824,
+           0.0511765,
+           0.0741176
+          ],
+          "Thickness": 1,
+          "Transparency": 0
+         },
+         "Attributes": {
+          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.046,0.051,0.074\nThickness=1.000\nTransparency=0.000"
+         }
+        },
+        {
+         "ClassName": "UIScale",
+         "Name": "UIScale",
+         "Properties": {
+          "Scale": 1
+         },
+         "Attributes": {
+          "CodeProps": "Scale=1.000"
+         }
+        },
+        {
+         "ClassName": "Frame",
+         "Name": "Icon_trophy",
+         "Properties": {
+          "AnchorPoint": [
+           0.5,
+           0.5
+          ],
+          "BackgroundTransparency": 1,
+          "BorderSizePixel": 0,
+          "ClipsDescendants": false,
+          "LayoutOrder": 0,
+          "Position": {
+           "UDim2": [
+            [
+             0.5,
+             0
+            ],
+            [
+             0.5,
+             0
+            ]
+           ]
+          },
+          "Size": {
+           "UDim2": [
+            [
+             0,
+             26
+            ],
+            [
+             0,
+             26
+            ]
+           ]
+          },
+          "ZIndex": 3
+         },
+         "Attributes": {
+          "CodeProps": "AnchorPoint=v2:0.500,0.500\nLayoutOrder=0.000\nPosition=u2:0.500,0,0.500,0\nSize=u2:0.000,26,0.000,26\nZIndex=3.000",
+          "IconId": "trophy"
+         }
+        },
+        {
+         "ClassName": "Frame",
+         "Name": "NotifyDot",
+         "Properties": {
+          "AnchorPoint": [
+           1,
+           0
+          ],
+          "BackgroundColor3": [
+           1,
+           0.345098,
+           0.384314
+          ],
+          "BorderSizePixel": 0,
+          "Position": {
+           "UDim2": [
+            [
+             1,
+             -1
+            ],
+            [
+             0,
+             1
+            ]
+           ]
+          },
+          "Size": {
+           "UDim2": [
+            [
+             0,
+             14
+            ],
+            [
+             0,
+             14
+            ]
+           ]
+          },
+          "Visible": false,
+          "ZIndex": 10
+         },
+         "Attributes": {
+          "CodeProps": "AnchorPoint=v2:1.000,0.000\nBackgroundColor3=c3:1.000,0.345,0.384\nBorderSizePixel=0.000\nPosition=u2:1.000,-1,0.000,1\nSize=u2:0.000,14,0.000,14\nVisible=false\nZIndex=10.000"
+         },
+         "Children": [
+          {
+           "ClassName": "UICorner",
+           "Name": "UICorner",
+           "Properties": {
+            "CornerRadius": {
+             "UDim": [
+              0,
+              99
+             ]
+            }
+           },
+           "Attributes": {
+            "CodeProps": "CornerRadius=u:0.000,99"
+           }
+          },
+          {
+           "ClassName": "UIStroke",
+           "Name": "UIStroke",
+           "Properties": {
+            "ApplyStrokeMode": "Border",
+            "Color": [
+             0.101961,
+             0.113725,
+             0.164706
+            ],
+            "Thickness": 1.5,
+            "Transparency": 0
+           },
+           "Attributes": {
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.102,0.114,0.165\nThickness=1.500\nTransparency=0.000"
+           }
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ClassName": "Frame",
+   "Name": "LeftColumn",
+   "Properties": {
+    "AnchorPoint": [
+     0,
+     0
+    ],
+    "BackgroundTransparency": 1,
+    "BorderSizePixel": 0,
+    "Position": {
+     "UDim2": [
+      [
+       0,
+       12
+      ],
+      [
+       0,
+       8
+      ]
+     ]
+    },
+    "Size": {
+     "UDim2": [
+      [
+       0,
+       326
+      ],
+      [
+       0,
+       456
+      ]
+     ]
+    },
+    "Visible": true,
+    "ZIndex": 1
+   },
+   "Attributes": {
+    "CodeProps": "AnchorPoint=v2:0.000,0.000\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nPosition=u2:0.000,12,0.000,8\nSize=u2:0.000,326,0.000,456\nVisible=true\nZIndex=1.000",
+    "Responsive": true
+   },
+   "Children": [
+    {
+     "ClassName": "Frame",
+     "Name": "Content",
+     "Properties": {
+      "BackgroundTransparency": 1,
+      "BorderSizePixel": 0,
+      "Size": {
+       "UDim2": [
+        [
+         0,
+         300
+        ],
+        [
+         0,
+         420
+        ]
+       ]
+      }
+     },
+     "Attributes": {
+      "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nSize=u2:0.000,300,0.000,420"
+     },
+     "Children": [
+      {
+       "ClassName": "UIScale",
+       "Name": "UIScale",
+       "Properties": {
+        "Scale": 1.08475
+       },
+       "Attributes": {
+        "CodeProps": "Scale=1.085"
+       }
+      },
+      {
+       "ClassName": "UIListLayout",
+       "Name": "UIListLayout",
+       "Properties": {
+        "FillDirection": "Vertical",
+        "HorizontalAlignment": "Left",
+        "Padding": {
+         "UDim": [
+          0,
+          10
+         ]
+        },
+        "SortOrder": "LayoutOrder",
+        "VerticalAlignment": "Top"
+       },
+       "Attributes": {
+        "CodeProps": "FillDirection=e:Vertical\nHorizontalAlignment=e:Left\nPadding=u:0.000,10\nSortOrder=e:LayoutOrder\nVerticalAlignment=e:Top"
+       }
+      },
+      {
+       "ClassName": "Frame",
+       "Name": "Tracker",
+       "Properties": {
+        "BackgroundColor3": [
+         0.145098,
+         0.160784,
+         0.227451
+        ],
+        "BackgroundTransparency": 1,
+        "BorderSizePixel": 0,
+        "LayoutOrder": 1,
+        "Size": {
+         "UDim2": [
+          [
+           0,
+           300
+          ],
+          [
+           0,
+           168
+          ]
+         ]
+        }
+       },
+       "Attributes": {
+        "CodeProps": "BackgroundColor3=c3:0.145,0.161,0.227\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nLayoutOrder=1.000\nSize=u2:0.000,300,0.000,168"
+       },
+       "Children": [
+        {
+         "ClassName": "UIListLayout",
+         "Name": "UIListLayout",
+         "Properties": {
+          "FillDirection": "Vertical",
+          "HorizontalAlignment": "Left",
+          "Padding": {
+           "UDim": [
+            0,
+            6
+           ]
+          },
+          "SortOrder": "LayoutOrder",
+          "VerticalAlignment": "Top"
+         },
+         "Attributes": {
+          "CodeProps": "FillDirection=e:Vertical\nHorizontalAlignment=e:Left\nPadding=u:0.000,6\nSortOrder=e:LayoutOrder\nVerticalAlignment=e:Top"
+         }
+        },
+        {
+         "ClassName": "Frame",
+         "Name": "Frame",
+         "Properties": {
+          "BackgroundColor3": [
+           0.101961,
+           0.113725,
+           0.164706
+          ],
+          "BackgroundTransparency": 0.1,
+          "BorderSizePixel": 0,
+          "LayoutOrder": 1,
+          "Size": {
+           "UDim2": [
+            [
+             0,
+             300
+            ],
+            [
+             0,
+             52
+            ]
+           ]
+          },
+          "Visible": false
+         },
+         "Attributes": {
+          "CodeProps": "BackgroundColor3=c3:0.102,0.114,0.165\nBackgroundTransparency=0.100\nBorderSizePixel=0.000\nLayoutOrder=1.000\nSize=u2:0.000,300,0.000,52\nVisible=false"
+         },
+         "Children": [
+          {
+           "ClassName": "UICorner",
+           "Name": "UICorner",
+           "Properties": {
+            "CornerRadius": {
+             "UDim": [
+              0,
+              8
+             ]
+            }
+           },
+           "Attributes": {
+            "CodeProps": "CornerRadius=u:0.000,8"
+           }
+          },
+          {
+           "ClassName": "UIStroke",
+           "Name": "UIStroke",
+           "Properties": {
+            "ApplyStrokeMode": "Border",
+            "Color": [
+             1,
+             0.803922,
+             0.282353
+            ],
+            "Thickness": 1.5,
+            "Transparency": 0
+           },
+           "Attributes": {
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:1.000,0.804,0.282\nThickness=1.500\nTransparency=0.000"
+           }
+          },
+          {
+           "ClassName": "TextLabel",
+           "Name": "TextLabel",
+           "Properties": {
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
+            "Font": "GothamBold",
+            "Position": {
+             "UDim2": [
+              [
+               0,
+               12
+              ],
+              [
+               0,
+               5
+              ]
+             ]
+            },
+            "RichText": true,
+            "Size": {
+             "UDim2": [
+              [
+               1,
+               -20
+              ],
+              [
+               0,
+               22
+              ]
+             ]
+            },
+            "Text": "",
+            "TextColor3": [
+             1,
+             1,
+             1
+            ],
+            "TextSize": 16,
+            "TextXAlignment": "Left"
+           },
+           "Attributes": {
+            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,12,0.000,5\nRichText=true\nSize=u2:1.000,-20,0.000,22\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000\nTextXAlignment=e:Left"
+           }
+          },
+          {
+           "ClassName": "TextLabel",
+           "Name": "TextLabel",
+           "Properties": {
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
+            "Font": "GothamMedium",
+            "Position": {
+             "UDim2": [
+              [
+               0,
+               12
+              ],
+              [
+               0,
+               27
+              ]
+             ]
+            },
+            "RichText": true,
+            "Size": {
+             "UDim2": [
+              [
+               1,
+               -20
+              ],
+              [
+               0,
+               20
+              ]
+             ]
+            },
+            "Text": "",
+            "TextColor3": [
+             1,
+             1,
+             1
+            ],
+            "TextSize": 14,
+            "TextXAlignment": "Left"
+           },
+           "Attributes": {
+            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamMedium\nPosition=u2:0.000,12,0.000,27\nRichText=true\nSize=u2:1.000,-20,0.000,20\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=14.000\nTextXAlignment=e:Left"
+           }
+          }
+         ]
+        },
+        {
+         "ClassName": "Frame",
+         "Name": "Frame",
+         "Properties": {
+          "BackgroundColor3": [
+           0.101961,
+           0.113725,
+           0.164706
+          ],
+          "BackgroundTransparency": 0.1,
+          "BorderSizePixel": 0,
+          "LayoutOrder": 2,
+          "Size": {
+           "UDim2": [
+            [
+             0,
+             300
+            ],
+            [
+             0,
+             52
+            ]
+           ]
+          },
+          "Visible": false
+         },
+         "Attributes": {
+          "CodeProps": "BackgroundColor3=c3:0.102,0.114,0.165\nBackgroundTransparency=0.100\nBorderSizePixel=0.000\nLayoutOrder=2.000\nSize=u2:0.000,300,0.000,52\nVisible=false"
+         },
+         "Children": [
+          {
+           "ClassName": "UICorner",
+           "Name": "UICorner",
+           "Properties": {
+            "CornerRadius": {
+             "UDim": [
+              0,
+              8
+             ]
+            }
+           },
+           "Attributes": {
+            "CodeProps": "CornerRadius=u:0.000,8"
+           }
+          },
+          {
+           "ClassName": "UIStroke",
+           "Name": "UIStroke",
+           "Properties": {
+            "ApplyStrokeMode": "Border",
+            "Color": [
+             1,
+             0.803922,
+             0.282353
+            ],
+            "Thickness": 1.5,
+            "Transparency": 0
+           },
+           "Attributes": {
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:1.000,0.804,0.282\nThickness=1.500\nTransparency=0.000"
+           }
+          },
+          {
+           "ClassName": "TextLabel",
+           "Name": "TextLabel",
+           "Properties": {
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
+            "Font": "GothamBold",
+            "Position": {
+             "UDim2": [
+              [
+               0,
+               12
+              ],
+              [
+               0,
+               5
+              ]
+             ]
+            },
+            "RichText": true,
+            "Size": {
+             "UDim2": [
+              [
+               1,
+               -20
+              ],
+              [
+               0,
+               22
+              ]
+             ]
+            },
+            "Text": "",
+            "TextColor3": [
+             1,
+             1,
+             1
+            ],
+            "TextSize": 16,
+            "TextXAlignment": "Left"
+           },
+           "Attributes": {
+            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,12,0.000,5\nRichText=true\nSize=u2:1.000,-20,0.000,22\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000\nTextXAlignment=e:Left"
+           }
+          },
+          {
+           "ClassName": "TextLabel",
+           "Name": "TextLabel",
+           "Properties": {
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
+            "Font": "GothamMedium",
+            "Position": {
+             "UDim2": [
+              [
+               0,
+               12
+              ],
+              [
+               0,
+               27
+              ]
+             ]
+            },
+            "RichText": true,
+            "Size": {
+             "UDim2": [
+              [
+               1,
+               -20
+              ],
+              [
+               0,
+               20
+              ]
+             ]
+            },
+            "Text": "",
+            "TextColor3": [
+             1,
+             1,
+             1
+            ],
+            "TextSize": 14,
+            "TextXAlignment": "Left"
+           },
+           "Attributes": {
+            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamMedium\nPosition=u2:0.000,12,0.000,27\nRichText=true\nSize=u2:1.000,-20,0.000,20\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=14.000\nTextXAlignment=e:Left"
+           }
+          }
+         ]
+        },
+        {
+         "ClassName": "Frame",
+         "Name": "Frame",
+         "Properties": {
+          "BackgroundColor3": [
+           0.101961,
+           0.113725,
+           0.164706
+          ],
+          "BackgroundTransparency": 0.1,
+          "BorderSizePixel": 0,
+          "LayoutOrder": 3,
+          "Size": {
+           "UDim2": [
+            [
+             0,
+             300
+            ],
+            [
+             0,
+             52
+            ]
+           ]
+          },
+          "Visible": false
+         },
+         "Attributes": {
+          "CodeProps": "BackgroundColor3=c3:0.102,0.114,0.165\nBackgroundTransparency=0.100\nBorderSizePixel=0.000\nLayoutOrder=3.000\nSize=u2:0.000,300,0.000,52\nVisible=false"
+         },
+         "Children": [
+          {
+           "ClassName": "UICorner",
+           "Name": "UICorner",
+           "Properties": {
+            "CornerRadius": {
+             "UDim": [
+              0,
+              8
+             ]
+            }
+           },
+           "Attributes": {
+            "CodeProps": "CornerRadius=u:0.000,8"
+           }
+          },
+          {
+           "ClassName": "UIStroke",
+           "Name": "UIStroke",
+           "Properties": {
+            "ApplyStrokeMode": "Border",
+            "Color": [
+             1,
+             0.803922,
+             0.282353
+            ],
+            "Thickness": 1.5,
+            "Transparency": 0
+           },
+           "Attributes": {
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:1.000,0.804,0.282\nThickness=1.500\nTransparency=0.000"
+           }
+          },
+          {
+           "ClassName": "TextLabel",
+           "Name": "TextLabel",
+           "Properties": {
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
+            "Font": "GothamBold",
+            "Position": {
+             "UDim2": [
+              [
+               0,
+               12
+              ],
+              [
+               0,
+               5
+              ]
+             ]
+            },
+            "RichText": true,
+            "Size": {
+             "UDim2": [
+              [
+               1,
+               -20
+              ],
+              [
+               0,
+               22
+              ]
+             ]
+            },
+            "Text": "",
+            "TextColor3": [
+             1,
+             1,
+             1
+            ],
+            "TextSize": 16,
+            "TextXAlignment": "Left"
+           },
+           "Attributes": {
+            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,12,0.000,5\nRichText=true\nSize=u2:1.000,-20,0.000,22\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000\nTextXAlignment=e:Left"
+           }
+          },
+          {
+           "ClassName": "TextLabel",
+           "Name": "TextLabel",
+           "Properties": {
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
+            "Font": "GothamMedium",
+            "Position": {
+             "UDim2": [
+              [
+               0,
+               12
+              ],
+              [
+               0,
+               27
+              ]
+             ]
+            },
+            "RichText": true,
+            "Size": {
+             "UDim2": [
+              [
+               1,
+               -20
+              ],
+              [
+               0,
+               20
+              ]
+             ]
+            },
+            "Text": "",
+            "TextColor3": [
+             1,
+             1,
+             1
+            ],
+            "TextSize": 14,
+            "TextXAlignment": "Left"
+           },
+           "Attributes": {
+            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamMedium\nPosition=u2:0.000,12,0.000,27\nRichText=true\nSize=u2:1.000,-20,0.000,20\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=14.000\nTextXAlignment=e:Left"
+           }
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "ClassName": "Frame",
+       "Name": "TutorialCard",
+       "Properties": {
+        "BackgroundColor3": [
+         0.101961,
+         0.113725,
+         0.164706
+        ],
+        "BorderSizePixel": 0,
+        "LayoutOrder": 5,
+        "Size": {
+         "UDim2": [
+          [
+           0,
+           290
+          ],
+          [
+           0,
+           142
+          ]
+         ]
+        },
+        "Visible": true
+       },
+       "Attributes": {
+        "CodeProps": "BackgroundColor3=c3:0.102,0.114,0.165\nBorderSizePixel=0.000\nLayoutOrder=5.000\nSize=u2:0.000,290,0.000,142\nVisible=true"
+       },
+       "Children": [
+        {
+         "ClassName": "UICorner",
+         "Name": "UICorner",
+         "Properties": {
+          "CornerRadius": {
+           "UDim": [
+            0,
+            8
+           ]
+          }
+         },
+         "Attributes": {
+          "CodeProps": "CornerRadius=u:0.000,8"
+         }
+        },
+        {
+         "ClassName": "UIStroke",
+         "Name": "UIStroke",
+         "Properties": {
+          "ApplyStrokeMode": "Border",
+          "Color": [
+           0.243137,
+           0.266667,
+           0.368627
+          ],
+          "Thickness": 1,
+          "Transparency": 0
+         },
+         "Attributes": {
+          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.243,0.267,0.369\nThickness=1.000\nTransparency=0.000"
+         }
+        },
+        {
+         "ClassName": "TextLabel",
+         "Name": "Step",
+         "Properties": {
+          "BackgroundTransparency": 1,
+          "BorderSizePixel": 0,
+          "Font": "GothamBold",
+          "Position": {
+           "UDim2": [
+            [
+             0,
+             14
+            ],
+            [
+             0,
+             10
+            ]
+           ]
+          },
+          "RichText": true,
+          "Size": {
+           "UDim2": [
+            [
+             1,
+             -20
+            ],
+            [
+             0,
+             14
+            ]
+           ]
+          },
+          "Text": "TUTORIAL  1 / 7",
+          "TextColor3": [
+           1,
+           0.803922,
+           0.282353
+          ],
+          "TextSize": 12,
+          "TextXAlignment": "Left"
+         },
+         "Attributes": {
+          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,14,0.000,10\nRichText=true\nSize=u2:1.000,-20,0.000,14\nText=TUTORIAL  1 / 7\nTextColor3=c3:1.000,0.804,0.282\nTextSize=12.000\nTextXAlignment=e:Left"
+         }
+        },
+        {
+         "ClassName": "TextLabel",
+         "Name": "Title",
+         "Properties": {
+          "BackgroundTransparency": 1,
+          "BorderSizePixel": 0,
+          "Font": "GothamBold",
+          "Position": {
+           "UDim2": [
+            [
+             0,
+             14
+            ],
+            [
+             0,
+             26
+            ]
+           ]
+          },
+          "RichText": true,
+          "Size": {
+           "UDim2": [
+            [
+             1,
+             -28
+            ],
+            [
+             0,
+             22
+            ]
+           ]
+          },
+          "Text": "Your base",
+          "TextColor3": [
+           0.968627,
+           0.968627,
+           0.992157
+          ],
+          "TextSize": 18,
+          "TextTruncate": "AtEnd",
+          "TextXAlignment": "Left"
+         },
+         "Attributes": {
+          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,14,0.000,26\nRichText=true\nSize=u2:1.000,-28,0.000,22\nText=Your base\nTextColor3=c3:0.969,0.969,0.992\nTextSize=18.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Left"
+         }
+        },
+        {
+         "ClassName": "TextLabel",
+         "Name": "Text",
+         "Properties": {
+          "BackgroundTransparency": 1,
+          "BorderSizePixel": 0,
+          "Font": "GothamMedium",
+          "Position": {
+           "UDim2": [
+            [
+             0,
+             14
+            ],
+            [
+             0,
+             50
+            ]
+           ]
+          },
+          "RichText": true,
+          "Size": {
+           "UDim2": [
+            [
+             1,
+             -28
+            ],
+            [
+             0,
+             54
+            ]
+           ]
+          },
+          "Text": "This is your base. Hamsters you win are brought here and work for you. Nobody else owns it.",
+          "TextColor3": [
+           0.647059,
+           0.670588,
+           0.803922
+          ],
+          "TextSize": 13,
+          "TextWrapped": true,
+          "TextXAlignment": "Left",
+          "TextYAlignment": "Top"
+         },
+         "Attributes": {
+          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamMedium\nPosition=u2:0.000,14,0.000,50\nRichText=true\nSize=u2:1.000,-28,0.000,54\nText=This is your base. Hamsters you win are brought here and work for you. Nobody else owns it.\nTextColor3=c3:0.647,0.671,0.804\nTextSize=13.000\nTextWrapped=true\nTextXAlignment=e:Left\nTextYAlignment=e:Top"
+         }
+        },
+        {
+         "ClassName": "TextButton",
+         "Name": "Next",
+         "Properties": {
+          "AnchorPoint": [
+           1,
+           1
+          ],
+          "AutoButtonColor": false,
+          "BackgroundColor3": [
+           0.227451,
+           0.815686,
+           0.486275
+          ],
+          "BorderSizePixel": 0,
+          "Font": "GothamBold",
+          "LayoutOrder": 0,
+          "Position": {
+           "UDim2": [
+            [
+             1,
+             -14
+            ],
+            [
+             1,
+             -10
+            ]
+           ]
+          },
+          "RichText": true,
+          "Size": {
+           "UDim2": [
+            [
+             0,
+             96
+            ],
+            [
+             0,
+             28
+            ]
+           ]
+          },
+          "Text": "",
+          "TextColor3": [
+           1,
+           1,
+           1
+          ],
+          "TextSize": 14,
+          "Visible": true
+         },
+         "Attributes": {
+          "CodeProps": "AnchorPoint=v2:1.000,1.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.816,0.486\nBorderSizePixel=0.000\nFont=e:GothamBold\nLayoutOrder=0.000\nPosition=u2:1.000,-14,1.000,-10\nRichText=true\nSize=u2:0.000,96,0.000,28\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=14.000"
+         },
+         "Children": [
+          {
+           "ClassName": "UICorner",
+           "Name": "UICorner",
+           "Properties": {
+            "CornerRadius": {
+             "UDim": [
+              0,
+              6
+             ]
+            }
+           },
+           "Attributes": {
+            "CodeProps": "CornerRadius=u:0.000,6"
+           }
+          },
+          {
+           "ClassName": "UIStroke",
+           "Name": "Edge",
+           "Properties": {
+            "ApplyStrokeMode": "Border",
+            "Color": [
+             0.125098,
+             0.448627,
+             0.267451
+            ],
+            "Thickness": 1,
+            "Transparency": 0
+           },
+           "Attributes": {
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.125,0.449,0.267\nThickness=1.000\nTransparency=0.000"
+           }
+          },
+          {
+           "ClassName": "UIScale",
+           "Name": "UIScale",
+           "Properties": {
+            "Scale": 1
+           },
+           "Attributes": {
+            "CodeProps": "Scale=1.000"
+           }
+          },
+          {
+           "ClassName": "Frame",
+           "Name": "Content",
+           "Properties": {
+            "AnchorPoint": [
+             0,
+             0
+            ],
+            "BackgroundColor3": [
+             0.145098,
+             0.160784,
+             0.227451
+            ],
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
+            "LayoutOrder": 0,
+            "Position": {
+             "UDim2": [
+              [
+               0,
+               0
+              ],
+              [
+               0,
+               0
+              ]
+             ]
+            },
+            "Size": {
+             "UDim2": [
+              [
+               1,
+               0
+              ],
+              [
+               1,
+               0
+              ]
+             ]
+            },
+            "ZIndex": 3
+           },
+           "Attributes": {
+            "CodeProps": "AnchorPoint=v2:0.000,0.000\nBackgroundColor3=c3:0.145,0.161,0.227\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nLayoutOrder=0.000\nPosition=u2:0.000,0,0.000,0\nSize=u2:1.000,0,1.000,0\nZIndex=3.000"
+           },
+           "Children": [
+            {
+             "ClassName": "UIListLayout",
+             "Name": "UIListLayout",
+             "Properties": {
+              "FillDirection": "Horizontal",
+              "HorizontalAlignment": "Center",
+              "Padding": {
+               "UDim": [
+                0,
+                5
+               ]
+              },
+              "SortOrder": "LayoutOrder",
+              "VerticalAlignment": "Center"
+             },
+             "Attributes": {
+              "CodeProps": "FillDirection=e:Horizontal\nHorizontalAlignment=e:Center\nPadding=u:0.000,5\nSortOrder=e:LayoutOrder\nVerticalAlignment=e:Center"
+             }
+            },
+            {
+             "ClassName": "TextLabel",
+             "Name": "TextLabel",
+             "Properties": {
+              "AutomaticSize": "X",
+              "BackgroundTransparency": 1,
+              "BorderSizePixel": 0,
+              "Font": "GothamBold",
+              "LayoutOrder": 2,
+              "RichText": true,
+              "Size": {
+               "UDim2": [
+                [
+                 0,
+                 0
+                ],
+                [
+                 0,
+                 20
+                ]
+               ]
+              },
+              "Text": "Next",
+              "TextColor3": [
+               1,
+               1,
+               1
+              ],
+              "TextSize": 14,
+              "TextXAlignment": "Left",
+              "ZIndex": 3
+             },
+             "Attributes": {
+              "CodeProps": "AutomaticSize=e:X\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nLayoutOrder=2.000\nRichText=true\nSize=u2:0.000,0,0.000,20\nText=Next\nTextColor3=c3:1.000,1.000,1.000\nTextSize=14.000\nTextXAlignment=e:Left\nZIndex=3.000"
+             }
+            }
+           ]
+          }
+         ]
+        },
+        {
+         "ClassName": "TextButton",
+         "Name": "Skip",
+         "Properties": {
+          "AnchorPoint": [
+           0,
+           1
+          ],
+          "AutoButtonColor": false,
+          "BackgroundColor3": [
+           0.145098,
+           0.160784,
+           0.227451
+          ],
+          "BorderSizePixel": 0,
+          "Font": "GothamBold",
+          "LayoutOrder": 0,
+          "Position": {
+           "UDim2": [
+            [
+             0,
+             14
+            ],
+            [
+             1,
+             -10
+            ]
+           ]
+          },
+          "RichText": true,
+          "Size": {
+           "UDim2": [
+            [
+             0,
+             64
+            ],
+            [
+             0,
+             28
+            ]
+           ]
+          },
+          "Text": "Skip",
+          "TextColor3": [
+           1,
+           1,
+           1
+          ],
+          "TextSize": 13
+         },
+         "Attributes": {
+          "CodeProps": "AnchorPoint=v2:0.000,1.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.145,0.161,0.227\nBorderSizePixel=0.000\nFont=e:GothamBold\nLayoutOrder=0.000\nPosition=u2:0.000,14,1.000,-10\nRichText=true\nSize=u2:0.000,64,0.000,28\nText=Skip\nTextColor3=c3:1.000,1.000,1.000\nTextSize=13.000"
+         },
+         "Children": [
+          {
+           "ClassName": "UICorner",
+           "Name": "UICorner",
+           "Properties": {
+            "CornerRadius": {
+             "UDim": [
+              0,
+              6
+             ]
+            }
+           },
+           "Attributes": {
+            "CodeProps": "CornerRadius=u:0.000,6"
+           }
+          },
+          {
+           "ClassName": "UIStroke",
+           "Name": "Edge",
+           "Properties": {
+            "ApplyStrokeMode": "Border",
+            "Color": [
+             0.0798039,
+             0.0884314,
+             0.125098
+            ],
+            "Thickness": 1,
+            "Transparency": 0
+           },
+           "Attributes": {
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.080,0.088,0.125\nThickness=1.000\nTransparency=0.000"
+           }
+          },
+          {
+           "ClassName": "UIScale",
+           "Name": "UIScale",
+           "Properties": {
+            "Scale": 1
+           },
+           "Attributes": {
+            "CodeProps": "Scale=1.000"
+           }
+          }
+         ]
+        },
+        {
+         "ClassName": "Frame",
+         "Name": "Progress",
+         "Properties": {
+          "BackgroundColor3": [
+           1,
+           0.803922,
+           0.282353
+          ],
+          "BorderSizePixel": 0,
+          "Size": {
+           "UDim2": [
+            [
+             0.142857,
+             0
+            ],
+            [
+             0,
+             2
+            ]
+           ]
+          }
+         },
+         "Attributes": {
+          "CodeProps": "BackgroundColor3=c3:1.000,0.804,0.282\nBorderSizePixel=0.000\nSize=u2:0.143,0,0.000,2"
+         }
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "ClassName": "Frame",
+   "Name": "BottomColumn",
+   "Properties": {
+    "AnchorPoint": [
+     0.5,
+     1
+    ],
+    "BackgroundTransparency": 1,
+    "BorderSizePixel": 0,
+    "Position": {
+     "UDim2": [
+      [
+       0.5,
+       0
+      ],
+      [
+       1,
+       -92
+      ]
+     ]
+    },
+    "Size": {
+     "UDim2": [
+      [
+       0,
+       499
+      ],
+      [
+       0,
+       196
+      ]
+     ]
+    },
+    "Visible": true,
+    "ZIndex": 1
+   },
+   "Attributes": {
+    "CodeProps": "AnchorPoint=v2:0.500,1.000\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nPosition=u2:0.500,0,1.000,-92\nSize=u2:0.000,499,0.000,196\nVisible=true\nZIndex=1.000",
+    "Responsive": true
+   },
+   "Children": [
+    {
+     "ClassName": "Frame",
+     "Name": "Content",
+     "Properties": {
+      "BackgroundTransparency": 1,
+      "BorderSizePixel": 0,
+      "Size": {
+       "UDim2": [
+        [
+         0,
+         460
+        ],
+        [
+         0,
+         180
+        ]
+       ]
+      }
+     },
+     "Attributes": {
+      "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nSize=u2:0.000,460,0.000,180"
+     },
+     "Children": [
+      {
+       "ClassName": "UIScale",
+       "Name": "UIScale",
+       "Properties": {
+        "Scale": 1.08475
+       },
+       "Attributes": {
+        "CodeProps": "Scale=1.085"
+       }
+      },
+      {
+       "ClassName": "UIListLayout",
+       "Name": "UIListLayout",
+       "Properties": {
+        "FillDirection": "Vertical",
+        "HorizontalAlignment": "Center",
+        "Padding": {
+         "UDim": [
+          0,
+          8
+         ]
+        },
+        "SortOrder": "LayoutOrder",
+        "VerticalAlignment": "Bottom"
+       },
+       "Attributes": {
+        "CodeProps": "FillDirection=e:Vertical\nHorizontalAlignment=e:Center\nPadding=u:0.000,8\nSortOrder=e:LayoutOrder\nVerticalAlignment=e:Bottom"
+       }
+      },
+      {
+       "ClassName": "TextLabel",
+       "Name": "FirstPersonHint",
+       "Properties": {
+        "BackgroundTransparency": 1,
+        "BorderSizePixel": 0,
+        "Font": "GothamMedium",
+        "LayoutOrder": 0,
+        "RichText": true,
+        "Size": {
+         "UDim2": [
+          [
+           0,
+           300
+          ],
+          [
+           0,
+           18
+          ]
+         ]
+        },
+        "Text": "Hold ALT to use the mouse",
+        "TextColor3": [
+         0.647059,
+         0.670588,
+         0.803922
+        ],
+        "TextSize": 12,
+        "TextXAlignment": "Center",
+        "Visible": false
+       },
+       "Attributes": {
+        "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamMedium\nLayoutOrder=0.000\nRichText=true\nSize=u2:0.000,300,0.000,18\nText=Hold ALT to use the mouse\nTextColor3=c3:0.647,0.671,0.804\nTextSize=12.000\nTextXAlignment=e:Center\nVisible=false"
+       }
+      },
+      {
+       "ClassName": "Frame",
+       "Name": "Strip",
+       "Properties": {
+        "BackgroundColor3": [
+         0.101961,
+         0.113725,
+         0.164706
+        ],
+        "BackgroundTransparency": 0.1,
+        "BorderSizePixel": 0,
+        "LayoutOrder": 1,
+        "Size": {
+         "UDim2": [
+          [
+           0,
+           440
+          ],
+          [
+           0,
+           34
+          ]
+         ]
+        },
+        "Visible": false
+       },
+       "Attributes": {
+        "CodeProps": "BackgroundColor3=c3:0.102,0.114,0.165\nBackgroundTransparency=0.100\nBorderSizePixel=0.000\nLayoutOrder=1.000\nSize=u2:0.000,440,0.000,34\nVisible=false"
+       },
+       "Children": [
+        {
+         "ClassName": "UICorner",
+         "Name": "UICorner",
+         "Properties": {
+          "CornerRadius": {
+           "UDim": [
+            0,
+            8
+           ]
+          }
+         },
+         "Attributes": {
+          "CodeProps": "CornerRadius=u:0.000,8"
+         }
+        },
+        {
+         "ClassName": "UIStroke",
+         "Name": "UIStroke",
+         "Properties": {
+          "ApplyStrokeMode": "Border",
+          "Color": [
+           0.243137,
+           0.266667,
+           0.368627
+          ],
+          "Thickness": 1.5,
+          "Transparency": 0
+         },
+         "Attributes": {
+          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.243,0.267,0.369\nThickness=1.500\nTransparency=0.000"
+         }
+        },
+        {
+         "ClassName": "TextLabel",
+         "Name": "TextLabel",
+         "Properties": {
+          "BackgroundTransparency": 1,
+          "BorderSizePixel": 0,
+          "Font": "GothamMedium",
+          "Position": {
+           "UDim2": [
+            [
+             0,
+             10
+            ],
+            [
+             0,
+             0
+            ]
+           ]
+          },
+          "RichText": true,
+          "Size": {
+           "UDim2": [
+            [
+             1,
+             -20
+            ],
+            [
+             1,
+             0
+            ]
+           ]
+          },
+          "Text": "Hamster balls roll down the road - get close and press [E] to claim one!",
+          "TextColor3": [
+           0.968627,
+           0.968627,
+           0.992157
+          ],
+          "TextSize": 13,
+          "TextWrapped": true,
+          "TextXAlignment": "Center"
+         },
+         "Attributes": {
+          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamMedium\nPosition=u2:0.000,10,0.000,0\nRichText=true\nSize=u2:1.000,-20,1.000,0\nText=Hamster balls roll down the road - get close and press [E] to claim one!\nTextColor3=c3:0.969,0.969,0.992\nTextSize=13.000\nTextWrapped=true\nTextXAlignment=e:Center"
+         }
+        }
+       ]
+      },
+      {
+       "ClassName": "Frame",
+       "Name": "GrabPrompt",
+       "Properties": {
+        "BackgroundColor3": [
+         0.101961,
+         0.113725,
+         0.164706
+        ],
+        "BackgroundTransparency": 0.04,
+        "BorderSizePixel": 0,
+        "LayoutOrder": 2,
+        "Size": {
+         "UDim2": [
+          [
+           0,
+           420
+          ],
+          [
+           0,
+           52
+          ]
+         ]
+        },
+        "Visible": false
+       },
+       "Attributes": {
+        "CodeProps": "BackgroundColor3=c3:0.102,0.114,0.165\nBackgroundTransparency=0.040\nBorderSizePixel=0.000\nLayoutOrder=2.000\nSize=u2:0.000,420,0.000,52\nVisible=false"
+       },
+       "Children": [
+        {
+         "ClassName": "UICorner",
+         "Name": "UICorner",
+         "Properties": {
+          "CornerRadius": {
+           "UDim": [
+            0,
+            8
+           ]
+          }
+         },
+         "Attributes": {
+          "CodeProps": "CornerRadius=u:0.000,8"
+         }
+        },
+        {
+         "ClassName": "UIStroke",
+         "Name": "UIStroke",
+         "Properties": {
+          "ApplyStrokeMode": "Border",
+          "Color": [
+           1,
+           0.803922,
+           0.282353
+          ],
+          "Thickness": 1.5,
+          "Transparency": 0
+         },
+         "Attributes": {
+          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:1.000,0.804,0.282\nThickness=1.500\nTransparency=0.000"
+         }
+        },
+        {
+         "ClassName": "TextLabel",
+         "Name": "TextLabel",
+         "Properties": {
+          "BackgroundColor3": [
+           0.145098,
+           0.160784,
+           0.227451
+          ],
+          "BackgroundTransparency": 0,
+          "BorderSizePixel": 0,
+          "Font": "GothamBold",
+          "Position": {
+           "UDim2": [
+            [
+             0,
+             8
+            ],
+            [
+             0,
+             7
+            ]
+           ]
+          },
+          "RichText": true,
+          "Size": {
+           "UDim2": [
+            [
+             0,
+             38
+            ],
+            [
+             0,
+             38
+            ]
+           ]
+          },
+          "Text": "E",
+          "TextColor3": [
+           1,
+           0.803922,
+           0.282353
+          ],
+          "TextSize": 20,
+          "TextXAlignment": "Center"
+         },
+         "Attributes": {
+          "CodeProps": "BackgroundColor3=c3:0.145,0.161,0.227\nBackgroundTransparency=0.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,8,0.000,7\nRichText=true\nSize=u2:0.000,38,0.000,38\nText=E\nTextColor3=c3:1.000,0.804,0.282\nTextSize=20.000\nTextXAlignment=e:Center"
+         },
+         "Children": [
+          {
+           "ClassName": "UICorner",
+           "Name": "UICorner",
+           "Properties": {
+            "CornerRadius": {
+             "UDim": [
+              0,
+              8
+             ]
+            }
+           },
+           "Attributes": {
+            "CodeProps": "CornerRadius=u:0.000,8"
+           }
+          },
+          {
+           "ClassName": "UIStroke",
+           "Name": "UIStroke",
+           "Properties": {
+            "ApplyStrokeMode": "Border",
+            "Color": [
+             0.243137,
+             0.266667,
+             0.368627
+            ],
+            "Thickness": 1.5,
+            "Transparency": 0
+           },
+           "Attributes": {
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.243,0.267,0.369\nThickness=1.500\nTransparency=0.000"
+           }
+          }
+         ]
+        },
+        {
+         "ClassName": "Frame",
+         "Name": "Frame",
+         "Properties": {
+          "AnchorPoint": [
+           1,
+           0.5
+          ],
+          "BackgroundColor3": [
+           0.0745098,
+           0.0823529,
+           0.121569
+          ],
+          "BorderSizePixel": 0,
+          "Position": {
+           "UDim2": [
+            [
+             1,
+             -9
+            ],
+            [
+             0.5,
+             0
+            ]
+           ]
+          },
+          "Size": {
+           "UDim2": [
+            [
+             0,
+             104
+            ],
+            [
+             0,
+             34
+            ]
+           ]
+          },
+          "Visible": false
+         },
+         "Attributes": {
+          "CodeProps": "AnchorPoint=v2:1.000,0.500\nBackgroundColor3=c3:0.075,0.082,0.122\nBorderSizePixel=0.000\nPosition=u2:1.000,-9,0.500,0\nSize=u2:0.000,104,0.000,34\nVisible=false"
+         },
+         "Children": [
+          {
+           "ClassName": "UICorner",
+           "Name": "UICorner",
+           "Properties": {
+            "CornerRadius": {
+             "UDim": [
+              0,
+              8
+             ]
+            }
+           },
+           "Attributes": {
+            "CodeProps": "CornerRadius=u:0.000,8"
+           }
+          },
+          {
+           "ClassName": "UIStroke",
+           "Name": "UIStroke",
+           "Properties": {
+            "ApplyStrokeMode": "Border",
+            "Color": [
+             0.243137,
+             0.266667,
+             0.368627
+            ],
+            "Thickness": 1.5,
+            "Transparency": 0
+           },
+           "Attributes": {
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.243,0.267,0.369\nThickness=1.500\nTransparency=0.000"
+           }
+          },
+          {
+           "ClassName": "Frame",
+           "Name": "Icon_coin",
+           "Properties": {
+            "AnchorPoint": [
+             0,
+             0
+            ],
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
+            "ClipsDescendants": false,
+            "LayoutOrder": 0,
+            "Position": {
+             "UDim2": [
+              [
+               0,
+               8
+              ],
+              [
+               0,
+               7
+              ]
+             ]
+            },
+            "Size": {
+             "UDim2": [
+              [
+               0,
+               20
+              ],
+              [
+               0,
+               20
+              ]
+             ]
+            },
+            "ZIndex": 1
+           },
+           "Attributes": {
+            "CodeProps": "AnchorPoint=v2:0.000,0.000\nLayoutOrder=0.000\nPosition=u2:0.000,8,0.000,7\nSize=u2:0.000,20,0.000,20\nZIndex=1.000",
+            "IconId": "coin"
+           }
+          },
+          {
+           "ClassName": "TextLabel",
+           "Name": "TextLabel",
+           "Properties": {
+            "BackgroundTransparency": 1,
+            "BorderSizePixel": 0,
+            "Font": "GothamBold",
+            "Position": {
+             "UDim2": [
+              [
+               0,
+               32
+              ],
+              [
+               0,
+               0
+              ]
+             ]
+            },
+            "RichText": true,
+            "Size": {
+             "UDim2": [
+              [
+               1,
+               -36
+              ],
+              [
+               1,
+               0
+              ]
+             ]
+            },
+            "Text": "",
+            "TextColor3": [
+             0.376471,
+             0.909804,
+             0.556863
+            ],
+            "TextSize": 17,
+            "TextXAlignment": "Left"
+           },
+           "Attributes": {
+            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,32,0.000,0\nRichText=true\nSize=u2:1.000,-36,1.000,0\nText=\nTextColor3=c3:0.376,0.910,0.557\nTextSize=17.000\nTextXAlignment=e:Left"
+           }
+          }
+         ]
+        },
+        {
+         "ClassName": "TextLabel",
+         "Name": "TextLabel",
+         "Properties": {
+          "BackgroundTransparency": 1,
+          "BorderSizePixel": 0,
+          "Font": "GothamBold",
+          "Position": {
+           "UDim2": [
+            [
+             0,
+             56
+            ],
+            [
+             0,
+             0
+            ]
+           ]
+          },
+          "RichText": true,
+          "Size": {
+           "UDim2": [
+            [
+             1,
+             -70
+            ],
+            [
+             1,
+             0
+            ]
+           ]
+          },
+          "Text": "",
+          "TextColor3": [
+           0.968627,
+           0.968627,
+           0.992157
+          ],
+          "TextSize": 16,
+          "TextTruncate": "AtEnd",
+          "TextXAlignment": "Left"
+         },
+         "Attributes": {
+          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,56,0.000,0\nRichText=true\nSize=u2:1.000,-70,1.000,0\nText=\nTextColor3=c3:0.969,0.969,0.992\nTextSize=16.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Left"
+         }
+        },
+        {
+         "ClassName": "TextButton",
+         "Name": "TextButton",
+         "Properties": {
+          "BackgroundTransparency": 1,
+          "Size": {
+           "UDim2": [
+            [
+             1,
+             0
+            ],
+            [
+             1,
+             0
+            ]
+           ]
+          },
+          "Text": ""
+         },
+         "Attributes": {
+          "CodeProps": "BackgroundTransparency=1.000\nSize=u2:1.000,0,1.000,0\nText="
+         }
+        }
+       ]
+      },
+      {
+       "ClassName": "Frame",
+       "Name": "ChannelBar",
+       "Properties": {
+        "BackgroundColor3": [
+         0.101961,
+         0.113725,
+         0.164706
+        ],
+        "BackgroundTransparency": 0.08,
+        "BorderSizePixel": 0,
+        "LayoutOrder": 5,
+        "Size": {
+         "UDim2": [
+          [
+           0,
+           320
+          ],
+          [
+           0,
+           46
+          ]
+         ]
+        },
+        "Visible": false
+       },
+       "Attributes": {
+        "CodeProps": "BackgroundColor3=c3:0.102,0.114,0.165\nBackgroundTransparency=0.080\nBorderSizePixel=0.000\nLayoutOrder=5.000\nSize=u2:0.000,320,0.000,46\nVisible=false"
+       },
+       "Children": [
+        {
+         "ClassName": "UICorner",
+         "Name": "UICorner",
+         "Properties": {
+          "CornerRadius": {
+           "UDim": [
+            0,
+            8
+           ]
+          }
+         },
+         "Attributes": {
+          "CodeProps": "CornerRadius=u:0.000,8"
+         }
+        },
+        {
+         "ClassName": "UIStroke",
+         "Name": "UIStroke",
+         "Properties": {
+          "ApplyStrokeMode": "Border",
+          "Color": [
+           1,
+           0.345098,
+           0.384314
+          ],
+          "Thickness": 1.5,
+          "Transparency": 0
+         },
+         "Attributes": {
+          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:1.000,0.345,0.384\nThickness=1.500\nTransparency=0.000"
+         }
+        },
+        {
+         "ClassName": "TextLabel",
+         "Name": "TextLabel",
+         "Properties": {
+          "BackgroundTransparency": 1,
+          "BorderSizePixel": 0,
+          "Font": "GothamBold",
+          "Position": {
+           "UDim2": [
+            [
+             0,
+             0
+            ],
+            [
+             0,
+             3
+            ]
+           ]
+          },
+          "RichText": true,
+          "Size": {
+           "UDim2": [
+            [
+             1,
+             0
+            ],
+            [
+             0,
+             22
+            ]
+           ]
+          },
+          "Text": "Stealing...",
+          "TextColor3": [
+           1,
+           1,
+           1
+          ],
+          "TextSize": 16,
+          "TextXAlignment": "Center"
+         },
+         "Attributes": {
+          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,0,0.000,3\nRichText=true\nSize=u2:1.000,0,0.000,22\nText=Stealing...\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000\nTextXAlignment=e:Center"
+         }
+        },
+        {
+         "ClassName": "Frame",
+         "Name": "Frame",
+         "Properties": {
+          "BackgroundColor3": [
+           0.0745098,
+           0.0823529,
+           0.121569
+          ],
+          "BorderSizePixel": 0,
+          "Position": {
+           "UDim2": [
+            [
+             0,
+             14
+            ],
+            [
+             0,
+             28
+            ]
+           ]
+          },
+          "Size": {
+           "UDim2": [
+            [
+             1,
+             -28
+            ],
+            [
+             0,
+             10
+            ]
+           ]
+          }
+         },
+         "Attributes": {
+          "CodeProps": "BackgroundColor3=c3:0.075,0.082,0.122\nBorderSizePixel=0.000\nPosition=u2:0.000,14,0.000,28\nSize=u2:1.000,-28,0.000,10"
+         },
+         "Children": [
+          {
+           "ClassName": "UICorner",
+           "Name": "UICorner",
+           "Properties": {
+            "CornerRadius": {
+             "UDim": [
+              0,
+              5
+             ]
+            }
+           },
+           "Attributes": {
+            "CodeProps": "CornerRadius=u:0.000,5"
+           }
+          },
+          {
+           "ClassName": "Frame",
+           "Name": "Frame",
+           "Properties": {
+            "BackgroundColor3": [
+             1,
+             0.803922,
+             0.282353
+            ],
+            "BorderSizePixel": 0,
+            "Size": {
+             "UDim2": [
+              [
+               0,
+               0
+              ],
+              [
+               1,
+               0
+              ]
+             ]
+            }
+           },
+           "Attributes": {
+            "CodeProps": "BackgroundColor3=c3:1.000,0.804,0.282\nBorderSizePixel=0.000\nSize=u2:0.000,0,1.000,0"
+           },
+           "Children": [
+            {
+             "ClassName": "UICorner",
+             "Name": "UICorner",
+             "Properties": {
+              "CornerRadius": {
+               "UDim": [
+                0,
+                5
+               ]
+              }
+             },
+             "Attributes": {
+              "CodeProps": "CornerRadius=u:0.000,5"
+             }
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -67,17 +67,212 @@ local C = UIKit.Colors
 -- tiny helpers
 ---------------------------------------------------------------------------
 
+---------------------------------------------------------------------------
+-- Studio-editable HUD: "templates" (StarterGui) and how the code adopts them
+--
+-- The HUD ScreenGuis (MainUI, HotbarUI) exist as real instances in StarterGui (src/StarterGui/*.model.json, produced by
+-- tools/SimTests/bake_hud.sh from this very code). When a template exists in PlayerGui, UIKit.new does NOT create a second
+-- copy: it hands back the template instance and applies the code's properties ONLY to the properties you have not changed.
+--   * you moved / resized / recoloured / retexted something in Studio  -> your value stays
+--   * you did not touch a property                                      -> the code still sets it (touch sizes, theme, state colours)
+-- Every baked instance carries the attribute CodeProps = the values the code gave it when baked; "you changed it" simply means
+-- the current value no longer equals that baked value. (Do not rename or delete template instances: hide them with Visible = false.)
+---------------------------------------------------------------------------
+
+local adopting: { [ScreenGui]: boolean } = {}
+local consumed: { [Instance]: boolean } = {}
+
+-- A text fingerprint of a property value, to find out whether it was changed since baking.
+local function whole(n: number): number
+	return if n >= 0 then math.floor(n) else math.ceil(n) -- UDim offsets are whole numbers in Roblox
+end
+
+local function fingerprint(value: any): string
+	local kind = typeof(value)
+	if kind == "number" then
+		return string.format("%.3f", value)
+	elseif kind == "string" or kind == "boolean" then
+		return tostring(value)
+	elseif kind == "UDim2" then
+		return string.format("u2:%.3f,%d,%.3f,%d", value.X.Scale, whole(value.X.Offset), value.Y.Scale, whole(value.Y.Offset))
+	elseif kind == "Vector2" then
+		return string.format("v2:%.3f,%.3f", value.X, value.Y)
+	elseif kind == "Color3" then
+		return string.format("c3:%.3f,%.3f,%.3f", value.R, value.G, value.B)
+	elseif kind == "EnumItem" then
+		return "e:" .. value.Name
+	elseif kind == "table" or kind == "userdata" or kind == "UDim" then
+		if value.Scale ~= nil and value.Offset ~= nil then
+			return string.format("u:%.3f,%d", value.Scale, whole(value.Offset))
+		elseif value.EnumType ~= nil and value.Name ~= nil then
+			return "e:" .. value.Name
+		elseif value.Keypoints ~= nil then
+			local parts = {}
+			for _, key in value.Keypoints do
+				local inner = key.Value
+				table.insert(parts, string.format("%.3f=%s", key.Time, if typeof(inner) == "Color3" then fingerprint(inner) else tostring(inner)))
+			end
+			return "seq:" .. table.concat(parts, "|")
+		end
+	elseif kind == "ColorSequence" then
+		local parts = {}
+		for _, key in value.Keypoints do
+			table.insert(parts, string.format("%.3f=%s", key.Time, fingerprint(key.Value)))
+		end
+		return "seq:" .. table.concat(parts, "|")
+	end
+	return tostring(value)
+end
+
+local function isBaking(): boolean
+	return ReplicatedStorage:GetAttribute("HudBake") == true
+end
+
+local function adoptionRoot(parent: Instance?): ScreenGui?
+	local node = parent
+	while node do
+		if node:IsA("ScreenGui") then
+			return if adopting[node] then node else nil
+		end
+		node = node.Parent
+	end
+	return nil
+end
+
+-- The first template child of `parent` that fits (same class, and the same Name when the code names it) and was not used yet.
+local function findTemplate(parent: Instance, className: string, name: string?): Instance?
+	for _, child in parent:GetChildren() do
+		if not consumed[child] and child.ClassName == className and (name == nil or child.Name == name) then
+			return child
+		end
+	end
+	return nil
+end
+
+local function parseCodeProps(instance: Instance): { [string]: string }
+	local text = instance:GetAttribute("CodeProps")
+	local result = {}
+	if type(text) == "string" then
+		for line in string.gmatch(text, "[^\n]+") do
+			local key, value = string.match(line, "^([%w_]+)=(.*)$")
+			if key then
+				result[key] = value
+			end
+		end
+	end
+	return result
+end
+
+-- Applies the code's properties to a template instance, keeping everything the user changed in Studio.
+local function mergeProps(instance: Instance, props: { [string]: any }?)
+	if not props then
+		return
+	end
+	local baked = parseCodeProps(instance)
+	for key, value in props do
+		if key ~= "Name" then
+			local ok, current = pcall(function()
+				return (instance :: any)[key]
+			end)
+			local original = baked[key]
+			if ok and (original == nil or fingerprint(current) == original) then
+				pcall(function()
+					(instance :: any)[key] = value
+				end)
+			end
+		end
+	end
+end
+
+-- Baking, step 1: remember WHICH properties the code sets on this instance (their values are fingerprinted at the end, see sealBake).
+local function recordCodeProps(instance: Instance, props: { [string]: any }?)
+	if not props then
+		return
+	end
+	local keys = {}
+	for key in props do
+		if key ~= "Name" and key ~= "Parent" then
+			table.insert(keys, key)
+		end
+	end
+	table.sort(keys)
+	if #keys > 0 then
+		instance:SetAttribute("CodeKeys", table.concat(keys, ","))
+	end
+end
+
+-- Baking, step 2 (tools/SimTests/bake_hud.sh): turn the recorded keys into CodeProps = the value each of those properties has
+-- NOW, after the code finished building (responsive sizes, state colours ...). "Unchanged by the user" means "still equal to this".
+function UIKit.sealBake(root: Instance)
+	local function seal(instance: Instance)
+		local keys = instance:GetAttribute("CodeKeys")
+		if type(keys) == "string" then
+			local lines = {}
+			for key in string.gmatch(keys, "[^,]+") do
+				local ok, current = pcall(function()
+					return (instance :: any)[key]
+				end)
+				if ok then
+					table.insert(lines, key .. "=" .. fingerprint(current))
+				end
+			end
+			instance:SetAttribute("CodeProps", table.concat(lines, "\n"))
+			instance:SetAttribute("CodeKeys", nil)
+		end
+	end
+	seal(root)
+	for _, descendant in root:GetDescendants() do
+		seal(descendant)
+	end
+end
+
 function UIKit.new(className: string, props: { [string]: any }?, parent: Instance?): any
+	if parent then
+		local root = adoptionRoot(parent)
+		if root then
+			local template = findTemplate(parent, className, if props then props.Name else nil)
+			if template then
+				consumed[template] = true
+				mergeProps(template, props)
+				return template
+			end
+		end
+	end
 	local instance = Instance.new(className)
 	if props then
 		for key, value in props do
 			(instance :: any)[key] = value
 		end
 	end
+	if isBaking() then
+		recordCodeProps(instance, props)
+	end
 	if parent then
 		instance.Parent = parent
 	end
 	return instance
+end
+
+-- Called once, after every HUD module has built what it builds at start-up. From now on elements are created normally, and baked
+-- template instances nobody claimed (leftovers of an older version of the HUD) are removed so they can not show up twice.
+function UIKit.finishAdoptAll()
+	for gui in adopting do
+		local orphans = {}
+		for _, descendant in gui:GetDescendants() do
+			if not consumed[descendant] and descendant:GetAttribute("CodeProps") ~= nil and descendant:IsA("GuiObject") then
+				table.insert(orphans, descendant) -- (layout / corner / stroke helpers are left alone: they cannot show up twice)
+			end
+		end
+		for _, orphan in orphans do
+			orphan:Destroy()
+		end
+		if #orphans > 0 then
+			warn(string.format("[UIKit] %s: removed %d template instance(s) that the code does not use any more. Re-run tools/SimTests/bake_hud.sh to refresh the templates.", gui.Name, #orphans))
+		end
+		gui:SetAttribute("Adopted", true)
+	end
+	table.clear(adopting)
+	table.clear(consumed)
 end
 
 -- One restrained corner language: everything is 6-8 px; only true circles / pills (radius >= 50) stay round.
@@ -129,7 +324,28 @@ end
 
 -- Drawn icon (no emoji): UIKit.icon(parent, "coin", { Size = UDim2.fromOffset(28, 28) })
 function UIKit.icon(parent: Instance?, id: string, props: { Size: UDim2?, Position: UDim2?, AnchorPoint: Vector2?, Color: Color3?, ZIndex: number?, LayoutOrder: number?, Name: string? }?): Frame
-	return Icons.create(parent, id, props)
+	if parent and adoptionRoot(parent) then
+		-- a template keeps the icon's root frame (position, size ...); the artwork is always drawn by the code
+		local template = findTemplate(parent, "Frame", (props and props.Name) or ("Icon_" .. id))
+		if template and template:GetAttribute("IconId") == id then
+			consumed[template] = true
+			local opts = props or {}
+			mergeProps(template, { Size = opts.Size or UDim2.fromOffset(28, 28), Position = opts.Position or UDim2.new(), AnchorPoint = opts.AnchorPoint or Vector2.zero, LayoutOrder = opts.LayoutOrder or 0, ZIndex = opts.ZIndex or 1 })
+			template:ClearAllChildren()
+			local ratio = Instance.new("UIAspectRatioConstraint")
+			ratio.AspectRatio = 1
+			ratio.Parent = template
+			local size = opts.Size or UDim2.fromOffset(28, 28)
+			Icons.fill(template :: Frame, id, opts.Color, if size.X.Offset > 0 then size.X.Offset else 28)
+			return template :: Frame
+		end
+	end
+	local icon = Icons.create(parent, id, props)
+	if isBaking() then
+		local opts = props or {}
+		recordCodeProps(icon, { Size = opts.Size or UDim2.fromOffset(28, 28), Position = opts.Position or UDim2.new(), AnchorPoint = opts.AnchorPoint or Vector2.zero, LayoutOrder = opts.LayoutOrder or 0, ZIndex = opts.ZIndex or 1 })
+	end
+	return icon
 end
 
 -- A drawn icon followed by text on one line (replaces "coin 12K" emoji strings).
@@ -205,7 +421,10 @@ function UIKit.vivid(frame: GuiObject, color: Color3, options: { Outline: number
 	frame.BackgroundColor3 = mix(C.Card, color, 0.08)
 	frame.BackgroundTransparency = 0
 	frame.ClipsDescendants = true
-	if not frame:FindFirstChildOfClass("UICorner") then
+	local existingCorner = frame:FindFirstChildOfClass("UICorner")
+	if existingCorner then
+		consumed[existingCorner] = true -- (a template already has it)
+	else
 		UIKit.corner(frame, math.min(opts.Corner or Theme.Radius.Card, 8))
 	end
 	local edge = UIKit.stroke(frame, mix(color, C.Line, 0.5), math.min(opts.Outline or 1, 2))
@@ -265,14 +484,32 @@ end
 function UIKit.screenGui(name: string, options: { Layer: string?, Insets: string?, Enabled: boolean? }?): ScreenGui
 	local opts = options or {}
 	local insets = opts.Insets or "None"
-	local gui = UIKit.new("ScreenGui", {
+	local playerGui = player:WaitForChild("PlayerGui")
+	local props: { [string]: any } = {
 		Name = name,
 		ResetOnSpawn = false,
 		DisplayOrder = Theme.Layers[opts.Layer or "Hud"] or Theme.Layers.Hud,
 		IgnoreGuiInset = insets ~= "Topbar",
 		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
 		Enabled = opts.Enabled ~= false,
-	}, player:WaitForChild("PlayerGui"))
+	}
+	-- a Studio template (StarterGui/<name>) is adopted instead of creating a second ScreenGui
+	local template = playerGui:FindFirstChild(name)
+	if not template and game:GetService("StarterGui"):FindFirstChild(name) then
+		template = playerGui:WaitForChild(name, 5)
+	end
+	local gui: ScreenGui
+	if template and template:IsA("ScreenGui") and template:GetAttribute("CodeProps") ~= nil and not isBaking() then
+		gui = template
+		mergeProps(gui, props)
+		consumed[gui] = true
+		adopting[gui] = true
+	else
+		gui = UIKit.new("ScreenGui", props, playerGui)
+		if isBaking() then
+			recordCodeProps(gui, props)
+		end
+	end
 	gui:SetAttribute("Insets", insets)
 	local mode = if insets == "Topbar" then Enum.ScreenInsets.TopbarSafeInsets elseif insets == "Device" then Enum.ScreenInsets.DeviceSafeInsets else Enum.ScreenInsets.None
 	pcall(function()
@@ -357,6 +594,7 @@ function UIKit.button(parent: Instance?, props: ButtonProps): TextButton
 		LayoutOrder = props.LayoutOrder or 0,
 		BorderSizePixel = 0,
 	}, parent)
+	color = button.BackgroundColor3 -- (a Studio-edited template keeps its own colour: hover and press build on that one)
 	UIKit.corner(button, props.Corner or Theme.Radius.Button)
 	-- flat surface, one hairline edge, no gradient and no outlined text: the hover/press feedback does the talking
 	local stroke = UIKit.stroke(button, mix(color, Color3.new(0, 0, 0), 0.45), 1)

@@ -307,13 +307,26 @@ function MainUI.start()
 	-----------------------------------------------------------------------
 	-- rail: icon buttons from the registry
 	-----------------------------------------------------------------------
-	local railViews: { [string]: { Button: TextButton, Dot: Frame, Def: UIRegistry.Definition } } = {}
+	local railViews: { [string]: { Button: TextButton, Dot: Frame, Def: UIRegistry.Definition, Base: Color3 } } = {}
 	local function rebuildRail()
-		for _, view in railViews do
-			view.Button:Destroy()
-		end
-		table.clear(railViews)
+		-- incremental: buttons that stay keep their instance (so a Studio-edited button keeps its look), others come and go
+		local wanted: { [string]: boolean } = {}
 		for _, def in UIRegistry.list("RightRail") do
+			wanted[def.Id] = true
+		end
+		for id, view in railViews do
+			if not wanted[id] then
+				view.Button:Destroy()
+				railViews[id] = nil
+			end
+		end
+		for _, def in UIRegistry.list("RightRail") do
+			local existing = railViews[def.Id]
+			if existing then
+				existing.Def = def
+				existing.Button.LayoutOrder = def.Order
+				continue
+			end
 			local button = UIKit.button(rail.Content, {
 				Text = "",
 				Size = UDim2.fromOffset(railButton, railButton),
@@ -333,7 +346,7 @@ function MainUI.start()
 			UIKit.icon(button, def.Icon :: string, { Size = UDim2.fromOffset(railButton * 0.58, railButton * 0.58), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5), ZIndex = 3 })
 			local dot = UIKit.notifyDot(button)
 			UIKit.tooltip(button, def.Tooltip or def.Id, "Left")
-			railViews[def.Id] = { Button = button, Dot = dot, Def = def }
+			railViews[def.Id] = { Button = button, Dot = dot, Def = def, Base = button.BackgroundColor3 } -- (Base = the colour you gave it in Studio, if any)
 		end
 	end
 	rebuildRail()
@@ -345,7 +358,7 @@ function MainUI.start()
 			for id, view in railViews do
 				local def = view.Def
 				local panel = if def.Panel then UIKit.getPanel(def.Panel) else nil
-				UIKit.setButtonColor(view.Button, if panel and panel.IsOpen then C.Peach else C.Cream)
+				UIKit.setButtonColor(view.Button, if panel and panel.IsOpen then C.Peach else view.Base)
 				view.Button.Visible = def.Visible == nil or def.Visible()
 				view.Dot.Visible = def.Badge ~= nil and DataController.Ready and def.Badge()
 				railViews[id] = view

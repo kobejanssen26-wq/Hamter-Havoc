@@ -61,5 +61,8 @@ for _, name in screens do
 	end
 end
 
+-- HUD templates (StarterGui): from now on nothing is adopted any more, leftovers are removed
+require(UI:WaitForChild("UIKit")).finishAdoptAll()
+
 -- let the loading screen know we're ready
 game.Players.LocalPlayer:SetAttribute("ClientReady", true)

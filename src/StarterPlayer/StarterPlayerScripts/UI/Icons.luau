@@ -643,11 +643,18 @@ function Icons.names(): { string }
 	return names
 end
 
+-- Draws the artwork of icon `id` into an (empty) root frame.
+function Icons.fill(root: Frame, id: string, tintColor: Color3?, px: number?)
+	local drawer = draw[id] or draw[alias[id] or ""] or draw.dot
+	drawer({ Root = root, Px = px or 28, Tint = tintColor })
+end
+
 function Icons.create(parent: Instance?, id: string, props: Props?): Frame
 	local opts = props or {}
 	local size = opts.Size or UDim2.fromOffset(28, 28)
 	local root = Instance.new("Frame")
 	root.Name = opts.Name or ("Icon_" .. id)
+	root:SetAttribute("IconId", id) -- the HUD templates (StarterGui) keep icon roots empty; the artwork is drawn at runtime
 	root.BackgroundTransparency = 1
 	root.BorderSizePixel = 0
 	root.Size = size
@@ -659,8 +666,7 @@ function Icons.create(parent: Instance?, id: string, props: Props?): Frame
 	local ratio = Instance.new("UIAspectRatioConstraint")
 	ratio.AspectRatio = 1
 	ratio.Parent = root
-	local drawer = draw[id] or draw[alias[id] or ""] or draw.dot
-	drawer({ Root = root, Px = if size.X.Offset > 0 then size.X.Offset else 28, Tint = opts.Color })
+	Icons.fill(root, id, opts.Color, if size.X.Offset > 0 then size.X.Offset else 28)
 	if opts.ZIndex then
 		for _, descendant in root:GetDescendants() do
 			if descendant:IsA("GuiObject") then

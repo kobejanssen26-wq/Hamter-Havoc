@@ -1128,10 +1128,23 @@ local function jsonDecode(text)
 	local function ws() pos = text:find("%S", pos) or #text + 1 end
 	local parseValue
 	local function parseString()
-		local close = text:find('"', pos + 1, true)
-		local out = text:sub(pos + 1, close - 1)
-		pos = close + 1
-		return out
+		local out = {}
+		local i = pos + 1
+		while true do
+			local c = text:sub(i, i)
+			if c == '"' then break end
+			if c == "\\" then
+				local n = text:sub(i + 1, i + 1)
+				if n == "n" then table.insert(out, "\n") i += 2
+				elseif n == "t" then table.insert(out, "\t") i += 2
+				elseif n == "u" then table.insert(out, string.char(tonumber(text:sub(i + 2, i + 5), 16) % 256)) i += 6
+				else table.insert(out, n) i += 2 end
+			else
+				table.insert(out, c) i += 1
+			end
+		end
+		pos = i + 1
+		return table.concat(out)
 	end
 	function parseValue()
 		ws()

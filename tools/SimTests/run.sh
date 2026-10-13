@@ -35,7 +35,44 @@ L
 	run_one scn_content.lua
 }
 
+# scn_hud.lua runs twice (no templates / with the baked templates + simulated Studio edits) and the built HUDs are compared
+run_hud() {
+	local OUTDIR="$BUILD"
+	for mode in plain template; do
+		python3 - "$HERE" "$BUILD" "$mode" <<'PY'
+import sys, json
+here, build, mode = sys.argv[1:4]
+texts = {}
+for name in ("MainUI", "HotbarUI"):
+    texts[name] = open(f"{here}/../../src/StarterGui/{name}.model.json").read()
+prelude = f'local MODE = "{mode}"\nlocal HUD_JSON = {{\n'
+for name, text in texts.items():
+    prelude += f'\t{name} = [==[{text}]==],\n'
+prelude += "}\nlocal find_game = find\n"
+open(f"{build}/scn_hud_{mode}.lua", "w").write(prelude + open(f"{here}/scn_hud.lua").read())
+PY
+		(cd "$BUILD" && python3 "$HERE/gen.py" "scn_hud_$mode.lua" >/dev/null && timeout 900 "$LUAU" run.lua 2>&1) > "$BUILD/hud_$mode.out" || true
+	done
+	grep -E "^\s+\[(PASS|FAIL)\]|PASS [0-9]+" "$BUILD/hud_template.out"
+	grep '^SIG|' "$BUILD/hud_plain.out" | sort > "$BUILD/hud_plain.sig"
+	grep '^SIG|' "$BUILD/hud_template.out" | sort > "$BUILD/hud_template.sig"
+	if [ -s "$BUILD/hud_plain.sig" ] && diff -q "$BUILD/hud_plain.sig" "$BUILD/hud_template.sig" >/dev/null; then
+		echo "  [PASS] the HUD built from the templates has exactly the same instances as the HUD built from code ($(wc -l < "$BUILD/hud_plain.sig") distinct paths)"
+	else
+		echo "  [FAIL] the template HUD differs from the code-built HUD"; diff "$BUILD/hud_plain.sig" "$BUILD/hud_template.sig" | head -20
+	fi
+}
+
+if [ "$1" = "scn_hud.lua" ]; then
+	run_hud
+	exit 0
+fi
+
 if [ "$1" = "--all" ]; then
+	hud_out="$(run_hud)"
+	echo "== scn_hud: $(echo "$hud_out" | grep -cE '\[PASS\]') passed, $(echo "$hud_out" | grep -c '\[FAIL\]') failed"
+	echo "$hud_out" | grep "\[FAIL\]" || true
+	if "$HERE/bake_hud.sh" --check >/dev/null 2>&1; then echo "== hud templates: up to date"; else echo "== hud templates: OUT OF DATE (run tools/SimTests/bake_hud.sh)"; fi
 	for s in scn_loop scn_ui scn_gear scn_combat scn_admin scn_rebirth scn_world scn_audit scn_tutorial scn_theft scn_lb scn_content scn_econ scn_wheels scn_game; do
 		if [ "$s" = "scn_content" ]; then out="$( (with_temp_content) )"; else out="$(run_one $s.lua)"; fi
 		echo "== $s: $(echo "$out" | grep -E 'PASS [0-9]+|TOTAL ERRORS|fails:' | tail -1)"
