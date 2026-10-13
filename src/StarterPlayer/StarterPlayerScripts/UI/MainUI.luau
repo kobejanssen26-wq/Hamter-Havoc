@@ -184,7 +184,7 @@ function MainUI.start()
 	-----------------------------------------------------------------------
 	-- regions
 	-----------------------------------------------------------------------
-	local TOP_DESIGN = Vector2.new(470, 250)
+	local TOP_DESIGN = Vector2.new(500, 200)
 	local top = UIKit.responsive(gui, { Name = "TopColumn", Design = TOP_DESIGN, Position = UDim2.new(0.5, 0, 0, Theme.Hud.TopMargin), AnchorPoint = Vector2.new(0.5, 0) })
 	regions.TopColumn = top
 	UIKit.list(top.Content, Enum.FillDirection.Vertical, 6, Enum.HorizontalAlignment.Center, Enum.VerticalAlignment.Top)
@@ -204,7 +204,7 @@ function MainUI.start()
 	regions.LeftColumn = left
 	UIKit.list(left.Content, Enum.FillDirection.Vertical, 10, Enum.HorizontalAlignment.Left, Enum.VerticalAlignment.Top)
 
-	local bottom = UIKit.responsive(gui, { Name = "BottomColumn", Design = Vector2.new(522, 310), Position = UDim2.new(0.5, 0, 1, -10), AnchorPoint = Vector2.new(0.5, 1) })
+	local bottom = UIKit.responsive(gui, { Name = "BottomColumn", Design = Vector2.new(460, 180), Position = UDim2.new(0.5, 0, 1, -92), AnchorPoint = Vector2.new(0.5, 1) })
 	regions.BottomColumn = bottom
 	UIKit.list(bottom.Content, Enum.FillDirection.Vertical, 8, Enum.HorizontalAlignment.Center, Enum.VerticalAlignment.Bottom)
 
@@ -213,10 +213,10 @@ function MainUI.start()
 	-----------------------------------------------------------------------
 	local topBar = UIKit.frame(top.Content, { Name = "TopBar", Size = UDim2.fromOffset(TOP_DESIGN.X, Theme.Size.Pill), BackgroundTransparency = 1, LayoutOrder = 1 })
 	UIKit.list(topBar, Enum.FillDirection.Horizontal, 8, Enum.HorizontalAlignment.Center, Enum.VerticalAlignment.Center)
-	local coinsPill = UIKit.pill(topBar, { Icon = "coin", Color = C.Cash, Size = UDim2.fromOffset(130, Theme.Size.Pill), LayoutOrder = 1 })
-	local incomePill = UIKit.pill(topBar, { Icon = "cash", Color = C.Cash, Size = UDim2.fromOffset(112, Theme.Size.Pill), LayoutOrder = 2 })
-	local gemsPill = UIKit.pill(topBar, { Icon = "gem", Color = C.Purple, Size = UDim2.fromOffset(116, Theme.Size.Pill), LayoutOrder = 3, OnPlus = function() MainUI.open("Shop", "Diamonds") end })
-	local rebirthPill = UIKit.pill(topBar, { Icon = "rebirth", Color = C.Bronze, Size = UDim2.fromOffset(98, Theme.Size.Pill), LayoutOrder = 4 })
+	local coinsPill = UIKit.pill(topBar, { Icon = "coin", Color = C.Cash, Size = UDim2.fromOffset(140, Theme.Size.Pill), LayoutOrder = 1, Big = true })
+	local incomePill = UIKit.pill(topBar, { Icon = "cash", Color = C.Cash, Size = UDim2.fromOffset(116, Theme.Size.Pill), LayoutOrder = 2 })
+	local gemsPill = UIKit.pill(topBar, { Icon = "gem", Color = C.Purple, Size = UDim2.fromOffset(112, Theme.Size.Pill), LayoutOrder = 3, OnPlus = function() MainUI.open("Shop", "Diamonds") end })
+	local rebirthPill = UIKit.pill(topBar, { Icon = "rebirth", Color = C.Bronze, Size = UDim2.fromOffset(104, Theme.Size.Pill), LayoutOrder = 4 })
 	UIKit.tooltip(coinsPill.Frame, "Cash", "Below")
 	UIKit.tooltip(incomePill.Frame, "Money per second (all hamsters working on your bench)", "Below")
 	UIKit.tooltip(gemsPill.Frame, "Diamonds", "Below")
@@ -235,7 +235,7 @@ function MainUI.start()
 		return string.format("Your base gate stays on %d s (+%d s per rebirth)", SecurityConfig.duration(rebirths), SecurityConfig.PerRebirthSeconds)
 	end, "Below")
 
-	local toastHolder = UIKit.frame(top.Content, { Name = "Toasts", Size = UDim2.fromOffset(TOP_DESIGN.X, 170), BackgroundTransparency = 1, LayoutOrder = 3 })
+	local toastHolder = UIKit.frame(top.Content, { Name = "Toasts", Size = UDim2.fromOffset(TOP_DESIGN.X, 108), BackgroundTransparency = 1, LayoutOrder = 3 })
 	UIKit.list(toastHolder, Enum.FillDirection.Vertical, 6, Enum.HorizontalAlignment.Center, Enum.VerticalAlignment.Top)
 	local toastCount = 0
 

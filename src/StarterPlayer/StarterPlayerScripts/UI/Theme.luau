@@ -49,7 +49,7 @@ Theme.Motion = { Open = 0.2, Close = 0.14, Hover = 0.1 }
 
 -- Spacing / sizing tokens (pixels at design scale).
 Theme.Space = { XS = 4, S = 8, M = 12, L = 16, XL = 24 }
-Theme.Size = { Pill = 34, Button = 40, IconButton = 46, IconButtonTouch = 54, Header = 52, Slot = 60, SlotTouch = 54 }
+Theme.Size = { Pill = 44, Button = 40, IconButton = 46, IconButtonTouch = 54, Header = 52, Slot = 60, SlotTouch = 54 }
 
 -- ScreenGui DisplayOrder: one explicit rule for who is in front of whom.
 Theme.Layers = {

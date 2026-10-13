@@ -215,19 +215,18 @@ local function fit()
 	if not camera or not bar then
 		return
 	end
-	local scale = bar:FindFirstChildOfClass("UIScale")
-	local width = bar:GetAttribute("DesignWidth") :: number
+	local holder = bar.Parent :: Instance
+	local scale = holder:FindFirstChildOfClass("UIScale")
+	local width = holder:GetAttribute("DesignWidth") :: number
 	if scale and width then
 		scale.Scale = math.clamp((camera.ViewportSize.X - 24) / width, 0.5, 1)
 	end
 end
 
 function HotbarUI.start()
-	local region = require(script.Parent.MainUI).region("BottomColumn")
-	if not region then
-		warn("[HotbarUI] BottomColumn region missing (MainUI must start first)")
-		return
-	end
+	-- The hotbar is its OWN ScreenGui, pinned to the bottom centre of the screen: no shared layout, so no other HUD part
+	-- can push it around (it used to live in a HUD column and could end up at the top of the screen).
+	local gui = UIKit.screenGui("HotbarUI", { Layer = "Hotbar", Insets = "Device" })
 	-- Roblox's own backpack bar would be a second hotbar: it is switched off (retry, CoreGui may not be ready yet)
 	task.spawn(function()
 		for _ = 1, 10 do
@@ -243,19 +242,18 @@ function HotbarUI.start()
 	local width = count * slotSize + (count - 1) * GAP
 	local layout = HotbarConfig.layout(slotSize)
 
-	-- one block: the tooltip card of the selected slot on top, the slots below (a list layout keeps them apart)
-	local block = UIKit.frame(region, { Name = "Hotbar", Size = UDim2.fromOffset(width, slotSize + 66), BackgroundTransparency = 1, LayoutOrder = 10 })
-	UIKit.list(block, Enum.FillDirection.Vertical, 6, Enum.HorizontalAlignment.Center, Enum.VerticalAlignment.Bottom)
+	local holder = UIKit.frame(gui, { Name = "Hotbar", Size = UDim2.fromOffset(width, slotSize), Position = UDim2.new(0.5, 0, 1, -14), AnchorPoint = Vector2.new(0.5, 1), BackgroundTransparency = 1 })
+	holder:SetAttribute("DesignWidth", width)
+	UIKit.new("UIScale", { Scale = 1 }, holder)
 
-	tip = UIKit.frame(block, { Name = "Tip", Size = UDim2.fromOffset(300, 54), LayoutOrder = 1, BackgroundColor3 = C.Cream, Visible = false })
+	-- tooltip card of the selected slot, floating just above the bar
+	tip = UIKit.frame(holder, { Name = "Tip", Size = UDim2.fromOffset(300, 54), Position = UDim2.new(0.5, 0, 0, -8), AnchorPoint = Vector2.new(0.5, 1), BackgroundColor3 = C.Cream, Visible = false })
 	UIKit.corner(tip, 8)
-	UIKit.stroke(tip, C.Line, 1.5)
+	UIKit.stroke(tip, C.Line, 1)
 	tipName = UIKit.label(tip, { Size = UDim2.new(1, -20, 0, 22), Position = UDim2.fromOffset(10, 5), Font = UIKit.Fonts.Title, TextSize = 15, TextColor3 = C.Ink, RichText = true })
 	tipDesc = UIKit.label(tip, { Size = UDim2.new(1, -20, 0, 20), Position = UDim2.fromOffset(10, 28), Font = UIKit.Fonts.Soft, TextSize = 12, TextColor3 = C.Muted, TextTruncate = Enum.TextTruncate.AtEnd })
 
-	bar = UIKit.frame(block, { Name = "Bar", Size = UDim2.fromOffset(width, slotSize), LayoutOrder = 2, BackgroundTransparency = 1 })
-	bar:SetAttribute("DesignWidth", width)
-	UIKit.new("UIScale", { Scale = 1 }, bar)
+	bar = UIKit.frame(holder, { Name = "Bar", Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1 })
 	UIKit.list(bar, Enum.FillDirection.Horizontal, GAP, Enum.HorizontalAlignment.Center)
 
 	for index = 1, count do

@@ -912,23 +912,27 @@ end
 ---------------------------------------------------------------------------
 
 -- A compact HUD indicator: dark capsule, drawn icon, value text. `Color` tints the value and the thin edge.
-function UIKit.pill(parent: Instance, props: { Icon: string, Color: Color3?, Size: UDim2?, LayoutOrder: number?, OnPlus: (() -> ())?, Label: string? }): { Frame: Frame, Value: TextLabel }
+function UIKit.pill(parent: Instance, props: { Icon: string, Color: Color3?, Size: UDim2?, LayoutOrder: number?, OnPlus: (() -> ())?, Label: string?, Big: boolean? }): { Frame: Frame, Value: TextLabel }
 	local accent = props.Color or C.Gold
+	-- HUD indicator: a solid dark plate, a coloured edge on the left (the colour says what it is), a large drawn icon and a
+	-- bold value. `Big` is for the main balance (cash): larger text.
 	local frame = UIKit.frame(parent, {
-		Size = props.Size or UDim2.fromOffset(130, 34),
+		Size = props.Size or UDim2.fromOffset(130, Theme.Size.Pill),
 		LayoutOrder = props.LayoutOrder or 0,
-		BackgroundColor3 = C.Cream,
-		BackgroundTransparency = 0.08,
+		BackgroundColor3 = C.Inset,
+		BackgroundTransparency = 0.05,
+		ClipsDescendants = true,
 	})
-	UIKit.corner(frame, Theme.Radius.Button)
-	UIKit.stroke(frame, C.Line, 1)
-	UIKit.icon(frame, props.Icon, { Size = UDim2.fromOffset(22, 22), Position = UDim2.new(0, 8, 0.5, 0), AnchorPoint = Vector2.new(0, 0.5), ZIndex = 3 })
+	UIKit.corner(frame, Theme.Radius.Button + 2)
+	UIKit.stroke(frame, mix(accent, C.Line, 0.6), 1)
+	UIKit.frame(frame, { Name = "AccentEdge", Size = UDim2.new(0, 4, 1, 0), BackgroundColor3 = accent, ZIndex = 2 })
+	UIKit.icon(frame, props.Icon, { Size = UDim2.fromOffset(if props.Big then 30 else 26, if props.Big then 30 else 26), Position = UDim2.new(0, 12, 0.5, 0), AnchorPoint = Vector2.new(0, 0.5), ZIndex = 3 })
 	local value = UIKit.label(frame, {
-		Size = UDim2.new(1, if props.OnPlus then -76 else -40, 1, 0),
-		Position = UDim2.fromOffset(38, 0),
+		Size = UDim2.new(1, if props.OnPlus then -84 else -52, 1, 0),
+		Position = UDim2.fromOffset(if props.Big then 48 else 44, 0),
 		Font = UIKit.Fonts.Title,
-		TextSize = Theme.Type.Heading,
-		TextColor3 = accent, -- the colour carries meaning: green cash, purple diamonds ...
+		TextSize = if props.Big then Theme.Type.Title + 2 else Theme.Type.Heading + 1,
+		TextColor3 = C.Text,
 		TextXAlignment = Enum.TextXAlignment.Left,
 		TextTruncate = Enum.TextTruncate.AtEnd,
 		ZIndex = 3,

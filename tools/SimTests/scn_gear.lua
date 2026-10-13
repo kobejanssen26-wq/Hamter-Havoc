@@ -635,16 +635,13 @@ task.spawn(function()
 
 	-- several resolutions: the hotbar block must fit on screen
 	local resOk, resDetail = true, ""
-	local regionRaw = byName(gui, "BottomColumn")[1]
+	local hp = RawData[hotbar].Props
+	check("the hotbar is anchored to the BOTTOM centre of the screen (own ScreenGui, not in a HUD column)", hp.Position.Y.Scale == 1 and hp.AnchorPoint.Y == 1 and hp.Position.X.Scale == 0.5 and RawData[RawData[hotbar].Parent].Name == "HotbarUI", tostring(hp.Position))
 	for _, vp in { Vector2.new(1920, 1080), Vector2.new(1280, 720), Vector2.new(844, 390), Vector2.new(667, 375), Vector2.new(390, 844) } do
 		cam.ViewportSize = vp
 		adv(0.3)
-		local scale = RawData[M.InstanceMethods.FindFirstChildOfClass(byName(hotbar, "Bar")[1], "UIScale")].Props.Scale
-		local barW = RawData[byName(hotbar, "Bar")[1]].Props.Size.X.Offset * scale
-		local wrapper = RawData[regionRaw].Props.Size
-		local regionW = wrapper.X.Offset
-		local regionScale = RawData[M.InstanceMethods.FindFirstChildOfClass(byName(regionRaw, "Content")[1], "UIScale")].Props.Scale
-		local total = barW * regionScale
+		local scale = RawData[M.InstanceMethods.FindFirstChildOfClass(hotbar, "UIScale")].Props.Scale
+		local total = RawData[hotbar].Attributes.DesignWidth * scale
 		if total > vp.X + 0.5 then resOk = false resDetail ..= string.format(" [%dx%d: hotbar %.0f wide]", vp.X, vp.Y, total) end
 	end
 	check("the hotbar fits the screen at 5 resolutions (incl. phone portrait)", resOk, resDetail)
