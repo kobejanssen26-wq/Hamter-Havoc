@@ -31,6 +31,7 @@ Run `python3 tools/ExportModels/export_models.py --update` to rebuild the files;
 | Default Hamster (Brownie) | Hamsters | [`Hamster_Default.rbxm`](Hamsters/Hamster_Default.rbxm) | 99 | None to display. HamsterAutoAnimate + HamsterAnimator (bundled) animate it on the client | Yes |
 | Upgrade Stations (8 pedestal machines) | Machines | [`Upgrade_Stations.rbxm`](Machines/Upgrade_Stations.rbxm) | 118 | Optional: bundled client script AnimateTaggedProps spins the training wheel / gear props | Yes |
 | Hamster Icons (48 drawn UI icons, no emoji) | UI_Assets | [`Hamster_Icons.rbxm`](UI_Assets/Hamster_Icons.rbxm) | 1 | None - self-contained ModuleScript | Yes |
+| Weapon Pack (every weapon as a Tool: Mega Slap Glove, Squeak Bat, Spring Boxing Glove, Shock Baton, Party Hammer, Bubble Shield, Frost Wand, Slingshot, Shadow Cloak, Mirror Clone) | Weapons | [`Weapon_Pack.rbxm`](Weapons/Weapon_Pack.rbxm) | 153 | None. Tools carry only the attributes ItemId / WeaponType; the server decides what they do (Content/Items). | Yes |
 | Hamster Wheel | Wheels | [`Hamster_Wheel.rbxm`](Wheels/Hamster_Wheel.rbxm) | 18 | WheelSpin script (bundled) turns it; without a controller it is a static model | Yes |
 
 See each asset's own README (folder next to the file) for hierarchy, pivot, attributes and required scripts.
