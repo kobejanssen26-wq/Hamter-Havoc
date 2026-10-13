@@ -153,6 +153,42 @@ task.spawn(function()
 	for index = 1, math.min(#floating, 15) do print("   FLOAT", floating[index]) end
 	check("no floating solid decorations outside the houses", #floating == 0, #floating)
 
+	-- 4. the walking route plaza -> Leaderboard Hall is clear: no collidable part stands in the lane x = -4.5..4.5, z = -100..-31
+	-- (every collidable part counts here, even thin ones; the floor itself - thinner than 0.5 and lower than 0.5 studs - does not)
+	local function laneBlockers(x0, x1, z0, z1)
+		local found = {}
+		for _, d in M.descendants(workspace) do
+			local data = RawData[d]
+			if data.Props and M.InstanceMethods.IsA(d, "BasePart") and data.Props.CanCollide ~= false and data.Props.Anchored and data.Name ~= "Baseplate" then
+				local cf, size = data.Props.CFrame, data.Props.Size
+				local r = cf.r
+				local hx = math.abs(r[1]) * size.X / 2 + math.abs(r[2]) * size.Y / 2 + math.abs(r[3]) * size.Z / 2
+				local hy = math.abs(r[4]) * size.X / 2 + math.abs(r[5]) * size.Y / 2 + math.abs(r[6]) * size.Z / 2
+				local hz = math.abs(r[7]) * size.X / 2 + math.abs(r[8]) * size.Y / 2 + math.abs(r[9]) * size.Z / 2
+				local top, bottom = cf.Y + hy, cf.Y - hy
+				local isFloor = top < 0.5
+				if not isFloor and bottom < 6.5 and top > 0.5 and cf.X + hx > x0 and cf.X - hx < x1 and cf.Z + hz > z0 and cf.Z - hz < z1 then
+					table.insert(found, string.format("%s at (%.0f,%.1f,%.0f) size %.1fx%.1fx%.1f", data.Name, cf.X, cf.Y, cf.Z, size.X, size.Y, size.Z))
+				end
+			end
+		end
+		return found
+	end
+	local blockers = laneBlockers(-4.5, 4.5, -100, -31)
+	for index = 1, math.min(#blockers, 10) do print("   BLOCKS", blockers[index]) end
+	check("the route from the plaza to the Leaderboard Hall is clear (no fountain, sign or prop in the lane)", #blockers == 0, #blockers)
+	check("self-test: the lane check does see a block dropped into the route", (function()
+		local probe = M.newInstance("Part", true)
+		RawData[probe].Name = "RouteProbe"
+		RawData[probe].Props.Anchored = true
+		RawData[probe].Props.Size = Vector3.new(6, 4, 6)
+		RawData[probe].Props.CFrame = CFrame.new(0, 2, -60)
+		M.setParent(probe, workspace)
+		local seen = #laneBlockers(-4.5, 4.5, -100, -31)
+		M.InstanceMethods.Destroy(probe)
+		return seen >= 1
+	end)())
+
 	-- the audit must be able to see a real problem: drop a block into the middle of the shop and look for it
 	local shop = workspace.HamsterPlaza:FindFirstChild("ShopHouse")
 	local counter = shop and M.InstanceMethods.FindFirstChild(shop, "Counter")

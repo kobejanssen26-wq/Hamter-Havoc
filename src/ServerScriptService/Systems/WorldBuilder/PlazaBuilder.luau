@@ -130,7 +130,7 @@ local function buildShop(parent: Instance, cframe: CFrame)
 	return model
 end
 
--- The plaza fountain at the south end of the plaza (where a second building used to be): a round stone basin,
+-- The plaza fountain at the south end of the plaza (where a second building used to be), now beside the walking route: a round stone basin,
 -- a column and two bowls, rippling water, benches and flowers. Everything is concentric, so nothing can clip.
 local function buildFountain(parent: Instance, cframe: CFrame, rng: Random)
 	local model = Build.model(parent, "PlazaFountain")
@@ -147,8 +147,10 @@ local function buildFountain(parent: Instance, cframe: CFrame, rng: Random)
 		local angle = index * math.pi / 3
 		Build.blob(model, "Spout", Vector3.new(0.5, 1.4, 0.5), CFrame.new(center.X + math.cos(angle) * 2.6, 3.9, center.Z + math.sin(angle) * 2.6), Palette.Water, Enum.Material.Glass, { CanCollide = false, Transparency = 0.35 })
 	end
+	-- one bench on the side that faces the walking route (the other side is the neighbouring house lot)
+	local towardRoute = if center.X < 0 then 1 else -1
+	Decor.bench(model, CFrame.new(center.X + towardRoute * 13, 0, center.Z) * CFrame.Angles(0, math.rad(90 * towardRoute), 0))
 	for _, side in { -1, 1 } do
-		Decor.bench(model, CFrame.new(center.X + side * 13, 0, center.Z) * CFrame.Angles(0, math.rad(90 * side), 0))
 		Decor.flowers(model, Vector3.new(center.X + side * 9, 0, center.Z + 9.5), 2.5, 8, rng)
 		Decor.flowers(model, Vector3.new(center.X + side * 9, 0, center.Z - 9.5), 2.5, 8, rng)
 	end
@@ -188,9 +190,17 @@ function PlazaBuilder.build(parent: Instance, rng: Random): PlazaInfo
 		Build.part(folder, "AnnexPath", Vector3.new(10, 0.2, 30), CFrame.new(0, 0.12, sign * 40), Palette.Pavement, Enum.Material.Cobblestone, { CanCollide = false })
 	end
 	local north = CFrame.new(0, 0, 52)
-	local south = CFrame.new(0, 0, -52) * CFrame.Angles(0, math.pi, 0)
 	buildShop(folder, north)
-	buildFountain(folder, south, rng)
+	-- The walking route to the Leaderboard Hall runs straight down x = 0 (see PlazaBuilder.ROUTE_HALF_WIDTH). The fountain
+	-- sits BESIDE it, in a small garden; a reading nook with trees balances the other side. Nothing solid stands in the route.
+	buildFountain(folder, CFrame.new(-20, 0, -64), rng)
+	local nook = Build.model(folder, "ReadingNook")
+	Decor.tree(nook, Vector3.new(21, 0, -58), "cherry", 1.2, rng)
+	Decor.tree(nook, Vector3.new(21, 0, -72), "cherry", 1.1, rng)
+	Decor.bench(nook, CFrame.new(7.5, 0, -65) * CFrame.Angles(0, math.rad(-90), 0))
+	Decor.flowers(nook, Vector3.new(14, 0, -65), 3, 12, rng)
+	-- signpost beside the route (not in it), facing the people who walk south out of the plaza
+	Decor.signpost(folder, CFrame.new(10.5, 0, -36) * CFrame.Angles(0, math.pi, 0), "LEADERBOARDS  v", nil)
 
 	-- a few quiet details: lamps along the annex, two trees per annex
 	for _, sign in { 1, -1 } do

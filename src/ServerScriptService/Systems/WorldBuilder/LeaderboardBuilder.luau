@@ -39,6 +39,7 @@ local function buildBoard(parent: Instance, metric: string, title: string, cfram
 		Build.part(model, "Post", Vector3.new(0.9, 12, 0.9), cframe * CFrame.new(side * 7.4, 6, 0.9), Palette.WoodDark, WOOD)
 	end
 	local board = Build.part(model, "Screen", Vector3.new(15, 10, 0.8), cframe * CFrame.new(0, 7.4, 0.9), Color3.fromRGB(24, 26, 44), PLASTIC)
+	Build.light(board, Color3.fromRGB(190, 200, 255), 0.6, 24) -- each board has its own soft light, so it reads at dusk and at night
 	Build.deco(model, "Frame", Vector3.new(16, 11, 0.5), cframe * CFrame.new(0, 7.4, 1.3), Palette.WoodDark, WOOD)
 	Build.deco(model, "Glow", Vector3.new(15.6, 0.3, 0.5), cframe * CFrame.new(0, 12.8, 0.7), Palette.Gold, NEON)
 
@@ -99,8 +100,23 @@ function LeaderboardBuilder.build(parent: Instance, rng: Random): { Folder: Fold
 	prompt.Parent = plinth
 	Build.target(plinth, "Leaderboard")
 
-	local sign = Build.part(folder, "HallSign", Vector3.new(16, 2.6, 0.6), CFrame.new(CENTER.X, 3.4, CENTER.Z + 40) * CFrame.Angles(0, math.pi, 0), Palette.WoodDark, WOOD, { CanCollide = false })
+	-- entrance gate: two posts either side of the path and a sign on a beam 9 studs up, so you WALK UNDER the sign
+	-- (the walking route is x = -5..5; the posts stand at x = +-7.5, nothing solid stands in between)
+	local gateZ = CENTER.Z + 31
+	for _, side in { -1, 1 } do
+		Build.part(folder, "GatePost", Vector3.new(1.2, 11, 1.2), CFrame.new(CENTER.X + side * 7.5, 5.5, gateZ), Palette.WoodDark, WOOD)
+		Build.part(folder, "GatePostBase", Vector3.new(2, 0.8, 2), CFrame.new(CENTER.X + side * 7.5, 0.4, gateZ), Palette.StoneDark, Enum.Material.Slate)
+	end
+	local sign = Build.part(folder, "HallSign", Vector3.new(16, 2.6, 0.6), CFrame.new(CENTER.X, 10.4, gateZ) * CFrame.Angles(0, math.pi, 0), Palette.WoodDark, WOOD, { CanCollide = false })
 	Build.surfaceText(sign, Enum.NormalId.Front, "LEADERBOARDS", { TextColor = Palette.Cream, PixelsPerStud = 50 })
+	Build.deco(folder, "GateGlow", Vector3.new(16.4, 0.25, 0.8), CFrame.new(CENTER.X, 11.8, gateZ), Palette.Gold, NEON)
+	Build.light(sign, Color3.fromRGB(255, 226, 160), 1.2, 26)
+	-- lamps along the path (outside the walking lane)
+	for _, z in { CENTER.Z + 50, CENTER.Z + 42 } do
+		for _, side in { -1, 1 } do
+			Decor.lamp(folder, Vector3.new(CENTER.X + side * 7.5, 0, z), 8)
+		end
+	end
 	for _, x in { -22, 22 } do
 		Decor.lamp(folder, Vector3.new(CENTER.X + x, 0, CENTER.Z + 10), 8)
 	end
