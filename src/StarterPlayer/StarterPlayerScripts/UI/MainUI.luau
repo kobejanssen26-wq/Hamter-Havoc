@@ -500,7 +500,7 @@ function MainUI.start()
 		local derived = DataController.derived()
 		coinsPill.Value.Text = Format.short(shown.Coins)
 		gemsPill.Value.Text = Format.short(shown.Gems)
-		rebirthPill.Value.Text = "Rebirth " .. (DataController.get("Rebirths") or 0)
+		rebirthPill.Value.Text = tostring(DataController.get("Rebirths") or 0) -- (the icon + tooltip say what it is; "Rebirth 12" did not fit)
 		incomePill.Value.Text = Format.rate(derived.IncomePerSecond or 0)
 	end
 

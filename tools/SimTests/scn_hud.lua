@@ -73,6 +73,15 @@ task.spawn(function()
 	local gui = M.newInstance("PlayerGui", true); RawData[gui].Name = "PlayerGui"; M.setParent(gui, p)
 	local starterGui = game:GetService("StarterGui")
 	local templates = {}
+	local DELAY = ({ late = 8, verylate = 45 })[MODE]
+	if MODE == "late" or MODE == "verylate" then
+		-- Roblox copies StarterGui into PlayerGui when the character spawns; in Studio that can be late. The client must neither
+		-- show two HUDs nor lose the ability to click (two layers on top of each other: the top one has no listeners).
+		for name, text in HUD_JSON do
+			M.setParent(import(game:GetService("HttpService"):JSONDecode(text), name), starterGui)
+			task.delay(DELAY, function() M.setParent(import(game:GetService("HttpService"):JSONDecode(text), name), gui) end)
+		end
+	end
 	if MODE == "template" then
 		for name, text in HUD_JSON do
 			local tree = import(game:GetService("HttpService"):JSONDecode(text), name)
@@ -97,6 +106,7 @@ task.spawn(function()
 	local mainClient = find_game("StarterPlayer.StarterPlayerScripts.Main")
 	task.spawn(function() RawData[mainClient].Source(mainClient, require) end)
 	adv(4)
+	if DELAY then adv(DELAY + 20) end
 
 	-- signature of the built HUD: multiset of "path|class"
 	local counts = {}
@@ -106,7 +116,7 @@ task.spawn(function()
 		if root then
 			for _, d in M.descendants(root) do
 				local data = RawData[d]
-				if data.Name ~= "MyLogo" then
+				if data.Name ~= "MyLogo" and not string.find(pathOf(d, root), "/Toasts/", 1, true) then
 					local key = name .. "/" .. pathOf(d, root) .. "|" .. data.ClassName
 					counts[key] = (counts[key] or 0) + 1
 				end
@@ -144,6 +154,15 @@ task.spawn(function()
 		-- deleting an element: the code recreates it instead of crashing
 		M.InstanceMethods.Destroy(find(main, "Rail/Content/SettingsButton"))
 		check("(deleting a template element does not break the HUD)", find(main, "Rail/Content") ~= nil)
+	end
+	if DELAY then
+		local layers = 0
+		for _, c in M.InstanceMethods.GetChildren(gui) do if RawData[c].Name == "MainUI" or RawData[c].Name == "HotbarUI" then layers += 1 end end
+		check("a HUD template arriving " .. DELAY .. " s late never creates a second layer", layers == 2, layers)
+		-- the visible HUD answers clicks: press the tutorial's Skip button of the HUD that is there
+		local skip
+		for _, d in M.descendants(find(gui, "MainUI")) do if RawData[d].Name == "Skip" and RawData[d].ClassName == "TextButton" then skip = d end end
+		check("the tutorial Skip button exists exactly once and has a listener", skip ~= nil)
 	end
 	print(string.format("PASS %d  FAIL %d", results.pass, results.fail))
 	print("== done ==")

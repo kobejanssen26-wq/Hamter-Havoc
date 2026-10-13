@@ -917,7 +917,7 @@
               ]
              ]
             },
-            "Text": "Rebirth 0",
+            "Text": "0",
             "TextColor3": [
              0.968627,
              0.968627,
@@ -929,7 +929,7 @@
             "ZIndex": 3
            },
            "Attributes": {
-            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,44,0.000,0\nRichText=true\nSize=u2:1.000,-52,1.000,0\nText=Rebirth 0\nTextColor3=c3:0.969,0.969,0.992\nTextSize=17.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Left\nZIndex=3.000"
+            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,44,0.000,0\nRichText=true\nSize=u2:1.000,-52,1.000,0\nText=0\nTextColor3=c3:0.969,0.969,0.992\nTextSize=17.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Left\nZIndex=3.000"
            }
           }
          ]

@@ -149,7 +149,10 @@ task.spawn(function()
 	end
 	check("top HUD has exactly four indicators", pillCount == 4, pillCount)
 	local hud = textsOf(topBar)
-	check("rebirth indicator is labelled", string.find(hud, "Rebirth 0", 1, true) ~= nil, hud)
+	local rebirthIcon = false
+	for _, d in M.descendants(workspace) do end
+	for _, d in M.descendants(RawData[p].Children[#RawData[p].Children]) do if RawData[d].Name == "Icon_rebirth" then rebirthIcon = true end end
+	check("rebirth indicator: the rebirth icon with the count (a short number; the tooltip says what it is)", rebirthIcon and string.find(hud, "|0", 1, true) ~= nil, hud)
 	check("no stray 'R0' badge", string.find(hud, "|R0", 1, true) == nil)
 
 	-- hotbar

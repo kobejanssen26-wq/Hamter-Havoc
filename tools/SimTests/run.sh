@@ -38,7 +38,7 @@ L
 # scn_hud.lua runs twice (no templates / with the baked templates + simulated Studio edits) and the built HUDs are compared
 run_hud() {
 	local OUTDIR="$BUILD"
-	for mode in plain template; do
+	for mode in plain template late verylate; do
 		python3 - "$HERE" "$BUILD" "$mode" <<'PY'
 import sys, json
 here, build, mode = sys.argv[1:4]
@@ -56,6 +56,11 @@ PY
 	grep -E "^\s+\[(PASS|FAIL)\]|PASS [0-9]+" "$BUILD/hud_template.out"
 	grep '^SIG|' "$BUILD/hud_plain.out" | sort > "$BUILD/hud_plain.sig"
 	grep '^SIG|' "$BUILD/hud_template.out" | sort > "$BUILD/hud_template.sig"
+	grep -E "^\s+\[(PASS|FAIL)\]" "$BUILD/hud_late.out" "$BUILD/hud_verylate.out" | sed 's/^[^:]*://' | grep -E "never creates|Skip button"
+	for mode in late verylate; do
+		grep '^SIG|' "$BUILD/hud_$mode.out" | sort > "$BUILD/hud_$mode.sig"
+		if diff -q "$BUILD/hud_plain.sig" "$BUILD/hud_$mode.sig" >/dev/null; then echo "  [PASS] HUD ($mode arrival of the templates) has the same instances as the code-built HUD"; else echo "  [FAIL] HUD ($mode) differs"; diff "$BUILD/hud_plain.sig" "$BUILD/hud_$mode.sig" | head -10; fi
+	done
 	if [ -s "$BUILD/hud_plain.sig" ] && diff -q "$BUILD/hud_plain.sig" "$BUILD/hud_template.sig" >/dev/null; then
 		echo "  [PASS] the HUD built from the templates has exactly the same instances as the HUD built from code ($(wc -l < "$BUILD/hud_plain.sig") distinct paths)"
 	else

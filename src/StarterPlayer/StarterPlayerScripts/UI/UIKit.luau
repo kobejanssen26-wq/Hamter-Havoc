@@ -80,6 +80,8 @@ local C = UIKit.Colors
 ---------------------------------------------------------------------------
 
 local adopting: { [ScreenGui]: boolean } = {}
+local activeGuis: { [string]: ScreenGui } = {}
+local watchingPlayerGui = false
 local consumed: { [Instance]: boolean } = {}
 
 -- A text fingerprint of a property value, to find out whether it was changed since baking.
@@ -474,10 +476,11 @@ function UIKit.screenGui(name: string, options: { Layer: string?, Insets: string
 		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
 		Enabled = opts.Enabled ~= false,
 	}
-	-- a Studio template (StarterGui/<name>) is adopted instead of creating a second ScreenGui
+	-- A Studio template (StarterGui/<name>) is adopted instead of creating a second ScreenGui. Roblox copies StarterGui into
+	-- PlayerGui when the character spawns, which in Studio can take a while: wait for it (up to 30 s).
 	local template = playerGui:FindFirstChild(name)
-	if not template and game:GetService("StarterGui"):FindFirstChild(name) then
-		template = playerGui:WaitForChild(name, 5)
+	if not template and not isBaking() and game:GetService("StarterGui"):FindFirstChild(name) then
+		template = playerGui:WaitForChild(name, 30)
 	end
 	local gui: ScreenGui
 	if template and template:IsA("ScreenGui") and template:GetAttribute("CodeProps") ~= nil and not isBaking() then
@@ -490,6 +493,26 @@ function UIKit.screenGui(name: string, options: { Layer: string?, Insets: string
 		if isBaking() then
 			recordCodeProps(gui, props)
 		end
+	end
+	-- never TWO huds: any other ScreenGui with this name (a template that arrived late, a leftover) is removed
+	activeGuis[name] = gui
+	for _, other in playerGui:GetChildren() do
+		if other ~= gui and other.Name == name and other:IsA("ScreenGui") then
+			other:Destroy()
+		end
+	end
+	if not watchingPlayerGui then
+		watchingPlayerGui = true
+		playerGui.ChildAdded:Connect(function(child)
+			local current = activeGuis[child.Name]
+			if current and child ~= current and child:IsA("ScreenGui") then
+				task.defer(function()
+					if child.Parent and activeGuis[child.Name] ~= child then
+						child:Destroy()
+					end
+				end)
+			end
+		end)
 	end
 	gui:SetAttribute("Insets", insets)
 	local mode = if insets == "Topbar" then Enum.ScreenInsets.TopbarSafeInsets elseif insets == "Device" then Enum.ScreenInsets.DeviceSafeInsets else Enum.ScreenInsets.None

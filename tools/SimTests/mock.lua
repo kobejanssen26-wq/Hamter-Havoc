@@ -583,6 +583,17 @@ end
 function InstanceMethods.WaitForChild(self, name, timeout)
 	local c = InstanceMethods.FindFirstChild(self, name)
 	if c then return c end
+	if timeout then
+		-- like Roblox: wait (in virtual time) until the child shows up, or give up with nil after `timeout` seconds
+		local waited = 0
+		while waited < timeout do
+			task.wait(0.1)
+			waited += 0.1
+			c = InstanceMethods.FindFirstChild(self, name)
+			if c then return c end
+		end
+		return nil
+	end
 	error("Infinite yield: WaitForChild('" .. name .. "') on " .. InstanceMethods.GetFullName(self) .. " (child never appears in mock)")
 end
 function InstanceMethods.GetFullName(self)
