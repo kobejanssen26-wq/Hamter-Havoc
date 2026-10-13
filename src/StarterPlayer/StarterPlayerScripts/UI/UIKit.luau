@@ -289,7 +289,7 @@ end
 function UIKit.stroke(parent: Instance, color: Color3, thickness: number?, transparency: number?): UIStroke
 	return UIKit.new("UIStroke", {
 		Color = color,
-		Thickness = math.min(thickness or 1, 1.5), -- hairlines only: thick outlines are what made every panel look the same
+		Thickness = math.min(thickness or 1, Theme.Outline.Thick), -- strong outlines are part of the playful style (max 3 px)
 		Transparency = transparency or 0,
 		ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
 	}, parent)
@@ -387,11 +387,11 @@ function UIKit.setButtonContent(button: TextButton, iconId: string?, text: strin
 end
 
 -- Kept for compatibility: UI text is no longer outlined (the old "cartoon" look). Text stays legible through contrast.
-function UIKit.cartoon(label: TextLabel | TextButton, _thickness: number?, _color: Color3?)
-	local outline = label:FindFirstChild("TextOutline")
-	if outline then
-		outline:Destroy()
-	end
+function UIKit.cartoon(label: TextLabel | TextButton, thickness: number?, color: Color3?)
+	-- the dark text outline that makes white text readable on any bright colour
+	local target = label :: any
+	target.TextStrokeColor3 = color or Theme.Colors.Line
+	target.TextStrokeTransparency = if (thickness or 2) >= 2 then 0.15 else 0.45
 end
 
 local function mix(a: Color3, b: Color3, t: number): Color3
@@ -401,7 +401,7 @@ end
 -- Card with a thin accent edge (flat: no gradient). Call it right after creating the frame (before adding content).
 function UIKit.vivid(frame: GuiObject, color: Color3, options: { Outline: number?, Corner: number? }?)
 	local opts = options or {}
-	frame.BackgroundColor3 = mix(C.Card, color, 0.08)
+	frame.BackgroundColor3 = mix(C.Card, color, 0.18)
 	frame.BackgroundTransparency = 0
 	frame.ClipsDescendants = true
 	local existingCorner = frame:FindFirstChildOfClass("UICorner")
@@ -410,7 +410,7 @@ function UIKit.vivid(frame: GuiObject, color: Color3, options: { Outline: number
 	else
 		UIKit.corner(frame, math.min(opts.Corner or Theme.Radius.Card, 8))
 	end
-	local edge = UIKit.stroke(frame, mix(color, C.Line, 0.5), math.min(opts.Outline or 1, 2))
+	local edge = UIKit.stroke(frame, color, math.max(opts.Outline or 2, Theme.Outline.Thin))
 	edge.Name = "AccentEdge"
 end
 
@@ -601,7 +601,10 @@ function UIKit.button(parent: Instance?, props: ButtonProps): TextButton
 	color = button.BackgroundColor3 -- (a Studio-edited template keeps its own colour: hover and press build on that one)
 	UIKit.corner(button, props.Corner or Theme.Radius.Button)
 	-- flat surface, one hairline edge, no gradient and no outlined text: the hover/press feedback does the talking
-	local stroke = UIKit.stroke(button, mix(color, Color3.new(0, 0, 0), 0.45), 1)
+	local stroke = UIKit.stroke(button, C.Line, Theme.Outline.Thin + 0.5)
+	-- a soft light top gives the button its chunky, pressable look
+	UIKit.new("UIGradient", { Color = ColorSequence.new(Color3.new(1, 1, 1), Color3.fromRGB(205, 205, 215)), Rotation = 90 }, button)
+	UIKit.cartoon(button, 2)
 	local scale = UIKit.new("UIScale", { Scale = 1 }, button)
 	button:SetAttribute("BaseColor", color)
 
@@ -663,10 +666,7 @@ function UIKit.setButtonColor(button: TextButton, color: Color3)
 	button:SetAttribute("BaseColor", color)
 	if not button:GetAttribute("Disabled") then
 		button.BackgroundColor3 = color
-		local edge = button:FindFirstChild("Edge") :: UIStroke?
-		if edge then
-			edge.Color = mix(color, Color3.new(0, 0, 0), 0.55)
-		end
+		-- (the outline stays the same deep violet on every button)
 	end
 end
 
@@ -1061,12 +1061,12 @@ function UIKit.panel(options: { Name: string, Title: string, Subtitle: string?, 
 	UIKit.corner(window, Theme.Radius.Window)
 	local outline = UIKit.frame(motion, { Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1, ZIndex = 20 })
 	UIKit.corner(outline, Theme.Radius.Window)
-	UIKit.stroke(outline, C.Line, 1)
+	UIKit.stroke(outline, accent, Theme.Outline.Thick)
 
 	-- header bar: icon, title, subtitle, close button
-	local header = UIKit.frame(window, { Name = "Header", Size = UDim2.new(1, 0, 0, 52), BackgroundColor3 = Theme.Colors.Header, ZIndex = 5 })
-	UIKit.frame(header, { Size = UDim2.new(1, 0, 0, 1), Position = UDim2.new(0, 0, 1, -1), BackgroundColor3 = C.Line, ZIndex = 6 })
-	UIKit.frame(header, { Size = UDim2.fromOffset(3, 22), Position = UDim2.fromOffset(0, 15), BackgroundColor3 = accent, ZIndex = 7 }) -- the panel's one accent mark
+	local header = UIKit.frame(window, { Name = "Header", Size = UDim2.new(1, 0, 0, 52), BackgroundColor3 = accent, ZIndex = 5 }) -- the window's colour
+	UIKit.new("UIGradient", { Color = ColorSequence.new(Color3.new(1, 1, 1), Color3.fromRGB(190, 190, 200)), Rotation = 90 }, header)
+	UIKit.frame(header, { Size = UDim2.new(1, 0, 0, 3), Position = UDim2.new(0, 0, 1, -3), BackgroundColor3 = C.Line, ZIndex = 6 })
 	local titleOffset = 20
 	if options.Icon then
 		UIKit.icon(header, options.Icon, { Size = UDim2.fromOffset(26, 26), Position = UDim2.fromOffset(18, 13), ZIndex = 7 })
@@ -1083,12 +1083,13 @@ function UIKit.panel(options: { Name: string, Title: string, Subtitle: string?, 
 		TextTruncate = Enum.TextTruncate.AtEnd,
 		ZIndex = 7,
 	})
+	UIKit.cartoon(title, 2)
 	UIKit.label(header, {
 		Size = UDim2.new(0.7, -titleOffset, 0, 16),
 		Position = UDim2.fromOffset(titleOffset, 30),
 		Font = UIKit.Fonts.Soft,
 		TextSize = 12,
-		TextColor3 = C.Muted,
+		TextColor3 = C.White,
 		Text = options.Subtitle or SUBTITLES[options.Name] or "",
 		TextTruncate = Enum.TextTruncate.AtEnd,
 		ZIndex = 7,
@@ -1174,10 +1175,10 @@ function UIKit.panel(options: { Name: string, Title: string, Subtitle: string?, 
 		Size = UDim2.fromOffset(34, 34),
 		Position = UDim2.new(1, -12, 0, 9),
 		AnchorPoint = Vector2.new(1, 0),
-		Color = C.Card,
+		Color = C.Red,
 		Name = "Close",
 		Silent = true,
-		Corner = 8,
+		Corner = 10,
 		OnClick = function()
 			panel:Close()
 		end,
@@ -1211,13 +1212,13 @@ function UIKit.pill(parent: Instance, props: { Icon: string, Color: Color3?, Siz
 	local frame = UIKit.frame(parent, {
 		Size = props.Size or UDim2.fromOffset(130, Theme.Size.Pill),
 		LayoutOrder = props.LayoutOrder or 0,
-		BackgroundColor3 = C.Inset,
+		BackgroundColor3 = C.CreamDark,
 		BackgroundTransparency = 0.05,
 		ClipsDescendants = true,
 	})
 	UIKit.corner(frame, Theme.Radius.Button + 2)
-	UIKit.stroke(frame, mix(accent, C.Line, 0.6), 1)
-	UIKit.frame(frame, { Name = "AccentEdge", Size = UDim2.new(0, 4, 1, 0), BackgroundColor3 = accent, ZIndex = 2 })
+	UIKit.stroke(frame, accent, Theme.Outline.Thick)
+	UIKit.frame(frame, { Name = "AccentEdge", Size = UDim2.new(0, 6, 1, 0), BackgroundColor3 = accent, ZIndex = 2 })
 	UIKit.icon(frame, props.Icon, { Size = UDim2.fromOffset(if props.Big then 30 else 26, if props.Big then 30 else 26), Position = UDim2.new(0, 12, 0.5, 0), AnchorPoint = Vector2.new(0, 0.5), ZIndex = 3 })
 	local value = UIKit.label(frame, {
 		Size = UDim2.new(1, if props.OnPlus then -84 else -52, 1, 0),
@@ -1229,6 +1230,7 @@ function UIKit.pill(parent: Instance, props: { Icon: string, Color: Color3?, Siz
 		TextTruncate = Enum.TextTruncate.AtEnd,
 		ZIndex = 3,
 	})
+	UIKit.cartoon(value, 2)
 	if props.OnPlus then
 		local plus = UIKit.button(frame, {
 			Text = "",
@@ -1344,9 +1346,10 @@ function UIKit.chip(parent: Instance, text: string, color: Color3, size: UDim2?)
 		Font = UIKit.Fonts.Body,
 		TextSize = 12,
 	})
-	label.BackgroundColor3 = mix(C.Card, color, 0.55)
+	label.BackgroundColor3 = color
 	UIKit.corner(label, 99)
-	UIKit.stroke(label, mix(color, C.Line, 0.3), 1)
+	UIKit.stroke(label, C.Line, Theme.Outline.Thin)
+	UIKit.cartoon(label, 1)
 	return label
 end
 

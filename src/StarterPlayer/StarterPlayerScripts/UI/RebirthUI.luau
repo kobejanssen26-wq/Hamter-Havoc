@@ -16,6 +16,7 @@ local RarityConfig = require(Modules:WaitForChild("RarityConfig"))
 local RebirthConfig = require(Modules:WaitForChild("RebirthConfig"))
 
 local DataController = require(script.Parent.Parent.Controllers.DataController)
+local Theme = require(script.Parent.Theme)
 local UIKit = require(script.Parent.UIKit)
 
 local RebirthUI = {}
@@ -36,7 +37,7 @@ local function heading(parent: Instance, text: string, y: number?): TextLabel
 end
 
 function RebirthUI.start()
-	local panel = UIKit.panel({ Name = "Rebirth", Title = "Rebirth", Icon = "rebirth", Design = Vector2.new(920, 640), Accent = ORANGE })
+	local panel = UIKit.panel({ Name = "Rebirth", Title = "Rebirth", Icon = "rebirth", Design = Vector2.new(920, 640), Accent = Theme.Accents.Rebirth })
 	local body = panel.Body
 
 	-----------------------------------------------------------------------

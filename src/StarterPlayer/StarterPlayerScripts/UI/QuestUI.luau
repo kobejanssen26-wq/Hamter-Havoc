@@ -14,6 +14,7 @@ local ShopConfig = require(Modules:WaitForChild("ShopConfig"))
 
 local AudioController = require(script.Parent.Parent.Controllers.AudioController)
 local DataController = require(script.Parent.Parent.Controllers.DataController)
+local Theme = require(script.Parent.Theme)
 local UIKit = require(script.Parent.UIKit)
 
 local QuestUI = {}
@@ -50,7 +51,7 @@ local function rewardRow(parent: Instance, reward: any, position: UDim2)
 end
 
 function QuestUI.start()
-	local panel = UIKit.panel({ Name = "Quests", Title = "Quests & Achievements", Icon = "scroll", Design = Vector2.new(780, 580), Accent = C.Purple })
+	local panel = UIKit.panel({ Name = "Quests", Title = "Quests & Achievements", Icon = "scroll", Design = Vector2.new(780, 580), Accent = Theme.Accents.Quests })
 	local body = panel.Body
 
 	local mode = "Quests"

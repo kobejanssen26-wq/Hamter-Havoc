@@ -15,6 +15,7 @@ local Format = require(Modules:WaitForChild("Format"))
 local LeaderboardConfig = require(Modules:WaitForChild("LeaderboardConfig"))
 
 local DataController = require(script.Parent.Parent.Controllers.DataController)
+local Theme = require(script.Parent.Theme)
 local UIKit = require(script.Parent.UIKit)
 local UIRegistry = require(script.Parent.UIRegistry)
 
@@ -28,7 +29,7 @@ local SHOWN_ROWS = 25
 local ROW_HEIGHT = 46
 
 function LeaderboardUI.start()
-	local panel = UIKit.panel({ Name = "Leaderboards", Title = "Leaderboards", Icon = "trophy", Design = Vector2.new(720, 600), Accent = C.Gold, Subtitle = "See who leads the plaza" })
+	local panel = UIKit.panel({ Name = "Leaderboards", Title = "Leaderboards", Icon = "trophy", Design = Vector2.new(720, 600), Accent = Theme.Accents.Leaderboards, Subtitle = "See who leads the plaza" })
 	local body = panel.Body
 
 	local metric, period = "Money", "Weekly"

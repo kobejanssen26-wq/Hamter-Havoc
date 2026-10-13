@@ -112,9 +112,9 @@
        "Name": "TopBar",
        "Properties": {
         "BackgroundColor3": [
-         0.145098,
-         0.160784,
-         0.227451
+         0.329412,
+         0.227451,
+         0.603922
         ],
         "BackgroundTransparency": 1,
         "BorderSizePixel": 0,
@@ -133,7 +133,7 @@
         }
        },
        "Attributes": {
-        "CodeProps": "BackgroundColor3=c3:0.145,0.161,0.227\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nLayoutOrder=1.000\nSize=u2:0.000,500,0.000,44"
+        "CodeProps": "BackgroundColor3=c3:0.329,0.227,0.604\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nLayoutOrder=1.000\nSize=u2:0.000,500,0.000,44"
        },
        "Children": [
         {
@@ -160,9 +160,9 @@
          "Name": "Frame",
          "Properties": {
           "BackgroundColor3": [
-           0.145098,
-           0.160784,
-           0.227451
+           0.141176,
+           0.0862745,
+           0.329412
           ],
           "BackgroundTransparency": 0.05,
           "BorderSizePixel": 0,
@@ -182,7 +182,7 @@
           }
          },
          "Attributes": {
-          "CodeProps": "BackgroundColor3=c3:0.145,0.161,0.227\nBackgroundTransparency=0.050\nBorderSizePixel=0.000\nClipsDescendants=true\nLayoutOrder=1.000\nSize=u2:0.000,140,0.000,44"
+          "CodeProps": "BackgroundColor3=c3:0.141,0.086,0.329\nBackgroundTransparency=0.050\nBorderSizePixel=0.000\nClipsDescendants=true\nLayoutOrder=1.000\nSize=u2:0.000,140,0.000,44"
          },
          "Children": [
           {
@@ -192,12 +192,12 @@
             "CornerRadius": {
              "UDim": [
               0,
-              8
+              12
              ]
             }
            },
            "Attributes": {
-            "CodeProps": "CornerRadius=u:0.000,8"
+            "CodeProps": "CornerRadius=u:0.000,12"
            }
           },
           {
@@ -206,15 +206,15 @@
            "Properties": {
             "ApplyStrokeMode": "Border",
             "Color": [
-             0.296471,
-             0.523922,
-             0.443922
+             0.360784,
+             0.92549,
+             0.439216
             ],
-            "Thickness": 1,
+            "Thickness": 3,
             "Transparency": 0
            },
            "Attributes": {
-            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.296,0.524,0.444\nThickness=1.000\nTransparency=0.000"
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.361,0.925,0.439\nThickness=3.000\nTransparency=0.000"
            }
           },
           {
@@ -222,16 +222,16 @@
            "Name": "AccentEdge",
            "Properties": {
             "BackgroundColor3": [
-             0.376471,
-             0.909804,
-             0.556863
+             0.360784,
+             0.92549,
+             0.439216
             ],
             "BorderSizePixel": 0,
             "Size": {
              "UDim2": [
               [
                0,
-               4
+               6
               ],
               [
                1,
@@ -242,7 +242,7 @@
             "ZIndex": 2
            },
            "Attributes": {
-            "CodeProps": "BackgroundColor3=c3:0.376,0.910,0.557\nBorderSizePixel=0.000\nSize=u2:0.000,4,1.000,0\nZIndex=2.000"
+            "CodeProps": "BackgroundColor3=c3:0.361,0.925,0.439\nBorderSizePixel=0.000\nSize=u2:0.000,6,1.000,0\nZIndex=2.000"
            }
           },
           {
@@ -251,7 +251,7 @@
            "Properties": {
             "BackgroundTransparency": 1,
             "BorderSizePixel": 0,
-            "Font": "GothamBold",
+            "Font": "GothamBlack",
             "Position": {
              "UDim2": [
               [
@@ -279,17 +279,23 @@
             },
             "Text": "254",
             "TextColor3": [
-             0.968627,
-             0.968627,
-             0.992157
+             1,
+             1,
+             1
             ],
             "TextSize": 22,
+            "TextStrokeColor3": [
+             0.101961,
+             0.0470588,
+             0.243137
+            ],
+            "TextStrokeTransparency": 0.15,
             "TextTruncate": "AtEnd",
             "TextXAlignment": "Left",
             "ZIndex": 3
            },
            "Attributes": {
-            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,48,0.000,0\nRichText=true\nSize=u2:1.000,-52,1.000,0\nText=254\nTextColor3=c3:0.969,0.969,0.992\nTextSize=22.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Left\nZIndex=3.000"
+            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBlack\nPosition=u2:0.000,48,0.000,0\nRichText=true\nSize=u2:1.000,-52,1.000,0\nText=254\nTextColor3=c3:1.000,1.000,1.000\nTextSize=22.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Left\nZIndex=3.000"
            }
           }
          ]
@@ -299,9 +305,9 @@
          "Name": "Frame",
          "Properties": {
           "BackgroundColor3": [
-           0.145098,
-           0.160784,
-           0.227451
+           0.141176,
+           0.0862745,
+           0.329412
           ],
           "BackgroundTransparency": 0.05,
           "BorderSizePixel": 0,
@@ -321,7 +327,7 @@
           }
          },
          "Attributes": {
-          "CodeProps": "BackgroundColor3=c3:0.145,0.161,0.227\nBackgroundTransparency=0.050\nBorderSizePixel=0.000\nClipsDescendants=true\nLayoutOrder=2.000\nSize=u2:0.000,116,0.000,44"
+          "CodeProps": "BackgroundColor3=c3:0.141,0.086,0.329\nBackgroundTransparency=0.050\nBorderSizePixel=0.000\nClipsDescendants=true\nLayoutOrder=2.000\nSize=u2:0.000,116,0.000,44"
          },
          "Children": [
           {
@@ -331,12 +337,12 @@
             "CornerRadius": {
              "UDim": [
               0,
-              8
+              12
              ]
             }
            },
            "Attributes": {
-            "CodeProps": "CornerRadius=u:0.000,8"
+            "CodeProps": "CornerRadius=u:0.000,12"
            }
           },
           {
@@ -345,15 +351,15 @@
            "Properties": {
             "ApplyStrokeMode": "Border",
             "Color": [
-             0.296471,
-             0.523922,
-             0.443922
+             0.360784,
+             0.92549,
+             0.439216
             ],
-            "Thickness": 1,
+            "Thickness": 3,
             "Transparency": 0
            },
            "Attributes": {
-            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.296,0.524,0.444\nThickness=1.000\nTransparency=0.000"
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.361,0.925,0.439\nThickness=3.000\nTransparency=0.000"
            }
           },
           {
@@ -361,16 +367,16 @@
            "Name": "AccentEdge",
            "Properties": {
             "BackgroundColor3": [
-             0.376471,
-             0.909804,
-             0.556863
+             0.360784,
+             0.92549,
+             0.439216
             ],
             "BorderSizePixel": 0,
             "Size": {
              "UDim2": [
               [
                0,
-               4
+               6
               ],
               [
                1,
@@ -381,7 +387,7 @@
             "ZIndex": 2
            },
            "Attributes": {
-            "CodeProps": "BackgroundColor3=c3:0.376,0.910,0.557\nBorderSizePixel=0.000\nSize=u2:0.000,4,1.000,0\nZIndex=2.000"
+            "CodeProps": "BackgroundColor3=c3:0.361,0.925,0.439\nBorderSizePixel=0.000\nSize=u2:0.000,6,1.000,0\nZIndex=2.000"
            }
           },
           {
@@ -390,7 +396,7 @@
            "Properties": {
             "BackgroundTransparency": 1,
             "BorderSizePixel": 0,
-            "Font": "GothamBold",
+            "Font": "GothamBlack",
             "Position": {
              "UDim2": [
               [
@@ -418,17 +424,23 @@
             },
             "Text": "$0.5/s",
             "TextColor3": [
-             0.968627,
-             0.968627,
-             0.992157
+             1,
+             1,
+             1
             ],
             "TextSize": 17,
+            "TextStrokeColor3": [
+             0.101961,
+             0.0470588,
+             0.243137
+            ],
+            "TextStrokeTransparency": 0.15,
             "TextTruncate": "AtEnd",
             "TextXAlignment": "Left",
             "ZIndex": 3
            },
            "Attributes": {
-            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,44,0.000,0\nRichText=true\nSize=u2:1.000,-52,1.000,0\nText=$0.5/s\nTextColor3=c3:0.969,0.969,0.992\nTextSize=17.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Left\nZIndex=3.000"
+            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBlack\nPosition=u2:0.000,44,0.000,0\nRichText=true\nSize=u2:1.000,-52,1.000,0\nText=$0.5/s\nTextColor3=c3:1.000,1.000,1.000\nTextSize=17.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Left\nZIndex=3.000"
            }
           }
          ]
@@ -438,9 +450,9 @@
          "Name": "Frame",
          "Properties": {
           "BackgroundColor3": [
-           0.145098,
-           0.160784,
-           0.227451
+           0.141176,
+           0.0862745,
+           0.329412
           ],
           "BackgroundTransparency": 0.05,
           "BorderSizePixel": 0,
@@ -460,7 +472,7 @@
           }
          },
          "Attributes": {
-          "CodeProps": "BackgroundColor3=c3:0.145,0.161,0.227\nBackgroundTransparency=0.050\nBorderSizePixel=0.000\nClipsDescendants=true\nLayoutOrder=3.000\nSize=u2:0.000,112,0.000,44"
+          "CodeProps": "BackgroundColor3=c3:0.141,0.086,0.329\nBackgroundTransparency=0.050\nBorderSizePixel=0.000\nClipsDescendants=true\nLayoutOrder=3.000\nSize=u2:0.000,112,0.000,44"
          },
          "Children": [
           {
@@ -470,12 +482,12 @@
             "CornerRadius": {
              "UDim": [
               0,
-              8
+              12
              ]
             }
            },
            "Attributes": {
-            "CodeProps": "CornerRadius=u:0.000,8"
+            "CodeProps": "CornerRadius=u:0.000,12"
            }
           },
           {
@@ -484,15 +496,15 @@
            "Properties": {
             "ApplyStrokeMode": "Border",
             "Color": [
-             0.425098,
-             0.351373,
-             0.621176
+             0.690196,
+             0.384314,
+             1
             ],
-            "Thickness": 1,
+            "Thickness": 3,
             "Transparency": 0
            },
            "Attributes": {
-            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.425,0.351,0.621\nThickness=1.000\nTransparency=0.000"
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.690,0.384,1.000\nThickness=3.000\nTransparency=0.000"
            }
           },
           {
@@ -500,8 +512,8 @@
            "Name": "AccentEdge",
            "Properties": {
             "BackgroundColor3": [
-             0.698039,
-             0.478431,
+             0.690196,
+             0.384314,
              1
             ],
             "BorderSizePixel": 0,
@@ -509,7 +521,7 @@
              "UDim2": [
               [
                0,
-               4
+               6
               ],
               [
                1,
@@ -520,7 +532,7 @@
             "ZIndex": 2
            },
            "Attributes": {
-            "CodeProps": "BackgroundColor3=c3:0.698,0.478,1.000\nBorderSizePixel=0.000\nSize=u2:0.000,4,1.000,0\nZIndex=2.000"
+            "CodeProps": "BackgroundColor3=c3:0.690,0.384,1.000\nBorderSizePixel=0.000\nSize=u2:0.000,6,1.000,0\nZIndex=2.000"
            }
           },
           {
@@ -529,7 +541,7 @@
            "Properties": {
             "BackgroundTransparency": 1,
             "BorderSizePixel": 0,
-            "Font": "GothamBold",
+            "Font": "GothamBlack",
             "Position": {
              "UDim2": [
               [
@@ -557,17 +569,23 @@
             },
             "Text": "25",
             "TextColor3": [
-             0.968627,
-             0.968627,
-             0.992157
+             1,
+             1,
+             1
             ],
             "TextSize": 17,
+            "TextStrokeColor3": [
+             0.101961,
+             0.0470588,
+             0.243137
+            ],
+            "TextStrokeTransparency": 0.15,
             "TextTruncate": "AtEnd",
             "TextXAlignment": "Left",
             "ZIndex": 3
            },
            "Attributes": {
-            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,44,0.000,0\nRichText=true\nSize=u2:1.000,-84,1.000,0\nText=25\nTextColor3=c3:0.969,0.969,0.992\nTextSize=17.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Left\nZIndex=3.000"
+            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBlack\nPosition=u2:0.000,44,0.000,0\nRichText=true\nSize=u2:1.000,-84,1.000,0\nText=25\nTextColor3=c3:1.000,1.000,1.000\nTextSize=17.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Left\nZIndex=3.000"
            }
           },
           {
@@ -581,11 +599,11 @@
             "AutoButtonColor": false,
             "BackgroundColor3": [
              0.227451,
-             0.815686,
-             0.486275
+             0.839216,
+             0.329412
             ],
             "BorderSizePixel": 0,
-            "Font": "GothamBold",
+            "Font": "GothamBlack",
             "LayoutOrder": 0,
             "Position": {
              "UDim2": [
@@ -619,10 +637,16 @@
              1
             ],
             "TextSize": 16,
+            "TextStrokeColor3": [
+             0.101961,
+             0.0470588,
+             0.243137
+            ],
+            "TextStrokeTransparency": 0.15,
             "ZIndex": 4
            },
            "Attributes": {
-            "CodeProps": "AnchorPoint=v2:1.000,0.500\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.816,0.486\nBorderSizePixel=0.000\nFont=e:GothamBold\nLayoutOrder=0.000\nPosition=u2:1.000,-6,0.500,0\nRichText=true\nSize=u2:0.000,24,0.000,24\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
+            "CodeProps": "AnchorPoint=v2:1.000,0.500\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.839,0.329\nBorderSizePixel=0.000\nFont=e:GothamBlack\nLayoutOrder=0.000\nPosition=u2:1.000,-6,0.500,0\nRichText=true\nSize=u2:0.000,24,0.000,24\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
            },
            "Children": [
             {
@@ -646,15 +670,47 @@
              "Properties": {
               "ApplyStrokeMode": "Border",
               "Color": [
-               0.125098,
-               0.448627,
-               0.267451
+               0.101961,
+               0.0470588,
+               0.243137
               ],
-              "Thickness": 1,
+              "Thickness": 2.5,
               "Transparency": 0
              },
              "Attributes": {
-              "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.125,0.449,0.267\nThickness=1.000\nTransparency=0.000"
+              "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.102,0.047,0.243\nThickness=2.500\nTransparency=0.000"
+             }
+            },
+            {
+             "ClassName": "UIGradient",
+             "Name": "UIGradient",
+             "Properties": {
+              "Color": {
+               "ColorSequence": {
+                "keypoints": [
+                 {
+                  "time": 0,
+                  "color": [
+                   1,
+                   1,
+                   1
+                  ]
+                 },
+                 {
+                  "time": 1,
+                  "color": [
+                   0.803922,
+                   0.803922,
+                   0.843137
+                  ]
+                 }
+                ]
+               }
+              },
+              "Rotation": 90
+             },
+             "Attributes": {
+              "CodeProps": "Color=seq:0.000=c3:1.000,1.000,1.000|1.000=c3:0.804,0.804,0.843\nRotation=90.000"
              }
             },
             {
@@ -800,9 +856,9 @@
          "Name": "Frame",
          "Properties": {
           "BackgroundColor3": [
-           0.145098,
-           0.160784,
-           0.227451
+           0.141176,
+           0.0862745,
+           0.329412
           ],
           "BackgroundTransparency": 0.05,
           "BorderSizePixel": 0,
@@ -822,7 +878,7 @@
           }
          },
          "Attributes": {
-          "CodeProps": "BackgroundColor3=c3:0.145,0.161,0.227\nBackgroundTransparency=0.050\nBorderSizePixel=0.000\nClipsDescendants=true\nLayoutOrder=4.000\nSize=u2:0.000,104,0.000,44"
+          "CodeProps": "BackgroundColor3=c3:0.141,0.086,0.329\nBackgroundTransparency=0.050\nBorderSizePixel=0.000\nClipsDescendants=true\nLayoutOrder=4.000\nSize=u2:0.000,104,0.000,44"
          },
          "Children": [
           {
@@ -832,12 +888,12 @@
             "CornerRadius": {
              "UDim": [
               0,
-              8
+              12
              ]
             }
            },
            "Attributes": {
-            "CodeProps": "CornerRadius=u:0.000,8"
+            "CodeProps": "CornerRadius=u:0.000,12"
            }
           },
           {
@@ -846,15 +902,15 @@
            "Properties": {
             "ApplyStrokeMode": "Border",
             "Color": [
-             0.545882,
-             0.481569,
-             0.334118
+             1,
+             0.839216,
+             0.156863
             ],
-            "Thickness": 1,
+            "Thickness": 3,
             "Transparency": 0
            },
            "Attributes": {
-            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.546,0.482,0.334\nThickness=1.000\nTransparency=0.000"
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:1.000,0.839,0.157\nThickness=3.000\nTransparency=0.000"
            }
           },
           {
@@ -863,15 +919,15 @@
            "Properties": {
             "BackgroundColor3": [
              1,
-             0.803922,
-             0.282353
+             0.839216,
+             0.156863
             ],
             "BorderSizePixel": 0,
             "Size": {
              "UDim2": [
               [
                0,
-               4
+               6
               ],
               [
                1,
@@ -882,7 +938,7 @@
             "ZIndex": 2
            },
            "Attributes": {
-            "CodeProps": "BackgroundColor3=c3:1.000,0.804,0.282\nBorderSizePixel=0.000\nSize=u2:0.000,4,1.000,0\nZIndex=2.000"
+            "CodeProps": "BackgroundColor3=c3:1.000,0.839,0.157\nBorderSizePixel=0.000\nSize=u2:0.000,6,1.000,0\nZIndex=2.000"
            }
           },
           {
@@ -891,7 +947,7 @@
            "Properties": {
             "BackgroundTransparency": 1,
             "BorderSizePixel": 0,
-            "Font": "GothamBold",
+            "Font": "GothamBlack",
             "Position": {
              "UDim2": [
               [
@@ -919,17 +975,23 @@
             },
             "Text": "0",
             "TextColor3": [
-             0.968627,
-             0.968627,
-             0.992157
+             1,
+             1,
+             1
             ],
             "TextSize": 17,
+            "TextStrokeColor3": [
+             0.101961,
+             0.0470588,
+             0.243137
+            ],
+            "TextStrokeTransparency": 0.15,
             "TextTruncate": "AtEnd",
             "TextXAlignment": "Left",
             "ZIndex": 3
            },
            "Attributes": {
-            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,44,0.000,0\nRichText=true\nSize=u2:1.000,-52,1.000,0\nText=0\nTextColor3=c3:0.969,0.969,0.992\nTextSize=17.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Left\nZIndex=3.000"
+            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBlack\nPosition=u2:0.000,44,0.000,0\nRichText=true\nSize=u2:1.000,-52,1.000,0\nText=0\nTextColor3=c3:1.000,1.000,1.000\nTextSize=17.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Left\nZIndex=3.000"
            }
           }
          ]
@@ -941,9 +1003,9 @@
        "Name": "StatusRow",
        "Properties": {
         "BackgroundColor3": [
-         0.145098,
-         0.160784,
-         0.227451
+         0.329412,
+         0.227451,
+         0.603922
         ],
         "BackgroundTransparency": 1,
         "BorderSizePixel": 0,
@@ -962,7 +1024,7 @@
         }
        },
        "Attributes": {
-        "CodeProps": "BackgroundColor3=c3:0.145,0.161,0.227\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nLayoutOrder=2.000\nSize=u2:0.000,500,0.000,30"
+        "CodeProps": "BackgroundColor3=c3:0.329,0.227,0.604\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nLayoutOrder=2.000\nSize=u2:0.000,500,0.000,30"
        },
        "Children": [
         {
@@ -989,9 +1051,9 @@
          "Name": "GateChip",
          "Properties": {
           "BackgroundColor3": [
-           0.151686,
-           0.213176,
-           0.248157
+           0.311059,
+           0.337569,
+           0.55451
           ],
           "BackgroundTransparency": 0,
           "BorderSizePixel": 0,
@@ -1012,7 +1074,7 @@
           "Visible": true
          },
          "Attributes": {
-          "CodeProps": "BackgroundColor3=c3:0.152,0.213,0.248\nBorderSizePixel=0.000\nLayoutOrder=0.000\nSize=u2:0.000,150,0.000,28\nVisible=true"
+          "CodeProps": "BackgroundColor3=c3:0.311,0.338,0.555\nBorderSizePixel=0.000\nLayoutOrder=0.000\nSize=u2:0.000,150,0.000,28\nVisible=true"
          },
          "Children": [
           {
@@ -1040,11 +1102,11 @@
              1,
              0.627451
             ],
-            "Thickness": 1.5,
+            "Thickness": 2,
             "Transparency": 0
            },
            "Attributes": {
-            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.510,1.000,0.627\nThickness=1.500\nTransparency=0.000"
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.510,1.000,0.627\nThickness=2.000\nTransparency=0.000"
            }
           },
           {
@@ -1053,7 +1115,7 @@
            "Properties": {
             "BackgroundTransparency": 1,
             "BorderSizePixel": 0,
-            "Font": "GothamBold",
+            "Font": "GothamBlack",
             "Position": {
              "UDim2": [
               [
@@ -1091,7 +1153,7 @@
             "ZIndex": 3
            },
            "Attributes": {
-            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,30,0.000,0\nRichText=true\nSize=u2:1.000,-32,1.000,0\nText=LOCKED  0:36\nTextColor3=c3:0.510,1.000,0.627\nTextSize=13.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Left\nZIndex=3.000"
+            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBlack\nPosition=u2:0.000,30,0.000,0\nRichText=true\nSize=u2:1.000,-32,1.000,0\nText=LOCKED  0:36\nTextColor3=c3:0.510,1.000,0.627\nTextSize=13.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Left\nZIndex=3.000"
            }
           }
          ]
@@ -1103,9 +1165,9 @@
        "Name": "Toasts",
        "Properties": {
         "BackgroundColor3": [
-         0.145098,
-         0.160784,
-         0.227451
+         0.329412,
+         0.227451,
+         0.603922
         ],
         "BackgroundTransparency": 1,
         "BorderSizePixel": 0,
@@ -1124,7 +1186,7 @@
         }
        },
        "Attributes": {
-        "CodeProps": "BackgroundColor3=c3:0.145,0.161,0.227\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nLayoutOrder=3.000\nSize=u2:0.000,500,0.000,108"
+        "CodeProps": "BackgroundColor3=c3:0.329,0.227,0.604\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nLayoutOrder=3.000\nSize=u2:0.000,500,0.000,108"
        },
        "Children": [
         {
@@ -1152,9 +1214,9 @@
          "Properties": {
           "AutomaticSize": "X",
           "BackgroundColor3": [
-           0.101961,
-           0.113725,
-           0.164706
+           0.227451,
+           0.14902,
+           0.462745
           ],
           "BackgroundTransparency": 0.04,
           "BorderSizePixel": 0,
@@ -1173,7 +1235,7 @@
           }
          },
          "Attributes": {
-          "CodeProps": "AutomaticSize=e:X\nBackgroundColor3=c3:0.102,0.114,0.165\nBackgroundTransparency=0.040\nBorderSizePixel=0.000\nLayoutOrder=1.000\nSize=u2:0.000,0,0.000,34"
+          "CodeProps": "AutomaticSize=e:X\nBackgroundColor3=c3:0.227,0.149,0.463\nBackgroundTransparency=0.040\nBorderSizePixel=0.000\nLayoutOrder=1.000\nSize=u2:0.000,0,0.000,34"
          },
          "Children": [
           {
@@ -1197,15 +1259,15 @@
            "Properties": {
             "ApplyStrokeMode": "Border",
             "Color": [
-             0.968627,
-             0.968627,
-             0.992157
+             1,
+             1,
+             1
             ],
             "Thickness": 1.5,
             "Transparency": 0.35
            },
            "Attributes": {
-            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.969,0.969,0.992\nThickness=1.500\nTransparency=0.350"
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:1.000,1.000,1.000\nThickness=1.500\nTransparency=0.350"
            }
           },
           {
@@ -1284,16 +1346,16 @@
             },
             "Text": "Hamster balls roll down the road in the middle. Walk close and press [E] to CLAIM one.",
             "TextColor3": [
-             0.968627,
-             0.968627,
-             0.992157
+             1,
+             1,
+             1
             ],
             "TextSize": 14,
             "TextTransparency": 0,
             "TextXAlignment": "Center"
            },
            "Attributes": {
-            "CodeProps": "AutomaticSize=e:X\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamMedium\nLayoutOrder=2.000\nRichText=true\nSize=u2:0.000,0,0.000,34\nText=Hamster balls roll down the road in the middle. Walk close and press [E] to CLAIM one.\nTextColor3=c3:0.969,0.969,0.992\nTextSize=14.000\nTextXAlignment=e:Center"
+            "CodeProps": "AutomaticSize=e:X\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamMedium\nLayoutOrder=2.000\nRichText=true\nSize=u2:0.000,0,0.000,34\nText=Hamster balls roll down the road in the middle. Walk close and press [E] to CLAIM one.\nTextColor3=c3:1.000,1.000,1.000\nTextSize=14.000\nTextXAlignment=e:Center"
            }
           }
          ]
@@ -1408,13 +1470,13 @@
         ],
         "AutoButtonColor": false,
         "BackgroundColor3": [
-         0.101961,
-         0.113725,
-         0.164706
+         0.227451,
+         0.14902,
+         0.462745
         ],
         "BackgroundTransparency": 0.06,
         "BorderSizePixel": 0,
-        "Font": "GothamBold",
+        "Font": "GothamBlack",
         "LayoutOrder": 10,
         "Position": {
          "UDim2": [
@@ -1448,10 +1510,16 @@
          1
         ],
         "TextSize": 16,
+        "TextStrokeColor3": [
+         0.101961,
+         0.0470588,
+         0.243137
+        ],
+        "TextStrokeTransparency": 0.15,
         "Visible": true
        },
        "Attributes": {
-        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.102,0.114,0.165\nBorderSizePixel=0.000\nFont=e:GothamBold\nLayoutOrder=10.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,46,0.000,46\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
+        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.149,0.463\nBorderSizePixel=0.000\nFont=e:GothamBlack\nLayoutOrder=10.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,46,0.000,46\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
        },
        "Children": [
         {
@@ -1475,15 +1543,47 @@
          "Properties": {
           "ApplyStrokeMode": "Border",
           "Color": [
-           0.0458824,
-           0.0511765,
-           0.0741176
+           0.101961,
+           0.0470588,
+           0.243137
           ],
-          "Thickness": 1,
+          "Thickness": 2.5,
           "Transparency": 0
          },
          "Attributes": {
-          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.046,0.051,0.074\nThickness=1.000\nTransparency=0.000"
+          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.102,0.047,0.243\nThickness=2.500\nTransparency=0.000"
+         }
+        },
+        {
+         "ClassName": "UIGradient",
+         "Name": "UIGradient",
+         "Properties": {
+          "Color": {
+           "ColorSequence": {
+            "keypoints": [
+             {
+              "time": 0,
+              "color": [
+               1,
+               1,
+               1
+              ]
+             },
+             {
+              "time": 1,
+              "color": [
+               0.803922,
+               0.803922,
+               0.843137
+              ]
+             }
+            ]
+           }
+          },
+          "Rotation": 90
+         },
+         "Attributes": {
+          "CodeProps": "Color=seq:0.000=c3:1.000,1.000,1.000|1.000=c3:0.804,0.804,0.843\nRotation=90.000"
          }
         },
         {
@@ -1506,8 +1606,8 @@
           ],
           "BackgroundColor3": [
            1,
-           0.345098,
-           0.384314
+           0.282353,
+           0.345098
           ],
           "BorderSizePixel": 0,
           "Position": {
@@ -1538,7 +1638,7 @@
           "ZIndex": 10
          },
          "Attributes": {
-          "CodeProps": "AnchorPoint=v2:1.000,0.000\nBackgroundColor3=c3:1.000,0.345,0.384\nBorderSizePixel=0.000\nPosition=u2:1.000,-1,0.000,1\nSize=u2:0.000,14,0.000,14\nVisible=false\nZIndex=10.000"
+          "CodeProps": "AnchorPoint=v2:1.000,0.000\nBackgroundColor3=c3:1.000,0.282,0.345\nBorderSizePixel=0.000\nPosition=u2:1.000,-1,0.000,1\nSize=u2:0.000,14,0.000,14\nVisible=false\nZIndex=10.000"
          },
          "Children": [
           {
@@ -1562,15 +1662,15 @@
            "Properties": {
             "ApplyStrokeMode": "Border",
             "Color": [
-             0.101961,
-             0.113725,
-             0.164706
+             0.227451,
+             0.14902,
+             0.462745
             ],
-            "Thickness": 1.5,
+            "Thickness": 2,
             "Transparency": 0
            },
            "Attributes": {
-            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.102,0.114,0.165\nThickness=1.500\nTransparency=0.000"
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.227,0.149,0.463\nThickness=2.000\nTransparency=0.000"
            }
           }
          ]
@@ -1587,13 +1687,13 @@
         ],
         "AutoButtonColor": false,
         "BackgroundColor3": [
-         0.101961,
-         0.113725,
-         0.164706
+         0.227451,
+         0.14902,
+         0.462745
         ],
         "BackgroundTransparency": 0.06,
         "BorderSizePixel": 0,
-        "Font": "GothamBold",
+        "Font": "GothamBlack",
         "LayoutOrder": 20,
         "Position": {
          "UDim2": [
@@ -1627,10 +1727,16 @@
          1
         ],
         "TextSize": 16,
+        "TextStrokeColor3": [
+         0.101961,
+         0.0470588,
+         0.243137
+        ],
+        "TextStrokeTransparency": 0.15,
         "Visible": true
        },
        "Attributes": {
-        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.102,0.114,0.165\nBorderSizePixel=0.000\nFont=e:GothamBold\nLayoutOrder=20.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,46,0.000,46\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
+        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.149,0.463\nBorderSizePixel=0.000\nFont=e:GothamBlack\nLayoutOrder=20.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,46,0.000,46\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
        },
        "Children": [
         {
@@ -1654,15 +1760,47 @@
          "Properties": {
           "ApplyStrokeMode": "Border",
           "Color": [
-           0.0458824,
-           0.0511765,
-           0.0741176
+           0.101961,
+           0.0470588,
+           0.243137
           ],
-          "Thickness": 1,
+          "Thickness": 2.5,
           "Transparency": 0
          },
          "Attributes": {
-          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.046,0.051,0.074\nThickness=1.000\nTransparency=0.000"
+          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.102,0.047,0.243\nThickness=2.500\nTransparency=0.000"
+         }
+        },
+        {
+         "ClassName": "UIGradient",
+         "Name": "UIGradient",
+         "Properties": {
+          "Color": {
+           "ColorSequence": {
+            "keypoints": [
+             {
+              "time": 0,
+              "color": [
+               1,
+               1,
+               1
+              ]
+             },
+             {
+              "time": 1,
+              "color": [
+               0.803922,
+               0.803922,
+               0.843137
+              ]
+             }
+            ]
+           }
+          },
+          "Rotation": 90
+         },
+         "Attributes": {
+          "CodeProps": "Color=seq:0.000=c3:1.000,1.000,1.000|1.000=c3:0.804,0.804,0.843\nRotation=90.000"
          }
         },
         {
@@ -1685,8 +1823,8 @@
           ],
           "BackgroundColor3": [
            1,
-           0.345098,
-           0.384314
+           0.282353,
+           0.345098
           ],
           "BorderSizePixel": 0,
           "Position": {
@@ -1717,7 +1855,7 @@
           "ZIndex": 10
          },
          "Attributes": {
-          "CodeProps": "AnchorPoint=v2:1.000,0.000\nBackgroundColor3=c3:1.000,0.345,0.384\nBorderSizePixel=0.000\nPosition=u2:1.000,-1,0.000,1\nSize=u2:0.000,14,0.000,14\nVisible=false\nZIndex=10.000"
+          "CodeProps": "AnchorPoint=v2:1.000,0.000\nBackgroundColor3=c3:1.000,0.282,0.345\nBorderSizePixel=0.000\nPosition=u2:1.000,-1,0.000,1\nSize=u2:0.000,14,0.000,14\nVisible=false\nZIndex=10.000"
          },
          "Children": [
           {
@@ -1741,15 +1879,15 @@
            "Properties": {
             "ApplyStrokeMode": "Border",
             "Color": [
-             0.101961,
-             0.113725,
-             0.164706
+             0.227451,
+             0.14902,
+             0.462745
             ],
-            "Thickness": 1.5,
+            "Thickness": 2,
             "Transparency": 0
            },
            "Attributes": {
-            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.102,0.114,0.165\nThickness=1.500\nTransparency=0.000"
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.227,0.149,0.463\nThickness=2.000\nTransparency=0.000"
            }
           }
          ]
@@ -1766,13 +1904,13 @@
         ],
         "AutoButtonColor": false,
         "BackgroundColor3": [
-         0.101961,
-         0.113725,
-         0.164706
+         0.227451,
+         0.14902,
+         0.462745
         ],
         "BackgroundTransparency": 0.06,
         "BorderSizePixel": 0,
-        "Font": "GothamBold",
+        "Font": "GothamBlack",
         "LayoutOrder": 30,
         "Position": {
          "UDim2": [
@@ -1806,10 +1944,16 @@
          1
         ],
         "TextSize": 16,
+        "TextStrokeColor3": [
+         0.101961,
+         0.0470588,
+         0.243137
+        ],
+        "TextStrokeTransparency": 0.15,
         "Visible": true
        },
        "Attributes": {
-        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.102,0.114,0.165\nBorderSizePixel=0.000\nFont=e:GothamBold\nLayoutOrder=30.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,46,0.000,46\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
+        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.149,0.463\nBorderSizePixel=0.000\nFont=e:GothamBlack\nLayoutOrder=30.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,46,0.000,46\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
        },
        "Children": [
         {
@@ -1833,15 +1977,47 @@
          "Properties": {
           "ApplyStrokeMode": "Border",
           "Color": [
-           0.0458824,
-           0.0511765,
-           0.0741176
+           0.101961,
+           0.0470588,
+           0.243137
           ],
-          "Thickness": 1,
+          "Thickness": 2.5,
           "Transparency": 0
          },
          "Attributes": {
-          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.046,0.051,0.074\nThickness=1.000\nTransparency=0.000"
+          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.102,0.047,0.243\nThickness=2.500\nTransparency=0.000"
+         }
+        },
+        {
+         "ClassName": "UIGradient",
+         "Name": "UIGradient",
+         "Properties": {
+          "Color": {
+           "ColorSequence": {
+            "keypoints": [
+             {
+              "time": 0,
+              "color": [
+               1,
+               1,
+               1
+              ]
+             },
+             {
+              "time": 1,
+              "color": [
+               0.803922,
+               0.803922,
+               0.843137
+              ]
+             }
+            ]
+           }
+          },
+          "Rotation": 90
+         },
+         "Attributes": {
+          "CodeProps": "Color=seq:0.000=c3:1.000,1.000,1.000|1.000=c3:0.804,0.804,0.843\nRotation=90.000"
          }
         },
         {
@@ -1864,8 +2040,8 @@
           ],
           "BackgroundColor3": [
            1,
-           0.345098,
-           0.384314
+           0.282353,
+           0.345098
           ],
           "BorderSizePixel": 0,
           "Position": {
@@ -1896,7 +2072,7 @@
           "ZIndex": 10
          },
          "Attributes": {
-          "CodeProps": "AnchorPoint=v2:1.000,0.000\nBackgroundColor3=c3:1.000,0.345,0.384\nBorderSizePixel=0.000\nPosition=u2:1.000,-1,0.000,1\nSize=u2:0.000,14,0.000,14\nVisible=false\nZIndex=10.000"
+          "CodeProps": "AnchorPoint=v2:1.000,0.000\nBackgroundColor3=c3:1.000,0.282,0.345\nBorderSizePixel=0.000\nPosition=u2:1.000,-1,0.000,1\nSize=u2:0.000,14,0.000,14\nVisible=false\nZIndex=10.000"
          },
          "Children": [
           {
@@ -1920,15 +2096,15 @@
            "Properties": {
             "ApplyStrokeMode": "Border",
             "Color": [
-             0.101961,
-             0.113725,
-             0.164706
+             0.227451,
+             0.14902,
+             0.462745
             ],
-            "Thickness": 1.5,
+            "Thickness": 2,
             "Transparency": 0
            },
            "Attributes": {
-            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.102,0.114,0.165\nThickness=1.500\nTransparency=0.000"
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.227,0.149,0.463\nThickness=2.000\nTransparency=0.000"
            }
           }
          ]
@@ -1945,13 +2121,13 @@
         ],
         "AutoButtonColor": false,
         "BackgroundColor3": [
-         0.101961,
-         0.113725,
-         0.164706
+         0.227451,
+         0.14902,
+         0.462745
         ],
         "BackgroundTransparency": 0.06,
         "BorderSizePixel": 0,
-        "Font": "GothamBold",
+        "Font": "GothamBlack",
         "LayoutOrder": 90,
         "Position": {
          "UDim2": [
@@ -1985,10 +2161,16 @@
          1
         ],
         "TextSize": 16,
+        "TextStrokeColor3": [
+         0.101961,
+         0.0470588,
+         0.243137
+        ],
+        "TextStrokeTransparency": 0.15,
         "Visible": true
        },
        "Attributes": {
-        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.102,0.114,0.165\nBorderSizePixel=0.000\nFont=e:GothamBold\nLayoutOrder=90.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,46,0.000,46\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
+        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.149,0.463\nBorderSizePixel=0.000\nFont=e:GothamBlack\nLayoutOrder=90.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,46,0.000,46\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
        },
        "Children": [
         {
@@ -2012,15 +2194,47 @@
          "Properties": {
           "ApplyStrokeMode": "Border",
           "Color": [
-           0.0458824,
-           0.0511765,
-           0.0741176
+           0.101961,
+           0.0470588,
+           0.243137
           ],
-          "Thickness": 1,
+          "Thickness": 2.5,
           "Transparency": 0
          },
          "Attributes": {
-          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.046,0.051,0.074\nThickness=1.000\nTransparency=0.000"
+          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.102,0.047,0.243\nThickness=2.500\nTransparency=0.000"
+         }
+        },
+        {
+         "ClassName": "UIGradient",
+         "Name": "UIGradient",
+         "Properties": {
+          "Color": {
+           "ColorSequence": {
+            "keypoints": [
+             {
+              "time": 0,
+              "color": [
+               1,
+               1,
+               1
+              ]
+             },
+             {
+              "time": 1,
+              "color": [
+               0.803922,
+               0.803922,
+               0.843137
+              ]
+             }
+            ]
+           }
+          },
+          "Rotation": 90
+         },
+         "Attributes": {
+          "CodeProps": "Color=seq:0.000=c3:1.000,1.000,1.000|1.000=c3:0.804,0.804,0.843\nRotation=90.000"
          }
         },
         {
@@ -2043,8 +2257,8 @@
           ],
           "BackgroundColor3": [
            1,
-           0.345098,
-           0.384314
+           0.282353,
+           0.345098
           ],
           "BorderSizePixel": 0,
           "Position": {
@@ -2075,7 +2289,7 @@
           "ZIndex": 10
          },
          "Attributes": {
-          "CodeProps": "AnchorPoint=v2:1.000,0.000\nBackgroundColor3=c3:1.000,0.345,0.384\nBorderSizePixel=0.000\nPosition=u2:1.000,-1,0.000,1\nSize=u2:0.000,14,0.000,14\nVisible=false\nZIndex=10.000"
+          "CodeProps": "AnchorPoint=v2:1.000,0.000\nBackgroundColor3=c3:1.000,0.282,0.345\nBorderSizePixel=0.000\nPosition=u2:1.000,-1,0.000,1\nSize=u2:0.000,14,0.000,14\nVisible=false\nZIndex=10.000"
          },
          "Children": [
           {
@@ -2099,15 +2313,15 @@
            "Properties": {
             "ApplyStrokeMode": "Border",
             "Color": [
-             0.101961,
-             0.113725,
-             0.164706
+             0.227451,
+             0.14902,
+             0.462745
             ],
-            "Thickness": 1.5,
+            "Thickness": 2,
             "Transparency": 0
            },
            "Attributes": {
-            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.102,0.114,0.165\nThickness=1.500\nTransparency=0.000"
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.227,0.149,0.463\nThickness=2.000\nTransparency=0.000"
            }
           }
          ]
@@ -2124,13 +2338,13 @@
         ],
         "AutoButtonColor": false,
         "BackgroundColor3": [
-         0.101961,
-         0.113725,
-         0.164706
+         0.227451,
+         0.14902,
+         0.462745
         ],
         "BackgroundTransparency": 0.06,
         "BorderSizePixel": 0,
-        "Font": "GothamBold",
+        "Font": "GothamBlack",
         "LayoutOrder": 40,
         "Position": {
          "UDim2": [
@@ -2164,10 +2378,16 @@
          1
         ],
         "TextSize": 16,
+        "TextStrokeColor3": [
+         0.101961,
+         0.0470588,
+         0.243137
+        ],
+        "TextStrokeTransparency": 0.15,
         "Visible": true
        },
        "Attributes": {
-        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.102,0.114,0.165\nBorderSizePixel=0.000\nFont=e:GothamBold\nLayoutOrder=40.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,46,0.000,46\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
+        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.149,0.463\nBorderSizePixel=0.000\nFont=e:GothamBlack\nLayoutOrder=40.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,46,0.000,46\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
        },
        "Children": [
         {
@@ -2191,15 +2411,47 @@
          "Properties": {
           "ApplyStrokeMode": "Border",
           "Color": [
-           0.0458824,
-           0.0511765,
-           0.0741176
+           0.101961,
+           0.0470588,
+           0.243137
           ],
-          "Thickness": 1,
+          "Thickness": 2.5,
           "Transparency": 0
          },
          "Attributes": {
-          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.046,0.051,0.074\nThickness=1.000\nTransparency=0.000"
+          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.102,0.047,0.243\nThickness=2.500\nTransparency=0.000"
+         }
+        },
+        {
+         "ClassName": "UIGradient",
+         "Name": "UIGradient",
+         "Properties": {
+          "Color": {
+           "ColorSequence": {
+            "keypoints": [
+             {
+              "time": 0,
+              "color": [
+               1,
+               1,
+               1
+              ]
+             },
+             {
+              "time": 1,
+              "color": [
+               0.803922,
+               0.803922,
+               0.843137
+              ]
+             }
+            ]
+           }
+          },
+          "Rotation": 90
+         },
+         "Attributes": {
+          "CodeProps": "Color=seq:0.000=c3:1.000,1.000,1.000|1.000=c3:0.804,0.804,0.843\nRotation=90.000"
          }
         },
         {
@@ -2222,8 +2474,8 @@
           ],
           "BackgroundColor3": [
            1,
-           0.345098,
-           0.384314
+           0.282353,
+           0.345098
           ],
           "BorderSizePixel": 0,
           "Position": {
@@ -2254,7 +2506,7 @@
           "ZIndex": 10
          },
          "Attributes": {
-          "CodeProps": "AnchorPoint=v2:1.000,0.000\nBackgroundColor3=c3:1.000,0.345,0.384\nBorderSizePixel=0.000\nPosition=u2:1.000,-1,0.000,1\nSize=u2:0.000,14,0.000,14\nVisible=false\nZIndex=10.000"
+          "CodeProps": "AnchorPoint=v2:1.000,0.000\nBackgroundColor3=c3:1.000,0.282,0.345\nBorderSizePixel=0.000\nPosition=u2:1.000,-1,0.000,1\nSize=u2:0.000,14,0.000,14\nVisible=false\nZIndex=10.000"
          },
          "Children": [
           {
@@ -2278,15 +2530,15 @@
            "Properties": {
             "ApplyStrokeMode": "Border",
             "Color": [
-             0.101961,
-             0.113725,
-             0.164706
+             0.227451,
+             0.14902,
+             0.462745
             ],
-            "Thickness": 1.5,
+            "Thickness": 2,
             "Transparency": 0
            },
            "Attributes": {
-            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.102,0.114,0.165\nThickness=1.500\nTransparency=0.000"
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.227,0.149,0.463\nThickness=2.000\nTransparency=0.000"
            }
           }
          ]
@@ -2396,9 +2648,9 @@
        "Name": "Tracker",
        "Properties": {
         "BackgroundColor3": [
-         0.145098,
-         0.160784,
-         0.227451
+         0.329412,
+         0.227451,
+         0.603922
         ],
         "BackgroundTransparency": 1,
         "BorderSizePixel": 0,
@@ -2417,7 +2669,7 @@
         }
        },
        "Attributes": {
-        "CodeProps": "BackgroundColor3=c3:0.145,0.161,0.227\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nLayoutOrder=1.000\nSize=u2:0.000,300,0.000,168"
+        "CodeProps": "BackgroundColor3=c3:0.329,0.227,0.604\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nLayoutOrder=1.000\nSize=u2:0.000,300,0.000,168"
        },
        "Children": [
         {
@@ -2444,9 +2696,9 @@
          "Name": "Frame",
          "Properties": {
           "BackgroundColor3": [
-           0.101961,
-           0.113725,
-           0.164706
+           0.227451,
+           0.14902,
+           0.462745
           ],
           "BackgroundTransparency": 0.1,
           "BorderSizePixel": 0,
@@ -2466,7 +2718,7 @@
           "Visible": false
          },
          "Attributes": {
-          "CodeProps": "BackgroundColor3=c3:0.102,0.114,0.165\nBackgroundTransparency=0.100\nBorderSizePixel=0.000\nLayoutOrder=1.000\nSize=u2:0.000,300,0.000,52\nVisible=false"
+          "CodeProps": "BackgroundColor3=c3:0.227,0.149,0.463\nBackgroundTransparency=0.100\nBorderSizePixel=0.000\nLayoutOrder=1.000\nSize=u2:0.000,300,0.000,52\nVisible=false"
          },
          "Children": [
           {
@@ -2491,14 +2743,14 @@
             "ApplyStrokeMode": "Border",
             "Color": [
              1,
-             0.803922,
-             0.282353
+             0.839216,
+             0.156863
             ],
             "Thickness": 1.5,
             "Transparency": 0
            },
            "Attributes": {
-            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:1.000,0.804,0.282\nThickness=1.500\nTransparency=0.000"
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:1.000,0.839,0.157\nThickness=1.500\nTransparency=0.000"
            }
           },
           {
@@ -2507,7 +2759,7 @@
            "Properties": {
             "BackgroundTransparency": 1,
             "BorderSizePixel": 0,
-            "Font": "GothamBold",
+            "Font": "GothamBlack",
             "Position": {
              "UDim2": [
               [
@@ -2543,7 +2795,7 @@
             "TextXAlignment": "Left"
            },
            "Attributes": {
-            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,12,0.000,5\nRichText=true\nSize=u2:1.000,-20,0.000,22\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000\nTextXAlignment=e:Left"
+            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBlack\nPosition=u2:0.000,12,0.000,5\nRichText=true\nSize=u2:1.000,-20,0.000,22\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000\nTextXAlignment=e:Left"
            }
           },
           {
@@ -2598,9 +2850,9 @@
          "Name": "Frame",
          "Properties": {
           "BackgroundColor3": [
-           0.101961,
-           0.113725,
-           0.164706
+           0.227451,
+           0.14902,
+           0.462745
           ],
           "BackgroundTransparency": 0.1,
           "BorderSizePixel": 0,
@@ -2620,7 +2872,7 @@
           "Visible": false
          },
          "Attributes": {
-          "CodeProps": "BackgroundColor3=c3:0.102,0.114,0.165\nBackgroundTransparency=0.100\nBorderSizePixel=0.000\nLayoutOrder=2.000\nSize=u2:0.000,300,0.000,52\nVisible=false"
+          "CodeProps": "BackgroundColor3=c3:0.227,0.149,0.463\nBackgroundTransparency=0.100\nBorderSizePixel=0.000\nLayoutOrder=2.000\nSize=u2:0.000,300,0.000,52\nVisible=false"
          },
          "Children": [
           {
@@ -2645,14 +2897,14 @@
             "ApplyStrokeMode": "Border",
             "Color": [
              1,
-             0.803922,
-             0.282353
+             0.839216,
+             0.156863
             ],
             "Thickness": 1.5,
             "Transparency": 0
            },
            "Attributes": {
-            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:1.000,0.804,0.282\nThickness=1.500\nTransparency=0.000"
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:1.000,0.839,0.157\nThickness=1.500\nTransparency=0.000"
            }
           },
           {
@@ -2661,7 +2913,7 @@
            "Properties": {
             "BackgroundTransparency": 1,
             "BorderSizePixel": 0,
-            "Font": "GothamBold",
+            "Font": "GothamBlack",
             "Position": {
              "UDim2": [
               [
@@ -2697,7 +2949,7 @@
             "TextXAlignment": "Left"
            },
            "Attributes": {
-            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,12,0.000,5\nRichText=true\nSize=u2:1.000,-20,0.000,22\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000\nTextXAlignment=e:Left"
+            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBlack\nPosition=u2:0.000,12,0.000,5\nRichText=true\nSize=u2:1.000,-20,0.000,22\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000\nTextXAlignment=e:Left"
            }
           },
           {
@@ -2752,9 +3004,9 @@
          "Name": "Frame",
          "Properties": {
           "BackgroundColor3": [
-           0.101961,
-           0.113725,
-           0.164706
+           0.227451,
+           0.14902,
+           0.462745
           ],
           "BackgroundTransparency": 0.1,
           "BorderSizePixel": 0,
@@ -2774,7 +3026,7 @@
           "Visible": false
          },
          "Attributes": {
-          "CodeProps": "BackgroundColor3=c3:0.102,0.114,0.165\nBackgroundTransparency=0.100\nBorderSizePixel=0.000\nLayoutOrder=3.000\nSize=u2:0.000,300,0.000,52\nVisible=false"
+          "CodeProps": "BackgroundColor3=c3:0.227,0.149,0.463\nBackgroundTransparency=0.100\nBorderSizePixel=0.000\nLayoutOrder=3.000\nSize=u2:0.000,300,0.000,52\nVisible=false"
          },
          "Children": [
           {
@@ -2799,14 +3051,14 @@
             "ApplyStrokeMode": "Border",
             "Color": [
              1,
-             0.803922,
-             0.282353
+             0.839216,
+             0.156863
             ],
             "Thickness": 1.5,
             "Transparency": 0
            },
            "Attributes": {
-            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:1.000,0.804,0.282\nThickness=1.500\nTransparency=0.000"
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:1.000,0.839,0.157\nThickness=1.500\nTransparency=0.000"
            }
           },
           {
@@ -2815,7 +3067,7 @@
            "Properties": {
             "BackgroundTransparency": 1,
             "BorderSizePixel": 0,
-            "Font": "GothamBold",
+            "Font": "GothamBlack",
             "Position": {
              "UDim2": [
               [
@@ -2851,7 +3103,7 @@
             "TextXAlignment": "Left"
            },
            "Attributes": {
-            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,12,0.000,5\nRichText=true\nSize=u2:1.000,-20,0.000,22\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000\nTextXAlignment=e:Left"
+            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBlack\nPosition=u2:0.000,12,0.000,5\nRichText=true\nSize=u2:1.000,-20,0.000,22\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000\nTextXAlignment=e:Left"
            }
           },
           {
@@ -2908,9 +3160,9 @@
        "Name": "TutorialCard",
        "Properties": {
         "BackgroundColor3": [
-         0.101961,
-         0.113725,
-         0.164706
+         0.227451,
+         0.14902,
+         0.462745
         ],
         "BorderSizePixel": 0,
         "LayoutOrder": 5,
@@ -2929,7 +3181,7 @@
         "Visible": true
        },
        "Attributes": {
-        "CodeProps": "BackgroundColor3=c3:0.102,0.114,0.165\nBorderSizePixel=0.000\nLayoutOrder=5.000\nSize=u2:0.000,290,0.000,142\nVisible=true"
+        "CodeProps": "BackgroundColor3=c3:0.227,0.149,0.463\nBorderSizePixel=0.000\nLayoutOrder=5.000\nSize=u2:0.000,290,0.000,142\nVisible=true"
        },
        "Children": [
         {
@@ -2953,15 +3205,15 @@
          "Properties": {
           "ApplyStrokeMode": "Border",
           "Color": [
-           0.243137,
-           0.266667,
-           0.368627
+           0.101961,
+           0.0470588,
+           0.243137
           ],
           "Thickness": 1,
           "Transparency": 0
          },
          "Attributes": {
-          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.243,0.267,0.369\nThickness=1.000\nTransparency=0.000"
+          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.102,0.047,0.243\nThickness=1.000\nTransparency=0.000"
          }
         },
         {
@@ -2970,7 +3222,7 @@
          "Properties": {
           "BackgroundTransparency": 1,
           "BorderSizePixel": 0,
-          "Font": "GothamBold",
+          "Font": "GothamBlack",
           "Position": {
            "UDim2": [
             [
@@ -2999,14 +3251,14 @@
           "Text": "TUTORIAL  1 / 7",
           "TextColor3": [
            1,
-           0.803922,
-           0.282353
+           0.839216,
+           0.156863
           ],
           "TextSize": 12,
           "TextXAlignment": "Left"
          },
          "Attributes": {
-          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,14,0.000,10\nRichText=true\nSize=u2:1.000,-20,0.000,14\nText=TUTORIAL  1 / 7\nTextColor3=c3:1.000,0.804,0.282\nTextSize=12.000\nTextXAlignment=e:Left"
+          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBlack\nPosition=u2:0.000,14,0.000,10\nRichText=true\nSize=u2:1.000,-20,0.000,14\nText=TUTORIAL  1 / 7\nTextColor3=c3:1.000,0.839,0.157\nTextSize=12.000\nTextXAlignment=e:Left"
          }
         },
         {
@@ -3015,7 +3267,7 @@
          "Properties": {
           "BackgroundTransparency": 1,
           "BorderSizePixel": 0,
-          "Font": "GothamBold",
+          "Font": "GothamBlack",
           "Position": {
            "UDim2": [
             [
@@ -3043,16 +3295,16 @@
           },
           "Text": "Your base",
           "TextColor3": [
-           0.968627,
-           0.968627,
-           0.992157
+           1,
+           1,
+           1
           ],
           "TextSize": 18,
           "TextTruncate": "AtEnd",
           "TextXAlignment": "Left"
          },
          "Attributes": {
-          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,14,0.000,26\nRichText=true\nSize=u2:1.000,-28,0.000,22\nText=Your base\nTextColor3=c3:0.969,0.969,0.992\nTextSize=18.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Left"
+          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBlack\nPosition=u2:0.000,14,0.000,26\nRichText=true\nSize=u2:1.000,-28,0.000,22\nText=Your base\nTextColor3=c3:1.000,1.000,1.000\nTextSize=18.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Left"
          }
         },
         {
@@ -3089,9 +3341,9 @@
           },
           "Text": "This is your base. Hamsters you win are brought here and work for you. Nobody else owns it.",
           "TextColor3": [
-           0.647059,
-           0.670588,
-           0.803922
+           0.839216,
+           0.792157,
+           0.960784
           ],
           "TextSize": 13,
           "TextWrapped": true,
@@ -3099,7 +3351,7 @@
           "TextYAlignment": "Top"
          },
          "Attributes": {
-          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamMedium\nPosition=u2:0.000,14,0.000,50\nRichText=true\nSize=u2:1.000,-28,0.000,54\nText=This is your base. Hamsters you win are brought here and work for you. Nobody else owns it.\nTextColor3=c3:0.647,0.671,0.804\nTextSize=13.000\nTextWrapped=true\nTextXAlignment=e:Left\nTextYAlignment=e:Top"
+          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamMedium\nPosition=u2:0.000,14,0.000,50\nRichText=true\nSize=u2:1.000,-28,0.000,54\nText=This is your base. Hamsters you win are brought here and work for you. Nobody else owns it.\nTextColor3=c3:0.839,0.792,0.961\nTextSize=13.000\nTextWrapped=true\nTextXAlignment=e:Left\nTextYAlignment=e:Top"
          }
         },
         {
@@ -3113,11 +3365,11 @@
           "AutoButtonColor": false,
           "BackgroundColor3": [
            0.227451,
-           0.815686,
-           0.486275
+           0.839216,
+           0.329412
           ],
           "BorderSizePixel": 0,
-          "Font": "GothamBold",
+          "Font": "GothamBlack",
           "LayoutOrder": 0,
           "Position": {
            "UDim2": [
@@ -3151,10 +3403,16 @@
            1
           ],
           "TextSize": 14,
+          "TextStrokeColor3": [
+           0.101961,
+           0.0470588,
+           0.243137
+          ],
+          "TextStrokeTransparency": 0.15,
           "Visible": true
          },
          "Attributes": {
-          "CodeProps": "AnchorPoint=v2:1.000,1.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.816,0.486\nBorderSizePixel=0.000\nFont=e:GothamBold\nLayoutOrder=0.000\nPosition=u2:1.000,-14,1.000,-10\nRichText=true\nSize=u2:0.000,96,0.000,28\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=14.000"
+          "CodeProps": "AnchorPoint=v2:1.000,1.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.839,0.329\nBorderSizePixel=0.000\nFont=e:GothamBlack\nLayoutOrder=0.000\nPosition=u2:1.000,-14,1.000,-10\nRichText=true\nSize=u2:0.000,96,0.000,28\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=14.000"
          },
          "Children": [
           {
@@ -3164,12 +3422,12 @@
             "CornerRadius": {
              "UDim": [
               0,
-              6
+              10
              ]
             }
            },
            "Attributes": {
-            "CodeProps": "CornerRadius=u:0.000,6"
+            "CodeProps": "CornerRadius=u:0.000,10"
            }
           },
           {
@@ -3178,15 +3436,47 @@
            "Properties": {
             "ApplyStrokeMode": "Border",
             "Color": [
-             0.125098,
-             0.448627,
-             0.267451
+             0.101961,
+             0.0470588,
+             0.243137
             ],
-            "Thickness": 1,
+            "Thickness": 2.5,
             "Transparency": 0
            },
            "Attributes": {
-            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.125,0.449,0.267\nThickness=1.000\nTransparency=0.000"
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.102,0.047,0.243\nThickness=2.500\nTransparency=0.000"
+           }
+          },
+          {
+           "ClassName": "UIGradient",
+           "Name": "UIGradient",
+           "Properties": {
+            "Color": {
+             "ColorSequence": {
+              "keypoints": [
+               {
+                "time": 0,
+                "color": [
+                 1,
+                 1,
+                 1
+                ]
+               },
+               {
+                "time": 1,
+                "color": [
+                 0.803922,
+                 0.803922,
+                 0.843137
+                ]
+               }
+              ]
+             }
+            },
+            "Rotation": 90
+           },
+           "Attributes": {
+            "CodeProps": "Color=seq:0.000=c3:1.000,1.000,1.000|1.000=c3:0.804,0.804,0.843\nRotation=90.000"
            }
           },
           {
@@ -3208,9 +3498,9 @@
              0
             ],
             "BackgroundColor3": [
-             0.145098,
-             0.160784,
-             0.227451
+             0.329412,
+             0.227451,
+             0.603922
             ],
             "BackgroundTransparency": 1,
             "BorderSizePixel": 0,
@@ -3242,7 +3532,7 @@
             "ZIndex": 3
            },
            "Attributes": {
-            "CodeProps": "AnchorPoint=v2:0.000,0.000\nBackgroundColor3=c3:0.145,0.161,0.227\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nLayoutOrder=0.000\nPosition=u2:0.000,0,0.000,0\nSize=u2:1.000,0,1.000,0\nZIndex=3.000"
+            "CodeProps": "AnchorPoint=v2:0.000,0.000\nBackgroundColor3=c3:0.329,0.227,0.604\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nLayoutOrder=0.000\nPosition=u2:0.000,0,0.000,0\nSize=u2:1.000,0,1.000,0\nZIndex=3.000"
            },
            "Children": [
             {
@@ -3271,7 +3561,7 @@
               "AutomaticSize": "X",
               "BackgroundTransparency": 1,
               "BorderSizePixel": 0,
-              "Font": "GothamBold",
+              "Font": "GothamBlack",
               "LayoutOrder": 2,
               "RichText": true,
               "Size": {
@@ -3297,7 +3587,7 @@
               "ZIndex": 3
              },
              "Attributes": {
-              "CodeProps": "AutomaticSize=e:X\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nLayoutOrder=2.000\nRichText=true\nSize=u2:0.000,0,0.000,20\nText=Next\nTextColor3=c3:1.000,1.000,1.000\nTextSize=14.000\nTextXAlignment=e:Left\nZIndex=3.000"
+              "CodeProps": "AutomaticSize=e:X\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBlack\nLayoutOrder=2.000\nRichText=true\nSize=u2:0.000,0,0.000,20\nText=Next\nTextColor3=c3:1.000,1.000,1.000\nTextSize=14.000\nTextXAlignment=e:Left\nZIndex=3.000"
              }
             }
            ]
@@ -3314,12 +3604,12 @@
           ],
           "AutoButtonColor": false,
           "BackgroundColor3": [
-           0.145098,
-           0.160784,
-           0.227451
+           0.329412,
+           0.227451,
+           0.603922
           ],
           "BorderSizePixel": 0,
-          "Font": "GothamBold",
+          "Font": "GothamBlack",
           "LayoutOrder": 0,
           "Position": {
            "UDim2": [
@@ -3352,10 +3642,16 @@
            1,
            1
           ],
-          "TextSize": 13
+          "TextSize": 13,
+          "TextStrokeColor3": [
+           0.101961,
+           0.0470588,
+           0.243137
+          ],
+          "TextStrokeTransparency": 0.15
          },
          "Attributes": {
-          "CodeProps": "AnchorPoint=v2:0.000,1.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.145,0.161,0.227\nBorderSizePixel=0.000\nFont=e:GothamBold\nLayoutOrder=0.000\nPosition=u2:0.000,14,1.000,-10\nRichText=true\nSize=u2:0.000,64,0.000,28\nText=Skip\nTextColor3=c3:1.000,1.000,1.000\nTextSize=13.000"
+          "CodeProps": "AnchorPoint=v2:0.000,1.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.329,0.227,0.604\nBorderSizePixel=0.000\nFont=e:GothamBlack\nLayoutOrder=0.000\nPosition=u2:0.000,14,1.000,-10\nRichText=true\nSize=u2:0.000,64,0.000,28\nText=Skip\nTextColor3=c3:1.000,1.000,1.000\nTextSize=13.000"
          },
          "Children": [
           {
@@ -3365,12 +3661,12 @@
             "CornerRadius": {
              "UDim": [
               0,
-              6
+              10
              ]
             }
            },
            "Attributes": {
-            "CodeProps": "CornerRadius=u:0.000,6"
+            "CodeProps": "CornerRadius=u:0.000,10"
            }
           },
           {
@@ -3379,15 +3675,47 @@
            "Properties": {
             "ApplyStrokeMode": "Border",
             "Color": [
-             0.0798039,
-             0.0884314,
-             0.125098
+             0.101961,
+             0.0470588,
+             0.243137
             ],
-            "Thickness": 1,
+            "Thickness": 2.5,
             "Transparency": 0
            },
            "Attributes": {
-            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.080,0.088,0.125\nThickness=1.000\nTransparency=0.000"
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.102,0.047,0.243\nThickness=2.500\nTransparency=0.000"
+           }
+          },
+          {
+           "ClassName": "UIGradient",
+           "Name": "UIGradient",
+           "Properties": {
+            "Color": {
+             "ColorSequence": {
+              "keypoints": [
+               {
+                "time": 0,
+                "color": [
+                 1,
+                 1,
+                 1
+                ]
+               },
+               {
+                "time": 1,
+                "color": [
+                 0.803922,
+                 0.803922,
+                 0.843137
+                ]
+               }
+              ]
+             }
+            },
+            "Rotation": 90
+           },
+           "Attributes": {
+            "CodeProps": "Color=seq:0.000=c3:1.000,1.000,1.000|1.000=c3:0.804,0.804,0.843\nRotation=90.000"
            }
           },
           {
@@ -3408,8 +3736,8 @@
          "Properties": {
           "BackgroundColor3": [
            1,
-           0.803922,
-           0.282353
+           0.839216,
+           0.156863
           ],
           "BorderSizePixel": 0,
           "Size": {
@@ -3426,7 +3754,7 @@
           }
          },
          "Attributes": {
-          "CodeProps": "BackgroundColor3=c3:1.000,0.804,0.282\nBorderSizePixel=0.000\nSize=u2:0.143,0,0.000,2"
+          "CodeProps": "BackgroundColor3=c3:1.000,0.839,0.157\nBorderSizePixel=0.000\nSize=u2:0.143,0,0.000,2"
          }
         }
        ]
@@ -3552,16 +3880,16 @@
         },
         "Text": "Hold ALT to use the mouse",
         "TextColor3": [
-         0.647059,
-         0.670588,
-         0.803922
+         0.839216,
+         0.792157,
+         0.960784
         ],
         "TextSize": 12,
         "TextXAlignment": "Center",
         "Visible": false
        },
        "Attributes": {
-        "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamMedium\nLayoutOrder=0.000\nRichText=true\nSize=u2:0.000,300,0.000,18\nText=Hold ALT to use the mouse\nTextColor3=c3:0.647,0.671,0.804\nTextSize=12.000\nTextXAlignment=e:Center\nVisible=false"
+        "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamMedium\nLayoutOrder=0.000\nRichText=true\nSize=u2:0.000,300,0.000,18\nText=Hold ALT to use the mouse\nTextColor3=c3:0.839,0.792,0.961\nTextSize=12.000\nTextXAlignment=e:Center\nVisible=false"
        }
       },
       {
@@ -3569,9 +3897,9 @@
        "Name": "Strip",
        "Properties": {
         "BackgroundColor3": [
-         0.101961,
-         0.113725,
-         0.164706
+         0.227451,
+         0.14902,
+         0.462745
         ],
         "BackgroundTransparency": 0.1,
         "BorderSizePixel": 0,
@@ -3591,7 +3919,7 @@
         "Visible": false
        },
        "Attributes": {
-        "CodeProps": "BackgroundColor3=c3:0.102,0.114,0.165\nBackgroundTransparency=0.100\nBorderSizePixel=0.000\nLayoutOrder=1.000\nSize=u2:0.000,440,0.000,34\nVisible=false"
+        "CodeProps": "BackgroundColor3=c3:0.227,0.149,0.463\nBackgroundTransparency=0.100\nBorderSizePixel=0.000\nLayoutOrder=1.000\nSize=u2:0.000,440,0.000,34\nVisible=false"
        },
        "Children": [
         {
@@ -3615,15 +3943,15 @@
          "Properties": {
           "ApplyStrokeMode": "Border",
           "Color": [
-           0.243137,
-           0.266667,
-           0.368627
+           0.101961,
+           0.0470588,
+           0.243137
           ],
           "Thickness": 1.5,
           "Transparency": 0
          },
          "Attributes": {
-          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.243,0.267,0.369\nThickness=1.500\nTransparency=0.000"
+          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.102,0.047,0.243\nThickness=1.500\nTransparency=0.000"
          }
         },
         {
@@ -3660,16 +3988,16 @@
           },
           "Text": "Hamster balls roll down the road - get close and press [E] to claim one!",
           "TextColor3": [
-           0.968627,
-           0.968627,
-           0.992157
+           1,
+           1,
+           1
           ],
           "TextSize": 13,
           "TextWrapped": true,
           "TextXAlignment": "Center"
          },
          "Attributes": {
-          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamMedium\nPosition=u2:0.000,10,0.000,0\nRichText=true\nSize=u2:1.000,-20,1.000,0\nText=Hamster balls roll down the road - get close and press [E] to claim one!\nTextColor3=c3:0.969,0.969,0.992\nTextSize=13.000\nTextWrapped=true\nTextXAlignment=e:Center"
+          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamMedium\nPosition=u2:0.000,10,0.000,0\nRichText=true\nSize=u2:1.000,-20,1.000,0\nText=Hamster balls roll down the road - get close and press [E] to claim one!\nTextColor3=c3:1.000,1.000,1.000\nTextSize=13.000\nTextWrapped=true\nTextXAlignment=e:Center"
          }
         }
        ]
@@ -3679,9 +4007,9 @@
        "Name": "GrabPrompt",
        "Properties": {
         "BackgroundColor3": [
-         0.101961,
-         0.113725,
-         0.164706
+         0.227451,
+         0.14902,
+         0.462745
         ],
         "BackgroundTransparency": 0.04,
         "BorderSizePixel": 0,
@@ -3701,7 +4029,7 @@
         "Visible": false
        },
        "Attributes": {
-        "CodeProps": "BackgroundColor3=c3:0.102,0.114,0.165\nBackgroundTransparency=0.040\nBorderSizePixel=0.000\nLayoutOrder=2.000\nSize=u2:0.000,420,0.000,52\nVisible=false"
+        "CodeProps": "BackgroundColor3=c3:0.227,0.149,0.463\nBackgroundTransparency=0.040\nBorderSizePixel=0.000\nLayoutOrder=2.000\nSize=u2:0.000,420,0.000,52\nVisible=false"
        },
        "Children": [
         {
@@ -3711,12 +4039,12 @@
           "CornerRadius": {
            "UDim": [
             0,
-            8
+            10
            ]
           }
          },
          "Attributes": {
-          "CodeProps": "CornerRadius=u:0.000,8"
+          "CodeProps": "CornerRadius=u:0.000,10"
          }
         },
         {
@@ -3726,14 +4054,14 @@
           "ApplyStrokeMode": "Border",
           "Color": [
            1,
-           0.803922,
-           0.282353
+           0.839216,
+           0.156863
           ],
-          "Thickness": 1.5,
+          "Thickness": 2,
           "Transparency": 0
          },
          "Attributes": {
-          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:1.000,0.804,0.282\nThickness=1.500\nTransparency=0.000"
+          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:1.000,0.839,0.157\nThickness=2.000\nTransparency=0.000"
          }
         },
         {
@@ -3741,13 +4069,13 @@
          "Name": "TextLabel",
          "Properties": {
           "BackgroundColor3": [
-           0.145098,
-           0.160784,
-           0.227451
+           0.329412,
+           0.227451,
+           0.603922
           ],
           "BackgroundTransparency": 0,
           "BorderSizePixel": 0,
-          "Font": "GothamBold",
+          "Font": "GothamBlack",
           "Position": {
            "UDim2": [
             [
@@ -3776,14 +4104,14 @@
           "Text": "E",
           "TextColor3": [
            1,
-           0.803922,
-           0.282353
+           0.839216,
+           0.156863
           ],
           "TextSize": 20,
           "TextXAlignment": "Center"
          },
          "Attributes": {
-          "CodeProps": "BackgroundColor3=c3:0.145,0.161,0.227\nBackgroundTransparency=0.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,8,0.000,7\nRichText=true\nSize=u2:0.000,38,0.000,38\nText=E\nTextColor3=c3:1.000,0.804,0.282\nTextSize=20.000\nTextXAlignment=e:Center"
+          "CodeProps": "BackgroundColor3=c3:0.329,0.227,0.604\nBackgroundTransparency=0.000\nBorderSizePixel=0.000\nFont=e:GothamBlack\nPosition=u2:0.000,8,0.000,7\nRichText=true\nSize=u2:0.000,38,0.000,38\nText=E\nTextColor3=c3:1.000,0.839,0.157\nTextSize=20.000\nTextXAlignment=e:Center"
          },
          "Children": [
           {
@@ -3807,15 +4135,15 @@
            "Properties": {
             "ApplyStrokeMode": "Border",
             "Color": [
-             0.243137,
-             0.266667,
-             0.368627
+             0.101961,
+             0.0470588,
+             0.243137
             ],
             "Thickness": 1.5,
             "Transparency": 0
            },
            "Attributes": {
-            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.243,0.267,0.369\nThickness=1.500\nTransparency=0.000"
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.102,0.047,0.243\nThickness=1.500\nTransparency=0.000"
            }
           }
          ]
@@ -3829,9 +4157,9 @@
            0.5
           ],
           "BackgroundColor3": [
-           0.0745098,
-           0.0823529,
-           0.121569
+           0.141176,
+           0.0862745,
+           0.329412
           ],
           "BorderSizePixel": 0,
           "Position": {
@@ -3861,7 +4189,7 @@
           "Visible": false
          },
          "Attributes": {
-          "CodeProps": "AnchorPoint=v2:1.000,0.500\nBackgroundColor3=c3:0.075,0.082,0.122\nBorderSizePixel=0.000\nPosition=u2:1.000,-9,0.500,0\nSize=u2:0.000,104,0.000,34\nVisible=false"
+          "CodeProps": "AnchorPoint=v2:1.000,0.500\nBackgroundColor3=c3:0.141,0.086,0.329\nBorderSizePixel=0.000\nPosition=u2:1.000,-9,0.500,0\nSize=u2:0.000,104,0.000,34\nVisible=false"
          },
          "Children": [
           {
@@ -3885,15 +4213,15 @@
            "Properties": {
             "ApplyStrokeMode": "Border",
             "Color": [
-             0.243137,
-             0.266667,
-             0.368627
+             0.101961,
+             0.0470588,
+             0.243137
             ],
             "Thickness": 1.5,
             "Transparency": 0
            },
            "Attributes": {
-            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.243,0.267,0.369\nThickness=1.500\nTransparency=0.000"
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.102,0.047,0.243\nThickness=1.500\nTransparency=0.000"
            }
           },
           {
@@ -3902,7 +4230,7 @@
            "Properties": {
             "BackgroundTransparency": 1,
             "BorderSizePixel": 0,
-            "Font": "GothamBold",
+            "Font": "GothamBlack",
             "Position": {
              "UDim2": [
               [
@@ -3930,15 +4258,15 @@
             },
             "Text": "",
             "TextColor3": [
-             0.376471,
-             0.909804,
-             0.556863
+             0.360784,
+             0.92549,
+             0.439216
             ],
             "TextSize": 17,
             "TextXAlignment": "Left"
            },
            "Attributes": {
-            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,32,0.000,0\nRichText=true\nSize=u2:1.000,-36,1.000,0\nText=\nTextColor3=c3:0.376,0.910,0.557\nTextSize=17.000\nTextXAlignment=e:Left"
+            "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBlack\nPosition=u2:0.000,32,0.000,0\nRichText=true\nSize=u2:1.000,-36,1.000,0\nText=\nTextColor3=c3:0.361,0.925,0.439\nTextSize=17.000\nTextXAlignment=e:Left"
            }
           }
          ]
@@ -3949,7 +4277,7 @@
          "Properties": {
           "BackgroundTransparency": 1,
           "BorderSizePixel": 0,
-          "Font": "GothamBold",
+          "Font": "GothamBlack",
           "Position": {
            "UDim2": [
             [
@@ -3977,16 +4305,16 @@
           },
           "Text": "",
           "TextColor3": [
-           0.968627,
-           0.968627,
-           0.992157
+           1,
+           1,
+           1
           ],
           "TextSize": 16,
           "TextTruncate": "AtEnd",
           "TextXAlignment": "Left"
          },
          "Attributes": {
-          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,56,0.000,0\nRichText=true\nSize=u2:1.000,-70,1.000,0\nText=\nTextColor3=c3:0.969,0.969,0.992\nTextSize=16.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Left"
+          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBlack\nPosition=u2:0.000,56,0.000,0\nRichText=true\nSize=u2:1.000,-70,1.000,0\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Left"
          }
         },
         {
@@ -4019,9 +4347,9 @@
        "Name": "ChannelBar",
        "Properties": {
         "BackgroundColor3": [
-         0.101961,
-         0.113725,
-         0.164706
+         0.227451,
+         0.14902,
+         0.462745
         ],
         "BackgroundTransparency": 0.08,
         "BorderSizePixel": 0,
@@ -4041,7 +4369,7 @@
         "Visible": false
        },
        "Attributes": {
-        "CodeProps": "BackgroundColor3=c3:0.102,0.114,0.165\nBackgroundTransparency=0.080\nBorderSizePixel=0.000\nLayoutOrder=5.000\nSize=u2:0.000,320,0.000,46\nVisible=false"
+        "CodeProps": "BackgroundColor3=c3:0.227,0.149,0.463\nBackgroundTransparency=0.080\nBorderSizePixel=0.000\nLayoutOrder=5.000\nSize=u2:0.000,320,0.000,46\nVisible=false"
        },
        "Children": [
         {
@@ -4051,12 +4379,12 @@
           "CornerRadius": {
            "UDim": [
             0,
-            8
+            10
            ]
           }
          },
          "Attributes": {
-          "CodeProps": "CornerRadius=u:0.000,8"
+          "CodeProps": "CornerRadius=u:0.000,10"
          }
         },
         {
@@ -4066,14 +4394,14 @@
           "ApplyStrokeMode": "Border",
           "Color": [
            1,
-           0.345098,
-           0.384314
+           0.282353,
+           0.345098
           ],
-          "Thickness": 1.5,
+          "Thickness": 2,
           "Transparency": 0
          },
          "Attributes": {
-          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:1.000,0.345,0.384\nThickness=1.500\nTransparency=0.000"
+          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:1.000,0.282,0.345\nThickness=2.000\nTransparency=0.000"
          }
         },
         {
@@ -4082,7 +4410,7 @@
          "Properties": {
           "BackgroundTransparency": 1,
           "BorderSizePixel": 0,
-          "Font": "GothamBold",
+          "Font": "GothamBlack",
           "Position": {
            "UDim2": [
             [
@@ -4118,7 +4446,7 @@
           "TextXAlignment": "Center"
          },
          "Attributes": {
-          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBold\nPosition=u2:0.000,0,0.000,3\nRichText=true\nSize=u2:1.000,0,0.000,22\nText=Stealing...\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000\nTextXAlignment=e:Center"
+          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBlack\nPosition=u2:0.000,0,0.000,3\nRichText=true\nSize=u2:1.000,0,0.000,22\nText=Stealing...\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000\nTextXAlignment=e:Center"
          }
         },
         {
@@ -4126,9 +4454,9 @@
          "Name": "Frame",
          "Properties": {
           "BackgroundColor3": [
-           0.0745098,
-           0.0823529,
-           0.121569
+           0.141176,
+           0.0862745,
+           0.329412
           ],
           "BorderSizePixel": 0,
           "Position": {
@@ -4157,7 +4485,7 @@
           }
          },
          "Attributes": {
-          "CodeProps": "BackgroundColor3=c3:0.075,0.082,0.122\nBorderSizePixel=0.000\nPosition=u2:0.000,14,0.000,28\nSize=u2:1.000,-28,0.000,10"
+          "CodeProps": "BackgroundColor3=c3:0.141,0.086,0.329\nBorderSizePixel=0.000\nPosition=u2:0.000,14,0.000,28\nSize=u2:1.000,-28,0.000,10"
          },
          "Children": [
           {
@@ -4181,8 +4509,8 @@
            "Properties": {
             "BackgroundColor3": [
              1,
-             0.803922,
-             0.282353
+             0.839216,
+             0.156863
             ],
             "BorderSizePixel": 0,
             "Size": {
@@ -4199,7 +4527,7 @@
             }
            },
            "Attributes": {
-            "CodeProps": "BackgroundColor3=c3:1.000,0.804,0.282\nBorderSizePixel=0.000\nSize=u2:0.000,0,1.000,0"
+            "CodeProps": "BackgroundColor3=c3:1.000,0.839,0.157\nBorderSizePixel=0.000\nSize=u2:0.000,0,1.000,0"
            },
            "Children": [
             {

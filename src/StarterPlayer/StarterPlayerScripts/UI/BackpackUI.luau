@@ -19,6 +19,7 @@ local ItemRegistry = require(Modules:WaitForChild("ItemRegistry"))
 
 local DataController = require(script.Parent.Parent.Controllers.DataController)
 local ItemView = require(script.Parent.ItemView)
+local Theme = require(script.Parent.Theme)
 local UIKit = require(script.Parent.UIKit)
 
 local BackpackUI = {}
@@ -44,7 +45,7 @@ function BackpackUI.ownedItems(): { any }
 end
 
 function BackpackUI.start()
-	local panel = UIKit.panel({ Name = "Backpack", Title = "Backpack", Icon = "bat", Design = Vector2.new(920, 620), Accent = C.Blue, Subtitle = "Your items, hamsters, index and emotes" })
+	local panel = UIKit.panel({ Name = "Backpack", Title = "Backpack", Icon = "bat", Design = Vector2.new(920, 620), Accent = Theme.Accents.Backpack, Subtitle = "Your items, hamsters, index and emotes" })
 
 	-- two tabs: Items (weapons, equipment, consumables) and Hamsters (the collection + working bench). The tab bar also
 	-- holds the shortcuts to the Hamster Index and the Emote wheel, so those need no buttons of their own on the HUD.

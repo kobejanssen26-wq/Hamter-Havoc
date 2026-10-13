@@ -11,6 +11,7 @@ local UpgradeConfig = require(Modules:WaitForChild("UpgradeConfig"))
 
 local AudioController = require(script.Parent.Parent.Controllers.AudioController)
 local DataController = require(script.Parent.Parent.Controllers.DataController)
+local Theme = require(script.Parent.Theme)
 local UIKit = require(script.Parent.UIKit)
 
 local UpgradeUI = {}
@@ -18,7 +19,7 @@ local UpgradeUI = {}
 local C = UIKit.Colors
 
 function UpgradeUI.start()
-	local panel = UIKit.panel({ Name = "Upgrades", Title = "Upgrades", Icon = "arrowup", Design = Vector2.new(860, 640), Accent = C.Green })
+	local panel = UIKit.panel({ Name = "Upgrades", Title = "Upgrades", Icon = "arrowup", Design = Vector2.new(860, 640), Accent = Theme.Accents.Upgrades })
 	local body = panel.Body
 
 	-- stat summary

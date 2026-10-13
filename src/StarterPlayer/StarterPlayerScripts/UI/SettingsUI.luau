@@ -9,6 +9,7 @@ local Modules = ReplicatedStorage:WaitForChild("Modules")
 local SettingsConfig = require(Modules:WaitForChild("SettingsConfig"))
 
 local DataController = require(script.Parent.Parent.Controllers.DataController)
+local Theme = require(script.Parent.Theme)
 local UIKit = require(script.Parent.UIKit)
 
 local SettingsUI = {}
@@ -19,7 +20,7 @@ function SettingsUI.start()
 	-----------------------------------------------------------------------
 	-- settings
 	-----------------------------------------------------------------------
-	local panel = UIKit.panel({ Name = "Settings", Title = "Settings", Icon = "gear", Design = Vector2.new(620, 580), Accent = C.BrownLight })
+	local panel = UIKit.panel({ Name = "Settings", Title = "Settings", Icon = "gear", Design = Vector2.new(620, 580), Accent = Theme.Accents.Settings })
 	local scroll = UIKit.scroll(panel.Body, { Size = UDim2.fromScale(1, 1) })
 	UIKit.list(scroll, Enum.FillDirection.Vertical, 8)
 	UIKit.padding(scroll, 4)

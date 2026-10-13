@@ -17,6 +17,7 @@ local Modules = ReplicatedStorage:WaitForChild("Modules")
 local InputConfig = require(Modules:WaitForChild("InputConfig"))
 local Remotes = require(ReplicatedStorage:WaitForChild("Remotes"))
 
+local Theme = require(script.Parent.Theme)
 local UIKit = require(script.Parent.UIKit)
 
 local AdminUI = {}
@@ -320,7 +321,7 @@ function AdminUI.open(refresh: boolean?)
 	end
 	data = result.data
 	if not panel then
-		panel = UIKit.panel({ Name = "Admin", Title = "Staff Panel", Icon = "gear", Design = Vector2.new(860, 560), Accent = C.Purple })
+		panel = UIKit.panel({ Name = "Admin", Title = "Staff Panel", Icon = "gear", Design = Vector2.new(860, 560), Accent = Theme.Accents.Admin })
 	end
 	build()
 	if not panel.IsOpen then

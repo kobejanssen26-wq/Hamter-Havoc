@@ -21,12 +21,25 @@ local ShopConfig = require(Modules:WaitForChild("ShopConfig"))
 local AudioController = require(script.Parent.Parent.Controllers.AudioController)
 local DataController = require(script.Parent.Parent.Controllers.DataController)
 local ItemView = require(script.Parent.ItemView)
+local Theme = require(script.Parent.Theme)
 local UIKit = require(script.Parent.UIKit)
 
 local ShopUI = {}
 
 local C = UIKit.Colors
 local player = Players.LocalPlayer
+
+-- every shop category has its own colour (tabs, so you find your way by colour)
+local CATEGORY_COLORS = {
+	Weapons = Theme.Colors.Red,
+	Equipment = Theme.Colors.Blue,
+	Boosts = Theme.Colors.Gold,
+	Hamsters = Theme.Colors.Rose,
+	Diamonds = Theme.Colors.Purple,
+	Gamepasses = Theme.Colors.Gold,
+	Cosmetics = Theme.Colors.Teal,
+	Limited = Theme.Colors.Bronze,
+}
 
 local CURRENCY = {
 	Coins = { Icon = "coin", Name = "Cash", Color = C.Cash },
@@ -44,7 +57,7 @@ local function balanceOf(currency: string): number
 end
 
 function ShopUI.start()
-	local panel = UIKit.panel({ Name = "Shop", Title = "Shop", Icon = "bag", Design = Vector2.new(1000, 690), Accent = C.Gold, Subtitle = "Weapons, equipment and boosts for cash and diamonds - passes and diamond packs for Robux" })
+	local panel = UIKit.panel({ Name = "Shop", Title = "Shop", Icon = "bag", Design = Vector2.new(1000, 690), Accent = Theme.Accents.Shop, Subtitle = "Weapons, equipment and boosts for cash and diamonds - passes and diamond packs for Robux" })
 	local body = panel.Body
 
 	-- TWO SHOPS in one window: the Cash Shop (spend what you earned in the game) and the Robux Shop (real purchases, Roblox's own prompt)
@@ -404,7 +417,7 @@ function ShopUI.start()
 				Name = "Tab_" .. category.Id,
 				Text = "",
 				Size = UDim2.fromOffset(136, 38),
-				Color = if category.Id == selected then C.Bronze else C.Card,
+				Color = if category.Id == selected then (CATEGORY_COLORS[category.Id] or C.Bronze) else (CATEGORY_COLORS[category.Id] or C.Bronze):Lerp(C.CreamDark, 0.62),
 				LayoutOrder = index,
 				OnClick = function()
 					selected = category.Id
@@ -413,7 +426,7 @@ function ShopUI.start()
 				end,
 			})
 			UIKit.icon(tab, category.Icon, { Size = UDim2.fromOffset(22, 22), Position = UDim2.new(0, 10, 0.5, 0), AnchorPoint = Vector2.new(0, 0.5), ZIndex = 3 })
-			UIKit.label(tab, { Size = UDim2.new(1, -40, 1, 0), Position = UDim2.fromOffset(38, 0), Text = category.Name, Font = UIKit.Fonts.Title, TextSize = 14, TextColor3 = C.White, TextTruncate = Enum.TextTruncate.AtEnd, ZIndex = 3 })
+			UIKit.cartoon(UIKit.label(tab, { Size = UDim2.new(1, -40, 1, 0), Position = UDim2.fromOffset(38, 0), Text = category.Name, Font = UIKit.Fonts.Title, TextSize = 14, TextColor3 = C.White, TextTruncate = Enum.TextTruncate.AtEnd, ZIndex = 3 }), 2)
 		end
 	end
 
