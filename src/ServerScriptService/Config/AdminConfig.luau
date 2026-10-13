@@ -10,19 +10,19 @@
 local AdminConfig = {}
 
 AdminConfig.OwnerUserIds = {
-	0, -- <<< replace 0 with YOUR Roblox UserId (you can list more than one owner)
+	8247768664, -- main owner: can do everything and can not be kicked, banned or changed by anybody
 }
 
--- Also treat the person who owns the experience (game.CreatorId when the experience belongs to a user) as Owner.
--- Convenient for Studio testing. Set to false if you want ONLY OwnerUserIds above.
-AdminConfig.CreatorIsOwner = true
+-- true = also treat the person who owns the experience (game.CreatorId) as Owner. Off, so ONLY the ids listed here count.
+AdminConfig.CreatorIsOwner = false
 
 --[[
 	=========================  2. OTHER STAFF  =========================
-	[UserId] = "Admin" | "Moderator" | "Developer"
+	[UserId] = "CoOwner" | "Admin" | "Moderator" | "Developer"
 	Names do not matter and are never used for permission - only the number counts.
 ]]
 AdminConfig.Users = {
+	[7426751118] = "CoOwner", -- every permission, but can not kick / ban / change the main Owner above
 	-- [11111111] = "Admin",
 	-- [22222222] = "Moderator",
 	-- [33333333] = "Developer",
@@ -43,7 +43,12 @@ AdminConfig.Users = {
 ]]
 AdminConfig.Roles = {
 	Owner = {
-		Level = 4,
+		Level = 5,
+		Permissions = { "*" },
+		Limits = { MaxCash = 1e12, MaxDiamonds = 1e9, MaxRebirths = 25, MaxBanMinutes = math.huge },
+	},
+	CoOwner = {
+		Level = 4, -- below Owner: may do everything, but not to an Owner
 		Permissions = { "*" },
 		Limits = { MaxCash = 1e12, MaxDiamonds = 1e9, MaxRebirths = 25, MaxBanMinutes = math.huge },
 	},

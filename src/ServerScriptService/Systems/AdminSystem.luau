@@ -84,12 +84,12 @@ function AdminSystem.roleOf(player: Player): string?
 	if ownerSet()[id] then
 		return "Owner"
 	end
-	if isCreator(id) then
-		return "Owner"
-	end
 	local role = AdminConfig.Users[id]
 	if type(role) == "string" and AdminConfig.Roles[role] and role ~= "Owner" then
-		return role
+		return role -- (an explicit entry wins over the creator rule below)
+	end
+	if isCreator(id) then
+		return "Owner"
 	end
 	return nil
 end
@@ -107,16 +107,16 @@ function AdminSystem.can(player: Player, permission: string): boolean
 end
 
 local function levelOf(userId: number): number
-	-- level of somebody who may be offline: only Owner / configured staff count
+	-- level of somebody who may be offline: only owners and configured staff count
 	if ownerSet()[userId] then
-		return 4
-	end
-	if isCreator(userId) then
-		return 4
+		return AdminConfig.Roles.Owner.Level
 	end
 	local role = AdminConfig.Users[userId]
 	local def = roleDef(if type(role) == "string" then role else nil)
-	return if def then def.Level else 0
+	if def then
+		return def.Level
+	end
+	return if isCreator(userId) then AdminConfig.Roles.Owner.Level else 0
 end
 
 local function limit(player: Player, name: string): number

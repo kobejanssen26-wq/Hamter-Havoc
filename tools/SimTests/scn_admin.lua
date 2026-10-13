@@ -35,6 +35,27 @@ task.spawn(function()
 	end
 	local owner, admin, mod, dev, normal, victim = join("Owner"), join("Admin"), join("Mod"), join("Dev"), join("Normal"), join("Victim")
 	adv(8)
+	local function has(list, name) for _, c in list do if c.Name == name then return true end end return false end
+	-- the shipped configuration
+	local shippedOwner, shippedCo = AdminConfig.OwnerUserIds[1], AdminConfig.Users[7426751118]
+	local function fakeUser(id, name) local g = M.newPlayer(name); RawData[g].Props.UserId = id return g end
+	local mainOwner, coOwner = fakeUser(8247768664, "MainOwner"), fakeUser(7426751118, "CoOwnerAcc")
+	check("shipped config: 8247768664 is Owner and 7426751118 is CoOwner", AdminSystem.roleOf(mainOwner) == "Owner" and AdminSystem.roleOf(coOwner) == "CoOwner" and shippedOwner == 8247768664 and shippedCo == "CoOwner")
+	check("the CoOwner has every command (same list as the Owner)", (function()
+		local open = AdminSystem.handle(coOwner, "open")
+		if not open then return false end
+		for name in AdminSystem.Commands do if not has(open.data.Commands, name) then return false end end
+		return true
+	end)())
+	check("the CoOwner can NOT kick or ban the Owner", (function()
+		local a = AdminSystem.execute(coOwner, "ban", { userId = 8247768664, minutes = 0, reason = "x" }, true)
+		return not a.ok
+	end)())
+	check("the Owner CAN act on the CoOwner (kick needs confirm, then works)", (function()
+		local a = AdminSystem.execute(mainOwner, "warn", { target = 7426751118, reason = "test" }, true)
+		return a.ok
+	end)())
+	check("nobody else is staff by default (creator rule is off)", AdminSystem.roleOf(normal) == nil)
 	AdminConfig.OwnerUserIds = { owner.UserId }
 	AdminConfig.Users = { [admin.UserId] = "Admin", [mod.UserId] = "Moderator", [dev.UserId] = "Developer" }
 	local function data(p) return DataSystem.get(p) end
@@ -46,7 +67,6 @@ task.spawn(function()
 	end
 	local function run(p, name, params, confirmed) return api(p, "run", name, params, confirmed) end
 	local function near(a, b) return math.abs(a - b) < 5 end -- idle income ticks a few cash while the sim runs
-	local function has(list, name) for _, c in list do if c.Name == name then return true end end return false end
 
 	-----------------------------------------------------------------
 	section("1. ordinary players get nothing")
