@@ -5,7 +5,7 @@ return {
 	AssetId = "", -- paste "rbxassetid://<number>" after you publish the animation
 	Rig = "R15",
 	Use = "Action",
-	Priority = "Action", -- above walk / idle so it plays while running, below Action2+ used by emotes
+	Priority = "Action2", -- above walk / idle (Movement) and above emotes (Action): a swing always shows, even while running
 	Looped = false,
 	FadeTime = 0.05,
 }

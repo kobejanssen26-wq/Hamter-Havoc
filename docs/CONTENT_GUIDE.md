@@ -109,7 +109,7 @@ Rack theft only reaches floors listed in `TheftConfig.StealableFloors` (default:
 ## 7. Shop, sounds, security, leaderboards (config only)
 * Shop items: `ShopConfig.Items` (each names its `Currency` implicitly through `Coins =` / `Gems =` / `Robux =`; empty categories are hidden).
 * Sounds: `AudioConfig.Sfx` (ids + base volume), `AudioConfig.Categories` (group volumes incl. `Gate`), `AudioConfig.MinInterval`, player setting *Gate & alarm sounds*.
-* Gate time: `SecurityConfig.BaseDuration + PerRebirthSeconds * rebirths` (45 s, +10 s per rebirth). Theft rules: `TheftConfig`.
+* Gate time and the reopen cooldown: `GameConfig.Security` (`GateBaseDuration` 45 s, `GateSecondsPerRebirth` 10 s, `GateReopenCooldown` 7 s). Theft rules: `TheftConfig`.
 * Leaderboards: `LeaderboardConfig` (metrics, periods, cache/flush times).
 
 ## 7b. Items: weapons, equipment, boosts (one file each)
@@ -118,7 +118,7 @@ Shop (Weapons / Equipment / Boosts tab), Backpack, hotbar, and (weapons) as a re
 
 | Category | `Equip.Kind` | What it does |
 |---|---|---|
-| `Weapon` | `Tool` | a real Tool. `Weapon = { Type = "Melee" or "Ranged", Range, Arc, Cooldown, Knockback, Stun, DropChance, Look = { Style = "bat" / "ladle" / "slingshot", Color, Accent } }` |
+| `Weapon` | `Tool` | a real Tool. `Weapon = { Type = "Melee" / "Ranged" / "Freeze" / "Cloak" / "Decoy" / "Guard", Range, Arc, Cooldown, Knockback, Lift, Stun, DropChance, WindUp, Active, Animation = "<Content/Animations name>", Look = { Style = "glove" / "spring" / "baton" / "hammer" / "shield" / "bat" / "wand" / "slingshot" / "cloak" / "mirror", Color, Accent, Swing = "Overhead" / "Side" / "Thrust" / "Punch" / "Recoil" / "Raise" } }` - full explanation: `docs/COMBAT_GUIDE.md` |
 | `Equipment` | `Passive` | works while owned. Supported `Stats`: `CollectRange`, `WalkSpeed` (a new stat needs code in `EconomyMath` first) |
 | `Consumable` | `Consume` | counted; `Effect = "Boost"` (+`BoostId`, `Seconds`) or `"Pouch"` (+`Minutes`) |
 
@@ -128,7 +128,8 @@ For sale: `Currency` (`"Coins"` or `"Gems"`) **and** `Price` together. Without t
 Invalid files are skipped and listed by the content check (§8); a typo never crashes the game. Limits are enforced (range ≤ 60, cooldown ≥ 0.3 s ...), so no file can make a "spam" weapon.
 
 **How weapons behave (all decided on the server, `CombatSystem`):** the client only says "attack" (+ an aim direction for ranged weapons). The server checks that you really own and hold the weapon, applies its own range/arc/cooldown,
-picks the target (melee: nearest player in front; ranged: a ray along your aim, blocked by walls) and only lands the hit near a hamster that is rolling home, carried or dropped — weapons can't be used to grief people for fun and never take health.
+and samples the hit area every frame during the active part of the swing (so moving targets are hit; walls block; safe zones and spawn protection apply). Weapons work with or without a carried hamster and never take health
+(`GameConfig.Combat.PvpNeedsHamsterNearby = true` brings back the old "only near a hamster" rule). See `docs/COMBAT_GUIDE.md`.
 A valid hit by the **owner** on a thief carrying a hamster uses the existing failed-theft path (`CombatSystem.theftHook` → `TheftSystem.ownerHit`); a hit by anybody else makes the carrier drop it with the weapon's `DropChance`.
 
 **Hotbar:** slot 1 is always the paws (slap). Owned weapons/consumables fill slots 2–8 in the order you got them (`profile.Hotbar`); re-order in the Backpack. Keys 1–8, `I` opens the Backpack. Pressing a weapon's key equips it, pressing again puts it away.
@@ -137,7 +138,8 @@ A valid hit by the **owner** on a thief carrying a hamster uses the existing fai
 Weapon `Type` can also be `Freeze` (Range, Cooldown, Duration <= 3 s), `Cloak` or `Decoy` (Cooldown, Duration). The rules live in
 `ServerScriptService/Systems/AbilitySystem` and `CombatSystem`; the item file only picks numbers within hard caps. `MinRebirth = N`
 keeps the item visible in the Shop with a lock and "Requires Rebirth N" and makes the server refuse the purchase below that level.
-Current ladder: Squeak Bat (R0) - Frost Wand (R1) - Seed Slingshot (R2) - Shadow Cloak (R3) - Mirror Clone (R5).
+Current ladder: Mega Slap Glove (R0, 1,500 cash) - Squeak Bat (R0) - Spring Boxing Glove (R1) - Frost Wand (R1) - Bubble Shield (R2) - Shock Baton (R2) - Seed Slingshot (R2) - Shadow Cloak (R3) - Party Hammer (R4) - Mirror Clone (R5).
+`Guard` is a shield: `Duration` 1-6 s, `Cooldown` 10-120 s.
 
 ### Characters (Content/Hamsters)
 New fields: `Persona` (idle personality), `Inspiration` (who/what the joke is, why it is recognisable), `Licensed` / `LicensedName`
@@ -145,6 +147,7 @@ New fields: `Persona` (idle personality), `Inspiration` (who/what the joke is, w
 (cash_stack, sweater_vest, side_part, box_stack, mini_rocket, jersey, held_pie, quiff, trench_coat, held_microphone, headset_mic, bald_shine).
 
 ## 7c. Game passes (Robux) — `GamepassConfig.luau`
+(The shop has two parts: **Cash Shop** and **Robux Shop**. Add `Enabled = false` to a pass to hide it. Diamond packs are developer products in `ShopConfig` (`Kind = "Product"`, `ProductId`, `Enabled`); `ProductId = 0` = not for sale.)
 1. Creator Dashboard → your experience → Monetization → Passes → create the pass, copy its numeric **PassId**.
 2. In `Modules/GamepassConfig.luau` set `PassId` on an existing entry or add one: `{ Key = "VIP", PassId = 123456, Name = ..., Description = ..., Icon = ..., Order = 60, Benefit = { CoinMult = 1.5 } }`.
    `Key` is permanent (it is stored in saves). Optional `Category` (default `Gamepasses`). Supported `Benefit` stats: `CoinMult`, `Luck`, `WalkSpeed`, `Slots`, `AutoCollect`.

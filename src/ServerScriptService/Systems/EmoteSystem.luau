@@ -10,6 +10,7 @@ local EmoteConfig = require(ReplicatedStorage.Modules.EmoteConfig)
 
 local Remotes = require(ReplicatedStorage.Remotes)
 
+local CombatSystem = require(script.Parent.CombatSystem)
 local DataSystem = require(script.Parent.DataSystem)
 local PlayerState = require(script.Parent.PlayerState)
 
@@ -33,6 +34,9 @@ function EmoteSystem.request(player: Player, emoteId: any): (boolean, string, an
 	end
 	if PlayerState.isStunned(player) then
 		return false, "You can't emote while stunned"
+	end
+	if CombatSystem.isSwinging(player) then
+		return false, "You can't emote in the middle of a swing"
 	end
 	local clock = os.clock()
 	if (lastUse[player] or 0) + EmoteConfig.Cooldown > clock then

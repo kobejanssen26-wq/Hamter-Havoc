@@ -153,7 +153,7 @@ function WeaponAnimator.play(player: Player, itemId: string, position: Vector3?)
 	local animationName = stats.Animation
 	local humanoid = character:FindFirstChildOfClass("Humanoid")
 	if animationName and humanoid and AnimationRegistry.playable(animationName) then
-		local track = AnimationController.play(humanoid, animationName, { Priority = Enum.AnimationPriority.Action, Looped = false })
+		local track = AnimationController.play(humanoid, animationName, { Priority = Enum.AnimationPriority.Action2, Looped = false })
 		if track then
 			-- scale so the animation ends when the cooldown does, never slower than its authored speed
 			local total = windUp + active + math.min(recovery, 0.4)

@@ -13,6 +13,9 @@ tools/SimTests/run.sh scn_theft.lua    # a single scenario with full output
 | `scn_loop` | claim → roll home → steal → carry → slap → drop → recover → secure, security gate, rebirth, shop/hotbar/tutorial, save/load |
 | `scn_theft` | rack theft (locked base, validation, owner hit, completion, duplicates, gate trap + 60 s timeout, death, disconnect, owner leaves, rebirth), rebirth gate time, elevators |
 | `scn_gear` | items/weapons/equipment: validation, server-side purchases, hotbar layout, equip rules, melee + ranged combat (range, cooldown, aim, walls, theft interruption), game-pass flow with a mock MarketplaceService, hotbar/shop/backpack UI geometry and behaviour |
+| `scn_combat` | the rebuilt combat: stationary / moving / running targets, directions, walls, cooldown, one hit per swing, knockback + stun caps, respawn + spawn protection, safe zones, forged remote payloads, abilities ending, emote vs swing, GameConfig wiring (gate cooldown) |
+| `scn_admin` | admin panel + config: authorization (ordinary players get nothing), roles, rank rules, limits, confirmation, validation, audit log, bans, live settings that survive a restart, shop overrides, panel not on the HUD |
+| `scn_hud` | Studio-editable HUD: templates (`src/StarterGui`) are adopted by the code with Studio edits kept, no duplicates, leftovers removed (run twice and compared). `bake_hud.sh` regenerates the templates, `--check` tests they are current |
 | `scn_rebirth` | rebirth keeps the whole collection and the bench (same hamsters, same places), save/leave/rejoin, auto-place never replaces, hamster catalog (new fields, balance, limited editions) |
 | `scn_world` | Studio-owned Environment is kept on Play, mountain placement/shape/budget, Lighting ownership |
 | `scn_audit` | geometry audit of the generated world: solid objects of different buildings intersecting, buried or floating parts (with a self-test that proves the audit can see a problem) |

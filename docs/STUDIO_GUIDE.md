@@ -32,7 +32,11 @@ The `Workspace` preview copies of houses/plaza/road exist so you can *see and me
 | Leaderboards | `Modules/LeaderboardConfig` |
 | Quests, achievements, daily reward, index rewards, upgrades | `Modules/QuestConfig`, `AchievementConfig`, `DailyRewardConfig`, `IndexRewardConfig`, `UpgradeConfig` |
 | UI colours, fonts, spacing | `StarterPlayer/StarterPlayerScripts/UI/Theme` |
-| UI buttons / panels, icons, text, animations | `StarterPlayerScripts/UI/*` (each screen is one LocalScript module; `UIKit` has the shared pieces, `Icons` draws every icon, `UIRegistry` adds buttons). The UI is *built by those scripts when the game starts*, so it is edited there, not as ScreenGuis in `StarterGui` |
+| The HUD (resource pills, side buttons, hotbar, hints) | **`StarterGui/MainUI` and `StarterGui/HotbarUI`** - real ScreenGuis you edit visually, see "HUD in Studio" below |
+| Windows (Shop, Backpack, Settings ...), icons, behaviour | `StarterPlayerScripts/UI/*` (each window is one LocalScript module; `UIKit` has the shared pieces, `Icons` draws every icon, `UIRegistry` adds side buttons). Windows are built by code at start |
+| Game settings (gate cooldown, combat caps, starting cash ...) | `Modules/GameConfig` (one documented place); admins can change the `Live` ones in the Admin panel |
+| Admin owner id and roles | `ServerScriptService/Config/AdminConfig` (server only) |
+| Combat, weapons, animations | `docs/COMBAT_GUIDE.md`, `Modules/Content/Items`, `Modules/Content/Animations` |
 | Sounds and volumes | `Modules/AudioConfig` |
 | Emotes / animations | `Modules/Content/Emotes`, `Modules/Content/Animations` |
 | Key bindings | `Modules/InputConfig` |
@@ -43,6 +47,24 @@ The `Workspace` preview copies of houses/plaza/road exist so you can *see and me
 They are called `Modules` (shared by server and client) and `Systems` (server services) from the start. Renaming them would break
 every `require` and every Rojo path for no gain, so the map above is the answer to "where is it". Server code lives only under
 `ServerScriptService`, client code only under `StarterPlayer/StarterPlayerScripts`; configuration that both sides read is in `ReplicatedStorage/Modules`.
+
+## HUD in Studio (MainUI, HotbarUI)
+
+`StarterGui/MainUI` (cash / cash-per-second / diamonds / rebirths, status row, toasts, side buttons, hints, grab prompt) and `StarterGui/HotbarUI` (the 8 slots) are normal ScreenGuis made of
+Frames, TextLabels, TextButtons, UIListLayouts, UICorners, UIStrokes ... Select them in the Explorer and edit them with the Properties panel and the on-screen handles like any Studio UI.
+
+How it works: when the game starts, the HUD code finds these instances and **adopts** them instead of creating new ones. For every property it checks whether *you* changed it:
+what you changed stays exactly as you set it (position, size, colour, font, text, visibility, layout order, padding ...); everything you did not touch is still set by the code
+(for example touch-screen sizes, the scale that fits the HUD to the screen, state colours). Each instance has an attribute `CodeProps` (what the code wrote when the template was made) - do not edit or delete it.
+
+Rules of thumb:
+* **Hide, don't delete:** set `Visible = false`. A deleted element is simply created again by the code.
+* **Don't rename** template instances (the code finds them by name and order). You may add your own decorations (an ImageLabel logo ...): they stay.
+* Region frames (`TopColumn`, `Rail`, `LeftColumn`, `BottomColumn`, `Hotbar`) scale with the screen through a `UIScale` the code manages; move them with `Position`/`AnchorPoint`.
+* Things that change with game state (selected rail button, cooldown shading, rarity colours, toasts, shop cards) are driven by the code and the `Theme` module, not by the template.
+* The hotbar is **not** Roblox's own backpack bar (that one is switched off); there is exactly one hotbar, at the bottom.
+* The templates are generated from the code: after changing HUD code run `tools/SimTests/bake_hud.sh` (needs the `luau` binary) and commit `src/StarterGui`. `run.sh --all` tells you when they are out of date. Leftover template instances that the code no longer builds are removed at start with a warning.
+* Windows (Shop, Backpack ...) and item cards are still built by code with the same design system (`Theme`, `UIKit`); only the HUD is a template.
 
 ## Test in Studio (what only you can verify)
 1. Open `HamsterPlaza.rbxl` → press **Play**. Mountains: walk to the map edge and look outward; the centre must stay open.

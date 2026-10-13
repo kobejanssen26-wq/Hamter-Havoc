@@ -10,6 +10,7 @@ local ContentValidator = require(script.Parent.ContentValidator)
 local EmoteConfig = {}
 
 EmoteConfig.Cooldown = 1.5 -- seconds between two emotes of one player (enforced on the server)
+EmoteConfig.MaxSeconds = 12 -- an emote that is still running after this long is stopped (a looping or broken animation can never hold a player)
 EmoteConfig.MaxSlots = 8 -- the wheel shows at most this many (extra emotes are ignored with a warning)
 EmoteConfig.DefaultKey = "B"
 -- Keys a player may choose in Settings for the wheel (all of them are free: see InputConfig).

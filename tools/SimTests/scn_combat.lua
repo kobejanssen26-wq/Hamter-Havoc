@@ -280,6 +280,20 @@ task.spawn(function()
 	check("a target standing inside a safe zone can not be hit from outside", slaps(alice) == before)
 	CollectionService:RemoveTag(zone, "SafeZone")
 	reset()
+	local hallZone
+	for _, z in CollectionService:GetTagged("SafeZone") do if RawData[z].Name == "SafeZone" then hallZone = z end end
+	check("the Leaderboard Hall has a real SafeZone part in the world (editable in Studio)", hallZone ~= nil)
+	if hallZone then
+		local zp = RawData[hallZone].Props.CFrame.Position
+		place(bob, zp + Vector3.new(0, 0, 0)); place(alice, zp + Vector3.new(0, 0, -30), zp)
+		adv(1)
+		before = slaps(alice)
+		RawData[rootOf(alice)].Props.CFrame = CFrame.lookAt(Vector3.new(zp.X, 5, zp.Z + 36), Vector3.new(zp.X, 5, zp.Z))
+		RawData[rootOf(bob)].Props.CFrame = CFrame.new(Vector3.new(zp.X, 5, zp.Z + 30))
+		swing(alice)
+		check("in the hall (safe zone) a target standing there is protected", slaps(alice) == before)
+	end
+	reset()
 	-- forged client data
 	place(alice, ORIGIN, ORIGIN + Vector3.new(0, 0, 1)); place(bob, ORIGIN + Vector3.new(0, 0, 40))
 	M.localPlayerRef = alice
@@ -379,6 +393,28 @@ task.spawn(function()
 		local r = Remotes.func("Request"):InvokeServer("ShopBuy", { Id = "gear_party_hammer" })
 		return not r.ok
 	end)())
+
+	-----------------------------------------------------------------
+	section("12. emotes and animations vs combat")
+	reset(); adv(5)
+	local EmoteSystem = require(find(S .. "EmoteSystem"))
+	local AnimationRegistry = require(find(MOD .. "AnimationRegistry"))
+	as(alice, "UnequipItem"); adv(0.5)
+	place(alice, ORIGIN, ORIGIN + Vector3.new(0, 0, 1))
+	CombatSystem.attack(alice, nil)
+	local midSwing = EmoteSystem.request(alice, "wave")
+	adv(2)
+	local afterSwing = EmoteSystem.request(alice, "wave")
+	check("an emote is refused in the middle of a swing and allowed afterwards", midSwing == false and afterSwing == true, tostring(midSwing) .. "/" .. tostring(afterSwing))
+	local allAction2 = true
+	for _, def in ItemRegistry.List do
+		if def.Equip.Kind == "Tool" and def.Equip.Weapon.Animation then
+			local anim = AnimationRegistry.ByName[def.Equip.Weapon.Animation]
+			if not anim or anim.Priority ~= "Action2" or anim.Use ~= "Action" then allAction2 = false end
+		end
+	end
+	check("every weapon animation exists in Content/Animations and uses priority Action2 (above emotes and running)", allAction2)
+	check("a weapon animation without an uploaded AssetId is not 'playable' (the built-in swing is used, nothing breaks)", AnimationRegistry.playable("Weapon_SlapGlove") == nil)
 
 	print(string.format("PASS %d  FAIL %d", results.pass, results.fail))
 	print("== done ==")

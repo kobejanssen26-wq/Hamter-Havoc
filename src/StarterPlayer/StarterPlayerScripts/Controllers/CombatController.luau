@@ -74,6 +74,10 @@ function CombatController.attack(): boolean
 	if now - lastAttack >= wait * 0.9 then
 		lastAttack = now
 		lastCooldown = wait
+		local emotes = script.Parent:FindFirstChild("EmoteController")
+		if emotes then
+			require(emotes).stop() -- a swing ends any emote: the two animations never fight
+		end
 		local def = CombatController.held()
 		local aim = if def and (def.Equip.Weapon.Type == "Ranged" or def.Equip.Weapon.Type == "Freeze") then aimDirection() else nil
 		Remotes.event("Attack"):FireServer(aim)

@@ -51,6 +51,17 @@ do
 			ItemRegistry.ById[entry.Def.Id] = entry.Def
 		end
 	end
+	-- a weapon that names an animation which does not exist is still fine (it uses the built-in swing), but say so
+	local registry = script.Parent:FindFirstChild("AnimationRegistry")
+	if registry then
+		local animations = require(registry).ByName
+		for _, def in ItemRegistry.List do
+			local name = def.Equip.Kind == "Tool" and def.Equip.Weapon.Animation
+			if name and not animations[name] then
+				table.insert(ItemRegistry.Issues, { Level = "warn", Kind = "Item", Id = def.Id, Message = string.format("Weapon.Animation '%s' is not in Content/Animations - the built-in swing is used", name) })
+			end
+		end
+	end
 	-- shop order: by the rebirth that unlocks it, then price (so the unlock ladder reads top to bottom)
 	table.sort(ItemRegistry.List, function(a, b)
 		local ar, br = a.MinRebirth or 0, b.MinRebirth or 0

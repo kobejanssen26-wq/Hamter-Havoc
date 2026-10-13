@@ -140,6 +140,11 @@ function EmoteController.play(emoteId: string): (boolean, string)
 	end
 	playing = emoteId
 	watch(h)
+	task.delay(EmoteConfig.MaxSeconds, function()
+		if playing == emoteId then
+			EmoteController.stop() -- nothing may play for ever
+		end
+	end)
 	if def.Sound then
 		AudioController.play(def.Sound)
 	end

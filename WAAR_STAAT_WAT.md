@@ -12,8 +12,8 @@ Open `HamsterPlaza.rbxl` in Roblox Studio → **View → Explorer**. Je ziet de 
 
 | Explorer-pad | Wat is het |
 |---|---|
-| `Workspace/HamsterPlaza` | Het plein: boog met gouden hamster (`PlazaArch`), `ShopHouse` (winkelgebouw), `PlazaFountain` (fontein). De Hamster Index heeft geen gebouw meer: hij zit in de Backpack |
-| `Workspace/LeaderboardHall` | De prikbord-hal achter de bibliotheek met 3 leaderboards (Most Hamsters / Most Steals / Most Money) en een kiosk die het volledige scherm opent |
+| `Workspace/HamsterPlaza` | Het plein: boog met gouden hamster (`PlazaArch`), `ShopHouse` (winkelgebouw), `PlazaFountain` (fontein, naast de looproute naar de ranglijsten), `ReadingNook`. De Hamster Index heeft geen gebouw meer: hij zit in de Backpack |
+| `Workspace/LeaderboardHall` | De hal aan het eind van de vrije looproute (x = 0) met 3 leaderboards (Most Hamsters / Most Steals / Most Money), een poort met bord waar je onderdoor loopt (`GatePost`, `HallSign`), een kiosk die het volledige scherm opent en de veilige zone `SafeZone` |
 | `Workspace/HamsterPath` | De weg met pijlen (`Road`, `Arrow`), het hol waar hamsters beginnen (`BurrowHill`, `BurrowHole`) en de uitgangstunnel (`ExitHill`) |
 | `Workspace/PlayerHouses/House1 … House8` | De 8 appartementen-torens. 1-4 = noordrij, 5-8 = zuidrij. In de voorbeeldkopie hebben ze 1,2,3,4,5,3,2,1 verdiepingen zodat je ziet hoe het gebouw groeit (bij Play start iedereen met 1 verdieping) |
 | `Workspace/Environment` | Grond (`Ground`), looppaden (`Promenades`), paden naar de poort (`GatePath`), lantaarns/banken (`Props`), bos (`Forest`), `Beyond` (buitenwereld), **`Backdrop`** (bergen `Mountain`, heuvels `Hill`, meren `Lake`, kliffen `Cliff`, wolken `Clouds`), onzichtbare muren (`Boundary`) |
@@ -54,7 +54,13 @@ Open `HamsterPlaza.rbxl` in Roblox Studio → **View → Explorer**. Je ziet de 
 |---|---|
 | een hamster toevoegen/veranderen | `ReplicatedStorage/Modules/HamsterDatabase` |
 | claim-tijd, stelen, drop-kans, verzekering | `ReplicatedStorage/Modules/HamsterStates` (`Config`) |
-| beveiligingstijd per rebirth | `ReplicatedStorage/Modules/SecurityConfig` |
+| **alle gewone instellingen** (poort-cooldown, gevechtslimieten, startgeld ...) | `ReplicatedStorage/Modules/GameConfig` |
+| poort: hoe lang aan en hoe snel opnieuw aan | `GameConfig` → `Security` (`GateReopenCooldown`, `GateBaseDuration`, `GateSecondsPerRebirth`); looks per rebirth: `SecurityConfig` |
+| een wapen toevoegen/veranderen | `ReplicatedStorage/Modules/Content/Items/<Wapen>` (kopieer een bestaand), animaties in `Content/Animations/` |
+| je admin-UserId en rollen | `ServerScriptService/Config/AdminConfig` (paneel openen met F10 of /admin) |
+| de HUD (geld, knoppen, hotbar) | `StarterGui/MainUI` en `StarterGui/HotbarUI` (visueel bewerken in Studio) |
+| Robux-passes / diamantpakketten | `GamepassConfig` / `ShopConfig` |
+| een veilige zone (geen gevechten) | geef een onzichtbaar deel de tag `SafeZone` (voorbeeld: `LeaderboardHall/SafeZone`) |
 | het appartement aanpassen | `…/WorldBuilder/HouseBuilder/Tower.luau` (verdiepingen) en `Yard.luau` (voortuin/poort) |
 | verdiepingen en wat ze geven | `ReplicatedStorage/Modules/FloorConfig` |
 | wedergeboorte: eisen, beloningen, wat reset | `ReplicatedStorage/Modules/RebirthConfig` |

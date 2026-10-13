@@ -76,6 +76,12 @@ function LeaderboardBuilder.build(parent: Instance, rng: Random): { Folder: Fold
 	Build.pillar(folder, "HallRing", 48, 0.24, CFrame.new(CENTER.X, 0.12, CENTER.Z), Palette.PavementDark, Enum.Material.Cobblestone, { CanCollide = false })
 	Build.part(folder, "HallPath", Vector3.new(10, 0.2, 38), CFrame.new(CENTER.X, 0.12, CENTER.Z + 33), Palette.Pavement, Enum.Material.Cobblestone, { CanCollide = false })
 
+	-- SAFE ZONE: nobody can attack, or be attacked, inside the hall (CombatSystem looks for parts tagged "SafeZone").
+	-- Resize / move / duplicate this part in Studio, or tag any other invisible part "SafeZone" to protect more places.
+	local zone = Build.part(folder, "SafeZone", Vector3.new(58, 26, 62), CFrame.new(CENTER.X, 13, CENTER.Z), Palette.Cream, PLASTIC, { CanCollide = false, CanQuery = false, CanTouch = false, Transparency = 1, CastShadow = false })
+	game:GetService("CollectionService"):AddTag(zone, "SafeZone")
+	zone:SetAttribute("Note", "Combat safe zone (tag: SafeZone)")
+
 	local boards: { Board } = {}
 	local specs = { { "Hamsters", "Most Hamsters", -58 }, { "Steals", "Most Steals", 0 }, { "Money", "Most Money", 58 } }
 	for _, spec in specs do

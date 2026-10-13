@@ -7,6 +7,8 @@ A cozy multiplayer hamster game for Roblox (Luau + [Rojo](https://rojo.space)).
 > and once it lands on the pad in your house it is **secured for good** and runs on a **hamster wheel** earning coins.
 > Upgrade, rebirth, hunt rarer hamsters, fill the Hamster Index.
 
+> **Eerste keer?** Lees [`docs/HANDLEIDING.md`](docs/HANDLEIDING.md) (Nederlands): je admin-UserId invullen, instellingen veranderen, een wapen / hamster / animatie toevoegen, de HUD in Studio aanpassen, de Robux-winkel instellen.
+
 > **Waar staat wat?** Zie [`WAAR_STAAT_WAT.md`](WAAR_STAAT_WAT.md) (Explorer-kaart, Nederlands). De wereld en alle 172 hamsters staan als voorbeeldkopie in `world/` en zijn in Studio direct zichtbaar zonder Play.
 
 > **Model library:** reusable Roblox models (hamster, wheel, combined assembly, apartment tower, nature/decor packs, upgrade machines, icons) are in [`ModelLibrary/`](ModelLibrary/README.md)
@@ -29,7 +31,7 @@ Controls: **E** claim / steal / carry / pick up · **Q** slap · **F** shops, up
 | Spawn | A ball rolls out of the burrow (west). Rarity decides speed, size, price, effects. Spawn luck is "sponsored" by players in turns (their Luck + Rebirths pick the species). |
 | Claim `E` | Pay the full price. The ball is now **InTransit** and rolls toward your house **by itself** (it is never teleported). |
 | Steal `E` | Hold-time grows with rarity (0.7–1.5 s). The ball becomes **Carried**: it floats behind the thief, who walks slower (rarer = heavier) and must reach **their own** arrival pad. |
-| Fight `Q` | A slap (1.1 s cooldown, small knockback, short stun, then brief immunity) near a ball in play. A hit carrier drops it 70 % of the time → **Dropped** → **Recoverable** → anyone can pick it up. |
+| Fight `Q` / click | A slap with bare paws or a weapon (Mega Slap Glove, Squeak Bat, Spring Boxing Glove, Shock Baton, Party Hammer ... see `docs/COMBAT_GUIDE.md`). The server samples the hit area during the swing, so running targets are hit too; it works with or without a carried hamster, never through walls or inside safe zones; knockback and stun are capped, hit immunity prevents stun-locking. A hit carrier drops the ball (weapon `DropChance`) → **Dropped** → **Recoverable** → anyone can pick it up; the OWNER hitting a thief makes the theft fail. |
 | Secure | A carrier within 7 studs of their own pad, or a ball that rolled home and rested 1.8 s on the pad, is **Secured**: permanent, joins the collection, gets a wheel, earns money. |
 | Money risk | Payer loses the price when it is stolen; if the thief secures it the payer gets **25 % insurance**. Payer leaves → ball vanishes, **100 % refund**. Abandoned balls roll back to the payer. |
 | Anti-grief | Max carry time 75 s, carrier leaves/dies/leaves the map/moves impossibly fast → dropped; 3 s / 8 s re-grab bans; max 3 unsecured balls per player; no physics-launched balls (positions are simulated, never physical). |
@@ -96,7 +98,7 @@ a header bar with a small close button, restrained gold/bronze accents, green fo
   **Daily Quests**, **Hamsters**, **Shop**, **Leaderboards**, **Emotes**, **Settings**. There is no big side menu.
 - **In-world menus** (all in your own plot, `HouseBuilder/Tower.luau` + `Yard.luau`, proximity prompts, work on PC and mobile): **Upgrade Terminal** and the upgrade pedestals (Upgrades),
   **Collection Archive** (Hamster Index), **Rebirth Altar** (Rebirth), **Mailbox** (daily gift), **Hamster Chest** (Hamsters). The central **Shop** stall in the plaza opens the Shop.
-- **Hotbar** (`HotbarUI`, `HotbarConfig`): permanent bottom bar, keys 1-6 or tap. Slot 1 = Slap (the real ability, shows its cooldown); the other slots are consumable items bought in the
+- **Hotbar** (`HotbarUI`, `HotbarConfig`): permanent bottom bar, keys 1-8 or tap. Slot 1 = Slap (the real ability, shows its cooldown); the other slots are consumable items bought in the
   Shop (2x Cash, 2x Luck, Speed Tonic, Auto Collector, Cash Pouch). Counts live in the server-owned `Items` table; `UseItem` is validated on the server. There is no fake weapon system.
 - **Shop** (`ShopUI`, `ShopConfig`): categories (Boosts, Equipment, Hamsters, Diamonds, Cosmetics, Limited Offers) are configuration-driven and only shown when they hold items that can
   really be bought right now. Each item names its currency (Cash / Diamonds / Robux) and price; the server validates, charges and grants atomically and refuses double clicks.

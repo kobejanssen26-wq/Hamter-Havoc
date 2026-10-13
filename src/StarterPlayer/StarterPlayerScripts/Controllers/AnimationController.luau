@@ -105,10 +105,29 @@ local function start(track: AnimationTrack, options: PlayOptions?, def: any?): A
 	return track
 end
 
+-- The rig of the character a Humanoid belongs to: "R15", "R6" or nil (not a character).
+local function rigOf(target: Instance): string?
+	local humanoid: Instance? = if target:IsA("Humanoid") then target else nil
+	if not humanoid then
+		local model = target:FindFirstAncestorOfClass("Model")
+		humanoid = if model then model:FindFirstChildOfClass("Humanoid") else nil
+	end
+	if humanoid and humanoid:IsA("Humanoid") then
+		return if humanoid.RigType == Enum.HumanoidRigType.R6 then "R6" else "R15"
+	end
+	return nil
+end
+
 -- Plays a registry animation by name on a Humanoid / AnimationController / Animator. Returns the track or nil.
 function AnimationController.play(target: Instance, name: string, options: PlayOptions?): AnimationTrack?
 	local def = AnimationRegistry.playable(name)
 	if not def then
+		return nil
+	end
+	-- an R15 animation does nothing useful on an R6 body (and the other way round): say so once instead of silently failing
+	local rig = rigOf(target)
+	if rig and def.Rig ~= "Any" and def.Rig ~= "Hamster" and def.Rig ~= rig then
+		warnOnce("rig:" .. name, string.format("animation '%s' is made for %s but this character is %s - skipped", name, tostring(def.Rig), rig))
 		return nil
 	end
 	local track = AnimationController.loadAsset(target, def.AssetId, "reg:" .. name)
