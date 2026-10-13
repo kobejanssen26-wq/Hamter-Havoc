@@ -11,17 +11,15 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 
 local Modules = ReplicatedStorage:WaitForChild("Modules")
-local HamsterStates = require(Modules:WaitForChild("HamsterStates"))
+local GameConfig = require(Modules:WaitForChild("GameConfig"))
 local ItemRegistry = require(Modules:WaitForChild("ItemRegistry"))
 local Remotes = require(ReplicatedStorage:WaitForChild("Remotes"))
-
-local AudioController = require(script.Parent.AudioController)
 
 local CombatController = {}
 
 local ACTION = "HamsterSlap"
 local lastAttack = 0
-local lastCooldown = HamsterStates.Config.SlapCooldown
+local lastCooldown = GameConfig.get("Combat", "PawCooldown")
 
 -- The weapon Tool the character holds right now: (definition, tool) or nil. (Ownership is the server's call.)
 function CombatController.held(): (any?, Tool?)
@@ -41,7 +39,7 @@ end
 
 local function cooldown(): number
 	local def = CombatController.held()
-	return if def then def.Equip.Weapon.Cooldown else HamsterStates.Config.SlapCooldown
+	return if def then def.Equip.Weapon.Cooldown else GameConfig.get("Combat", "PawCooldown")
 end
 
 -- Where a ranged weapon aims: from the character towards what the cursor / screen centre points at.
@@ -77,12 +75,9 @@ function CombatController.attack(): boolean
 		lastAttack = now
 		lastCooldown = wait
 		local def = CombatController.held()
-		local aim = if def and def.Equip.Weapon.Type == "Ranged" then aimDirection() else nil
+		local aim = if def and (def.Equip.Weapon.Type == "Ranged" or def.Equip.Weapon.Type == "Freeze") then aimDirection() else nil
 		Remotes.event("Attack"):FireServer(aim)
-		if not def then
-			AudioController.play("Slap")
-		end
-		return true
+		return true -- the swing animation and sound start when the server announces the swing (Fx "Swing")
 	end
 	return false
 end

@@ -36,7 +36,7 @@ L
 }
 
 if [ "$1" = "--all" ]; then
-	for s in scn_loop scn_ui scn_gear scn_rebirth scn_world scn_audit scn_tutorial scn_theft scn_lb scn_content scn_econ scn_wheels scn_game; do
+	for s in scn_loop scn_ui scn_gear scn_combat scn_rebirth scn_world scn_audit scn_tutorial scn_theft scn_lb scn_content scn_econ scn_wheels scn_game; do
 		if [ "$s" = "scn_content" ]; then out="$( (with_temp_content) )"; else out="$(run_one $s.lua)"; fi
 		echo "== $s: $(echo "$out" | grep -E 'PASS [0-9]+|TOTAL ERRORS|fails:' | tail -1)"
 		echo "$out" | grep -E "\[FAIL\]" || true

@@ -49,14 +49,7 @@ HamsterStates.Config = {
 	StolenInsurance = 0.25, -- payer gets this share back when somebody else secures their stolen hamster
 	VanishRefund = 1.0, -- payer leaves / ball is removed: full refund
 
-	-- fighting
-	SlapCooldown = 1.1,
-	SlapRange = 8,
-	SlapArc = 0.15, -- minimum dot(look, toTarget)
-	StunSeconds = 0.9,
-	StunImmunitySeconds = 1.6,
-	DropChance = 0.7, -- chance that a hit carrier loses the hamster
-	KnockbackPower = 38,
+	-- fighting numbers (slap range, cooldown, knockback ...) live in GameConfig.luau > Combat
 }
 
 -- Radius of the glass ball (studs). Bigger rarity = bigger ball.

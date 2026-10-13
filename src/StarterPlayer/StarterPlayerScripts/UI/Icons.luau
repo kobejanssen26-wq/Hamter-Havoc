@@ -518,6 +518,52 @@ draw.bat = function(c)
 	shape(c, 0.14, 0.78, 0.14, 0.14, rgb(255, 107, 107), { Circle = true, Stroke = rgb(150, 60, 60), Z = 3 })
 end
 
+-- Mega Slap Glove: a big yellow glove with a pink cuff.
+draw.glove = function(c)
+	local skin = tint(c, rgb(255, 214, 92))
+	shape(c, 0.14, 0.66, 0.4, 0.26, rgb(255, 74, 120), { Radius = 0.25, Rot = 40, Stroke = rgb(160, 40, 76), Z = 1 })
+	shape(c, 0.3, 0.2, 0.52, 0.5, skin, { Circle = true, Top = rgb(255, 240, 160), Stroke = rgb(190, 140, 30), Z = 2 })
+	for index = 0, 2 do
+		shape(c, 0.46 + index * 0.13, 0.04 + index * 0.05, 0.14, 0.3, skin, { Radius = 0.5, Rot = 25, Stroke = rgb(190, 140, 30), Z = 3 })
+	end
+	shape(c, 0.22, 0.34, 0.2, 0.2, skin, { Circle = true, Stroke = rgb(190, 140, 30), Z = 3 })
+end
+
+-- Spring Boxing Glove: red glove on a coil.
+draw.spring = function(c)
+	for coil = 0, 3 do
+		shape(c, 0.1 + coil * 0.07, 0.62 - coil * 0.1 + 0.18, 0.34, 0.1, rgb(190, 198, 214), { Radius = 0.5, Rot = 40, Stroke = rgb(110, 118, 140), Z = 1 })
+	end
+	shape(c, 0.36, 0.06, 0.58, 0.54, tint(c, rgb(235, 52, 62)), { Circle = true, Top = rgb(255, 130, 130), Stroke = rgb(140, 20, 30), Z = 2 })
+	shape(c, 0.34, 0.5, 0.26, 0.14, rgb(255, 255, 255), { Radius = 0.3, Rot = 40, Stroke = rgb(180, 180, 190), Z = 3 })
+end
+
+-- Shock Baton: dark grip, silver shaft, glowing coils, spark.
+draw.baton = function(c)
+	shape(c, 0.12, 0.5, 0.14, 0.46, rgb(40, 42, 54), { Radius = 0.5, Rot = 45, Stroke = rgb(20, 22, 30), Z = 1 })
+	shape(c, 0.38, 0.26, 0.1, 0.5, rgb(170, 178, 196), { Radius = 0.5, Rot = 45, Stroke = rgb(100, 108, 126), Z = 2 })
+	for coil = 0, 2 do
+		shape(c, 0.34 + coil * 0.12, 0.38 - coil * 0.12, 0.2, 0.07, tint(c, rgb(70, 220, 255)), { Radius = 0.5, Rot = -45, Z = 3 })
+	end
+	shape(c, 0.7, 0.04, 0.24, 0.24, rgb(200, 245, 255), { Circle = true, Stroke = rgb(70, 220, 255), Z = 4 })
+end
+
+-- Party Hammer: striped neon head on a purple handle.
+draw.hammer = function(c)
+	shape(c, 0.44, 0.34, 0.1, 0.6, rgb(110, 70, 140), { Radius = 0.5, Rot = 40, Stroke = rgb(60, 36, 84), Z = 1 })
+	shape(c, 0.2, 0.06, 0.66, 0.34, tint(c, rgb(255, 90, 200)), { Radius = 0.18, Rot = 40, Top = rgb(255, 170, 230), Stroke = rgb(150, 30, 110), Z = 2 })
+	shape(c, 0.4, 0.14, 0.1, 0.4, rgb(255, 226, 80), { Rot = 40, Z = 3 })
+	shape(c, 0.56, 0.1, 0.1, 0.4, rgb(255, 226, 80), { Rot = 40, Z = 3 })
+end
+
+-- Bubble Shield: round blue shield with a gold rim and a cross.
+draw.shield = function(c)
+	shape(c, 0.1, 0.1, 0.8, 0.8, rgb(255, 226, 80), { Circle = true, Stroke = rgb(170, 130, 20), Z = 1 })
+	shape(c, 0.18, 0.18, 0.64, 0.64, tint(c, rgb(76, 168, 255)), { Circle = true, Top = rgb(160, 214, 255), Stroke = rgb(30, 90, 170), Z = 2 })
+	shape(c, 0.44, 0.24, 0.12, 0.52, rgb(255, 255, 255), { Radius = 0.3, Z = 3 })
+	shape(c, 0.24, 0.44, 0.52, 0.12, rgb(255, 255, 255), { Radius = 0.3, Z = 3 })
+end
+
 draw.ladle = function(c)
 	local metal = tint(c, rgb(176, 186, 204))
 	shape(c, 0.44, 0.34, 0.1, 0.62, rgb(138, 90, 58), { Radius = 0.5, Rot = 45, Stroke = rgb(90, 56, 34), Z = 1 })

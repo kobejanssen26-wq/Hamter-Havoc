@@ -97,6 +97,11 @@ function ItemView.stats(def: any): { { string } }
 			table.insert(lines, { "Lasts", string.format("%d s", w.Duration) })
 			table.insert(lines, { "Cooldown", string.format("%d s", w.Cooldown) })
 			table.insert(lines, { "Counter", "Cyan outline, pops on hit" })
+		elseif w.Type == "Guard" then
+			table.insert(lines, { "Ability", "Shield: blocks knockback and stun" })
+			table.insert(lines, { "Lasts", string.format("%d s", w.Duration) })
+			table.insert(lines, { "Cooldown", string.format("%d s", w.Cooldown) })
+			table.insert(lines, { "Limit", "Not while carrying a hamster" })
 		else
 			table.insert(lines, { "Type", if w.Type == "Ranged" then "Ranged" else "Melee" })
 			table.insert(lines, { "Range", string.format("%d studs", w.Range) })

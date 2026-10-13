@@ -215,11 +215,14 @@ end
 local ITEM_CATEGORIES = { Weapon = true, Equipment = true, Consumable = true }
 local PASSIVE_STATS = { CollectRange = true, WalkSpeed = true }
 local WEAPON_LIMITS = { Range = { 3, 80 }, Cooldown = { 0.3, 10 }, Knockback = { 0, 100 }, Stun = { 0, 3 }, DropChance = { 0, 1 }, Arc = { -1, 1 } }
+-- optional numbers every attack may set (otherwise CombatTiming / GameConfig defaults apply)
+local OPTIONAL_WEAPON_LIMITS = { WindUp = { 0, 1 }, Active = { 0, 0.6 }, Lift = { 0, 40 } }
 -- Ability weapons: their own stat sets and hard caps, so no item file can make an unbounded power.
 local ABILITY_LIMITS = {
 	Freeze = { Range = { 5, 60 }, Cooldown = { 8, 120 }, Duration = { 0.5, 3 } },
 	Cloak = { Cooldown = { 15, 180 }, Duration = { 2, 10 } },
 	Decoy = { Cooldown = { 15, 180 }, Duration = { 2, 10 } },
+	Guard = { Cooldown = { 10, 120 }, Duration = { 1, 6 } },
 }
 local BOOST_IDS = { Coins2x = true, Luck2x = true, Speed2x = true, AutoCollect = true }
 
@@ -284,13 +287,25 @@ function ContentValidator.validateItem(def: any, context: any): { Issue }
 		else
 			local limitsFor = if weapon.Type == "Melee" or weapon.Type == "Ranged" then WEAPON_LIMITS else ABILITY_LIMITS[weapon.Type]
 			if not limitsFor then
-				err("Weapon.Type must be Melee, Ranged, Freeze, Cloak or Decoy")
+				err("Weapon.Type must be Melee, Ranged, Freeze, Cloak, Decoy or Guard")
 			else
 				for stat, limits in limitsFor do
 					local value = weapon[stat]
 					if type(value) ~= "number" or value ~= value or value < limits[1] or value > limits[2] then
 						err(string.format("Weapon.%s must be a number between %s and %s", stat, limits[1], limits[2]))
 					end
+				end
+				for stat, limits in OPTIONAL_WEAPON_LIMITS do
+					local value = weapon[stat]
+					if value ~= nil and (type(value) ~= "number" or value ~= value or value < limits[1] or value > limits[2]) then
+						err(string.format("Weapon.%s must be a number between %s and %s", stat, limits[1], limits[2]))
+					end
+				end
+				if type(weapon.Cooldown) == "number" and (weapon.Cooldown < (weapon.WindUp or 0) + (weapon.Active or 0)) then
+					err("Weapon.Cooldown must be at least WindUp + Active (the swing has to finish before the next one)")
+				end
+				if weapon.Animation ~= nil and type(weapon.Animation) ~= "string" then
+					err("Weapon.Animation must be the Name of an animation in Content/Animations")
 				end
 			end
 		end

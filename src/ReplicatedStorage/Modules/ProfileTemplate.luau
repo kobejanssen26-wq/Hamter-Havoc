@@ -3,14 +3,15 @@
 	(so adding a field later never breaks old saves). Must stay JSON-serialisable.
 ]]
 
+local GameConfig = require(script.Parent.GameConfig)
 local SettingsConfig = require(script.Parent.SettingsConfig)
 
 return {
 	Version = 1,
 
 	-- currencies
-	Coins = 250, -- enough for the first Basic hamster (100) and a spare
-	Gems = 25,
+	Coins = GameConfig.get("Economy", "StartingCash"), -- GameConfig.luau > Economy
+	Gems = GameConfig.get("Economy", "StartingDiamonds"),
 	Tokens = 0,
 	Rebirths = 0,
 

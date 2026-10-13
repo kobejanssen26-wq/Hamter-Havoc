@@ -2,12 +2,14 @@
 	AbilitySystem: the special tools (Frost Wand, Shadow Cloak, Mirror Clone). Item files (Content/Items) only choose the
 	numbers; ALL rules live here and are enforced on the server:
 
-	  Freeze   hits the first player on the aim ray (CombatSystem finds the target), freezes them for Duration (capped at 3 s),
+	  Freeze   hits the first player on the aim ray (CombatSystem finds the target), freezes them for Duration (capped by GameConfig > Abilities > FreezeMaxSeconds),
 	           cancels their steal/pick-up channel, and makes them immune to being frozen again for a while (no chain-freezing).
 	  Cloak    the user turns almost invisible for Duration. Counterplay: a faint sparkle trail stays visible, it ends the moment
 	           the user attacks, is hit, is frozen, picks up or carries a hamster, or dies, and it has a long cooldown.
 	  Decoy    a see-through cyan look-alike walks away for Duration. It is only a model: no data, items or currency are copied,
 	           it can't steal or be stolen from, only one exists per player, and any hit pops it.
+
+	Guard    a raised shield: no stun / knockback while it is up (not while carrying a hamster; theft rules still apply).
 
 	Cooldowns are the weapon's Cooldown (CombatSystem). Ownership of the tool is checked by GearSystem.equippedWeapon.
 ]]
@@ -16,6 +18,7 @@ local Debris = game:GetService("Debris")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local GameConfig = require(ReplicatedStorage.Modules.GameConfig)
 local Remotes = require(ReplicatedStorage.Remotes)
 
 local HamsterSystem = require(script.Parent.HamsterSystem)
@@ -24,7 +27,6 @@ local PlayerState = require(script.Parent.PlayerState)
 
 local AbilitySystem = {}
 
-AbilitySystem.FreezeImmunity = 6 -- seconds a frozen player can't be frozen again
 local CLOAK_ALPHA = 0.88
 
 local cloaks: { [Player]: { Until: number, Original: { [BasePart]: number }, Trail: Instance? } } = {}
@@ -43,8 +45,8 @@ function AbilitySystem.freeze(attacker: Player, target: Player, seconds: number)
 	if not targetRoot then
 		return false
 	end
-	seconds = math.clamp(seconds, 0.5, 3)
-	PlayerState.freeze(target, seconds, AbilitySystem.FreezeImmunity)
+	seconds = math.clamp(seconds, 0.5, GameConfig.get("Abilities", "FreezeMaxSeconds"))
+	PlayerState.freeze(target, seconds, GameConfig.get("Abilities", "FreezeImmunitySeconds"))
 	HamsterSystem.interrupt(target)
 	AbilitySystem.endCloak(target) -- being frozen reveals you
 	-- an ice block around the target, visible to everybody, removed when the freeze ends
@@ -231,6 +233,70 @@ function AbilitySystem.hasDecoy(player: Player): boolean
 end
 
 ---------------------------------------------------------------------------
+-- Guard (shield)
+---------------------------------------------------------------------------
+
+local guards: { [Player]: { Until: number, Shield: Instance? } } = {}
+
+function AbilitySystem.isGuarding(player: Player): boolean
+	local guard = guards[player]
+	return guard ~= nil and guard.Until > os.clock()
+end
+
+function AbilitySystem.endGuard(player: Player)
+	local guard = guards[player]
+	if not guard then
+		return
+	end
+	guards[player] = nil
+	if guard.Shield then
+		guard.Shield:Destroy()
+	end
+	player:SetAttribute("Guarding", nil)
+end
+
+-- A raised shield: while it is up, hits do not stun or knock you back. It does NOT stop theft rules or hamster drops, and it
+-- can't be raised while you carry a hamster (so it can't be used to make a theft unstoppable). Returns (ok, message).
+function AbilitySystem.guard(player: Player, seconds: number): (boolean, string?)
+	if AbilitySystem.isGuarding(player) then
+		return false, "Your shield is already up"
+	end
+	if HamsterSystem.carriedBy(player) then
+		return false, "You can't raise the shield while carrying a hamster"
+	end
+	local humanoid, root = PlayerState.character(player)
+	if not humanoid or not root then
+		return false, "You can't use the shield right now"
+	end
+	local shield = Instance.new("Part")
+	shield.Name = "GuardBubble"
+	shield.Shape = Enum.PartType.Ball
+	shield.Size = Vector3.new(7.5, 7.5, 7.5)
+	shield.Material = Enum.Material.ForceField
+	shield.Color = Color3.fromRGB(90, 190, 255)
+	shield.Transparency = 0.5
+	shield.CanCollide = false
+	shield.CanTouch = false
+	shield.CanQuery = false
+	shield.Massless = true
+	shield.CFrame = root.CFrame
+	local weld = Instance.new("WeldConstraint")
+	weld.Part0 = root
+	weld.Part1 = shield
+	weld.Parent = shield
+	shield.Parent = root.Parent
+	local entry = { Until = os.clock() + math.clamp(seconds, 1, 6), Shield = shield :: Instance? }
+	guards[player] = entry
+	player:SetAttribute("Guarding", true)
+	task.delay(entry.Until - os.clock(), function()
+		if guards[player] == entry then
+			AbilitySystem.endGuard(player)
+		end
+	end)
+	return true, nil
+end
+
+---------------------------------------------------------------------------
 -- lifecycle
 ---------------------------------------------------------------------------
 
@@ -240,6 +306,7 @@ function AbilitySystem.reveal(player: Player)
 end
 
 function AbilitySystem.forget(player: Player)
+	AbilitySystem.endGuard(player)
 	AbilitySystem.endCloak(player)
 	AbilitySystem.removeDecoy(player)
 end
@@ -247,6 +314,7 @@ end
 function AbilitySystem.start()
 	local function watch(player: Player)
 		player.CharacterRemoving:Connect(function()
+			AbilitySystem.endGuard(player)
 			cloaks[player] = nil
 			AbilitySystem.removeDecoy(player)
 		end)

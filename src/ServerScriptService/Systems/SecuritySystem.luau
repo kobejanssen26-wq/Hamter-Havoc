@@ -117,7 +117,7 @@ function SecuritySystem.activate(house: HouseBuilder.House): boolean
 	local data = DataSystem.get(owner)
 	local time = now()
 	entry.Until = time + SecurityConfig.duration(if data then data.Rebirths else 0)
-	entry.ReadyAt = entry.Until + tier.Recharge
+	entry.ReadyAt = entry.Until + SecurityConfig.recharge(tier)
 	publish(house)
 	return true
 end

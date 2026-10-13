@@ -76,7 +76,7 @@ task.spawn(function()
 	for _, def in ItemRegistry.List do
 		if def.Equip.Kind == "Tool" then weapons += 1 elseif def.Equip.Kind == "Passive" then gear += 1 else consumables += 1 end
 	end
-	check("5 weapons/abilities, 2 equipment items, 5 consumables are registered", weapons == 5 and gear == 2 and consumables == 5, weapons .. "/" .. gear .. "/" .. consumables)
+	check("10 weapons/abilities, 2 equipment items, 5 consumables are registered", weapons == 10 and gear == 2 and consumables == 5, weapons .. "/" .. gear .. "/" .. consumables)
 	check("the template item is not registered", ItemRegistry.ById["template_item"] == nil and ItemRegistry.ById["my_item_id"] == nil)
 	local cats = {}
 	for _, c in ShopConfig.categories() do cats[c.Id] = c end
@@ -232,13 +232,25 @@ task.spawn(function()
 	local stunsBefore = a.Stats.Slaps or 0
 	CombatSystem.attack(alice, nil)
 	check("a second swing inside the cooldown is ignored", (a.Stats.Slaps or 0) == stunsBefore)
-	-- no fight context
+	-- no hamster nearby: the hit still works now (the old "only near a hamster" rule is a GameConfig switch)
 	adv(60)
 	place(carol, Vector3.new(0, 5, 0))
 	place(alice, Vector3.new(0, 5, 6), Vector3.new(0, 5, 0))
 	CombatSystem.attack(alice, nil)
-	adv(0.3)
-	check("a weapon never works outside a hamster fight (no griefing)", not PlayerState.isStunned(carol))
+	adv(0.5)
+	check("a weapon hit works with no hamster anywhere near (fix: it used to need a carried hamster)", PlayerState.isStunned(carol))
+	local GameConfig = require(find(MOD .. "GameConfig"))
+	adv(60)
+	GameConfig.set("Combat", "PvpNeedsHamsterNearby", true, true)
+	PlayerState.clear(carol); PlayerState.grantImmunity(carol, 0)
+	adv(3)
+	place(carol, Vector3.new(500, 5, 500)); place(alice, Vector3.new(500, 5, 506), Vector3.new(500, 5, 500))
+	adv(3)
+	CombatSystem.attack(alice, nil)
+	adv(0.5)
+	check("with PvpNeedsHamsterNearby = true the old rule is back (no hamster fight, no hit)", not PlayerState.isStunned(carol))
+	GameConfig.reset("Combat", "PvpNeedsHamsterNearby", true)
+	adv(60)
 
 	-- ranged: second theft, this time carol steals slot 2
 	adv(10)
@@ -581,6 +593,7 @@ task.spawn(function()
 	click(byName(shop.Gui, "Tab_Weapons")[1])
 	check("weapon cards listed", #byName(shop.Gui, "Item_gear_foam_bat") == 1 and #byName(shop.Gui, "Item_gear_shadow_cloak") == 1 and #byName(shop.Gui, "Item_gear_seed_slingshot") == 1)
 	check("detail panel shows the selected weapon", string.find(textsOf(byName(shop.Gui, "Detail")[1]), "Cooldown", 1, true) ~= nil and #byName(shop.Gui, "DetailIcon") == 1)
+	click(byName(shop.Gui, "Item_gear_foam_bat")[1])
 	check("owned weapon offers Equip instead of Buy", #byName(shop.Gui, "Action") == 1 and (string.find(tostring(RawData[byName(shop.Gui, "Action")[1]].Props.Text), "Equip", 1, true) ~= nil), #byName(shop.Gui, "Action") .. ":" .. textsOf(shop.Gui):sub(1, 400))
 	-- rebirth-locked weapons stay visible with a lock + requirement
 	M.isServer = true; a.Gear.mirror_clone = nil; a.Rebirths = 0; require(find(S .. "ReplicationSystem")).mark(alice, "Gear", "Hotbar", "Rebirths"); M.isServer = false

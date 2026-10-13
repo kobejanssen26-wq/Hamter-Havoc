@@ -1,7 +1,7 @@
 --[[
 	ToolBuilder: turns an ItemRegistry weapon into a real Roblox Tool.
 	  - a Tool named after the item with attributes ItemId / WeaponType, RequiresHandle = true, cannot be dropped
-	  - built-in geometry per Look.Style ("bat", "ladle", "slingshot"): a Handle plus welded parts, all massless and
+	  - built-in geometry per Look.Style ("bat", "glove", "spring", "baton", "hammer", "shield", "wand", "slingshot", "cloak", "mirror"): a Handle plus welded parts, all massless and
 	    non-colliding (a weapon can never trip or push anybody)
 	  - or your own Tool from Studio: item.ModelName -> ReplicatedStorage/Assets/Tools/<ModelName> (needs a part named Handle)
 	The tool itself does nothing: attacks are requests the server validates (CombatSystem). It only has to look right.
@@ -134,6 +134,89 @@ STYLES.mirror = function(tool: Tool, look: any)
 	face.Reflectance = 0.45
 	part(tool, "Gem", Vector3.new(0.4, 0.4, 0.3), CFrame.new(0, 1.05, -1.55), Color3.fromRGB(255, 100, 140), Enum.Material.Neon, Enum.PartType.Ball)
 	tool.Grip = CFrame.new(0, 0, 0.8)
+end
+
+-- Mega Slap Glove: a huge cartoon glove on a short cuff - cuff, round palm, four fat fingers and a thumb.
+STYLES.glove = function(tool: Tool, look: any)
+	local skin = color(look.Color, Color3.fromRGB(255, 214, 92))
+	local cuffColor = color(look.Accent, Color3.fromRGB(255, 74, 120))
+	local shade = Color3.fromRGB(214, 164, 40)
+	handle(tool, Vector3.new(0.7, 0.7, 1.6), cuffColor, Enum.Material.SmoothPlastic)
+	part(tool, "CuffBand", Vector3.new(1.5, 1.5, 0.5), CFrame.new(0, 0, -0.9), Color3.fromRGB(255, 255, 255), Enum.Material.SmoothPlastic, Enum.PartType.Cylinder)
+	part(tool, "CuffRim", Vector3.new(1.7, 1.7, 0.35), CFrame.new(0, 0, -1.25), cuffColor, Enum.Material.SmoothPlastic, Enum.PartType.Cylinder)
+	part(tool, "Palm", Vector3.new(2.7, 2.3, 2.1), CFrame.new(0, 0, -2.5), skin, Enum.Material.SmoothPlastic, Enum.PartType.Ball)
+	for index = 0, 3 do
+		local x = -0.9 + index * 0.6
+		local lift = if index == 1 or index == 2 then 0.25 else 0
+		part(tool, "Finger" .. index, Vector3.new(0.62, 0.62, 1.5), CFrame.new(x, 0.35 + lift, -3.75), skin, Enum.Material.SmoothPlastic, Enum.PartType.Ball)
+		part(tool, "Knuckle" .. index, Vector3.new(0.45, 0.2, 0.2), CFrame.new(x, 0.9 + lift, -3.1), shade, Enum.Material.SmoothPlastic)
+	end
+	part(tool, "Thumb", Vector3.new(0.75, 0.75, 1.3), CFrame.new(-1.45, -0.1, -3.0) * CFrame.Angles(0, math.rad(35), 0), skin, Enum.Material.SmoothPlastic, Enum.PartType.Ball)
+	tool.Grip = CFrame.new(0, 0, 0.5)
+end
+
+-- Spring Boxing Glove: a handle, a visible coil spring and a red boxing glove that punches out on the swing.
+STYLES.spring = function(tool: Tool, look: any)
+	local red = color(look.Color, Color3.fromRGB(235, 52, 62))
+	local steel = color(look.Accent, Color3.fromRGB(190, 198, 214))
+	handle(tool, Vector3.new(0.5, 0.5, 2.0), Color3.fromRGB(60, 64, 80), Enum.Material.SmoothPlastic)
+	part(tool, "Plate", Vector3.new(1.4, 1.4, 0.25), CFrame.new(0, 0, -1.1), steel, Enum.Material.Metal, Enum.PartType.Cylinder)
+	for coil = 0, 4 do
+		part(tool, "Coil" .. coil, Vector3.new(1.05, 1.05, 0.16), CFrame.new(0, 0, -1.5 - coil * 0.34), if coil % 2 == 0 then steel else Color3.fromRGB(128, 136, 156), Enum.Material.Metal, Enum.PartType.Cylinder)
+	end
+	part(tool, "Rod", Vector3.new(0.3, 0.3, 1.8), CFrame.new(0, 0, -2.3), Color3.fromRGB(128, 136, 156), Enum.Material.Metal)
+	part(tool, "Fist", Vector3.new(2.7, 2.5, 2.6), CFrame.new(0, 0.1, -4.0), red, Enum.Material.SmoothPlastic, Enum.PartType.Ball)
+	part(tool, "FistThumb", Vector3.new(0.9, 0.9, 1.4), CFrame.new(-1.2, 0.2, -3.5) * CFrame.Angles(0, math.rad(25), 0), red, Enum.Material.SmoothPlastic, Enum.PartType.Ball)
+	part(tool, "FistCuff", Vector3.new(1.7, 1.7, 0.45), CFrame.new(0, 0, -2.95), Color3.fromRGB(255, 255, 255), Enum.Material.SmoothPlastic, Enum.PartType.Cylinder)
+	part(tool, "FistStripe", Vector3.new(1.2, 0.3, 0.9), CFrame.new(0, 1.15, -4.2), Color3.fromRGB(255, 255, 255), Enum.Material.SmoothPlastic)
+	tool.Grip = CFrame.new(0, 0, 0.8)
+end
+
+-- Shock Baton: black grip, silver shaft, three glowing coils and a spark ball on the tip.
+STYLES.baton = function(tool: Tool, look: any)
+	local glow = color(look.Color, Color3.fromRGB(70, 220, 255))
+	local metal = color(look.Accent, Color3.fromRGB(170, 178, 196))
+	handle(tool, Vector3.new(0.5, 0.5, 1.9), Color3.fromRGB(32, 34, 44), Enum.Material.SmoothPlastic)
+	for ring = 0, 2 do
+		part(tool, "GripRing" .. ring, Vector3.new(0.68, 0.68, 0.14), CFrame.new(0, 0, 0.5 - ring * 0.45), Color3.fromRGB(60, 64, 80), Enum.Material.SmoothPlastic, Enum.PartType.Cylinder)
+	end
+	part(tool, "Shaft", Vector3.new(0.36, 0.36, 3.0), CFrame.new(0, 0, -2.4), metal, Enum.Material.Metal)
+	for coil = 0, 2 do
+		part(tool, "Coil" .. coil, Vector3.new(0.78, 0.78, 0.2), CFrame.new(0, 0, -2.0 - coil * 0.75), glow, Enum.Material.Neon, Enum.PartType.Cylinder)
+	end
+	part(tool, "TipCap", Vector3.new(0.6, 0.6, 0.35), CFrame.new(0, 0, -4.05), metal, Enum.Material.Metal, Enum.PartType.Cylinder)
+	local spark = part(tool, "Spark", Vector3.new(0.85, 0.85, 0.85), CFrame.new(0, 0, -4.5), glow, Enum.Material.Neon, Enum.PartType.Ball)
+	spark.Transparency = 0.1
+	tool.Grip = CFrame.new(0, 0, 0.8)
+end
+
+-- Party Hammer: a stout handle and a big striped energy head.
+STYLES.hammer = function(tool: Tool, look: any)
+	local head = color(look.Color, Color3.fromRGB(255, 90, 200))
+	local accent = color(look.Accent, Color3.fromRGB(255, 226, 80))
+	handle(tool, Vector3.new(0.55, 0.55, 3.4), Color3.fromRGB(110, 70, 140), Enum.Material.SmoothPlastic)
+	part(tool, "GripWrap", Vector3.new(0.7, 0.7, 1.2), CFrame.new(0, 0, 1.0), accent, Enum.Material.SmoothPlastic, Enum.PartType.Cylinder)
+	part(tool, "Pommel", Vector3.new(0.9, 0.9, 0.5), CFrame.new(0, 0, 1.9), accent, Enum.Material.Neon, Enum.PartType.Ball)
+	part(tool, "HeadCore", Vector3.new(3.4, 1.7, 1.9), CFrame.new(0, 0, -2.2), head, Enum.Material.Neon)
+	part(tool, "HeadBandA", Vector3.new(3.5, 1.8, 0.4), CFrame.new(0, 0, -1.5), accent, Enum.Material.SmoothPlastic)
+	part(tool, "HeadBandB", Vector3.new(3.5, 1.8, 0.4), CFrame.new(0, 0, -2.9), accent, Enum.Material.SmoothPlastic)
+	part(tool, "CapL", Vector3.new(0.5, 2.1, 2.1), CFrame.new(-1.9, 0, -2.2), Color3.fromRGB(70, 220, 255), Enum.Material.Neon, Enum.PartType.Cylinder)
+	part(tool, "CapR", Vector3.new(0.5, 2.1, 2.1), CFrame.new(1.9, 0, -2.2), Color3.fromRGB(70, 220, 255), Enum.Material.Neon, Enum.PartType.Cylinder)
+	tool.Grip = CFrame.new(0, 0, 1.1)
+end
+
+-- Bubble Shield: a round shield held in front of the body, with a glowing centre and a rim.
+STYLES.shield = function(tool: Tool, look: any)
+	local face = color(look.Color, Color3.fromRGB(76, 168, 255))
+	local rim = color(look.Accent, Color3.fromRGB(255, 226, 80))
+	handle(tool, Vector3.new(0.45, 0.45, 1.0), Color3.fromRGB(60, 64, 80), Enum.Material.SmoothPlastic)
+	local disc = part(tool, "Disc", Vector3.new(0.35, 3.8, 3.8), CFrame.new(0, 0, -1.0) * CFrame.Angles(0, math.rad(90), 0), face, Enum.Material.SmoothPlastic, Enum.PartType.Cylinder)
+	disc.Reflectance = 0.1
+	part(tool, "Rim", Vector3.new(0.5, 4.2, 4.2), CFrame.new(0, 0, -0.9) * CFrame.Angles(0, math.rad(90), 0), rim, Enum.Material.Metal, Enum.PartType.Cylinder)
+	part(tool, "Boss", Vector3.new(0.7, 1.3, 1.3), CFrame.new(0, 0, -1.35) * CFrame.Angles(0, math.rad(90), 0), rim, Enum.Material.Neon, Enum.PartType.Cylinder)
+	part(tool, "BarH", Vector3.new(3.0, 0.35, 0.2), CFrame.new(0, 0, -1.25), Color3.fromRGB(255, 255, 255), Enum.Material.SmoothPlastic)
+	part(tool, "BarV", Vector3.new(0.35, 3.0, 0.2), CFrame.new(0, 0, -1.25), Color3.fromRGB(255, 255, 255), Enum.Material.SmoothPlastic)
+	tool.Grip = CFrame.new(0, 0, 0.3)
 end
 
 function ToolBuilder.build(def: any): Tool

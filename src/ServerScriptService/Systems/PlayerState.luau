@@ -97,6 +97,18 @@ function PlayerState.freeze(player: Player, seconds: number, immunity: number?)
 	end)
 end
 
+-- Can not be hit / frozen for `seconds` (spawn protection, guard blocks). Never shortens an existing immunity.
+function PlayerState.grantImmunity(player: Player, seconds: number)
+	immuneUntil[player] = math.max(immuneUntil[player] or 0, os.clock() + seconds)
+end
+
+-- Removes every stun / freeze / carry slowdown (respawn, admin tools) and restores normal movement.
+function PlayerState.clear(player: Player)
+	stunnedUntil[player] = nil
+	frozenUntil[player] = nil
+	PlayerState.apply(player)
+end
+
 function PlayerState.setCarry(player: Player, factor: number?)
 	carryFactor[player] = factor
 	PlayerState.apply(player)

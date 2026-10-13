@@ -17,6 +17,7 @@ local Remotes = require(ReplicatedStorage:WaitForChild("Remotes"))
 
 local AudioController = require(script.Parent.AudioController)
 local DataController = require(script.Parent.DataController)
+local WeaponAnimator = require(script.Parent.WeaponAnimator)
 
 local FxController = {}
 
@@ -388,35 +389,15 @@ local function distanceToMe(position: Vector3): number
 	return math.huge
 end
 
--- A weapon swing / shot, drawn on every client from the server's broadcast (cosmetic only: damage is server-side).
+-- The visible part of a weapon swing / shot, drawn on every client from the server's broadcast (cosmetic only).
+-- The swing animation itself is WeaponAnimator's job (Fx "Swing").
 function FxController.weaponUse(itemId: string, position: Vector3, userId: any, direction: any)
 	local def = ItemRegistry.get(itemId)
 	if not def or def.Equip.Kind ~= "Tool" then
 		return
 	end
 	local stats = def.Equip.Weapon
-	local player = if type(userId) == "number" then Players:GetPlayerByUserId(userId) else nil
-	local character = player and player.Character
-	local tool = nil
-	if character then
-		for _, child in character:GetChildren() do
-			if child:IsA("Tool") and child:GetAttribute("ItemId") == itemId then
-				tool = child
-			end
-		end
-	end
-	AudioController.play("Slap", { Position = position, Pitch = if stats.Type == "Ranged" then 1.5 else 0.75 + math.random() * 0.2 })
-	if tool then
-		local grip = tool.Grip
-		local pull = if stats.Type == "Ranged" then CFrame.new(0, 0, 0.5) else CFrame.Angles(math.rad(-85), 0, 0)
-		local out = TweenService:Create(tool, TweenInfo.new(0.09, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Grip = grip * pull })
-		out:Play()
-		out.Completed:Once(function()
-			if tool.Parent then
-				TweenService:Create(tool, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Grip = grip }):Play()
-			end
-		end)
-	end
+	WeaponAnimator.playForUserId(userId, itemId, position)
 	if stats.Type == "Ranged" and typeof(direction) == "Vector3" and direction.Magnitude > 0.1 then
 		local look = stats.Look or {}
 		local shot = Instance.new("Part")
@@ -496,8 +477,16 @@ function FxController.worldEvent(kind: string, rarityId: string, position: Vecto
 		if near < 25 then
 			FxController.shake(0.5, 0.4)
 		end
-	elseif kind == "Slap" then
-		AudioController.play("Slap", { Position = position, Pitch = 0.9 + math.random() * 0.3 })
+	elseif kind == "Swing" then
+		-- the server started a swing ("" = bare paws): animate it for this attacker (ranged weapons also draw their shot)
+		if rarityId ~= "" then
+			FxController.weaponUse(rarityId, position, extra, direction)
+		else
+			WeaponAnimator.playForUserId(extra, "", position)
+		end
+	elseif kind == "Block" then
+		FxController.burst(lifted, WORLD_COLORS.SecurityOn, 4)
+		AudioController.play("Zap", { Position = position, Pitch = 1.8, Volume = 0.4 })
 	elseif kind == "WeaponUse" then
 		FxController.weaponUse(rarityId, position, extra, direction)
 	elseif kind == "Hit" then
