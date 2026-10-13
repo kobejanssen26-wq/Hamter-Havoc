@@ -562,6 +562,8 @@ define("setRebirths", {
 		EconomySystem.updateAttributes(target)
 		ReplicationSystem.mark(target, "Rebirths")
 		Events.EquippedChanged:Fire(target)
+		-- the same notification a real rebirth sends: the tower grows (floors, trim, stations), slots and the gate follow
+		Events.Rebirthed:Fire(target, count)
 		audit(c.Admin, "rebirths", target.UserId, string.format("%s -> %d", target.Name, count), c.Params.reason)
 		return ok(string.format("%s is now rebirth %d", target.Name, count))
 	end,

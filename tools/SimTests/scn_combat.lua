@@ -416,6 +416,164 @@ task.spawn(function()
 	check("every weapon animation exists in Content/Animations and uses priority Action2 (above emotes and running)", allAction2)
 	check("a weapon animation without an uploaded AssetId is not 'playable' (the built-in swing is used, nothing breaks)", AnimationRegistry.playable("Weapon_SlapGlove") == nil)
 
+	-----------------------------------------------------------------
+	section("13. traps (spike, glue, banana)")
+	reset(); adv(40)
+	local TrapSystem = require(find(S .. "TrapSystem"))
+	local a2 = data(alice); a2.Coins = 5e7; a2.Rebirths = 6; adv(0.5)
+	for _, id in { "gear_spike_trap", "gear_glue_trap", "gear_banana_peel" } do
+		local r = as(alice, "ShopBuy", { Id = id })
+		check("purchase " .. id, r.ok, r.message or r.error)
+	end
+	adv(0.5)
+	as(alice, "EquipItem", { Id = "spike_trap" }); adv(0.5)
+	place(alice, ORIGIN, ORIGIN + Vector3.new(0, 0, 1))
+	CombatSystem.attack(alice, nil); adv(0.4)
+	check("using the spike trap sets one trap in the world", TrapSystem.activeCount(alice) == 1 and workspace:FindFirstChild("Traps") ~= nil)
+	local trap1 = TrapSystem.all()[1]
+	-- not armed yet: stepping on it does nothing
+	place(bob, trap1.Position + Vector3.new(0, 3, 0)); adv(0.3)
+	check("a trap is harmless until it is armed (visible warning time)", not PlayerState.isStunned(bob))
+	adv(1.5)
+	check("then the next stranger who stands on it is stunned and the trap is used up", PlayerState.isStunned(bob) and TrapSystem.activeCount(alice) == 0)
+	-- the owner is never hurt by their own trap
+	adv(10)
+	PlayerState.forget(bob); place(bob, Vector3.new(800, 5, 0))
+	CombatSystem.attack(alice, nil); adv(0.4)
+	local mine = TrapSystem.all()[1]
+	adv(1.6)
+	place(alice, mine.Position + Vector3.new(0, 3, 0)); adv(0.5)
+	check("the owner can stand on their own trap without harm", not PlayerState.isStunned(alice) and TrapSystem.activeCount(alice) == 1)
+	-- max 3 at a time
+	for i = 1, 4 do adv(10); place(alice, ORIGIN + Vector3.new(i * 12, 0, 0), ORIGIN + Vector3.new(i * 12, 0, 1)); CombatSystem.attack(alice, nil); adv(0.3) end
+	check("at most 3 traps per player (the 4th is refused)", TrapSystem.activeCount(alice) == 3, TrapSystem.activeCount(alice))
+	-- spawn protected players are not hit
+	local last = TrapSystem.all()[#TrapSystem.all()]
+	adv(1.6)
+	PlayerState.grantImmunity(carol, 5); place(carol, last.Position + Vector3.new(0, 3, 0)); adv(0.5)
+	check("a spawn-protected / immune player is not hit by a trap", not PlayerState.isStunned(carol))
+	PlayerState.forget(carol); place(carol, Vector3.new(900, 5, 0))
+	-- expiry
+	adv(70)
+	check("traps disappear after their lifetime", TrapSystem.activeCount(alice) == 0)
+	-- safe zone
+	local hall
+	for _, z in CollectionService:GetTagged("SafeZone") do if RawData[z].Name == "SafeZone" then hall = z end end
+	local zp = RawData[hall].Props.CFrame.Position
+	place(alice, Vector3.new(zp.X, 5, zp.Z), Vector3.new(zp.X, 5, zp.Z + 1)); adv(10)
+	CombatSystem.attack(alice, nil); adv(0.4)
+	check("no traps in a safe zone", TrapSystem.activeCount(alice) == 0)
+	-- glue
+	as(alice, "EquipItem", { Id = "glue_trap" }); adv(10)
+	place(alice, ORIGIN, ORIGIN + Vector3.new(0, 0, 1)); PlayerState.forget(bob)
+	CombatSystem.attack(alice, nil); adv(0.3)
+	local glue = TrapSystem.all()[1]
+	adv(1.4)
+	local normalSpeed = RawData[M.InstanceMethods.FindFirstChildOfClass(RawData[bob].Props.Character, "Humanoid")].Props.WalkSpeed
+	place(bob, glue.Position + Vector3.new(0, 3, 0)); adv(0.4)
+	local bobHumanoid = M.InstanceMethods.FindFirstChildOfClass(RawData[bob].Props.Character, "Humanoid")
+	check("glue slows the victim to about a third of their speed (no stun)", PlayerState.isSlowed(bob) and not PlayerState.isStunned(bob) and RawData[bobHumanoid].Props.WalkSpeed < normalSpeed * 0.5, RawData[bobHumanoid].Props.WalkSpeed)
+	adv(5)
+	check("...and normal speed comes back by itself", not PlayerState.isSlowed(bob) and RawData[bobHumanoid].Props.WalkSpeed == normalSpeed, RawData[bobHumanoid].Props.WalkSpeed)
+	-- banana
+	as(alice, "EquipItem", { Id = "banana_peel" }); adv(10)
+	place(bob, Vector3.new(700, 5, 0))
+	place(alice, ORIGIN, ORIGIN + Vector3.new(0, 0, 1)); PlayerState.forget(bob)
+	CombatSystem.attack(alice, nil); adv(0.3)
+	local banana = TrapSystem.all()[1]
+	adv(1.2)
+	M.remoteLog = {}
+	place(bob, banana.Position + Vector3.new(0, 3, 0)); adv(0.4)
+	local flung = false
+	for _, e in M.remoteLog do if e[1] == "Knockback" then flung = true end end
+	check("a banana flings and briefly stuns the victim", flung and PlayerState.isStunned(bob), tostring(flung) .. " stunned=" .. tostring(PlayerState.isStunned(bob)) .. " traps=" .. #TrapSystem.all() .. " kind=" .. tostring(banana and banana.Stats.TrapKind))
+	-- leaving the game removes the player's traps
+	adv(10)
+	CombatSystem.attack(alice, nil); adv(0.3)
+	local before2 = #TrapSystem.all()
+	TrapSystem.forget(alice)
+	check("a player's traps are removed when they leave", #TrapSystem.all() == 0 and before2 >= 1)
+
+	-----------------------------------------------------------------
+	section("14. daily rewards are specific")
+	local DailyRewardConfig = require(find(MOD .. "DailyRewardConfig"))
+	local day1 = DailyRewardConfig.lines(1, 0)
+	check("day 1 says exactly what you get: 500 Cash + Speed Tonic", day1[1] == "500 Cash" and day1[2] == "Speed Tonic", table.concat(day1, " | "))
+	local sunday = require(find(MOD .. "HamsterDatabase")).ById.sunday_sunbeam.Name
+	check("day 7 lists the exclusive hamster, diamonds and the Spike Trap", table.concat(DailyRewardConfig.lines(7, 0), "|") == "150 Diamonds|Spike Trap|" .. sunday .. " (exclusive hamster)", table.concat(DailyRewardConfig.lines(7, 0), "|"))
+	check("every daily reward item exists in the item catalog", (function()
+		for _, day in DailyRewardConfig.Days do for _, id in day.Items or {} do if not ItemRegistry.get(id) then return false end end end
+		return true
+	end)())
+	local c2 = data(carol)
+	c2.Daily = { Streak = 6, LastDay = DailyRewardConfig.dayNumber(os.time()) - 1 }
+	local gemsBefore = c2.Gems
+	adv(2)
+	local claimed = as(carol, "ClaimDaily")
+	adv(0.5)
+	check("claiming day 7 grants the hamster, the diamonds and the Spike Trap weapon", claimed.ok and c2.Gear.spike_trap == true and c2.Gems >= gemsBefore + 150 and (c2.Inventory.sunday_sunbeam or 0) >= 1, tostring(claimed.msg))
+	c2.Daily = { Streak = 0, LastDay = 0 }
+	local itemsBefore = c2.Items.item_speed or 0
+	adv(2)
+	claimed = as(carol, "ClaimDaily")
+	check("claiming day 1 gives cash and one Speed Tonic you can use from the hotbar", claimed.ok and (c2.Items.item_speed or 0) == itemsBefore + 1, tostring(claimed.msg))
+
+	-----------------------------------------------------------------
+	section("15. lucky wheel (server)")
+	local SpinWheelConfig = require(find(MOD .. "SpinWheelConfig"))
+	local counts, rng = {}, Random.new(7)
+	for _ = 1, 20000 do local i = SpinWheelConfig.pick(rng:NextNumber()) counts[i] = (counts[i] or 0) + 1 end
+	local fair = true
+	for i, prize in SpinWheelConfig.Prizes do
+		local expected = prize.Weight / SpinWheelConfig.totalWeight() * 20000
+		if math.abs((counts[i] or 0) - expected) > math.max(40, expected * 0.2) then fair = false end
+	end
+	check("the draw follows the configured weights (20,000 simulated spins)", fair)
+	check("the first and last slice are reachable (roll 0 and roll 0.9999)", SpinWheelConfig.pick(0) == 1 and SpinWheelConfig.pick(0.9999) == #SpinWheelConfig.Prizes)
+	check("every prize reward is valid (items exist, boosts known)", (function()
+		for _, prize in SpinWheelConfig.Prizes do
+			for _, id in prize.Reward.Items or {} do if not ItemRegistry.get(id) then return false end end
+		end
+		return true
+	end)())
+	local SpinSystem = require(find(S .. "SpinSystem"))
+	local d3 = data(bob); d3.Wheel = { NextFreeAt = 0 }; d3.Gems = 100
+	local ok1, _, info1 = SpinSystem.spin(bob, false)
+	check("a free spin works once and returns the prize slice", ok1 and info1.Free and info1.Index >= 1)
+	adv(5)
+	local ok2 = SpinSystem.spin(bob, false)
+	check("a second free spin is refused until the timer is over", not ok2)
+	local gemsBefore2 = d3.Gems
+	local ok3, _, info3 = SpinSystem.spin(bob, true)
+	check("an extra spin costs " .. SpinWheelConfig.ExtraSpinGems .. " diamonds", ok3 and not info3.Free and d3.Gems <= gemsBefore2 - SpinWheelConfig.ExtraSpinGems + 600)
+	adv(5)
+	d3.Gems = 0; d3.Wheel.NextFreeAt = os.time() + 1000
+	check("without diamonds an extra spin is refused", not SpinSystem.spin(bob, true))
+	check("a forged 'pay' value (string) does not buy a spin", not SpinSystem.spin(bob, "yes"))
+
+	-----------------------------------------------------------------
+	section("16. hamster body types (height and silhouette)")
+	local HamsterDatabase = require(find(MOD .. "HamsterDatabase"))
+	local HamsterShapes = require(find(MOD .. "HamsterShapes"))
+	local HamsterBuilder = require(find(MOD .. "HamsterBuilder"))
+	local sizes, shapesSeen, minSize, maxSize = {}, {}, math.huge, 0
+	for _, sp in HamsterDatabase.Species do
+		minSize, maxSize = math.min(minSize, sp.Size), math.max(maxSize, sp.Size)
+		shapesSeen[sp.Shape] = (shapesSeen[sp.Shape] or 0) + 1
+	end
+	local kinds = 0
+	for _ in shapesSeen do kinds += 1 end
+	check("the collection uses all 7 body types", kinds == 7, kinds)
+	check("hamster sizes span a wide range (smallest vs biggest at least 2.5x)", maxSize / minSize >= 2.5, string.format("%.2f .. %.2f", minSize, maxSize))
+	check("a hamster keeps the same shape every time (picked from its id)", HamsterShapes.pick("brownie") == HamsterShapes.pick("brownie"))
+	check("the named characters have fitting shapes (Elon lanky, Jeff chonk, Seed bean)", HamsterDatabase.ById.elon_muskrat.Shape == "lanky" and HamsterDatabase.ById.jeff_parcel.Shape == "chonk" and HamsterDatabase.ById.i_show_seed.Shape == "bean", tostring(HamsterDatabase.ById.elon_muskrat and HamsterDatabase.ById.elon_muskrat.Shape))
+	local tall, small = HamsterBuilder.build(HamsterDatabase.ById.elon_muskrat), HamsterBuilder.build(HamsterDatabase.ById.i_show_seed)
+	check("a lanky hamster is built much taller than a bean hamster", tall:GetAttribute("Height") > small:GetAttribute("Height") * 1.5, tostring(tall:GetAttribute("Height")) .. " vs " .. tostring(small:GetAttribute("Height")))
+	check("every shape keeps its head close to the face (head scale 0.9-1.15, so eyes never sink into the head)", (function()
+		for _, def in HamsterShapes.List do if def.Head < 0.9 or def.Head > 1.15 then return false end end
+		return true
+	end)())
+
 	print(string.format("PASS %d  FAIL %d", results.pass, results.fail))
 	print("== done ==")
 end)

@@ -76,7 +76,7 @@ task.spawn(function()
 	for _, def in ItemRegistry.List do
 		if def.Equip.Kind == "Tool" then weapons += 1 elseif def.Equip.Kind == "Passive" then gear += 1 else consumables += 1 end
 	end
-	check("10 weapons/abilities, 2 equipment items, 5 consumables are registered", weapons == 10 and gear == 2 and consumables == 5, weapons .. "/" .. gear .. "/" .. consumables)
+	check("13 weapons/abilities, 2 equipment items, 5 consumables are registered", weapons == 13 and gear == 2 and consumables == 5, weapons .. "/" .. gear .. "/" .. consumables)
 	check("the template item is not registered", ItemRegistry.ById["template_item"] == nil and ItemRegistry.ById["my_item_id"] == nil)
 	local cats = {}
 	for _, c in ShopConfig.categories() do cats[c.Id] = c end
@@ -680,6 +680,21 @@ task.spawn(function()
 	end
 	check("the hotbar fits the screen at 5 resolutions (incl. phone portrait)", resOk, resDetail)
 	cam.ViewportSize = Vector2.new(1280, 720)
+
+	-- lucky wheel (server draw + window)
+	local wheel = UIKit.getPanel("Wheel")
+	wheel:Open(); adv(0.8)
+	check("the Lucky Wheel window shows one bubble per prize", #byName(wheel.Gui, "Ring") == 1 and #M.descendants(byName(wheel.Gui, "Ring")[1]) > 20)
+	local spinBtn = byName(wheel.Gui, "Spin")[1]
+	check("a free spin is offered at first", string.find(tostring(RawData[spinBtn].Props.Text), "FREE", 1, true) ~= nil, tostring(RawData[spinBtn].Props.Text))
+	local nextFreeBefore = a.Wheel.NextFreeAt
+	local coinsBeforeSpin, gemsBeforeSpin = a.Coins, a.Gems
+	click(spinBtn)
+	adv(5)
+	check("spinning uses the free spin (next free spin is hours away) and pays a prize decided by the server", a.Wheel.NextFreeAt > nextFreeBefore and a.Wheel.NextFreeAt >= os.time() + 3600)
+	adv(1.2)
+	check("the second spin costs diamonds", string.find(tostring(RawData[byName(wheel.Gui, "Spin")[1]].Props.Text), "gems", 1, true) ~= nil, tostring(RawData[byName(wheel.Gui, "Spin")[1]].Props.Text))
+	wheel:Close(); adv(0.5)
 
 	print(string.format("PASS %d  FAIL %d", results.pass, results.fail))
 	print("== done ==")

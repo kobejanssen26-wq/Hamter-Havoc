@@ -97,6 +97,11 @@ function ItemView.stats(def: any): { { string } }
 			table.insert(lines, { "Lasts", string.format("%d s", w.Duration) })
 			table.insert(lines, { "Cooldown", string.format("%d s", w.Cooldown) })
 			table.insert(lines, { "Counter", "Cyan outline, pops on hit" })
+		elseif w.Type == "Trap" then
+			table.insert(lines, { "Ability", ({ Spike = "Spikes: stun + drops a carried hamster", Glue = "Glue: slows to " .. math.floor((w.Slow or 0.4) * 100) .. "% speed", Banana = "Banana: slips and flings" })[w.TrapKind] or "Trap" })
+			table.insert(lines, { "Max set", string.format("%d at a time, %d s each", w.MaxActive, w.Duration) })
+			table.insert(lines, { "Cooldown", string.format("%d s", w.Cooldown) })
+			table.insert(lines, { "Limit", "Not while carrying a hamster; not in safe zones" })
 		elseif w.Type == "Guard" then
 			table.insert(lines, { "Ability", "Shield: blocks knockback and stun" })
 			table.insert(lines, { "Lasts", string.format("%d s", w.Duration) })

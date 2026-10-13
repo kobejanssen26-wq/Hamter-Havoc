@@ -219,6 +219,41 @@ STYLES.shield = function(tool: Tool, look: any)
 	tool.Grip = CFrame.new(0, 0, 0.3)
 end
 
+-- Spike Trap (held): a steel plate with a ring of red-tipped spikes, carried flat in front of you.
+STYLES.spiketrap = function(tool: Tool, look: any)
+	local steel = color(look.Color, Color3.fromRGB(150, 158, 176))
+	local tip = color(look.Accent, Color3.fromRGB(255, 72, 88))
+	handle(tool, Vector3.new(2.6, 0.4, 2.6), Color3.fromRGB(70, 74, 92), Enum.Material.Metal)
+	for ix = -1, 1 do
+		for iz = -1, 1 do
+			part(tool, "Spike", Vector3.new(0.35, 0.9, 0.35), CFrame.new(ix * 0.8, 0.6, iz * 0.8), steel, Enum.Material.Metal, Enum.PartType.Cylinder)
+			part(tool, "SpikeTip", Vector3.new(0.4, 0.5, 0.4), CFrame.new(ix * 0.8, 1.1, iz * 0.8), tip, Enum.Material.Neon, Enum.PartType.Ball)
+		end
+	end
+	tool.Grip = CFrame.new(0, -0.2, 0) * CFrame.Angles(math.rad(-90), 0, 0)
+end
+
+-- Glue Puddle (held): a jar of glowing green goo with a drip.
+STYLES.gluetrap = function(tool: Tool, look: any)
+	local glue = color(look.Color, Color3.fromRGB(120, 255, 90))
+	handle(tool, Vector3.new(1.8, 2.0, 1.8), Color3.fromRGB(210, 235, 255), Enum.Material.Glass).Transparency = 0.5
+	part(tool, "Goo", Vector3.new(1.5, 1.4, 1.5), CFrame.new(0, -0.2, 0), glue, Enum.Material.Neon, Enum.PartType.Ball)
+	part(tool, "Lid", Vector3.new(1.4, 0.4, 1.4), CFrame.new(0, 1.1, 0), Color3.fromRGB(255, 84, 170), Enum.Material.SmoothPlastic, Enum.PartType.Cylinder)
+	part(tool, "Drip", Vector3.new(0.5, 0.8, 0.5), CFrame.new(0.8, -1.0, 0.2), glue, Enum.Material.Neon, Enum.PartType.Ball)
+	tool.Grip = CFrame.new(0, -0.4, 0)
+end
+
+-- Banana Peel (held): a curved banana.
+STYLES.banana = function(tool: Tool, look: any)
+	local peel = color(look.Color, Color3.fromRGB(255, 226, 60))
+	local brown = color(look.Accent, Color3.fromRGB(150, 98, 40))
+	handle(tool, Vector3.new(0.9, 0.9, 2.6), peel, Enum.Material.SmoothPlastic)
+	part(tool, "CurveA", Vector3.new(0.9, 0.9, 1.6), CFrame.new(0, 0.5, -1.5) * CFrame.Angles(math.rad(28), 0, 0), peel, Enum.Material.SmoothPlastic)
+	part(tool, "CurveB", Vector3.new(0.8, 0.8, 1.2), CFrame.new(0, 1.2, -2.4) * CFrame.Angles(math.rad(55), 0, 0), peel, Enum.Material.SmoothPlastic)
+	part(tool, "Stem", Vector3.new(0.4, 0.4, 0.7), CFrame.new(0, 0, 1.6), brown, Enum.Material.Wood)
+	tool.Grip = CFrame.new(0, 0, 0.6)
+end
+
 function ToolBuilder.build(def: any): Tool
 	local tool: Tool
 	local custom = nil

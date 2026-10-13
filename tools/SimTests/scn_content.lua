@@ -148,6 +148,25 @@ task.spawn(function()
 	adv(0.6)
 	check("choosing an emote plays it and closes the wheel", played[#played] == "wave" and RawData[wheel].Props.Enabled == false, tostring(played[#played]))
 	check("Emotes are reachable from the Backpack (mobile access) and not from the rail", #byName(gui, "EmotesButton") == 0 and #byName(gui, "OpenEmotes") == 1)
+	-- PlayEmote does nothing (custom Animate script / quirk): the emote still plays through Roblox's own animation ids
+	local loaded = {}
+	local animatorMethods = {
+		LoadAnimation = function(_, animation)
+			table.insert(loaded, animation.AnimationId)
+			local stopped = M.newInstance("BindableEvent", true)
+			return { IsPlaying = false, Length = 2, Priority = 0, Looped = false, Stopped = RawData[stopped].Signals.Event or { Connect = function() return { Disconnect = function() end } end }, Play = function() end, Stop = function() end }
+		end,
+	}
+	M.setMethods(humanoid, { PlayEmote = function() return false end, GetPlayingAnimationTracks = function() return {} end })
+	local animator = M.newInstance("Animator", true)
+	M.setMethods(animator, animatorMethods)
+	M.setParent(animator, humanoid)
+	data.Rebirths = 1
+	adv(1.6)
+	local EmoteControllerFallback = require(find("StarterPlayer.StarterPlayerScripts.Controllers.EmoteController"))
+	local okFallback, msgFallback = EmoteControllerFallback.play("wave")
+	check("when PlayEmote does nothing the emote plays through Roblox's standard animation id", okFallback and loaded[#loaded] == "rbxassetid://507770239", tostring(msgFallback) .. " " .. tostring(loaded[#loaded]))
+	EmoteControllerFallback.stop()
 	data.Rebirths = 0
 	local EmoteController = require(find("StarterPlayer.StarterPlayerScripts.Controllers.EmoteController"))
 	adv(1.6)

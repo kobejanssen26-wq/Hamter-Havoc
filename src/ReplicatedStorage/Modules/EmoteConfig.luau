@@ -19,6 +19,19 @@ EmoteConfig.KeyChoices = { "B", "G", "V", "X", "Z" }
 -- Roblox's default emotes (played with Humanoid:PlayEmote, they need no asset ids).
 EmoteConfig.BuiltinEmotes = { wave = true, point = true, dance = true, dance2 = true, dance3 = true, laugh = true, cheer = true }
 
+-- Fallback when Humanoid:PlayEmote does nothing (a custom Animate script, a rig without the emote bindables, Studio quirks):
+-- the animations Roblox's own default Animate script uses for these emotes, per rig. They are Roblox's, so every experience may play them.
+EmoteConfig.BuiltinFallback = {
+	R15 = {
+		wave = "rbxassetid://507770239", point = "rbxassetid://507770453", dance = "rbxassetid://507771019",
+		dance2 = "rbxassetid://507776043", dance3 = "rbxassetid://507777268", laugh = "rbxassetid://507770818", cheer = "rbxassetid://507770677",
+	},
+	R6 = {
+		wave = "rbxassetid://128777973", point = "rbxassetid://128853357", dance = "rbxassetid://182435998",
+		dance2 = "rbxassetid://182436842", dance3 = "rbxassetid://182436935", laugh = "rbxassetid://129423131", cheer = "rbxassetid://129423030",
+	},
+}
+
 EmoteConfig.List = {} :: { any }
 EmoteConfig.ById = {} :: { [string]: any }
 EmoteConfig.Issues = {} :: { ContentValidator.Issue }

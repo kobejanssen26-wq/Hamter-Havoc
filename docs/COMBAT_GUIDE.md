@@ -78,8 +78,19 @@ Emotes and swings never run together: attacking stops the current emote, and the
 | Shadow Cloak | 3 | 400 diamonds | invisibility 6 s (sparkle trail counterplay) | – | 45 s | – | – |
 | Party Hammer | 4 | 600,000 cash | wide slow smash, strongest shove | 12 | 2.2 s | 60 | 1.4 s |
 | Mirror Clone | 5 | 900 diamonds | decoy 8 s | – | 50 s | – | – |
+| Banana Peel (trap) | 0 | 3,500 cash | slip trap: knocks the victim back + short stun, 3 at a time, lasts 40 s | – | 5 s | 40 | 0.9 s |
+| Glue Trap (trap) | 1 | 30,000 cash | slows the victim to 35% speed for 4.5 s, lasts 40 s | – | see file | – | – |
+| Spike Trap (trap) | 2 | 75,000 cash | stuns 1.5 s and makes a carrier drop the hamster, lasts 60 s | – | see file | – | 1.5 s |
 
 All numbers live in the item files; the table is a snapshot. Every damage weapon is capped by `GameConfig` (knockback 60, lift 28, stun 1.6 s).
+
+## 7b. Traps
+
+Type `Trap` (files `BananaPeel`, `GlueTrap`, `SpikeTrap` in `Content/Items`). Using the item places a trap on the ground in front of you (`TrapSystem`, server). Rules:
+* limits: `MaxActive` per player, a trap is armed after `Arm` seconds and disappears after `Duration`; none inside a `SafeZone`, none while you carry a hamster;
+* the server checks every 0.1 s who steps on an armed trap; the placer and spawn-protected players never trigger it;
+* effects come only from the file: `Stun`, `Knockback`, `DropChance` (a carrier drops the hamster; if the trap's owner is the hamster's owner the normal theft rules decide), `Slow` + `SlowSeconds` (glue);
+* all values are capped by `GameConfig` and `ContentValidator`. Kinds of look: `Look.Shape` = `Spike`, `Glue`, `Banana`.
 
 ## 8. Tests
 

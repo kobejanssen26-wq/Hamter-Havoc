@@ -22,7 +22,7 @@ function DailyRewardUI.start()
 
 	UIKit.label(body, {
 		Size = UDim2.new(1, 0, 0, 30),
-		Text = "Come back every day to keep your streak! Day 5 and Day 7 give exclusive hamsters.",
+		Text = "Come back every day to keep your streak! Day 5 and Day 7 give exclusive hamsters (day 7 also a spike trap).",
 		TextSize = 15,
 		TextColor3 = C.Muted,
 		TextXAlignment = Enum.TextXAlignment.Center,
@@ -31,7 +31,7 @@ function DailyRewardUI.start()
 	local row = UIKit.frame(body, { Size = UDim2.new(1, 0, 0, 240), Position = UDim2.fromOffset(0, 40), BackgroundTransparency = 1 })
 	UIKit.list(row, Enum.FillDirection.Horizontal, 8, Enum.HorizontalAlignment.Center)
 
-	local cards: { { Frame: Frame, Stroke: UIStroke, State: TextLabel, Icon: Frame } } = {}
+	local cards: { { Frame: Frame, Stroke: UIStroke, State: TextLabel, Icon: Frame, Text: TextLabel } } = {}
 	for index, day in DailyRewardConfig.Days do
 		local card = UIKit.frame(row, { Size = UDim2.fromOffset(120, 236), LayoutOrder = index })
 		UIKit.vivid(card, Color3.fromRGB(255, 232, 150), { Corner = 12, Outline = 3.5 })
@@ -43,15 +43,18 @@ function DailyRewardUI.start()
 			TextSize = 20,
 			TextXAlignment = Enum.TextXAlignment.Center,
 		})
-		local icon = UIKit.icon(card, day.Icon, { Size = UDim2.fromOffset(72, 72), Position = UDim2.new(0.5, 0, 0, 42), AnchorPoint = Vector2.new(0.5, 0) })
-		UIKit.label(card, {
-			Size = UDim2.new(1, -10, 0, 40),
-			Position = UDim2.fromOffset(5, 120),
-			Text = day.Label,
-			TextSize = 14,
+		local icon = UIKit.icon(card, day.Icon, { Size = UDim2.fromOffset(60, 60), Position = UDim2.new(0.5, 0, 0, 38), AnchorPoint = Vector2.new(0.5, 0) })
+		local rewardText = UIKit.label(card, {
+			Name = "RewardLines",
+			Size = UDim2.new(1, -10, 0, 78),
+			Position = UDim2.fromOffset(5, 102),
+			Text = "",
+			TextSize = 13,
 			TextWrapped = true,
 			TextXAlignment = Enum.TextXAlignment.Center,
+			TextYAlignment = Enum.TextYAlignment.Top,
 			TextColor3 = C.Ink,
+			Font = UIKit.Fonts.Title,
 		})
 		if day.Hamster then
 			UIKit.chip(card, "EXCLUSIVE", C.Purple, UDim2.fromOffset(100, 20)).Position = UDim2.fromOffset(10, 164)
@@ -64,7 +67,7 @@ function DailyRewardUI.start()
 			Font = UIKit.Fonts.Title,
 			TextXAlignment = Enum.TextXAlignment.Center,
 		})
-		cards[index] = { Frame = card, Stroke = stroke, State = state, Icon = icon }
+		cards[index] = { Frame = card, Stroke = stroke, State = state, Icon = icon, Text = rewardText }
 	end
 
 	local info = UIKit.label(body, {
@@ -106,6 +109,8 @@ function DailyRewardUI.start()
 		-- how many cards of the current 7-day cycle are already ticked off
 		local claimedInCycle = if streak >= 7 and canClaim then 0 else streak
 		for index, card in cards do
+			-- exactly what is in the gift ("500 Cash", "Speed Tonic" ...); cash grows with your rebirths
+			card.Text.Text = table.concat(DailyRewardConfig.lines(index, data.Rebirths or 0), "\n")
 			if canClaim and index == nextDay then
 				card.State.Text = "TODAY!"
 				card.State.TextColor3 = C.Green

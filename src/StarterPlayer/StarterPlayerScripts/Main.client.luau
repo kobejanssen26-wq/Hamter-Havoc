@@ -44,6 +44,7 @@ local screens = {
 	"SettingsUI",
 	"QuestUI",
 	"DailyRewardUI",
+	"WheelUI",
 	"HamsterHUD",
 	"AnnouncementUI",
 	"HotbarUI",

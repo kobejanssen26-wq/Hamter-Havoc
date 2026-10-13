@@ -10,6 +10,7 @@
 	Usage:  local model = HamsterBuilder.build(species, { Scale = 0.5, LowDetail = true })
 ]]
 
+local HamsterShapes = require(script.Parent.HamsterShapes)
 local Toolkit = require(script.Toolkit)
 local Faces = require(script.Faces)
 local Hats = require(script.Hats)
@@ -87,24 +88,13 @@ function HamsterBuilder.signature(species: any): string
 		table.concat(accessories, "+"),
 		table.concat(fx, "+"),
 		string.format("%.2f", species.Size or 1),
+		tostring(species.Shape or ""),
 	}, "|")
 end
 
--- Stable per-species body proportions in a narrow range (so they stay hamster-like), from the species id.
-function HamsterBuilder.proportions(id: string): { Width: number, Height: number, Length: number, Head: number }
-	local hash = 5381
-	for index = 1, #id do
-		hash = (hash * 33 + string.byte(id, index)) % 2147483647
-	end
-	local function unit(shift: number): number
-		return ((hash // shift) % 1000) / 999 * 2 - 1 -- -1 .. 1
-	end
-	return {
-		Width = 1 + unit(1) * 0.1,
-		Height = 1 + unit(7) * 0.08,
-		Length = 1 + unit(31) * 0.1,
-		Head = 1 + unit(127) * 0.07,
-	}
+-- Body proportions of a species: its shape (HamsterShapes) with a tiny stable jitter, so hamsters differ in silhouette.
+function HamsterBuilder.proportions(id: string, shape: string?): { Width: number, Height: number, Length: number, Head: number }
+	return HamsterShapes.proportions(shape or HamsterShapes.pick(id), id)
 end
 
 function HamsterBuilder.build(species: any, options: BuildOptions?): Model
@@ -154,7 +144,7 @@ function HamsterBuilder.build(species: any, options: BuildOptions?): Model
 	-- core body ---------------------------------------------------------
 	-- every species gets its own stable proportions (plumper, longer, bigger head ...), so hamsters are not just recolours.
 	-- Derived from the id, so a species always looks the same; `species.Build = { Width, Height, Length, Head }` overrides it.
-	local build = species.Build or HamsterBuilder.proportions(species.Id or species.Name or "")
+	local build = species.Build or HamsterBuilder.proportions(species.Id or species.Name or "", species.Shape)
 	T.limb(ctx, "Body", "Root", V3(0, 0.5, 0.3), V3(2.7 * build.Width, 2.2 * build.Height, 2.6 * build.Length), CF(0, 1.3, 0.3), fur, Enum.MeshType.Sphere, { Cast = true })
 	T.limb(ctx, "Head", "Body", V3(0, 1.8, -0.4), V3(2.6 * build.Head, 2.2 * build.Head, 2.3 * build.Head), CF(0, 2.3, -0.7), fur, Enum.MeshType.Sphere, { Cast = true })
 

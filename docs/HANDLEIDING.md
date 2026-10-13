@@ -76,5 +76,14 @@ Diamantpakketten: `ShopConfig` (`ProductId`). `0` = niet ingesteld = niet te koo
 Elk onzichtbaar deel met de tag `SafeZone` is een veilige zone: daarin kun je niet aanvallen en niet geraakt worden. De Leaderboard-hal heeft er één (die wordt bij elke Play opnieuw gebouwd door `LeaderboardBuilder`; maat aanpassen doe je daar).
 Eigen zones: maak in Studio een onzichtbaar Part (Anchored aan, CanCollide uit, Transparency 1) in je **eigen map** (bv. `Workspace/MijnZones`, niet in een gegenereerde map) en geef het de tag `SafeZone` (**View → Tag Editor**). Die blijft staan bij Play.
 
-## 9. Wat ik niet kon testen
+## 9. Nieuwe dingen (laatste ronde)
+
+* **Rebirth via admin-paneel:** bouwt nu ook het huis omhoog (net als een echte rebirth). Test: admin → Rebirths +10 → je huis krijgt extra verdiepingen.
+* **Emotes:** kloppen ze niet met jouw animaties, dan speelt het spel de standaard Roblox-emotes (`EmoteConfig.BuiltinFallback`). Of dat in jouw Studio werkt kon ik niet zien; zie `AnimationController.preflight()` (hoofdstuk 5).
+* **Vallen (traps):** Banana Peel, Glue Trap, Spike Trap staan in de wapenwinkel (zie `COMBAT_GUIDE.md` §7b). Aanpassen: `Content/Items/BananaPeel.luau` enz.
+* **Prijzenrad:** knop **Lucky Wheel** in het Quests-scherm. Gratis draai elke 4 uur, extra draai voor 40 diamanten. Prijzen en kansen: `ReplicatedStorage/Modules/SpinWheelConfig` (`FreeSpinEverySeconds`, `ExtraSpinGems`, lijst `Prizes` met `Weight`).
+* **Dagelijkse beloningen:** per dag een concrete lijst (bv. dag 1 = 500 Coins + Speed-item, dag 7 = zeldzame hamster + 150 Gems + Spike Trap) in `DailyRewardConfig.Days`.
+* **Hamstervormen:** elke hamster heeft een lichaamstype (`standard`, `chonk`, `lanky`, `long`, `bean`, `tiny`, `giant`) dat hoogte, breedte en kop verandert. Kies er een in het hamsterbestand: `Look = { Shape = "lanky" }`; zonder keuze wordt er een vaste gekozen op basis van de id. Lijst/maten: `Modules/HamsterShapes`.
+
+## 10. Wat ik niet kon testen
 Alles is getest in een simulatie van Roblox (`tools/SimTests/run.sh --all`), niet in echte Roblox Studio. Zie het eindrapport voor de lijst van wat jij nog moet bekijken (uiterlijk van wapens, HUD, bergen, animaties, echte Robux-aankopen, meerdere echte spelers).

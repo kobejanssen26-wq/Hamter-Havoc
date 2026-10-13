@@ -141,6 +141,9 @@ local function questsBadge(): boolean
 			return true
 		end
 	end
+	if data.Wheel and now >= (data.Wheel.NextFreeAt or 0) then
+		return true -- the free Lucky Wheel spin is ready
+	end
 	if data.Quests and data.Achievements and data.Stats and data.Index then
 		for _, quest in QuestConfig.Quests do
 			if not data.Quests.Claimed[quest.Id] and QuestConfig.isComplete(data, quest) then

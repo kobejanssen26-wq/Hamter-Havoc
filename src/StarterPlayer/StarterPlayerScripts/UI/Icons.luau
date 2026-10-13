@@ -564,6 +564,31 @@ draw.shield = function(c)
 	shape(c, 0.24, 0.44, 0.52, 0.12, rgb(255, 255, 255), { Radius = 0.3, Z = 3 })
 end
 
+-- Spike Trap: plate with red-tipped spikes.
+draw.spike = function(c)
+	shape(c, 0.08, 0.72, 0.84, 0.18, rgb(70, 74, 92), { Radius = 0.3, Stroke = rgb(30, 32, 44), Z = 1 })
+	for index = 0, 3 do
+		shape(c, 0.14 + index * 0.2, 0.28, 0.14, 0.46, tint(c, rgb(170, 178, 196)), { Radius = 0.5, Stroke = rgb(80, 88, 106), Z = 2 })
+		shape(c, 0.15 + index * 0.2, 0.14, 0.12, 0.16, rgb(255, 72, 88), { Circle = true, Z = 3 })
+	end
+end
+
+-- Glue Puddle: a green blob with a shine.
+draw.glue = function(c)
+	local green = tint(c, rgb(120, 255, 90))
+	shape(c, 0.08, 0.5, 0.84, 0.36, green, { Radius = 0.5, Top = rgb(200, 255, 180), Stroke = rgb(50, 150, 40), Z = 1 })
+	shape(c, 0.3, 0.2, 0.4, 0.4, green, { Circle = true, Top = rgb(200, 255, 180), Stroke = rgb(50, 150, 40), Z = 2 })
+	shape(c, 0.38, 0.28, 0.1, 0.1, rgb(255, 255, 255), { Circle = true, Alpha = 0.4, Z = 3 })
+end
+
+-- Banana Peel: a yellow banana.
+draw.banana = function(c)
+	local yellow = tint(c, rgb(255, 226, 60))
+	shape(c, 0.1, 0.46, 0.8, 0.26, yellow, { Radius = 0.5, Rot = -18, Top = rgb(255, 245, 160), Stroke = rgb(170, 120, 20), Z = 2 })
+	shape(c, 0.62, 0.2, 0.2, 0.4, yellow, { Radius = 0.5, Rot = 25, Stroke = rgb(170, 120, 20), Z = 1 })
+	shape(c, 0.82, 0.1, 0.1, 0.12, rgb(150, 98, 40), { Radius = 0.3, Z = 3 })
+end
+
 draw.ladle = function(c)
 	local metal = tint(c, rgb(176, 186, 204))
 	shape(c, 0.44, 0.34, 0.1, 0.62, rgb(138, 90, 58), { Radius = 0.5, Rot = 45, Stroke = rgb(90, 56, 34), Z = 1 })

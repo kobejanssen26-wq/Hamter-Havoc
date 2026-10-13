@@ -90,6 +90,12 @@ function ContentValidator.validateHamster(def: any, context: any): { Issue }
 	if def.Description ~= nil and (type(def.Description) ~= "string" or #def.Description > 140) then
 		err("Description must be a text of at most 140 characters (shown in the Hamster Index)")
 	end
+	if type(def.Look) == "table" and def.Look.Shape ~= nil then
+		local shapes = { standard = true, chonk = true, lanky = true, long = true, bean = true, tiny = true, giant = true }
+		if not shapes[def.Look.Shape] then
+			err("Look.Shape must be one of: standard, chonk, lanky, long, bean, tiny, giant")
+		end
+	end
 	if def.Persona ~= nil and not PERSONAS[def.Persona] then
 		err("Persona must be one of: hyper, smug, scheming, mischievous, screamer, dancer, sleepy, confused, rich, calm")
 	end
@@ -216,13 +222,15 @@ local ITEM_CATEGORIES = { Weapon = true, Equipment = true, Consumable = true }
 local PASSIVE_STATS = { CollectRange = true, WalkSpeed = true }
 local WEAPON_LIMITS = { Range = { 3, 80 }, Cooldown = { 0.3, 10 }, Knockback = { 0, 100 }, Stun = { 0, 3 }, DropChance = { 0, 1 }, Arc = { -1, 1 } }
 -- optional numbers every attack may set (otherwise CombatTiming / GameConfig defaults apply)
-local OPTIONAL_WEAPON_LIMITS = { WindUp = { 0, 1 }, Active = { 0, 0.6 }, Lift = { 0, 40 } }
+local OPTIONAL_WEAPON_LIMITS = { WindUp = { 0, 1 }, Active = { 0, 0.6 }, Lift = { 0, 40 }, Slow = { 0.2, 0.9 }, SlowSeconds = { 0.5, 8 }, Stun = { 0, 3 }, Knockback = { 0, 100 }, DropChance = { 0, 1 } }
+local TRAP_KINDS = { Spike = true, Glue = true, Banana = true }
 -- Ability weapons: their own stat sets and hard caps, so no item file can make an unbounded power.
 local ABILITY_LIMITS = {
 	Freeze = { Range = { 5, 60 }, Cooldown = { 8, 120 }, Duration = { 0.5, 3 } },
 	Cloak = { Cooldown = { 15, 180 }, Duration = { 2, 10 } },
 	Decoy = { Cooldown = { 15, 180 }, Duration = { 2, 10 } },
 	Guard = { Cooldown = { 10, 120 }, Duration = { 1, 6 } },
+	Trap = { Cooldown = { 2, 120 }, Duration = { 8, 120 }, MaxActive = { 1, 6 }, ArmSeconds = { 0.3, 3 } },
 }
 local BOOST_IDS = { Coins2x = true, Luck2x = true, Speed2x = true, AutoCollect = true }
 
@@ -287,7 +295,7 @@ function ContentValidator.validateItem(def: any, context: any): { Issue }
 		else
 			local limitsFor = if weapon.Type == "Melee" or weapon.Type == "Ranged" then WEAPON_LIMITS else ABILITY_LIMITS[weapon.Type]
 			if not limitsFor then
-				err("Weapon.Type must be Melee, Ranged, Freeze, Cloak, Decoy or Guard")
+				err("Weapon.Type must be Melee, Ranged, Freeze, Cloak, Decoy, Guard or Trap")
 			else
 				for stat, limits in limitsFor do
 					local value = weapon[stat]
@@ -303,6 +311,9 @@ function ContentValidator.validateItem(def: any, context: any): { Issue }
 				end
 				if type(weapon.Cooldown) == "number" and (weapon.Cooldown < (weapon.WindUp or 0) + (weapon.Active or 0)) then
 					err("Weapon.Cooldown must be at least WindUp + Active (the swing has to finish before the next one)")
+				end
+				if weapon.Type == "Trap" and not TRAP_KINDS[weapon.TrapKind] then
+					err("a Trap needs Weapon.TrapKind = \"Spike\", \"Glue\" or \"Banana\"")
 				end
 				if weapon.Animation ~= nil and type(weapon.Animation) ~= "string" then
 					err("Weapon.Animation must be the Name of an animation in Content/Animations")

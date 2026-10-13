@@ -52,6 +52,7 @@ return {
 	Quests = { Claimed = {} },
 	Achievements = { Claimed = {} },
 	Daily = { Streak = 0, LastDay = 0 },
+	Wheel = { NextFreeAt = 0 }, -- Lucky Wheel: unix time the next free spin is ready
 	Codes = {}, -- [CODE] = true
 	Receipts = {}, -- processed developer product receipt ids
 

@@ -295,7 +295,9 @@ local function addBall(data: { [string]: any })
 	local shell = makeShell(radius, color, definition.Rank)
 	shell.Parent = container
 
-	local baseScale = math.clamp(1.2 * radius / (3.4 * (species.Size or 1)), 0.2, 1.1)
+	-- a hamster fills its ball a little more or less depending on its size (Size ^ 0.55, so tall hamsters are visibly taller)
+	local sizeFactor = math.clamp((species.Size or 1) ^ 0.55, 0.62, 1.5)
+	local baseScale = math.clamp(1.2 * radius * sizeFactor / (3.4 * (species.Size or 1)), 0.2, 1.1)
 	local hamster = HamsterBuilder.build(species, {
 		Scale = baseScale,
 		LowDetail = DataController.setting("LowGraphics") == true,

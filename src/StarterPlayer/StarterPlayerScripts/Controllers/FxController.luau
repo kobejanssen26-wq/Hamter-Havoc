@@ -484,6 +484,15 @@ function FxController.worldEvent(kind: string, rarityId: string, position: Vecto
 		else
 			WeaponAnimator.playForUserId(extra, "", position)
 		end
+	elseif kind == "TrapSet" then
+		FxController.burst(lifted, WORLD_COLORS.Claim, 2)
+		AudioController.play("Click", { Position = position, Pitch = 0.6 })
+	elseif kind == "TrapHit" then
+		FxController.burst(lifted, WORLD_COLORS.Zap, 6)
+		AudioController.play("Hit", { Position = position, Pitch = 0.8 })
+		if near < 40 then
+			FxController.shake(0.4, 0.3)
+		end
 	elseif kind == "Block" then
 		FxController.burst(lifted, WORLD_COLORS.SecurityOn, 4)
 		AudioController.play("Zap", { Position = position, Pitch = 1.8, Volume = 0.4 })

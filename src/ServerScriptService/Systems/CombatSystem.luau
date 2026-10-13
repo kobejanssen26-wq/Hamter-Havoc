@@ -46,6 +46,9 @@ local CombatSystem = {}
 
 -- Set by TheftSystem (ownerHit): returns true when a rack theft was ended by this hit.
 CombatSystem.theftHook = nil :: ((Player, Player) -> boolean)?
+-- Set by TrapSystem: places a trap for the attacker (ok, message) and counts the traps they have out.
+CombatSystem.trapPlacer = nil :: ((Player, any, any) -> (boolean, string?))?
+CombatSystem.trapCount = nil :: ((Player) -> number)?
 
 local CONTEXT_RADIUS = 34
 local MAX_HEIGHT_DIFFERENCE = 6
@@ -437,10 +440,16 @@ function CombatSystem.attack(attacker: Player, rawAim: any)
 	end
 
 	-- self abilities: no target needed, they happen right away
-	if stats.Type == "Cloak" or stats.Type == "Decoy" or stats.Type == "Guard" then
+	if stats.Type == "Cloak" or stats.Type == "Decoy" or stats.Type == "Guard" or stats.Type == "Trap" then
 		local ok, message
 		if stats.Type == "Cloak" then
 			ok, message = AbilitySystem.cloak(attacker, stats.Duration)
+		elseif stats.Type == "Trap" then
+			if CombatSystem.trapPlacer then
+				ok, message = CombatSystem.trapPlacer(attacker, def, stats)
+			else
+				ok, message = false, "Traps are not available"
+			end
 		elseif stats.Type == "Decoy" then
 			ok, message = AbilitySystem.decoy(attacker, stats.Duration)
 		else
@@ -454,6 +463,10 @@ function CombatSystem.attack(attacker: Player, rawAim: any)
 			return
 		end
 		Remotes.event("Fx"):FireAllClients("WeaponUse", (def :: any).Id, root.Position, attacker.UserId, root.CFrame.LookVector)
+		if stats.Type == "Trap" then
+			Notifier.send(attacker, string.format("%s set (%d of %d)", (def :: any).DisplayName, if CombatSystem.trapCount then CombatSystem.trapCount(attacker) else 0, stats.MaxActive), "success")
+			return
+		end
 		local verb = if stats.Type == "Cloak" then "You are cloaked" elseif stats.Type == "Guard" then "Shield up" else "Decoy sent"
 		Notifier.send(attacker, string.format("%s for %d s", verb, stats.Duration), "success")
 		return

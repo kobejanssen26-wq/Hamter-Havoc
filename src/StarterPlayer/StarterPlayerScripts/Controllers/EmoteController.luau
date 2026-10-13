@@ -118,6 +118,23 @@ function EmoteController.play(emoteId: string): (boolean, string)
 			return h:PlayEmote(def.Builtin)
 		end)
 		started = ok and result == true
+		if not started then
+			-- PlayEmote did nothing: play Roblox's own animation for this emote directly (R15 or R6)
+			local rig = if h.RigType == Enum.HumanoidRigType.R6 then "R6" else "R15"
+			local assetId = EmoteConfig.BuiltinFallback[rig][def.Builtin]
+			if assetId then
+				local track = AnimationController.playAsset(h, assetId, { Priority = Enum.AnimationPriority.Action, Looped = false })
+				if track then
+					currentTrack = track
+					started = true
+					table.insert(currentConnections, track.Stopped:Connect(function()
+						if currentTrack == track then
+							EmoteController.stop()
+						end
+					end))
+				end
+			end
+		end
 	else
 		local track
 		if def.AnimationId then

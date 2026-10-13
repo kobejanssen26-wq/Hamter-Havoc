@@ -37,6 +37,17 @@ function Rewards.grant(player: Player, reward: any): { string }
 		local info = ShopConfig.Boosts[reward.Boost.Id]
 		table.insert(lines, string.format("%s (%d min)", if info then info.Name else reward.Boost.Id, math.floor(reward.Boost.Seconds / 60)))
 	end
+	if reward.Items then
+		local GearSystem = require(script.Parent.GearSystem)
+		local ItemRegistry = require(Modules.ItemRegistry)
+		for _, id in reward.Items do
+			local def = ItemRegistry.get(id)
+			if def then
+				local ok = GearSystem.grant(player, id)
+				table.insert(lines, if ok then def.DisplayName else def.DisplayName .. " (you already have it)")
+			end
+		end
+	end
 	if reward.Hamster then
 		local species = HamsterDatabase.ById[reward.Hamster]
 		if species then

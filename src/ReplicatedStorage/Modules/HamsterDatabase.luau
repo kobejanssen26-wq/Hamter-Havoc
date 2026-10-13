@@ -344,7 +344,7 @@ end
 HamsterDatabase.Issues = {} :: { any }
 
 local COLOR_LOOK = { HairColor = "HairColor", Fur = "Fur", Belly = "Belly", Color2 = "Color2", Accent = "Accent", EyeColor = "EyeColor", HatColor = "HatColor", EarInner = "EarInner", EarColor = "EarColor", PawColor = "PawColor", TailColor = "TailColor", TailTip = "TailTip" }
-local PLAIN_LOOK = { "Ears", "Eyes", "Mouth", "Pattern", "Tail", "Size", "NoBlush" }
+local PLAIN_LOOK = { "Ears", "Eyes", "Mouth", "Pattern", "Tail", "Size", "NoBlush", "Shape" }
 
 local function loadCustomHamsters()
 	local registryScript = script.Parent:FindFirstChild("ContentRegistry")
@@ -438,6 +438,17 @@ local function loadCustomHamsters()
 	end
 end
 loadCustomHamsters()
+
+-- Body types: every hamster gets a shape (its own `Look.Shape`, or one picked from its id) and the shape scales its size, so the
+-- collection has tall, tiny, round and long hamsters (see HamsterShapes). Done once, here, so every system sees the same Size.
+do
+	local HamsterShapes = require(script.Parent.HamsterShapes)
+	for _, species in HamsterDatabase.Species do
+		local shape = if HamsterShapes.exists(species.Shape) then species.Shape else HamsterShapes.pick(species.Id)
+		species.Shape = shape
+		species.Size = (species.Size or 1) * HamsterShapes.List[shape].SizeMul
+	end
+end
 
 HamsterDatabase.Total = #HamsterDatabase.Species
 

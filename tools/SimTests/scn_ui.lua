@@ -60,7 +60,7 @@ task.spawn(function()
 	check("every shop item has a drawn icon", missingIcon == 0, missingIcon .. " missing")
 
 	-- every panel opens and closes
-	for _, name in { "Backpack", "Index", "Rebirth", "Upgrades", "Daily", "Quests", "Shop", "Settings", "Codes" } do
+	for _, name in { "Backpack", "Index", "Rebirth", "Upgrades", "Daily", "Quests", "Shop", "Settings", "Codes", "Wheel" } do
 		local panel = UIKit.getPanel(name)
 		check("panel exists: " .. name, panel ~= nil)
 		if panel then

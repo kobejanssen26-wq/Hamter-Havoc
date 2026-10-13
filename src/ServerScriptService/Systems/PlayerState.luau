@@ -19,6 +19,8 @@ local stunnedUntil: { [Player]: number } = {}
 local immuneUntil: { [Player]: number } = {}
 local frozenUntil: { [Player]: number } = {}
 local carryFactor: { [Player]: number? } = {}
+local slowUntil: { [Player]: number } = {}
+local slowFactor: { [Player]: number } = {}
 
 -- Humanoid + root of a living character, or nil.
 function PlayerState.character(player: Player): (Humanoid?, BasePart?)
@@ -70,7 +72,30 @@ function PlayerState.apply(player: Player)
 		return
 	end
 	humanoid.PlatformStand = false
-	humanoid.WalkSpeed = speed * (carryFactor[player] or 1)
+	local slow = if (slowUntil[player] or 0) > os.clock() then (slowFactor[player] or 1) else 1
+	humanoid.WalkSpeed = speed * (carryFactor[player] or 1) * slow
+end
+
+function PlayerState.isSlowed(player: Player): boolean
+	return (slowUntil[player] or 0) > os.clock()
+end
+
+-- Glue and friends: walk at `factor` of normal speed for `seconds` (never stacks: the stronger / longer one counts).
+function PlayerState.slow(player: Player, factor: number, seconds: number)
+	local until_ = os.clock() + seconds
+	if PlayerState.isSlowed(player) then
+		slowFactor[player] = math.min(slowFactor[player] or 1, factor)
+		slowUntil[player] = math.max(slowUntil[player] or 0, until_)
+	else
+		slowFactor[player] = factor
+		slowUntil[player] = until_
+	end
+	PlayerState.apply(player)
+	task.delay(seconds + 0.05, function()
+		if player.Parent == Players and not PlayerState.isSlowed(player) then
+			PlayerState.apply(player)
+		end
+	end)
 end
 
 function PlayerState.stun(player: Player, seconds: number, immunity: number?)
@@ -106,6 +131,7 @@ end
 function PlayerState.clear(player: Player)
 	stunnedUntil[player] = nil
 	frozenUntil[player] = nil
+	slowUntil[player] = nil
 	PlayerState.apply(player)
 end
 
@@ -119,6 +145,8 @@ function PlayerState.forget(player: Player)
 	frozenUntil[player] = nil
 	immuneUntil[player] = nil
 	carryFactor[player] = nil
+	slowUntil[player] = nil
+	slowFactor[player] = nil
 end
 
 return PlayerState
