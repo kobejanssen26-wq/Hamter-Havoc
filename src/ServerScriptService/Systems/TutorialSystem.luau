@@ -7,6 +7,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local GameConfig = require(ReplicatedStorage.Modules.GameConfig)
 local TutorialConfig = require(ReplicatedStorage.Modules.TutorialConfig)
 
 local DataSystem = require(script.Parent.DataSystem)
@@ -71,6 +72,10 @@ end
 function TutorialSystem.check(player: Player)
 	local data = DataSystem.get(player)
 	if not data or data.Tutorial.Done then
+		return
+	end
+	if not GameConfig.get("Tutorial", "Enabled") then
+		finish(player, data, true) -- GameConfig > Tutorial > Enabled = false: nobody gets the tutorial
 		return
 	end
 	local step = TutorialConfig.Steps[data.Tutorial.Step]
