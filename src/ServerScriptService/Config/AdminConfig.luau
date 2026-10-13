@@ -1,0 +1,77 @@
+--[[
+	AdminConfig: WHO may use the admin panel and WHAT each role may do.
+	This module lives on the SERVER only (ServerScriptService): players can never read this list.
+
+	=========================  1. PUT YOUR OWN ROBLOX USER ID HERE  =========================
+	Your UserId is the number in your profile link:  roblox.com/users/  <<< 123456789 >>>  /profile
+	Replace the 0 below. Nothing else is needed to become Owner.
+]]
+
+local AdminConfig = {}
+
+AdminConfig.OwnerUserIds = {
+	0, -- <<< replace 0 with YOUR Roblox UserId (you can list more than one owner)
+}
+
+-- Also treat the person who owns the experience (game.CreatorId when the experience belongs to a user) as Owner.
+-- Convenient for Studio testing. Set to false if you want ONLY OwnerUserIds above.
+AdminConfig.CreatorIsOwner = true
+
+--[[
+	=========================  2. OTHER STAFF  =========================
+	[UserId] = "Admin" | "Moderator" | "Developer"
+	Names do not matter and are never used for permission - only the number counts.
+]]
+AdminConfig.Users = {
+	-- [11111111] = "Admin",
+	-- [22222222] = "Moderator",
+	-- [33333333] = "Developer",
+}
+
+--[[
+	=========================  3. WHAT EACH ROLE MAY DO  =========================
+	Permission names (used by the commands in AdminSystem.luau):
+	  Panel      open the panel at all                 Inspect    look at a player's progress
+	  Warn       warn a player                         ServerInfo basic server numbers
+	  Kick       kick a player                         Announce   message to everybody
+	  History    read a player's moderation history    SafeTools  harmless test tools (clear stun / freeze)
+	  BanTemp    temporary ban (limited minutes)       Settings   change live GameConfig values + shop prices
+	  BanPerm    permanent ban (minutes = 0)           AuditLog   read the admin action log
+	  Unban      lift a ban                            Cash / Diamonds / Rebirth / Items   economy and progression
+	A role with  "*"  has every permission.
+	Limits are per role; a bigger number than the limit is refused by the server.
+]]
+AdminConfig.Roles = {
+	Owner = {
+		Level = 4,
+		Permissions = { "*" },
+		Limits = { MaxCash = 1e12, MaxDiamonds = 1e9, MaxRebirths = 25, MaxBanMinutes = math.huge },
+	},
+	Admin = {
+		Level = 3,
+		Permissions = { "Panel", "Inspect", "Warn", "Kick", "History", "BanTemp", "BanPerm", "Unban", "Cash", "Diamonds", "Rebirth", "Items", "Announce", "ServerInfo", "SafeTools", "Settings", "AuditLog" },
+		Limits = { MaxCash = 1e9, MaxDiamonds = 1e6, MaxRebirths = 25, MaxBanMinutes = math.huge },
+	},
+	Moderator = {
+		Level = 2,
+		Permissions = { "Panel", "Inspect", "Warn", "Kick", "History", "BanTemp", "ServerInfo", "SafeTools" },
+		Limits = { MaxCash = 0, MaxDiamonds = 0, MaxRebirths = 0, MaxBanMinutes = 7 * 24 * 60 },
+	},
+	Developer = {
+		Level = 1,
+		-- testing tools only: no kicking, banning or announcing
+		Permissions = { "Panel", "Inspect", "ServerInfo", "SafeTools", "Settings", "Cash", "Diamonds", "Rebirth", "Items", "AuditLog" },
+		Limits = { MaxCash = 1e8, MaxDiamonds = 1e5, MaxRebirths = 25, MaxBanMinutes = 0 },
+	},
+}
+
+-- Actions that need an explicit "Are you sure?" (the server refuses them without a confirmation flag).
+AdminConfig.ConfirmCashAbove = 1e6 -- cash / diamond changes bigger than this (or any removal) need confirmation
+
+-- Seconds between two admin requests of one player (spam protection).
+AdminConfig.MinSecondsBetweenRequests = 0.15
+
+-- A discreet way in: the key lives in InputConfig.Bindings.Admin (client) and the chat command /admin. Both only ASK the server;
+-- the server decides. There is no button on the normal HUD.
+
+return AdminConfig

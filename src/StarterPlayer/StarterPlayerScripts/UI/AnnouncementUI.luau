@@ -167,6 +167,9 @@ function AnnouncementUI.start()
 			subtitle = if info.PlayerName ~= "" then string.format("Rolled by %s's luck - claim it before anyone else!", info.PlayerName) else "Claim it before anyone else!"
 		elseif info.Kind == "Steal" then
 			subtitle = "Chase them down and slap it loose!"
+		elseif info.Kind == "Staff" then
+			showBanner(info.Text, "Basic", "Message from the staff") -- admin announcement: no rare-spawn alarm
+			return
 		end
 		showBanner(info.Text, info.RarityId, subtitle)
 		AudioController.playRareAlert(info.RarityId)

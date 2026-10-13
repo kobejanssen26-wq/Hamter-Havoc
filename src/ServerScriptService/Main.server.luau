@@ -29,6 +29,8 @@ local ShopSystem = require(Systems.ShopSystem)
 local ItemSystem = require(Systems.ItemSystem)
 local GearSystem = require(Systems.GearSystem)
 local AbilitySystem = require(Systems.AbilitySystem)
+local AdminSystem = require(Systems.AdminSystem)
+local ConfigStore = require(Systems.ConfigStore)
 local EmoteSystem = require(Systems.EmoteSystem)
 local TutorialSystem = require(Systems.TutorialSystem)
 local TheftSystem = require(Systems.TheftSystem)
@@ -37,6 +39,9 @@ local WorldBuilder = require(Systems.WorldBuilder)
 
 -- content problems (a typo in a hamster/emote/animation file) are reported at start and never stop the game
 require(ReplicatedStorage.Modules.ContentCheck).report()
+
+-- saved admin settings (GameConfig overrides, shop prices) before anything reads them
+ConfigStore.start()
 
 -- world first, so houses exist before anybody joins
 local world = WorldBuilder.build()
@@ -53,6 +58,7 @@ HamsterSystem.start()
 GearSystem.start()
 AbilitySystem.start()
 CombatSystem.start()
+AdminSystem.start()
 QuestSystem.start()
 ShopSystem.start()
 TutorialSystem.start()
@@ -60,6 +66,9 @@ LeaderboardSystem.start()
 RequestRouter.start()
 
 local function onPlayerAdded(player: Player)
+	if not AdminSystem.checkJoin(player) then
+		return -- banned: kicked before any data is loaded
+	end
 	player.CharacterAdded:Connect(function(character)
 		HouseSystem.onCharacterAdded(player, character)
 	end)
@@ -104,6 +113,7 @@ local function onPlayerRemoving(player: Player)
 	ItemSystem.forget(player)
 	GearSystem.forget(player)
 	AbilitySystem.forget(player)
+	AdminSystem.forget(player)
 	EmoteSystem.forget(player)
 	ReplicationSystem.clear(player)
 	DataSystem.release(player)

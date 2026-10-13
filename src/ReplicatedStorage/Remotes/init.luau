@@ -42,7 +42,7 @@ local EVENTS = {
 	"OpenUI",
 	"Fx",
 }
-local FUNCTIONS = { "Request" }
+local FUNCTIONS = { "Request", "Admin" }
 
 local Remotes = {}
 

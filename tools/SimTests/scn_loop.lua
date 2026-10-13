@@ -695,7 +695,7 @@ task.spawn(function()
 	check("turning the gate on -> exactly one SecurityOn effect", fxCount("SecurityOn") == 1 and fxCount("SecurityOff") == 0, fxCount("SecurityOn"))
 	adv(require(find("ReplicatedStorage.Modules.SecurityConfig")).duration(0) + 1)
 	check("gate switches off -> exactly one SecurityOff effect", fxCount("SecurityOff") == 1 and fxCount("SecurityOn") == 1, fxCount("SecurityOff"))
-	adv(tier.Recharge + 2)
+	adv(require(find("ReplicatedStorage.Modules.SecurityConfig")).recharge(tier) + 2)
 	check("recharge finishing plays no extra gate effect", fxCount("SecurityOn") == 1 and fxCount("SecurityOff") == 1)
 	check("the big base banner is never sent", bannerEvents() == 0)
 	-- migration: a profile saved before the tutorial existed is treated as finished

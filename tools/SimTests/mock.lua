@@ -907,6 +907,10 @@ function M.newPlayer(name)
 		LoadCharacter = function(self)
 			return M.spawnCharacter(self)
 		end,
+		Kick = function(self, message)
+			M.kicked = M.kicked or {}
+			M.kicked[self] = message or ""
+		end,
 	})
 	setParent(player, Players)
 	local backpack = newInstance("Backpack", true)
@@ -1099,7 +1103,81 @@ service("ServerStorage")
 service("StarterGui")
 service("StarterPlayer")
 service("HttpService")
-setMethods(service("HttpService"), { GenerateGUID = function() Sim.guid = (Sim.guid or 0) + 1 return "guid-" .. Sim.guid end })
+-- minimal JSON (objects with string keys, arrays, numbers, strings, booleans) for the tests
+local function jsonEncode(v)
+	local t = type(v)
+	if t == "number" or t == "boolean" then return tostring(v) end
+	if t == "string" then return '"' .. v:gsub('[%c"\\]', function(c) return string.format("\\u%04x", c:byte()) end) .. '"' end
+	if t == "table" then
+		local isArray = #v > 0
+		local parts = {}
+		if isArray then
+			for _, item in v do table.insert(parts, jsonEncode(item)) end
+			return "[" .. table.concat(parts, ",") .. "]"
+		end
+		local keys = {}
+		for k in v do table.insert(keys, tostring(k)) end
+		table.sort(keys)
+		for _, k in keys do table.insert(parts, jsonEncode(k) .. ":" .. jsonEncode(v[k])) end
+		return "{" .. table.concat(parts, ",") .. "}"
+	end
+	return "null"
+end
+local function jsonDecode(text)
+	local pos = 1
+	local function ws() pos = text:find("%S", pos) or #text + 1 end
+	local parseValue
+	local function parseString()
+		local close = text:find('"', pos + 1, true)
+		local out = text:sub(pos + 1, close - 1)
+		pos = close + 1
+		return out
+	end
+	function parseValue()
+		ws()
+		local c = text:sub(pos, pos)
+		if c == "{" then
+			pos += 1
+			local out = {}
+			ws()
+			if text:sub(pos, pos) == "}" then pos += 1 return out end
+			while true do
+				ws()
+				local key = parseString()
+				ws(); pos += 1 -- colon
+				out[key] = parseValue()
+				ws()
+				local d = text:sub(pos, pos); pos += 1
+				if d == "}" then return out end
+			end
+		elseif c == "[" then
+			pos += 1
+			local out = {}
+			ws()
+			if text:sub(pos, pos) == "]" then pos += 1 return out end
+			while true do
+				table.insert(out, parseValue())
+				ws()
+				local d = text:sub(pos, pos); pos += 1
+				if d == "]" then return out end
+			end
+		elseif c == '"' then
+			return parseString()
+		elseif text:sub(pos, pos + 3) == "true" then pos += 4 return true
+		elseif text:sub(pos, pos + 4) == "false" then pos += 5 return false
+		elseif text:sub(pos, pos + 3) == "null" then pos += 4 return nil
+		end
+		local num = text:match("^-?[%d%.eE+-]+", pos)
+		pos += #num
+		return tonumber(num)
+	end
+	return parseValue()
+end
+setMethods(service("HttpService"), {
+	GenerateGUID = function() Sim.guid = (Sim.guid or 0) + 1 return "guid-" .. Sim.guid end,
+	JSONEncode = function(_, v) return jsonEncode(v) end,
+	JSONDecode = function(_, text) return jsonDecode(text) end,
+})
 
 -- DataStore + Marketplace
 local store = {}
@@ -1133,6 +1211,8 @@ setMethods(DataStoreService, {
 	GetRequestBudgetForRequestType = function() return 100 end,
 	GetDataStore = function()
 		return {
+			GetAsync = function(_, key) local v = store[key] return v end,
+			SetAsync = function(_, key, value) store[key] = value end,
 			UpdateAsync = function(_, key, fn)
 				local old = store[key]
 				local copy = old and table.clone(old) or nil

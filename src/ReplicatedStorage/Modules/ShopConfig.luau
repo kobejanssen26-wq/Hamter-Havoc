@@ -122,6 +122,9 @@ end
 
 -- Can this item be bought right now? (Robux items need a real pass / product id; timed offers must be running.)
 function ShopConfig.available(item: any, now: number?): boolean
+	if item.Disabled then
+		return false -- switched off by an admin (Admin panel > Shop) or ConfigStore
+	end
 	if (item.Kind == "Pass" and item.PassId == 0) or (item.Kind == "Product" and item.ProductId == 0) then
 		return false
 	end
@@ -129,6 +132,46 @@ function ShopConfig.available(item: any, now: number?): boolean
 		return false
 	end
 	return true
+end
+
+-- Live shop overrides set by admins: { [shopItemId] = { Price = number?, Disabled = boolean? } }. The server applies them and publishes
+-- them as the ReplicatedStorage attribute "ShopOverrides" (JSON) so every client shows the same price / availability.
+-- The server still charges the price it has in memory, never one the client sends.
+function ShopConfig.applyOverrides(map: any)
+	for _, item in ShopConfig.Items do
+		if item.BasePrice == nil then
+			item.BasePrice = item.Price
+			item.BaseDisabled = item.Disabled or false
+		end
+		local override = if type(map) == "table" then map[item.Id] else nil
+		local price = if type(override) == "table" and type(override.Price) == "number" and override.Price >= 1 and override.Price <= 1e12 and override.Price == override.Price then math.floor(override.Price) else nil
+		if item.Currency == "Coins" then
+			item.Coins = price or item.BasePrice
+		elseif item.Currency == "Gems" then
+			item.Gems = price or item.BasePrice
+		end
+		if item.Currency == "Coins" or item.Currency == "Gems" then
+			item.Price = price or item.BasePrice
+		end
+		item.Disabled = if type(override) == "table" and type(override.Disabled) == "boolean" then override.Disabled else item.BaseDisabled
+	end
+end
+
+do
+	local RunService = game:GetService("RunService")
+	local ReplicatedStorage = game:GetService("ReplicatedStorage")
+	if RunService:IsClient() then
+		local HttpService = game:GetService("HttpService")
+		local function refresh()
+			local raw = ReplicatedStorage:GetAttribute("ShopOverrides")
+			local ok, decoded = pcall(function()
+				return HttpService:JSONDecode(if type(raw) == "string" then raw else "{}")
+			end)
+			ShopConfig.applyOverrides(if ok then decoded else {})
+		end
+		ReplicatedStorage:GetAttributeChangedSignal("ShopOverrides"):Connect(refresh)
+		task.defer(refresh)
+	end
 end
 
 -- Unconfigured game passes (PassId 0) are listed, greyed out and never purchasable, ONLY while testing in Studio.
