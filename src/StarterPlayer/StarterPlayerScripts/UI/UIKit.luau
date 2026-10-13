@@ -324,27 +324,8 @@ end
 
 -- Drawn icon (no emoji): UIKit.icon(parent, "coin", { Size = UDim2.fromOffset(28, 28) })
 function UIKit.icon(parent: Instance?, id: string, props: { Size: UDim2?, Position: UDim2?, AnchorPoint: Vector2?, Color: Color3?, ZIndex: number?, LayoutOrder: number?, Name: string? }?): Frame
-	if parent and adoptionRoot(parent) then
-		-- a template keeps the icon's root frame (position, size ...); the artwork is always drawn by the code
-		local template = findTemplate(parent, "Frame", (props and props.Name) or ("Icon_" .. id))
-		if template and template:GetAttribute("IconId") == id then
-			consumed[template] = true
-			local opts = props or {}
-			mergeProps(template, { Size = opts.Size or UDim2.fromOffset(28, 28), Position = opts.Position or UDim2.new(), AnchorPoint = opts.AnchorPoint or Vector2.zero, LayoutOrder = opts.LayoutOrder or 0, ZIndex = opts.ZIndex or 1 })
-			template:ClearAllChildren()
-			local ratio = Instance.new("UIAspectRatioConstraint")
-			ratio.AspectRatio = 1
-			ratio.Parent = template
-			local size = opts.Size or UDim2.fromOffset(28, 28)
-			Icons.fill(template :: Frame, id, opts.Color, if size.X.Offset > 0 then size.X.Offset else 28)
-			return template :: Frame
-		end
-	end
+	-- icons are always drawn by the code (never part of the Studio templates)
 	local icon = Icons.create(parent, id, props)
-	if isBaking() then
-		local opts = props or {}
-		recordCodeProps(icon, { Size = opts.Size or UDim2.fromOffset(28, 28), Position = opts.Position or UDim2.new(), AnchorPoint = opts.AnchorPoint or Vector2.zero, LayoutOrder = opts.LayoutOrder or 0, ZIndex = opts.ZIndex or 1 })
-	end
 	return icon
 end
 

@@ -246,49 +246,6 @@
            }
           },
           {
-           "ClassName": "Frame",
-           "Name": "Icon_coin",
-           "Properties": {
-            "AnchorPoint": [
-             0,
-             0.5
-            ],
-            "BackgroundTransparency": 1,
-            "BorderSizePixel": 0,
-            "ClipsDescendants": false,
-            "LayoutOrder": 0,
-            "Position": {
-             "UDim2": [
-              [
-               0,
-               12
-              ],
-              [
-               0.5,
-               0
-              ]
-             ]
-            },
-            "Size": {
-             "UDim2": [
-              [
-               0,
-               30
-              ],
-              [
-               0,
-               30
-              ]
-             ]
-            },
-            "ZIndex": 3
-           },
-           "Attributes": {
-            "CodeProps": "AnchorPoint=v2:0.000,0.500\nLayoutOrder=0.000\nPosition=u2:0.000,12,0.500,0\nSize=u2:0.000,30,0.000,30\nZIndex=3.000",
-            "IconId": "coin"
-           }
-          },
-          {
            "ClassName": "TextLabel",
            "Name": "TextLabel",
            "Properties": {
@@ -428,49 +385,6 @@
            }
           },
           {
-           "ClassName": "Frame",
-           "Name": "Icon_cash",
-           "Properties": {
-            "AnchorPoint": [
-             0,
-             0.5
-            ],
-            "BackgroundTransparency": 1,
-            "BorderSizePixel": 0,
-            "ClipsDescendants": false,
-            "LayoutOrder": 0,
-            "Position": {
-             "UDim2": [
-              [
-               0,
-               12
-              ],
-              [
-               0.5,
-               0
-              ]
-             ]
-            },
-            "Size": {
-             "UDim2": [
-              [
-               0,
-               26
-              ],
-              [
-               0,
-               26
-              ]
-             ]
-            },
-            "ZIndex": 3
-           },
-           "Attributes": {
-            "CodeProps": "AnchorPoint=v2:0.000,0.500\nLayoutOrder=0.000\nPosition=u2:0.000,12,0.500,0\nSize=u2:0.000,26,0.000,26\nZIndex=3.000",
-            "IconId": "cash"
-           }
-          },
-          {
            "ClassName": "TextLabel",
            "Name": "TextLabel",
            "Properties": {
@@ -607,49 +521,6 @@
            },
            "Attributes": {
             "CodeProps": "BackgroundColor3=c3:0.698,0.478,1.000\nBorderSizePixel=0.000\nSize=u2:0.000,4,1.000,0\nZIndex=2.000"
-           }
-          },
-          {
-           "ClassName": "Frame",
-           "Name": "Icon_gem",
-           "Properties": {
-            "AnchorPoint": [
-             0,
-             0.5
-            ],
-            "BackgroundTransparency": 1,
-            "BorderSizePixel": 0,
-            "ClipsDescendants": false,
-            "LayoutOrder": 0,
-            "Position": {
-             "UDim2": [
-              [
-               0,
-               12
-              ],
-              [
-               0.5,
-               0
-              ]
-             ]
-            },
-            "Size": {
-             "UDim2": [
-              [
-               0,
-               26
-              ],
-              [
-               0,
-               26
-              ]
-             ]
-            },
-            "ZIndex": 3
-           },
-           "Attributes": {
-            "CodeProps": "AnchorPoint=v2:0.000,0.500\nLayoutOrder=0.000\nPosition=u2:0.000,12,0.500,0\nSize=u2:0.000,26,0.000,26\nZIndex=3.000",
-            "IconId": "gem"
            }
           },
           {
@@ -1015,49 +886,6 @@
            }
           },
           {
-           "ClassName": "Frame",
-           "Name": "Icon_rebirth",
-           "Properties": {
-            "AnchorPoint": [
-             0,
-             0.5
-            ],
-            "BackgroundTransparency": 1,
-            "BorderSizePixel": 0,
-            "ClipsDescendants": false,
-            "LayoutOrder": 0,
-            "Position": {
-             "UDim2": [
-              [
-               0,
-               12
-              ],
-              [
-               0.5,
-               0
-              ]
-             ]
-            },
-            "Size": {
-             "UDim2": [
-              [
-               0,
-               26
-              ],
-              [
-               0,
-               26
-              ]
-             ]
-            },
-            "ZIndex": 3
-           },
-           "Attributes": {
-            "CodeProps": "AnchorPoint=v2:0.000,0.500\nLayoutOrder=0.000\nPosition=u2:0.000,12,0.500,0\nSize=u2:0.000,26,0.000,26\nZIndex=3.000",
-            "IconId": "rebirth"
-           }
-          },
-          {
            "ClassName": "TextLabel",
            "Name": "TextLabel",
            "Properties": {
@@ -1217,49 +1045,6 @@
            },
            "Attributes": {
             "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.510,1.000,0.627\nThickness=1.500\nTransparency=0.000"
-           }
-          },
-          {
-           "ClassName": "Frame",
-           "Name": "Icon_shield",
-           "Properties": {
-            "AnchorPoint": [
-             0,
-             0
-            ],
-            "BackgroundTransparency": 1,
-            "BorderSizePixel": 0,
-            "ClipsDescendants": false,
-            "LayoutOrder": 0,
-            "Position": {
-             "UDim2": [
-              [
-               0,
-               7
-              ],
-              [
-               0,
-               5
-              ]
-             ]
-            },
-            "Size": {
-             "UDim2": [
-              [
-               0,
-               18
-              ],
-              [
-               0,
-               18
-              ]
-             ]
-            },
-            "ZIndex": 3
-           },
-           "Attributes": {
-            "CodeProps": "AnchorPoint=v2:0.000,0.000\nLayoutOrder=0.000\nPosition=u2:0.000,7,0.000,5\nSize=u2:0.000,18,0.000,18\nZIndex=3.000",
-            "IconId": "shield"
            }
           },
           {
@@ -1473,49 +1258,6 @@
            },
            "Attributes": {
             "CodeProps": "FillDirection=e:Horizontal\nHorizontalAlignment=e:Left\nPadding=u:0.000,8\nSortOrder=e:LayoutOrder\nVerticalAlignment=e:Center"
-           }
-          },
-          {
-           "ClassName": "Frame",
-           "Name": "Icon_star",
-           "Properties": {
-            "AnchorPoint": [
-             0,
-             0
-            ],
-            "BackgroundTransparency": 1,
-            "BorderSizePixel": 0,
-            "ClipsDescendants": false,
-            "LayoutOrder": 1,
-            "Position": {
-             "UDim2": [
-              [
-               0,
-               0
-              ],
-              [
-               0,
-               0
-              ]
-             ]
-            },
-            "Size": {
-             "UDim2": [
-              [
-               0,
-               18
-              ],
-              [
-               0,
-               18
-              ]
-             ]
-            },
-            "ZIndex": 1
-           },
-           "Attributes": {
-            "CodeProps": "AnchorPoint=v2:0.000,0.000\nLayoutOrder=1.000\nPosition=u2:0.000,0,0.000,0\nSize=u2:0.000,18,0.000,18\nZIndex=1.000",
-            "IconId": "star"
            }
           },
           {
@@ -1756,49 +1498,6 @@
         },
         {
          "ClassName": "Frame",
-         "Name": "Icon_scroll",
-         "Properties": {
-          "AnchorPoint": [
-           0.5,
-           0.5
-          ],
-          "BackgroundTransparency": 1,
-          "BorderSizePixel": 0,
-          "ClipsDescendants": false,
-          "LayoutOrder": 0,
-          "Position": {
-           "UDim2": [
-            [
-             0.5,
-             0
-            ],
-            [
-             0.5,
-             0
-            ]
-           ]
-          },
-          "Size": {
-           "UDim2": [
-            [
-             0,
-             26
-            ],
-            [
-             0,
-             26
-            ]
-           ]
-          },
-          "ZIndex": 3
-         },
-         "Attributes": {
-          "CodeProps": "AnchorPoint=v2:0.500,0.500\nLayoutOrder=0.000\nPosition=u2:0.500,0,0.500,0\nSize=u2:0.000,26,0.000,26\nZIndex=3.000",
-          "IconId": "scroll"
-         }
-        },
-        {
-         "ClassName": "Frame",
          "Name": "NotifyDot",
          "Properties": {
           "AnchorPoint": [
@@ -1974,49 +1673,6 @@
          },
          "Attributes": {
           "CodeProps": "Scale=1.000"
-         }
-        },
-        {
-         "ClassName": "Frame",
-         "Name": "Icon_bag",
-         "Properties": {
-          "AnchorPoint": [
-           0.5,
-           0.5
-          ],
-          "BackgroundTransparency": 1,
-          "BorderSizePixel": 0,
-          "ClipsDescendants": false,
-          "LayoutOrder": 0,
-          "Position": {
-           "UDim2": [
-            [
-             0.5,
-             0
-            ],
-            [
-             0.5,
-             0
-            ]
-           ]
-          },
-          "Size": {
-           "UDim2": [
-            [
-             0,
-             26
-            ],
-            [
-             0,
-             26
-            ]
-           ]
-          },
-          "ZIndex": 3
-         },
-         "Attributes": {
-          "CodeProps": "AnchorPoint=v2:0.500,0.500\nLayoutOrder=0.000\nPosition=u2:0.500,0,0.500,0\nSize=u2:0.000,26,0.000,26\nZIndex=3.000",
-          "IconId": "bag"
          }
         },
         {
@@ -2200,49 +1856,6 @@
         },
         {
          "ClassName": "Frame",
-         "Name": "Icon_gift",
-         "Properties": {
-          "AnchorPoint": [
-           0.5,
-           0.5
-          ],
-          "BackgroundTransparency": 1,
-          "BorderSizePixel": 0,
-          "ClipsDescendants": false,
-          "LayoutOrder": 0,
-          "Position": {
-           "UDim2": [
-            [
-             0.5,
-             0
-            ],
-            [
-             0.5,
-             0
-            ]
-           ]
-          },
-          "Size": {
-           "UDim2": [
-            [
-             0,
-             26
-            ],
-            [
-             0,
-             26
-            ]
-           ]
-          },
-          "ZIndex": 3
-         },
-         "Attributes": {
-          "CodeProps": "AnchorPoint=v2:0.500,0.500\nLayoutOrder=0.000\nPosition=u2:0.500,0,0.500,0\nSize=u2:0.000,26,0.000,26\nZIndex=3.000",
-          "IconId": "gift"
-         }
-        },
-        {
-         "ClassName": "Frame",
          "Name": "NotifyDot",
          "Properties": {
           "AnchorPoint": [
@@ -2422,49 +2035,6 @@
         },
         {
          "ClassName": "Frame",
-         "Name": "Icon_gear",
-         "Properties": {
-          "AnchorPoint": [
-           0.5,
-           0.5
-          ],
-          "BackgroundTransparency": 1,
-          "BorderSizePixel": 0,
-          "ClipsDescendants": false,
-          "LayoutOrder": 0,
-          "Position": {
-           "UDim2": [
-            [
-             0.5,
-             0
-            ],
-            [
-             0.5,
-             0
-            ]
-           ]
-          },
-          "Size": {
-           "UDim2": [
-            [
-             0,
-             26
-            ],
-            [
-             0,
-             26
-            ]
-           ]
-          },
-          "ZIndex": 3
-         },
-         "Attributes": {
-          "CodeProps": "AnchorPoint=v2:0.500,0.500\nLayoutOrder=0.000\nPosition=u2:0.500,0,0.500,0\nSize=u2:0.000,26,0.000,26\nZIndex=3.000",
-          "IconId": "gear"
-         }
-        },
-        {
-         "ClassName": "Frame",
          "Name": "NotifyDot",
          "Properties": {
           "AnchorPoint": [
@@ -2640,49 +2210,6 @@
          },
          "Attributes": {
           "CodeProps": "Scale=1.000"
-         }
-        },
-        {
-         "ClassName": "Frame",
-         "Name": "Icon_trophy",
-         "Properties": {
-          "AnchorPoint": [
-           0.5,
-           0.5
-          ],
-          "BackgroundTransparency": 1,
-          "BorderSizePixel": 0,
-          "ClipsDescendants": false,
-          "LayoutOrder": 0,
-          "Position": {
-           "UDim2": [
-            [
-             0.5,
-             0
-            ],
-            [
-             0.5,
-             0
-            ]
-           ]
-          },
-          "Size": {
-           "UDim2": [
-            [
-             0,
-             26
-            ],
-            [
-             0,
-             26
-            ]
-           ]
-          },
-          "ZIndex": 3
-         },
-         "Attributes": {
-          "CodeProps": "AnchorPoint=v2:0.500,0.500\nLayoutOrder=0.000\nPosition=u2:0.500,0,0.500,0\nSize=u2:0.000,26,0.000,26\nZIndex=3.000",
-          "IconId": "trophy"
          }
         },
         {
@@ -4367,49 +3894,6 @@
            },
            "Attributes": {
             "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.243,0.267,0.369\nThickness=1.500\nTransparency=0.000"
-           }
-          },
-          {
-           "ClassName": "Frame",
-           "Name": "Icon_coin",
-           "Properties": {
-            "AnchorPoint": [
-             0,
-             0
-            ],
-            "BackgroundTransparency": 1,
-            "BorderSizePixel": 0,
-            "ClipsDescendants": false,
-            "LayoutOrder": 0,
-            "Position": {
-             "UDim2": [
-              [
-               0,
-               8
-              ],
-              [
-               0,
-               7
-              ]
-             ]
-            },
-            "Size": {
-             "UDim2": [
-              [
-               0,
-               20
-              ],
-              [
-               0,
-               20
-              ]
-             ]
-            },
-            "ZIndex": 1
-           },
-           "Attributes": {
-            "CodeProps": "AnchorPoint=v2:0.000,0.000\nLayoutOrder=0.000\nPosition=u2:0.000,8,0.000,7\nSize=u2:0.000,20,0.000,20\nZIndex=1.000",
-            "IconId": "coin"
            }
           },
           {

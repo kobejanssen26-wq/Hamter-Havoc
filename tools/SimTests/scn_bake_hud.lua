@@ -69,6 +69,7 @@ end
 local function export(inst)
 	local data = RawData[inst]
 	if SKIP_CLASSES[data.ClassName] then return nil end
+	if data.Attributes.IconId ~= nil then return nil end -- icons are drawn by the code, not part of the templates
 	local props, names = {}, {}
 	for k in data.Props do table.insert(names, k) end
 	table.sort(names)
