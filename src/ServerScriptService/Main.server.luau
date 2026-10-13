@@ -43,6 +43,9 @@ require(ReplicatedStorage.Modules.ContentCheck).report()
 -- saved admin settings (GameConfig overrides, shop prices) before anything reads them
 ConfigStore.start()
 
+-- weapon models for the shop / backpack previews (ReplicatedStorage/Assets/WeaponPreviews)
+require(Systems.ToolBuilder).publishPreviews()
+
 -- world first, so houses exist before anybody joins
 local world = WorldBuilder.build()
 LeaderboardService.attachBoards(world.Boards)

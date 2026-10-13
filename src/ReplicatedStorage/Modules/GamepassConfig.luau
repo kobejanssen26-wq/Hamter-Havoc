@@ -10,7 +10,7 @@
 	4. Test: see docs/CONTENT_GUIDE.md ("Game passes").
 
 	Fields: Key (stable, never change), PassId, Name, Description, Icon (drawn icon id or "rbxassetid://..." thumbnail),
-	Order (sort position), Category (optional, default "Gamepasses"), Benefit.
+	Order (sort position), Category (optional, default "Gamepasses"), Benefit, Enabled (optional, false = hidden and not purchasable).
 	The Robux price is NOT written here: the server asks Roblox for it (MarketplaceService:GetProductInfo), so it can never be out of date.
 ]]
 
@@ -51,6 +51,10 @@ for _, entry in GamepassConfig.List do
 	end
 	if type(entry.Name) ~= "string" or entry.Name == "" then
 		problem("Name is missing")
+		ok = false
+	end
+	if entry.Enabled ~= nil and type(entry.Enabled) ~= "boolean" then
+		problem("Enabled must be true or false")
 		ok = false
 	end
 	if type(entry.Benefit) ~= "table" then

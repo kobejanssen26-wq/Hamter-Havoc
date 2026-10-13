@@ -44,12 +44,19 @@ local function balanceOf(currency: string): number
 end
 
 function ShopUI.start()
-	local panel = UIKit.panel({ Name = "Shop", Title = "Shop", Icon = "bag", Design = Vector2.new(1000, 640), Accent = C.Gold, Subtitle = "Weapons, equipment, boosts and game passes" })
+	local panel = UIKit.panel({ Name = "Shop", Title = "Shop", Icon = "bag", Design = Vector2.new(1000, 690), Accent = C.Gold, Subtitle = "Weapons, equipment and boosts for cash and diamonds - passes and diamond packs for Robux" })
 	local body = panel.Body
+
+	-- TWO SHOPS in one window: the Cash Shop (spend what you earned in the game) and the Robux Shop (real purchases, Roblox's own prompt)
+	local mode = "Cash"
+	local modeRow = UIKit.frame(body, { Name = "ShopSwitch", Size = UDim2.new(1, 0, 0, 40), BackgroundTransparency = 1 })
+	UIKit.list(modeRow, Enum.FillDirection.Horizontal, 8, Enum.HorizontalAlignment.Left, Enum.VerticalAlignment.Center)
+	local modeButtons: { [string]: TextButton } = {}
 
 	-- category tabs (scroll sideways on narrow screens)
 	local tabs = UIKit.new("ScrollingFrame", {
 		Name = "Tabs",
+		Position = UDim2.fromOffset(0, 46),
 		Size = UDim2.new(1, 0, 0, 44),
 		BackgroundTransparency = 1,
 		BorderSizePixel = 0,
@@ -61,16 +68,16 @@ function ShopUI.start()
 	UIKit.list(tabs, Enum.FillDirection.Horizontal, 6, Enum.HorizontalAlignment.Left, Enum.VerticalAlignment.Center)
 
 	-- sub header: category title (left) and balances (right)
-	local subtitle = UIKit.label(body, { Name = "CategoryTitle", Size = UDim2.fromOffset(360, 30), Position = UDim2.fromOffset(2, 50), Font = UIKit.Fonts.Title, TextSize = 20 })
-	local balances = UIKit.frame(body, { Size = UDim2.fromOffset(420, 34), Position = UDim2.new(1, 0, 0, 48), AnchorPoint = Vector2.new(1, 0), BackgroundTransparency = 1 })
+	local subtitle = UIKit.label(body, { Name = "CategoryTitle", Size = UDim2.fromOffset(360, 30), Position = UDim2.fromOffset(2, 96), Font = UIKit.Fonts.Title, TextSize = 20 })
+	local balances = UIKit.frame(body, { Size = UDim2.fromOffset(420, 34), Position = UDim2.new(1, 0, 0, 94), AnchorPoint = Vector2.new(1, 0), BackgroundTransparency = 1 })
 	UIKit.list(balances, Enum.FillDirection.Horizontal, 8, Enum.HorizontalAlignment.Right, Enum.VerticalAlignment.Center)
 	local cashPill = UIKit.pill(balances, { Icon = "coin", Color = C.Cash, Size = UDim2.fromOffset(190, 32), LayoutOrder = 1 })
 	local gemPill = UIKit.pill(balances, { Icon = "gem", Color = C.Purple, Size = UDim2.fromOffset(150, 32), LayoutOrder = 2 })
 
-	local grid = UIKit.scroll(body, { Name = "Items", Size = UDim2.new(1, -330, 1, -92), Position = UDim2.fromOffset(0, 88) })
-	local empty = UIKit.label(body, { Name = "Empty", Size = UDim2.new(1, -330, 0, 120), Position = UDim2.fromOffset(0, 180), Text = "", TextWrapped = true, TextSize = 18, TextColor3 = C.Muted, Font = UIKit.Fonts.Title, TextXAlignment = Enum.TextXAlignment.Center, Visible = false })
+	local grid = UIKit.scroll(body, { Name = "Items", Size = UDim2.new(1, -330, 1, -138), Position = UDim2.fromOffset(0, 134) })
+	local empty = UIKit.label(body, { Name = "Empty", Size = UDim2.new(1, -330, 0, 120), Position = UDim2.fromOffset(0, 230), Text = "", TextWrapped = true, TextSize = 18, TextColor3 = C.Muted, Font = UIKit.Fonts.Title, TextXAlignment = Enum.TextXAlignment.Center, Visible = false })
 
-	local detail = UIKit.frame(body, { Name = "Detail", Size = UDim2.new(0, 314, 1, -92), Position = UDim2.new(1, 0, 0, 88), AnchorPoint = Vector2.new(1, 0), BackgroundColor3 = C.CreamDark })
+	local detail = UIKit.frame(body, { Name = "Detail", Size = UDim2.new(0, 314, 1, -138), Position = UDim2.new(1, 0, 0, 134), AnchorPoint = Vector2.new(1, 0), BackgroundColor3 = C.CreamDark })
 	UIKit.corner(detail, 10)
 	UIKit.stroke(detail, C.Line, 1.5)
 
@@ -203,7 +210,11 @@ function ShopUI.start()
 		local stroke = card:FindFirstChild("Edge") :: UIStroke
 		stroke.Color = if selectedItem == item.Id then C.Gold else accent
 		stroke.Thickness = if selectedItem == item.Id then 3 else 1.5
-		UIKit.icon(card, item.Icon, { Size = UDim2.fromOffset(56, 56), Position = UDim2.new(0.5, 0, 0, 12), AnchorPoint = Vector2.new(0.5, 0), ZIndex = 3 })
+		if def and def.Equip.Kind == "Tool" then
+			UIKit.weaponIcon(card, def.Id, item.Icon, { Size = UDim2.fromOffset(72, 60), Position = UDim2.new(0.5, 0, 0, 10), AnchorPoint = Vector2.new(0.5, 0), ZIndex = 3 })
+		else
+			UIKit.icon(card, item.Icon, { Size = UDim2.fromOffset(56, 56), Position = UDim2.new(0.5, 0, 0, 12), AnchorPoint = Vector2.new(0.5, 0), ZIndex = 3 })
+		end
 		UIKit.label(card, { Size = UDim2.new(1, -12, 0, 20), Position = UDim2.fromOffset(6, 74), Text = item.Name, Font = UIKit.Fonts.Title, TextColor3 = C.Ink, TextSize = 14, TextXAlignment = Enum.TextXAlignment.Center, TextTruncate = Enum.TextTruncate.AtEnd, ZIndex = 3 })
 		-- price line / state
 		local priceRow = UIKit.iconText(card, {
@@ -260,7 +271,11 @@ function ShopUI.start()
 		local currency = CURRENCY[item.Currency] or CURRENCY.Gems
 		local accent = if def then ItemView.rarityColor(def) else currency.Color
 		UIKit.frame(detail, { Size = UDim2.new(1, 0, 0, 4), BackgroundColor3 = accent })
-		UIKit.icon(detail, item.Icon, { Name = "DetailIcon", Size = UDim2.fromOffset(84, 84), Position = UDim2.new(0.5, 0, 0, 16), AnchorPoint = Vector2.new(0.5, 0) })
+		if def and def.Equip.Kind == "Tool" then
+			UIKit.weaponIcon(detail, def.Id, item.Icon, { Name = "DetailIcon", Size = UDim2.fromOffset(150, 86), Position = UDim2.new(0.5, 0, 0, 14), AnchorPoint = Vector2.new(0.5, 0), Spin = true })
+		else
+			UIKit.icon(detail, item.Icon, { Name = "DetailIcon", Size = UDim2.fromOffset(84, 84), Position = UDim2.new(0.5, 0, 0, 16), AnchorPoint = Vector2.new(0.5, 0) })
+		end
 		UIKit.label(detail, { Name = "DetailName", Size = UDim2.new(1, -24, 0, 26), Position = UDim2.fromOffset(12, 106), Text = item.Name, Font = UIKit.Fonts.Title, TextSize = 20, TextXAlignment = Enum.TextXAlignment.Center, TextTruncate = Enum.TextTruncate.AtEnd })
 		local tagText = if item.Kind == "Pass" then "GAME PASS" elseif def then string.upper(def.Category) .. (if def.Rarity then "  -  " .. string.upper(def.Rarity) else "") else string.upper(item.Category)
 		UIKit.chip(detail, tagText, accent, UDim2.fromOffset(170, 20)).Position = UDim2.new(0.5, -85, 0, 134)
@@ -341,6 +356,43 @@ function ShopUI.start()
 		end
 	end
 
+	-- which shop a category belongs to
+	local ROBUX_CATEGORIES = { Gamepasses = true, Diamonds = true }
+	local function shopOf(categoryId: string): string
+		return if ROBUX_CATEGORIES[categoryId] then "Robux" else "Cash"
+	end
+
+	local function buildModeSwitch()
+		for _, child in modeRow:GetChildren() do
+			if child:IsA("GuiObject") then
+				child:Destroy()
+			end
+		end
+		modeButtons = {}
+		for index, def in { { Id = "Cash", Text = "CASH SHOP", Icon = "coin", Color = C.Green }, { Id = "Robux", Text = "ROBUX SHOP", Icon = "gift", Color = C.Gold } } do
+			local active = mode == def.Id
+			local button = UIKit.button(modeRow, {
+				Name = "Mode_" .. def.Id,
+				Text = "",
+				Size = UDim2.fromOffset(190, 36),
+				Color = if active then def.Color else C.Card,
+				LayoutOrder = index,
+				OnClick = function()
+					if mode ~= def.Id then
+						mode = def.Id
+						selected = ""
+						selectedItem = nil
+						render()
+					end
+				end,
+			})
+			UIKit.icon(button, def.Icon, { Size = UDim2.fromOffset(22, 22), Position = UDim2.new(0, 12, 0.5, 0), AnchorPoint = Vector2.new(0, 0.5), ZIndex = 3 })
+			UIKit.label(button, { Size = UDim2.new(1, -44, 1, 0), Position = UDim2.fromOffset(40, 0), Text = def.Text, Font = UIKit.Fonts.Title, TextSize = 15, TextColor3 = if active then C.BrownDark else C.White, ZIndex = 3 })
+			modeButtons[def.Id] = button
+		end
+		UIKit.label(modeRow, { Size = UDim2.fromOffset(380, 36), LayoutOrder = 3, Text = if mode == "Robux" then "Real purchases through Roblox. Prices are set by Roblox." else "Spend the cash and diamonds you earn playing.", TextSize = 13, TextColor3 = C.Muted, Font = UIKit.Fonts.Soft })
+	end
+
 	local function buildTabs(categories: { any })
 		for _, child in tabs:GetChildren() do
 			if child:IsA("GuiObject") then
@@ -373,7 +425,13 @@ function ShopUI.start()
 		cashPill.Value.Text = Format.short(DataController.coins())
 		gemPill.Value.Text = Format.short(DataController.gems())
 
-		local categories = ShopConfig.categories()
+		local categories = {}
+		for _, category in ShopConfig.categories() do
+			if shopOf(category.Id) == mode then
+				table.insert(categories, category)
+			end
+		end
+		buildModeSwitch()
 		local current
 		for _, category in categories do
 			if category.Id == selected then
@@ -385,7 +443,9 @@ function ShopUI.start()
 			selected = current.Id
 		end
 		buildTabs(categories)
-		subtitle.Text = if current then current.Name else "Shop"
+		subtitle.Text = if current then current.Name else (if mode == "Robux" then "Robux Shop" else "Cash Shop")
+		cashPill.Frame.Visible = mode == "Cash"
+		gemPill.Frame.Visible = true
 
 		grid:ClearAllChildren()
 		UIKit.new("UIGridLayout", {
@@ -416,7 +476,7 @@ function ShopUI.start()
 		end
 		empty.Visible = #items == 0
 		if #items == 0 then
-			empty.Text = if selected == "Gamepasses" then "No game passes are available yet.\nThey appear here as soon as a PassId is configured." else "Nothing to buy here right now."
+			empty.Text = if selected == "Gamepasses" then "No game passes are available yet.\nThey appear here as soon as a PassId is configured." elseif selected == "Diamonds" then "Diamond packs appear here as soon as a ProductId is configured." else "Nothing to buy here right now."
 		end
 		buildDetail(chosen, data)
 		if selected == "Gamepasses" then
@@ -427,6 +487,7 @@ function ShopUI.start()
 	panel.OnOpen[1] = function()
 		if panel.Focus then
 			selected = panel.Focus
+			mode = shopOf(selected)
 			selectedItem = nil
 			panel.Focus = nil
 		end

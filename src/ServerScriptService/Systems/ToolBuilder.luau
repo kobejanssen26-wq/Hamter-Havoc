@@ -250,4 +250,42 @@ function ToolBuilder.build(def: any): Tool
 	return tool
 end
 
+-- Publishes a non-interactive MODEL of every weapon to ReplicatedStorage/Assets/WeaponPreviews/<ItemId>, so the shop and the
+-- backpack can show the REAL model in a ViewportFrame (what you see is exactly what you hold). Parts only, anchored, no scripts.
+function ToolBuilder.publishPreviews()
+	local ItemRegistry = require(ReplicatedStorage.Modules.ItemRegistry)
+	local assets = ReplicatedStorage:FindFirstChild("Assets")
+	if not assets then
+		assets = Instance.new("Folder")
+		assets.Name = "Assets"
+		assets.Parent = ReplicatedStorage
+	end
+	local old = assets:FindFirstChild("WeaponPreviews")
+	if old then
+		old:Destroy()
+	end
+	local folder = Instance.new("Folder")
+	folder.Name = "WeaponPreviews"
+	for _, def in ItemRegistry.List do
+		if def.Equip.Kind == "Tool" then
+			local tool = ToolBuilder.build(def)
+			local model = Instance.new("Model")
+			model.Name = def.Id
+			for _, child in tool:GetChildren() do
+				if child:IsA("BasePart") then
+					child.Anchored = true
+					child.Parent = model
+				end
+			end
+			local handle = model:FindFirstChild("Handle")
+			if handle and handle:IsA("BasePart") then
+				model.PrimaryPart = handle
+			end
+			tool:Destroy()
+			model.Parent = folder
+		end
+	end
+	folder.Parent = assets
+end
+
 return ToolBuilder

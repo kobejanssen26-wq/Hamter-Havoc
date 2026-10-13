@@ -100,6 +100,7 @@ do
 				Order = pass.Order,
 				Robux = 0, -- the real price is fetched from Roblox by the server (ShopSystem.passPrice)
 				Unconfigured = not GamepassConfig.configured(pass),
+				Disabled = pass.Enabled == false, -- GamepassConfig: Enabled = false hides the pass
 			})
 		end
 	end
@@ -108,6 +109,9 @@ end
 ShopConfig.ById = {} :: { [string]: any }
 -- Currency + price in one place: item.Currency is "Coins", "Gems" or "Robux"; the UI shows them as Cash / Diamonds / Robux.
 for _, item in ShopConfig.Items do
+	if item.Enabled == false then
+		item.Disabled = true -- any shop entry (for example a diamond pack) can be switched off with Enabled = false
+	end
 	item.Category = item.Category or ShopConfig.SectionToCategory[item.Section] or "Boosts"
 	if item.Kind == "Pass" then
 		item.Currency, item.Price = "Robux", 0

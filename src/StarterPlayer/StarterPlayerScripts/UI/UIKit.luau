@@ -681,6 +681,56 @@ function UIKit.hamsterIcon(parent: Instance, species: any, props: { Size: UDim2?
 	return viewport
 end
 
+-- The REAL model of a weapon (the one players hold; published by the server in Assets/WeaponPreviews) in a ViewportFrame.
+-- Falls back to the flat icon when no preview exists (for example while the server is still starting).
+function UIKit.weaponIcon(parent: Instance, itemId: string, fallbackIcon: string, props: { Size: UDim2?, Position: UDim2?, AnchorPoint: Vector2?, ZIndex: number?, Spin: boolean?, Name: string? }?): GuiObject
+	local opts = props or {}
+	local assets = ReplicatedStorage:FindFirstChild("Assets")
+	local previews = assets and assets:FindFirstChild("WeaponPreviews")
+	local source = previews and previews:FindFirstChild(itemId)
+	if not source or not source:IsA("Model") then
+		return UIKit.icon(parent, fallbackIcon, { Size = opts.Size, Position = opts.Position, AnchorPoint = opts.AnchorPoint, ZIndex = opts.ZIndex, Name = opts.Name })
+	end
+	local viewport = UIKit.new("ViewportFrame", {
+		Name = opts.Name or "WeaponPreview",
+		BackgroundTransparency = 1,
+		Size = opts.Size or UDim2.fromOffset(110, 110),
+		Position = opts.Position or UDim2.new(),
+		AnchorPoint = opts.AnchorPoint or Vector2.zero,
+		LightColor = Color3.fromRGB(255, 244, 224),
+		Ambient = Color3.fromRGB(165, 155, 170),
+		LightDirection = Vector3.new(-0.5, -1, 0.6),
+		ZIndex = opts.ZIndex or 1,
+	}, parent)
+	viewport:SetAttribute("ItemId", itemId)
+	local model = source:Clone()
+	model.Parent = viewport
+	local boxCFrame, size = model:GetBoundingBox()
+	local center = boxCFrame.Position
+	local camera = Instance.new("Camera")
+	local fov = 30
+	local radius = math.max(size.X, size.Y, size.Z) * 0.5
+	local distance = radius / math.tan(math.rad(fov / 2)) * 1.2
+	camera.FieldOfView = fov
+	camera.CFrame = CFrame.lookAt(center + Vector3.new(0.75, 0.45, -1).Unit * distance, center)
+	camera.Parent = viewport
+	viewport.CurrentCamera = camera
+	if opts.Spin then
+		local base = model:GetPivot()
+		local connection
+		local angle = 0
+		connection = RunService.RenderStepped:Connect(function(dt)
+			if not viewport.Parent then
+				connection:Disconnect()
+				return
+			end
+			angle += dt * 0.8
+			model:PivotTo(CFrame.new(center) * CFrame.Angles(0, math.sin(angle) * 0.9, 0) * CFrame.new(-center) * base)
+		end)
+	end
+	return viewport
+end
+
 ---------------------------------------------------------------------------
 -- panels (windows)
 ---------------------------------------------------------------------------

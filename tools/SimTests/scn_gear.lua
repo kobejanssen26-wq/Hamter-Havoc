@@ -587,12 +587,30 @@ task.spawn(function()
 	-- shop
 	local shop = UIKit.getPanel("Shop")
 	shop:Open(); adv(0.8)
-	for _, name in { "Tab_Weapons", "Tab_Equipment", "Tab_Boosts", "Tab_Gamepasses" } do
-		check("shop tab exists: " .. name, #byName(shop.Gui, name) == 1)
+	for _, name in { "Tab_Weapons", "Tab_Equipment", "Tab_Boosts" } do
+		check("cash shop tab exists: " .. name, #byName(shop.Gui, name) == 1)
 	end
+	check("the Cash Shop does not show Robux items (no game pass tab)", #byName(shop.Gui, "Tab_Gamepasses") == 0)
+	check("two shops: a Cash Shop and a Robux Shop switch", #byName(shop.Gui, "Mode_Cash") == 1 and #byName(shop.Gui, "Mode_Robux") == 1)
 	click(byName(shop.Gui, "Tab_Weapons")[1])
 	check("weapon cards listed", #byName(shop.Gui, "Item_gear_foam_bat") == 1 and #byName(shop.Gui, "Item_gear_shadow_cloak") == 1 and #byName(shop.Gui, "Item_gear_seed_slingshot") == 1)
 	check("detail panel shows the selected weapon", string.find(textsOf(byName(shop.Gui, "Detail")[1]), "Cooldown", 1, true) ~= nil and #byName(shop.Gui, "DetailIcon") == 1)
+	check("weapon cards show the REAL model in a viewport (not a generic icon)", #byName(byName(shop.Gui, "Item_gear_slap_glove")[1], "WeaponPreview") == 1)
+	check("the preview model of the glove has the glove's parts (Palm, Finger0, Thumb ...)", (function()
+		local view = byName(byName(shop.Gui, "Item_gear_slap_glove")[1], "WeaponPreview")[1]
+		local model = M.InstanceMethods.FindFirstChildOfClass(view, "Model")
+		return model ~= nil and M.InstanceMethods.FindFirstChild(model, "Palm") ~= nil and M.InstanceMethods.FindFirstChild(model, "Thumb") ~= nil and M.InstanceMethods.FindFirstChild(model, "Handle") ~= nil
+	end)())
+	check("each weapon's preview differs (glove vs hammer vs shield have different parts)", (function()
+		local function names(id)
+			local p = game:GetService("ReplicatedStorage").Assets.WeaponPreviews[id]
+			local t = {}
+			for _, c in M.InstanceMethods.GetChildren(p) do table.insert(t, RawData[c].Name) end
+			table.sort(t)
+			return table.concat(t, ",")
+		end
+		return names("slap_glove") ~= names("party_hammer") and names("party_hammer") ~= names("bubble_shield") and names("spring_glove") ~= names("shock_baton")
+	end)())
 	click(byName(shop.Gui, "Item_gear_foam_bat")[1])
 	check("owned weapon offers Equip instead of Buy", #byName(shop.Gui, "Action") == 1 and (string.find(tostring(RawData[byName(shop.Gui, "Action")[1]].Props.Text), "Equip", 1, true) ~= nil), #byName(shop.Gui, "Action") .. ":" .. textsOf(shop.Gui):sub(1, 400))
 	-- rebirth-locked weapons stay visible with a lock + requirement
@@ -609,12 +627,15 @@ task.spawn(function()
 	adv(1.5)
 	local unlockedAction = byName(shop.Gui, "Action")[1]
 	check("at the required rebirth it becomes buyable", unlockedAction ~= nil and RawData[unlockedAction].Attributes.Disabled ~= true, unlockedAction and tostring(RawData[unlockedAction].Props.Text))
+	click(byName(shop.Gui, "Mode_Robux")[1])
+	check("the Robux Shop has the Game Passes tab and no cash items", #byName(shop.Gui, "Tab_Gamepasses") == 1 and #byName(shop.Gui, "Tab_Weapons") == 0)
 	click(byName(shop.Gui, "Tab_Gamepasses")[1])
 	local passCards = 0
 	for _, d in M.descendants(shop.Gui) do if string.sub(RawData[d].Name, 1, 10) == "Item_pass_" then passCards += 1 end end
 	check("game pass tab lists configured-or-greyed passes", passCards == #GamepassConfig.List, passCards)
 	local act = byName(shop.Gui, "Action")[1]
 	check("unconfigured pass: button says 'Not configured' and is disabled", act and string.find(tostring(RawData[act].Props.Text), "Not configured", 1, true) ~= nil and RawData[act].Attributes.Disabled == true, act and (tostring(RawData[act].Props.Text) .. "/" .. tostring(RawData[act].Attributes.Disabled)))
+	click(byName(shop.Gui, "Mode_Cash")[1])
 	click(byName(shop.Gui, "Tab_Boosts")[1])
 	check("boost cards present", #byName(shop.Gui, "Item_boost_coins") == 1)
 	shop:Close(); adv(0.5)

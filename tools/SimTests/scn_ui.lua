@@ -185,7 +185,7 @@ task.spawn(function()
 	-- shop
 	local shop = UIKit.getPanel("Shop")
 	shop:Open(); adv(0.6)
-	check("shop has category tabs: Weapons / Equipment / Boosts / Hamsters / Cosmetics / Game Passes", #byName(shop.Gui, "Tab_Weapons") == 1 and #byName(shop.Gui, "Tab_Equipment") == 1 and #byName(shop.Gui, "Tab_Boosts") == 1 and #byName(shop.Gui, "Tab_Hamsters") == 1 and #byName(shop.Gui, "Tab_Cosmetics") == 1 and #byName(shop.Gui, "Tab_Gamepasses") == 1)
+	check("cash shop has category tabs: Weapons / Equipment / Boosts / Hamsters / Cosmetics (+ a Robux Shop switch)", #byName(shop.Gui, "Tab_Weapons") == 1 and #byName(shop.Gui, "Tab_Equipment") == 1 and #byName(shop.Gui, "Tab_Boosts") == 1 and #byName(shop.Gui, "Tab_Hamsters") == 1 and #byName(shop.Gui, "Tab_Cosmetics") == 1 and #byName(shop.Gui, "Mode_Robux") == 1)
 	check("empty categories are not shown", #byName(shop.Gui, "Tab_Limited") == 0 and #byName(shop.Gui, "Tab_Diamonds") == 0)
 	shop:Close(); adv(0.4)
 
