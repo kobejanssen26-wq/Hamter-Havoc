@@ -73,15 +73,14 @@ function WheelUI.start()
 	local listTitle = UIKit.label(body, { Position = UDim2.fromOffset(RADIUS * 2 + BUBBLE + 40, 14), Size = UDim2.new(1, -(RADIUS * 2 + BUBBLE + 40), 0, 26), Text = "PRIZES", Font = UIKit.Fonts.Title, TextSize = UIKit.Type.Caption, TextColor3 = C.Muted })
 	local list = UIKit.frame(body, { Name = "PrizeList", Position = UDim2.fromOffset(RADIUS * 2 + BUBBLE + 40, 42), Size = UDim2.new(1, -(RADIUS * 2 + BUBBLE + 40), 0, 330), BackgroundTransparency = 1 })
 	UIKit.list(list, Enum.FillDirection.Vertical, 4)
-	local total = SpinWheelConfig.totalWeight()
-	local rows: { { Frame: Frame, Label: TextLabel } } = {}
+	local rows: { { Frame: Frame, Label: TextLabel, Chance: TextLabel } } = {}
 	for index, prize in prizes do
 		local row = UIKit.frame(list, { Name = "Row_" .. prize.Id, Size = UDim2.new(1, 0, 0, 32), LayoutOrder = index, BackgroundColor3 = C.Card })
 		UIKit.corner(row, 8)
 		UIKit.frame(row, { Size = UDim2.fromOffset(8, 32), BackgroundColor3 = prize.Color, ZIndex = 2 })
 		local label = UIKit.label(row, { Size = UDim2.new(1, -80, 1, 0), Position = UDim2.fromOffset(16, 0), Text = prize.Label, Font = UIKit.Fonts.Title, TextSize = 13, TextTruncate = Enum.TextTruncate.AtEnd })
-		UIKit.label(row, { Size = UDim2.fromOffset(60, 32), Position = UDim2.new(1, -64, 0, 0), Text = string.format("%.1f%%", prize.Weight / total * 100), TextSize = 12, TextColor3 = C.Muted, TextXAlignment = Enum.TextXAlignment.Right })
-		rows[index] = { Frame = row, Label = label }
+		local chance = UIKit.label(row, { Size = UDim2.fromOffset(60, 32), Position = UDim2.new(1, -64, 0, 0), Text = "", TextSize = 12, TextColor3 = C.Muted, TextXAlignment = Enum.TextXAlignment.Right })
+		rows[index] = { Frame = row, Label = label, Chance = chance }
 	end
 
 	local info = UIKit.label(body, { Name = "Info", Size = UDim2.new(1, 0, 0, 30), Position = UDim2.new(0, 0, 1, -34), Text = "", Font = UIKit.Fonts.Title, TextSize = 17, TextXAlignment = Enum.TextXAlignment.Center })
@@ -104,7 +103,26 @@ function WheelUI.start()
 		return now >= nextFree, math.max(0, nextFree - now)
 	end
 
+	-- what each prize is worth to THIS player (cash scales with progress) and whether it is unlocked yet
+	local function refreshPrizes()
+		local data = DataController.Data
+		if not data or not data.Rebirths then
+			return
+		end
+		local ctx = SpinWheelConfig.context(data, DataController.now())
+		local total = SpinWheelConfig.totalWeight(ctx)
+		for index, prize in prizes do
+			local row = rows[index]
+			local open = SpinWheelConfig.eligible(prize, ctx)
+			row.Label.Text = SpinWheelConfig.preview(prize, ctx)
+			row.Label.TextColor3 = if open then C.Ink else C.Muted
+			row.Chance.Text = if open and total > 0 then string.format("%.1f%%", prize.Weight / total * 100) else "locked"
+			bubbles[index].BackgroundTransparency = if open then 0 else 0.55
+		end
+	end
+
 	local function refresh()
+		refreshPrizes()
 		local free, wait = state()
 		if spinning then
 			return
@@ -113,8 +131,8 @@ function WheelUI.start()
 			spinButton.Text = "SPIN\nFREE!"
 			UIKit.setButtonColor(spinButton, C.Green)
 			info.Text = '<font color="#60e070">Your free spin is ready!</font>'
-		elseif SpinWheelConfig.ExtraSpinGems > 0 then
-			spinButton.Text = string.format("SPIN\n%d gems", SpinWheelConfig.ExtraSpinGems)
+		elseif SpinWheelConfig.extraSpinGems() > 0 then
+			spinButton.Text = string.format("SPIN\n%d gems", SpinWheelConfig.extraSpinGems())
 			UIKit.setButtonColor(spinButton, C.Purple)
 			info.Text = "Next free spin in " .. Format.clock(wait)
 		else
@@ -149,7 +167,8 @@ function WheelUI.start()
 			for rowIndex, row in rows do
 				row.Frame.BackgroundColor3 = if rowIndex == index then prizes[index].Color else C.Card
 			end
-			info.Text = string.format('<font color="#ffe060">You won: %s!</font>', prizes[index].Label)
+			local won = if result.extra.Lines and #result.extra.Lines > 0 then table.concat(result.extra.Lines, ", ") else prizes[index].Label
+			info.Text = string.format('<font color="#ffe060">You won: %s!</font>', won)
 		end)
 	end
 	spinButton.Activated:Connect(spin)

@@ -14,7 +14,11 @@
 	  cash, ability caps ...
 	Weapons, equipment, boosts, prices     Content/Items/<YourItem>   (copy _Template)   +   ShopConfig (categories, other shop items)
 	Combat / weapon animations             docs/COMBAT_GUIDE.md, Content/Animations/Weapon_*, CombatTiming
-	Admin owner UserId + staff roles       ServerScriptService/Config/AdminConfig   (server only; panel: F10 or /admin)
+	Admin owner UserId, default roles,     ServerScriptService/Config/AdminConfig   (server only; panel: F10 or /admin; roles are also
+	  permission list                        created / edited / assigned in the panel, tab Roles)
+	Lucky Wheel (prizes, odds, scaling,    SpinWheelConfig + GameConfig (Wheel: FreeSpinSeconds, ExtraSpinGems, CashCapPercent)
+	  cooldown)
+	Hamster auras (glow, sparkles, ring)   AuraConfig (rarity defaults) + `Look.Aura` in a hamster file
 	Game passes (Robux)                    GamepassConfig
 	Rebirth cost, requirements, rewards    RebirthConfig        (what resets / is kept: RebirthConfig.ResetList / KeepList)
 	Floors, elevator unlocks               FloorConfig

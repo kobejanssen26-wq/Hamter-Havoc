@@ -96,6 +96,12 @@ function ContentValidator.validateHamster(def: any, context: any): { Issue }
 			err("Look.Shape must be one of: standard, chonk, lanky, long, bean, tiny, giant")
 		end
 	end
+	if type(def.Look) == "table" and def.Look.Aura ~= nil then
+		local problem = require(script.Parent.AuraConfig).problem(def.Look.Aura)
+		if problem then
+			err(problem)
+		end
+	end
 	if def.Persona ~= nil and not PERSONAS[def.Persona] then
 		err("Persona must be one of: hyper, smug, scheming, mischievous, screamer, dancer, sleepy, confused, rich, calm")
 	end

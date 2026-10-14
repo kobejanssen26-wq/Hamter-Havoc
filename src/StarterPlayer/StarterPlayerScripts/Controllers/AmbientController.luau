@@ -89,6 +89,8 @@ local function updateEmitters(model: Instance, enabled: boolean)
 	for _, descendant in model:GetDescendants() do
 		if descendant:IsA("ParticleEmitter") then
 			descendant.Enabled = enabled
+		elseif descendant:IsA("PointLight") and descendant.Name == "BuilderGlow" then
+			descendant.Enabled = enabled -- the glow of an aura also stops when the hamster is far away
 		end
 	end
 end

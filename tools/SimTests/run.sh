@@ -78,7 +78,7 @@ if [ "$1" = "--all" ]; then
 	echo "== scn_hud: $(echo "$hud_out" | grep -cE '\[PASS\]') passed, $(echo "$hud_out" | grep -c '\[FAIL\]') failed"
 	echo "$hud_out" | grep "\[FAIL\]" || true
 	if "$HERE/bake_hud.sh" --check >/dev/null 2>&1; then echo "== hud templates: up to date"; else echo "== hud templates: OUT OF DATE (run tools/SimTests/bake_hud.sh)"; fi
-	for s in scn_loop scn_ui scn_gear scn_combat scn_admin scn_rebirth scn_world scn_audit scn_tutorial scn_theft scn_lb scn_content scn_econ scn_wheels scn_adminui scn_game; do
+	for s in scn_loop scn_ui scn_gear scn_combat scn_admin scn_rebirth scn_world scn_audit scn_tutorial scn_theft scn_lb scn_content scn_econ scn_wheels scn_adminui scn_luckywheel scn_auras scn_game; do
 		if [ "$s" = "scn_content" ]; then out="$( (with_temp_content) )"; else out="$(run_one $s.lua)"; fi
 		echo "== $s: $(echo "$out" | grep -E 'PASS [0-9]+|TOTAL ERRORS|fails:' | tail -1)"
 		echo "$out" | grep -E "\[FAIL\]" || true

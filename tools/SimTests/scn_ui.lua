@@ -130,7 +130,7 @@ task.spawn(function()
 		local UIRegistry = require(find("StarterPlayer.StarterPlayerScripts.UI.UIRegistry"))
 		local ids = {}
 		for _, def in UIRegistry.list("RightRail") do table.insert(ids, def.Id) end
-		check("the right rail holds ONLY Quests, Backpack, Shop, Leaderboards, Settings", table.concat(ids, ",") == "Quests,Backpack,Shop,Leaderboards,Settings", table.concat(ids, ","))
+		check("the right rail holds ONLY Quests, Lucky Wheel, Backpack, Shop, Leaderboards, Settings", table.concat(ids, ",") == "Quests,Wheel,Backpack,Shop,Leaderboards,Settings", table.concat(ids, ","))
 		local backpack = UIKit.getPanel("Backpack")
 		check("Hamsters, Hamster Index and Emotes moved into the Backpack", #byName(backpack.Gui, "Tab_Hamsters") == 1 and #byName(backpack.Gui, "OpenIndex") == 1 and #byName(backpack.Gui, "OpenEmotes") == 1)
 		check("the old 'My Hamsters' window is gone (alias opens the Backpack tab)", UIKit.getPanel("Inventory") == nil)

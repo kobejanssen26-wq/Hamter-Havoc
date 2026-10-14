@@ -417,7 +417,12 @@ task.spawn(function()
 	AdminUI.open()
 	adv(0.5)
 	check("for the owner the panel opens", M.InstanceMethods.FindFirstChild(gui, "AdminUI") ~= nil)
-	local all = textsOf(M.InstanceMethods.FindFirstChild(gui, "AdminUI"))
+	local adminGui = M.InstanceMethods.FindFirstChild(gui, "AdminUI")
+	for _, d in M.descendants(adminGui) do
+		if RawData[d].Name == "Tab_Moderation" then RawData[d].Signals.Activated:Fire() end
+	end
+	adv(0.5)
+	local all = textsOf(adminGui)
 	check("the panel lists the staff tools (Kick, Ban ...)", string.find(all, "Kick player", 1, true) and string.find(all, "Ban player", 1, true), all:sub(1, 300))
 	print(string.format("PASS %d  FAIL %d", results.pass, results.fail))
 	print("== done ==")

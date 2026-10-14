@@ -17,6 +17,8 @@ local Hats = require(script.Hats)
 local Gear = require(script.Gear)
 local Wings = require(script.Wings)
 local Characters = require(script.Characters)
+local Auras = require(script.Auras)
+local RarityConfig = require(script.Parent.RarityConfig)
 
 local T = Toolkit
 local CF = CFrame.new
@@ -46,6 +48,7 @@ export type BuildOptions = {
 	Scale: number?,
 	LowDetail: boolean?,
 	Particles: boolean?,
+	Aura: boolean?, -- false = no rarity aura (icons / previews)
 }
 
 local NOSE = Color3.fromRGB(255, 130, 150)
@@ -225,6 +228,7 @@ function HamsterBuilder.build(species: any, options: BuildOptions?): Model
 	if species.Glow then
 		T.glow(ctx, species.Glow[1], species.Glow[2], species.Glow[3])
 	end
+	Auras.apply(ctx, species, opts, RarityConfig.ById[species.Rarity])
 
 	-- size ---------------------------------------------------------------
 	local scale = (species.Size or 1) * (opts.Scale or 1)

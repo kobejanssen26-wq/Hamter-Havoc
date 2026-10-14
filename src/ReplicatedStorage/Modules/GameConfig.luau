@@ -57,6 +57,11 @@ GameConfig.Schema = {
 		FreezeImmunitySeconds = { Default = 6, Min = 0, Max = 60, Live = true, Doc = "After being frozen you can not be frozen again for this long." },
 		GuardImmunityFromKnockback = { Default = true, Live = true, Doc = "true = an active shield blocks knockback and stun." },
 	},
+	Wheel = {
+		FreeSpinSeconds = { Default = 7200, Min = 60, Max = 604800, Live = true, Doc = "Seconds between two FREE Lucky Wheel spins (7200 = 2 hours). Applies from the next spin a player makes." },
+		ExtraSpinGems = { Default = 40, Min = 0, Max = 1000, Live = true, Doc = "Diamonds an extra spin costs while the free one is not ready (0 = no paid spins)." },
+		CashCapPercent = { Default = 6, Min = 0.1, Max = 100, Live = true, Doc = "A cash prize can never be worth more than this percent of the player's next rebirth cost." },
+	},
 	Economy = {
 		StartingCash = { Default = 250, Min = 0, Max = 1000000, Live = false, Doc = "Cash a brand-new player starts with." },
 		StartingDiamonds = { Default = 25, Min = 0, Max = 100000, Live = false, Doc = "Diamonds a brand-new player starts with." },

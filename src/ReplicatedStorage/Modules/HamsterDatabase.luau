@@ -344,7 +344,7 @@ end
 HamsterDatabase.Issues = {} :: { any }
 
 local COLOR_LOOK = { HairColor = "HairColor", Fur = "Fur", Belly = "Belly", Color2 = "Color2", Accent = "Accent", EyeColor = "EyeColor", HatColor = "HatColor", EarInner = "EarInner", EarColor = "EarColor", PawColor = "PawColor", TailColor = "TailColor", TailTip = "TailTip" }
-local PLAIN_LOOK = { "Ears", "Eyes", "Mouth", "Pattern", "Tail", "Size", "NoBlush", "Shape" }
+local PLAIN_LOOK = { "Ears", "Eyes", "Mouth", "Pattern", "Tail", "Size", "NoBlush", "Shape", "Aura" }
 
 local function loadCustomHamsters()
 	local registryScript = script.Parent:FindFirstChild("ContentRegistry")

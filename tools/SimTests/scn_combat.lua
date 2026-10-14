@@ -521,15 +521,9 @@ task.spawn(function()
 	-----------------------------------------------------------------
 	section("15. lucky wheel (server)")
 	local SpinWheelConfig = require(find(MOD .. "SpinWheelConfig"))
-	local counts, rng = {}, Random.new(7)
-	for _ = 1, 20000 do local i = SpinWheelConfig.pick(rng:NextNumber()) counts[i] = (counts[i] or 0) + 1 end
-	local fair = true
-	for i, prize in SpinWheelConfig.Prizes do
-		local expected = prize.Weight / SpinWheelConfig.totalWeight() * 20000
-		if math.abs((counts[i] or 0) - expected) > math.max(40, expected * 0.2) then fair = false end
-	end
-	check("the draw follows the configured weights (20,000 simulated spins)", fair)
-	check("the first and last slice are reachable (roll 0 and roll 0.9999)", SpinWheelConfig.pick(0) == 1 and SpinWheelConfig.pick(0.9999) == #SpinWheelConfig.Prizes)
+	-- (the draw, scaling and cooldown are tested in depth in scn_luckywheel.lua)
+	local ctx0 = SpinWheelConfig.context(data(bob), os.time())
+	check("the first and last slice are reachable for a beginner's draw (roll 0 / 0.9999)", SpinWheelConfig.pick(0, ctx0) == 1 and SpinWheelConfig.pick(0.9999, ctx0) ~= nil)
 	check("every prize reward is valid (items exist, boosts known)", (function()
 		for _, prize in SpinWheelConfig.Prizes do
 			for _, id in prize.Reward.Items or {} do if not ItemRegistry.get(id) then return false end end
@@ -543,10 +537,12 @@ task.spawn(function()
 	adv(5)
 	local ok2 = SpinSystem.spin(bob, false)
 	check("a second free spin is refused until the timer is over", not ok2)
+	adv(1)
 	local gemsBefore2 = d3.Gems
 	local ok3, _, info3 = SpinSystem.spin(bob, true)
-	check("an extra spin costs " .. SpinWheelConfig.ExtraSpinGems .. " diamonds", ok3 and not info3.Free and d3.Gems <= gemsBefore2 - SpinWheelConfig.ExtraSpinGems + 600)
+	check("an extra spin costs " .. SpinWheelConfig.extraSpinGems() .. " diamonds", ok3 and not info3.Free and d3.Gems <= gemsBefore2 - SpinWheelConfig.extraSpinGems() + 600)
 	adv(5)
+	adv(1)
 	d3.Gems = 0; d3.Wheel.NextFreeAt = os.time() + 1000
 	check("without diamonds an extra spin is refused", not SpinSystem.spin(bob, true))
 	check("a forged 'pay' value (string) does not buy a spin", not SpinSystem.spin(bob, "yes"))

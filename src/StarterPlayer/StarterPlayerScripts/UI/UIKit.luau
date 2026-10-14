@@ -898,7 +898,7 @@ function UIKit.hamsterIcon(parent: Instance, species: any, props: { Size: UDim2?
 		return viewport
 	end
 
-	local model = HamsterBuilder.build(species, { LowDetail = true, Particles = false })
+	local model = HamsterBuilder.build(species, { LowDetail = true, Particles = false, Aura = false })
 	model:PivotTo(CFrame.new(0, 0, 0))
 	model.Parent = viewport
 	local camera = Instance.new("Camera")

@@ -15,13 +15,42 @@ Alles hieronder werkt in Roblox Studio: open `HamsterPlaza.rbxl`, kijk in **View
 **Panel openen** (er is bewust géén knop op het scherm): druk op **F10** of typ **/admin** in de chat. Gewone spelers krijgen geen reactie en niets te zien.
 De toets staat in `ReplicatedStorage/Modules/InputConfig` (`Admin`).
 
-Wat je in het paneel kunt: spelers waarschuwen / kicken / bannen (tijdelijk of permanent, met reden) / unbannen, geschiedenis bekijken, geld / diamanten /
-rebirths / wapens geven of afnemen, aankondigingen, serverinfo, **instellingen live veranderen** en **winkelprijzen** aanpassen of een item uitzetten.
-Gevaarlijke acties vragen om een tweede klik (**Confirm?**). Alles wat staf doet komt in het logboek (naam, UserId, actie, doelwit, reden, tijd).
-Er is bewust geen "voer code uit"-vak.
+### Het paneel (F10 of /admin)
 
-**Hamster geven:** tab *Economy* → **Give hamster** → kies de speler, typ de id of naam (bv. `divine_empress`) en hoeveel (max 10). Divine-hamsters staan in `HamsterDatabase` onder `raw.Divine`; de zichtbare namen staan in `HamsterNames` (bv. Radiant Matron).
-**Andere admins maken:** tab *Staff* → **Make / remove staff** (alleen Owner en CoOwner): typ het UserId en de rol `Admin`, `Moderator` of `Developer` (`None` haalt iemand weer weg). Wordt opgeslagen; je kunt alleen rollen onder je eigen rol geven. Wie in `AdminConfig.Users` staat, verander je alleen daar.
+Links staan **alle spelers in de server** met hun foto, weergavenaam en @gebruikersnaam; typ in het zoekvak om te filteren. Klik een speler: onder de lijst zie je zijn kaart (foto, naam, UserId, rol). Het UserId gaat daarna vanzelf mee naar elke actie, je hoeft het nooit te onthouden. Voor iemand die **niet in de server** is: typ de gebruikersnaam bij *find a username (offline too)* en klik **Find username**; Roblox zoekt het UserId op. De lijst ververst zichzelf als iemand joint of weggaat.
+
+Daarnaast staan de tabbladen (je ziet alleen wat jouw rol mag):
+
+| Tab | Wat |
+|---|---|
+| Dashboard | je rol, spelers, staf online, serveruptime, of rollen opgeslagen worden |
+| Players | speler bekijken (voortgang) |
+| Roles | rollen maken, aanpassen, hernoemen, verwijderen en toewijzen (zie hieronder) |
+| Moderation | waarschuwen, kicken, tijdelijk / permanent bannen, unbannen, geschiedenis |
+| Economy | cash, diamanten, rebirths geven of afnemen |
+| Hamsters | **visuele kiezer**: zoek op naam, filter op zeldzaamheid, klik een hamster, kies aantal, **Grant** |
+| Weapons & gear | zoeklijst met alle wapens en items, klik en **Grant** |
+| Game | aankondiging, serverinfo, veilige testtools |
+| Settings | live instellingen (ook de Lucky Wheel: `Wheel.…`) en winkelprijzen |
+| Logs | het staflogboek |
+
+De hamster- en itemlijst komen uit **dezelfde catalogus als het spel** (`HamsterDatabase`, `ItemRegistry`): voeg je een hamster of wapen toe, dan staat hij hier vanzelf. Een hamster geven werkt voor spelers die in de server zijn (hun collectie moet geladen zijn). Gevaarlijke acties vragen om een tweede klik (**Confirm?**); alles wat staf doet komt in het logboek (naam, UserId, actie, doelwit, reden, tijd). Er is bewust geen "voer code uit"-vak.
+
+### Rollen en rechten (tab Roles)
+
+Klik **+ New role** of **Edit** bij een rol. Je ziet een vinkjeslijst per groep (General, Moderation, Economy, Staff) met alle rechten, plus de limieten (max cash, diamanten, rebirths, banminuten). **Save role** slaat op, **Give to selected player** geeft de rol aan de gekozen speler, **Remove** bij een lid haalt hem weg. Een ingebouwde rol (Admin, Moderator, Developer) kun je aanpassen; **Reset to file** zet hem terug naar `AdminConfig`. Een eigen rol (bv. *Trial Mod*, alleen Warn + Kick) kun je verwijderen.
+
+Regels (de **server** dwingt ze af, niet het scherm):
+* **Owner** en **CoOwner** bestaan alleen in `AdminConfig` en kunnen door niemand worden aangepast, verwijderd of weggehaald.
+* Je kunt alleen rollen maken, aanpassen, geven en weghalen die **lager** zijn dan je eigen rol (de *Priority*, 0.5–3.9), en nooit je eigen rol.
+* Je kunt een recht alleen geven als je het **zelf hebt**; limieten nooit boven je eigen limieten.
+* Rollen met `ManageRoles` / `ManageAdmins` of priority 3+ geven of maken vraagt `ManageAdmins`. Standaard heeft alleen Owner/CoOwner dat; de Admin-rol heeft het niet.
+* Niemand kan zichzelf promoveren; een speler uit `AdminConfig.Users` verander je alleen in dat bestand.
+* Opgeslagen rollen worden bij elke serverstart gecontroleerd (namen, levels, onbekende rechten weg, nooit `*`). Gaat er iets mis: zet in `AdminConfig` **`IgnoreSavedRoles = true`**, dan telt alleen het bestand.
+* Opslag: één DataStore-sleutel (`HamsterPlazaStaff_v1`), alleen geschreven als je iets verandert, andere servers lezen elke 90 seconden mee. Zonder *Studio Access to API Services* blijft een wijziging alleen tot de server sluit (het paneel meldt dat).
+
+Rechten die er zijn: Panel, Inspect, ServerInfo, SafeTools, AuditLog, Announce, Settings, Warn, Kick, History, BanTemp, BanPerm, Unban, Cash, Diamonds, Rebirth, Items, Hamsters, ManageRoles, ManageAdmins (lijst + uitleg: `AdminConfig.PermissionCatalog`).
+Kicken / bannen gebruiken onze eigen opslag (ban wordt bij joinen geweigerd), niet de Roblox-banfunctie.
 
 Opmerking: *events aan/uitzetten* bestaat nog niet, want het spel heeft (nog) geen event-systeem om aan of uit te zetten.
 
@@ -79,14 +108,35 @@ Diamantpakketten: `ShopConfig` (`ProductId`). `0` = niet ingesteld = niet te koo
 Elk onzichtbaar deel met de tag `SafeZone` is een veilige zone: daarin kun je niet aanvallen en niet geraakt worden. De Leaderboard-hal heeft er één (die wordt bij elke Play opnieuw gebouwd door `LeaderboardBuilder`; maat aanpassen doe je daar).
 Eigen zones: maak in Studio een onzichtbaar Part (Anchored aan, CanCollide uit, Transparency 1) in je **eigen map** (bv. `Workspace/MijnZones`, niet in een gegenereerde map) en geef het de tag `SafeZone` (**View → Tag Editor**). Die blijft staan bij Play.
 
-## 9. Nieuwe dingen (laatste ronde)
+## 9. Nieuwe dingen (eerdere ronde)
 
 * **Rebirth via admin-paneel:** bouwt nu ook het huis omhoog (net als een echte rebirth). Test: admin → Rebirths +10 → je huis krijgt extra verdiepingen.
 * **Emotes:** kloppen ze niet met jouw animaties, dan speelt het spel de standaard Roblox-emotes (`EmoteConfig.BuiltinFallback`). Of dat in jouw Studio werkt kon ik niet zien; zie `AnimationController.preflight()` (hoofdstuk 5).
 * **Vallen (traps):** Banana Peel, Glue Trap, Spike Trap staan in de wapenwinkel (zie `COMBAT_GUIDE.md` §7b). Aanpassen: `Content/Items/BananaPeel.luau` enz.
-* **Prijzenrad:** knop **Lucky Wheel** in het Quests-scherm. Gratis draai elke 4 uur, extra draai voor 40 diamanten. Prijzen en kansen: `ReplicatedStorage/Modules/SpinWheelConfig` (`FreeSpinEverySeconds`, `ExtraSpinGems`, lijst `Prizes` met `Weight`).
+* **Prijzenrad:** zie hoofdstuk 10.
 * **Dagelijkse beloningen:** per dag een concrete lijst (bv. dag 1 = 500 Coins + Speed-item, dag 7 = zeldzame hamster + 150 Gems + Spike Trap) in `DailyRewardConfig.Days`.
 * **Hamstervormen:** elke hamster heeft een lichaamstype (`standard`, `chonk`, `lanky`, `long`, `bean`, `tiny`, `giant`) dat hoogte, breedte en kop verandert. Kies er een in het hamsterbestand: `Look = { Shape = "lanky" }`; zonder keuze wordt er een vaste gekozen op basis van de id. Lijst/maten: `Modules/HamsterShapes`.
 
-## 10. Wat ik niet kon testen
+## 10. Lucky Wheel, auras, toetsen, emotes
+
+* **Lucky Wheel:** knop met het klaverblad rechts in de rail (bolletje = gratis draai klaar). Elke **2 uur** een gratis draai (`Wheel.FreeSpinSeconds`, live in het paneel te veranderen); extra draai voor `Wheel.ExtraSpinGems` diamanten. De server trekt de prijs; de tijd staat opgeslagen als servertijd, dus opnieuw joinen, van server wisselen of de pc-klok aanpassen helpt niet.
+  Prijzen en kansen: `ReplicatedStorage/Modules/SpinWheelConfig` (uitleg bovenaan). **Cash schaalt mee met de voortgang**: de grootste van "x% van de kosten van je volgende rebirth" en "x minuten van je huidige inkomen", nooit boven `Wheel.CashCapPercent` van die rebirthkosten. Een beginner krijgt dus een paar duizend, een veteraan miljoenen. Diamanten groeien per rebirth, de mysteriehamster wordt zeldzamer naarmate je verder bent, sommige vakjes zijn pas vanaf rebirth 1 te winnen (grijs met "locked"). Een kapotte prijs (gewicht 0, negatief, onbekende hamster …) wordt overgeslagen en gemeld in de Output.
+* **Auras:** `Modules/AuraConfig`. Standaard per zeldzaamheid (Rare = zachte gloed, Epic = sparkles, Legendary = sterren + ring, Mythic = vuur, Secret = glitch …). Per hamster in zijn bestand: `Look = { Aura = false }` (geen aura) of `Look = { Aura = { Style = "flame", Color = "FF8800", Rate = 6, Light = 1.2, Ring = "FFD866" } }`; alle velden zijn optioneel. `AuraConfig.Enabled`, `Intensity` en `MaxRate` regelen alles tegelijk (handig voor prestaties). Een aura is maximaal één emitter + één licht + één dunne ring, wordt uitgezet als je ver weg bent en verdwijnt met het model.
+* **F-toets:** F is de toets van alle wereldmenu's (winkel, upgrades, lift, beveiliging, stelen). Roblox toont per toets één prompt (de dichtstbijzijnde); de stelen-prompt vraagt ingedrukt houden. Nieuw: `Controllers/PromptController` drukt een niet-reagerende tikprompt zelf in als de engine hem niet afhandelt. Debug: zet in Studio op je `Player` het attribuut `PromptDebug = true`, dan meldt de Output welke prompt reageerde of waarom geen.
+* **Emotes:** B opent het wiel. Lukt een emote niet, dan staat in de Output een regel `[Emote] '…' could not start (rig, id …)` met de reden. Zie hoofdstuk 5.
+
+## 11. Het project openen en beheren in Studio
+
+1. **Gewoon openen:** download `HamsterPlaza.rbxl` uit de repository (GitHub → het bestand → *Download raw file*) en open het in Roblox Studio. Alles wat hieronder staat staat daarin, je kunt het meteen bewerken en publiceren. Haal het bestand opnieuw op na elke wijziging die ik maak.
+2. **Met Rojo (aanbevolen als je vaak wijzigt):** het project gebruikt Rojo (`default.project.json`, de scripts staan in `src/`, de wereld in `world/`). Installeer Rojo (Studio-plugin + `rokit install`), draai `rojo serve` in de projectmap en klik in Studio **Connect**. Wijzigingen in de bestanden verschijnen direct in Studio. Zonder Rojo hoef je niets te installeren: gebruik stap 1.
+3. **Waar staat wat:**
+   * Instellingen: `ReplicatedStorage/Modules/GameConfig` (live-regels ook in het admin-paneel), prijzen/kansen van het rad `SpinWheelConfig`, auras `AuraConfig`, rebirths `RebirthConfig`, dagelijkse beloningen `DailyRewardConfig`, winkel `ShopConfig`, passes `GamepassConfig`.
+   * Hamsters / wapens / emotes / animaties: `ReplicatedStorage/Modules/Content/Hamsters | Items | Emotes | Animations` (één bestand per ding, kopieer `_Template.luau`).
+   * Rollen en rechten: in het spel (tab Roles); de basis (jouw UserId, Owner, CoOwner, standaardrollen) in `ServerScriptService/Config/AdminConfig`.
+   * HUD: `StarterGui/MainUI` en `StarterGui/HotbarUI` (echte ScreenGuis, hoofdstuk 6). Het admin-paneel wordt bewust in code gebouwd (het is gereedschap voor jou, geen speler-HUD).
+   * Eigen modellen: hamsters in `ReplicatedStorage/Assets/HamsterModels`, wapens in `Assets/Tools`.
+4. **Wat kan direct in Studio, en wat moet eerst naar Roblox:** getallen, teksten, kleuren, UI-posities en modellen bewerk je direct. **Animaties, geluiden, plaatjes (icons), game passes en developer products** moeten eerst door jou op Roblox staan (upload / publiceer, het ID is dan van jouw account of groep); daarna plak je het ID in het bestand. Ik heb geen ID's verzonnen.
+5. **Controleren:** na een wijziging meldt de Output (`[Content] …`, `[Wheel] …`) typefouten en kapotte regels; ongeldige waarden worden geweigerd of begrensd in plaats van het spel te breken.
+
+## 12. Wat ik niet kon testen
 Alles is getest in een simulatie van Roblox (`tools/SimTests/run.sh --all`), niet in echte Roblox Studio. Zie het eindrapport voor de lijst van wat jij nog moet bekijken (uiterlijk van wapens, HUD, bergen, animaties, echte Robux-aankopen, meerdere echte spelers).
