@@ -128,6 +128,49 @@ function Build.wedge(
 	return wedge
 end
 
+-- One right-angled wedge whose right angle sits at `right`, with the legs going to `far` (the long leg, along the ground
+-- of the wedge) and `top` (the short leg, "up"). The two legs must be perpendicular.
+local function rightWedge(parent: Instance, right: Vector3, far: Vector3, top: Vector3, thickness: number, color: Color3, material: Enum.Material?, props: { [string]: any }?): WedgePart?
+	local legZ = far - right
+	local up = top - right
+	local length, height = legZ.Magnitude, up.Magnitude
+	if length < 0.05 or height < 0.05 then
+		return nil
+	end
+	local yAxis = up / height
+	local zAxis = -legZ / length -- a WedgePart's right angle is at its back-bottom; the long leg runs towards the front (-Z)
+	local xAxis = yAxis:Cross(zAxis)
+	return Build.wedge(parent, "Facet", Vector3.new(thickness, height, length), CFrame.fromMatrix(right + up / 2 + legZ / 2, xAxis, yAxis, zAxis), color, material, props)
+end
+
+-- A flat triangle a-b-c made of two wedges (the classic Roblox technique). Used for faceted scenery such as mountains:
+-- neighbouring triangles that share vertices meet without gaps.
+function Build.triangle(parent: Instance, a: Vector3, b: Vector3, c: Vector3, color: Color3, material: Enum.Material?, props: { [string]: any }?, thickness: number?): number
+	local lengths = { (b - a).Magnitude, (c - b).Magnitude, (a - c).Magnitude }
+	local p, q, r = a, b, c -- p-q becomes the longest edge, r the opposite corner
+	if lengths[2] >= lengths[1] and lengths[2] >= lengths[3] then
+		p, q, r = b, c, a
+	elseif lengths[3] >= lengths[1] and lengths[3] >= lengths[2] then
+		p, q, r = c, a, b
+	end
+	local edge = q - p
+	local longest = edge.Magnitude
+	if longest < 0.1 then
+		return 0
+	end
+	local direction = edge / longest
+	local foot = p + direction * (r - p):Dot(direction)
+	local count = 0
+	local t = thickness or 0.4
+	if rightWedge(parent, foot, p, r, t, color, material, props) then
+		count += 1
+	end
+	if rightWedge(parent, foot, q, r, t, color, material, props) then
+		count += 1
+	end
+	return count
+end
+
 -- Text printed on one face of a part.
 function Build.surfaceText(
 	part: BasePart,

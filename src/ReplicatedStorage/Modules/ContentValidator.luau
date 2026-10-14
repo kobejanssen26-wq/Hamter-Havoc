@@ -224,7 +224,7 @@ function ContentValidator.validateAnimation(def: any, seen: { [string]: boolean 
 	return list
 end
 
-local ITEM_CATEGORIES = { Weapon = true, Equipment = true, Consumable = true }
+local ITEM_CATEGORIES = { Weapon = true, Gadget = true, Equipment = true, Consumable = true }
 local PASSIVE_STATS = { CollectRange = true, WalkSpeed = true }
 local WEAPON_LIMITS = { Range = { 3, 80 }, Cooldown = { 0.3, 10 }, Knockback = { 0, 100 }, Stun = { 0, 3 }, DropChance = { 0, 1 }, Arc = { -1, 1 } }
 -- optional numbers every attack may set (otherwise CombatTiming / GameConfig defaults apply)
@@ -237,6 +237,10 @@ local ABILITY_LIMITS = {
 	Decoy = { Cooldown = { 15, 180 }, Duration = { 2, 10 } },
 	Guard = { Cooldown = { 10, 120 }, Duration = { 1, 6 } },
 	Trap = { Cooldown = { 2, 120 }, Duration = { 8, 120 }, MaxActive = { 1, 6 }, ArmSeconds = { 0.3, 3 } },
+	-- mobility gadgets (MobilitySystem): a glide of Duration seconds, falling at most FallSpeed studs/s and flying at Speed;
+	-- a rocket boost throwing you Boost studs/s up and Forward studs/s ahead
+	Glider = { Cooldown = { 2, 120 }, Duration = { 1, 10 }, Speed = { 10, 60 }, FallSpeed = { 2, 30 } },
+	Rocket = { Cooldown = { 3, 120 }, Boost = { 20, 120 }, Forward = { 0, 80 } },
 }
 local BOOST_IDS = { Coins2x = true, Luck2x = true, Speed2x = true, AutoCollect = true }
 
@@ -263,7 +267,7 @@ function ContentValidator.validateItem(def: any, context: any): { Issue }
 		err("Description must be a text of at most 160 characters")
 	end
 	if not ITEM_CATEGORIES[def.Category] then
-		err("Category must be Weapon, Equipment or Consumable")
+		err("Category must be Weapon, Gadget, Equipment or Consumable")
 	end
 	if type(def.Icon) ~= "string" or def.Icon == "" then
 		err("Icon must be a drawn icon id (UI/Icons.luau) or \"rbxassetid://<number>\"")
@@ -292,8 +296,10 @@ function ContentValidator.validateItem(def: any, context: any): { Issue }
 		return list
 	end
 	if equip.Kind == "Tool" then
-		if def.Category ~= "Weapon" then
-			err("a Tool item must have Category = \"Weapon\"")
+		local weaponType = if type(equip.Weapon) == "table" then equip.Weapon.Type else nil
+		local gadget = weaponType == "Glider" or weaponType == "Rocket"
+		if def.Category ~= (if gadget then "Gadget" else "Weapon") then
+			err(if gadget then "a Glider / Rocket item must have Category = \"Gadget\"" else "a Tool item must have Category = \"Weapon\"")
 		end
 		local weapon = equip.Weapon
 		if type(weapon) ~= "table" then
@@ -301,7 +307,7 @@ function ContentValidator.validateItem(def: any, context: any): { Issue }
 		else
 			local limitsFor = if weapon.Type == "Melee" or weapon.Type == "Ranged" then WEAPON_LIMITS else ABILITY_LIMITS[weapon.Type]
 			if not limitsFor then
-				err("Weapon.Type must be Melee, Ranged, Freeze, Cloak, Decoy, Guard or Trap")
+				err("Weapon.Type must be Melee, Ranged, Freeze, Cloak, Decoy, Guard, Trap, Glider or Rocket")
 			else
 				for stat, limits in limitsFor do
 					local value = weapon[stat]

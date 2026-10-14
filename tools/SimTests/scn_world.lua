@@ -70,19 +70,23 @@ task.spawn(function()
 	end
 	check("a real set of mountains exists", mountains >= 40, mountains)
 	check("nothing stands inside or at the edge of the playable ground (centre stays open)", bad == 0 and minGap >= 20, string.format("%d bad, closest %.0f studs", bad, minGap))
-	check("part budget is sane (cheap scenery)", parts > 500 and parts < 3500, parts)
+	check("part budget is sane (cheap scenery)", parts > 500 and parts < 14000, parts)
 	check("all mountain parts are anchored, non-colliding and don't cast shadows", anchored and uncollidable)
 	check("heights are bounded (no sky-high spikes)", tallest < 700, math.floor(tallest))
 	local rangesOk = true
 	for _, range in Config.Ranges do if M.InstanceMethods.FindFirstChild(folder, range.Name) == nil then rangesOk = false end end
 	check("every configured range (near / mid / far) is present", rangesOk)
-	-- silhouette: peaks narrow upwards (each slope is built from bands that get shorter towards the top)
-	local m1 = M.InstanceMethods.GetChildren(M.InstanceMethods.GetChildren(folder)[1])[1]
-	local lengths = {}
-	for _, part in M.InstanceMethods.GetChildren(m1) do lengths[#lengths + 1] = RawData[part].Props.Size.X end
-	local varied = false
-	for i = 2, #lengths do if math.abs(lengths[i] - lengths[1]) > 1 then varied = true end end
-	check("slopes taper (not a block / blob)", varied)
+	-- faceted massifs: built from triangles, with recorded height, and every part below the declared height
+	local m1 = M.InstanceMethods.GetChildren(folder)[1]
+	local m1 = M.InstanceMethods.GetChildren(m1)[1]
+	local tri = RawData[m1].Attributes.Triangles
+	local hgt = RawData[m1].Attributes.Height
+	local within = true
+	for _, part in M.InstanceMethods.GetChildren(m1) do
+		local cf, size = RawData[part].Props.CFrame, RawData[part].Props.Size
+		if cf and size and hgt and cf.Y - size.Y / 2 > hgt + 1 then within = false end
+	end
+	check("mountains are faceted triangle meshes (Triangles/Height recorded, parts stay under the height)", type(tri) == "number" and tri >= 20 and type(hgt) == "number" and within, tostring(tri) .. "/" .. tostring(hgt))
 	-- deterministic: same seed -> same mountains (reproducible scenery)
 	local holder2 = M.newInstance("Folder", true)
 	local folder2 = MountainBuilder.build(holder2, Random.new(Config.Seed), halfX, halfZ, {})

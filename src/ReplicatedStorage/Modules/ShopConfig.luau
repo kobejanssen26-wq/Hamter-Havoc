@@ -96,6 +96,7 @@ do
 				Desc = pass.Description or "",
 				Kind = "Pass",
 				PassKey = pass.Key,
+				ItemId = pass.Benefit and pass.Benefit.Gear or nil, -- (a pass that gives an item shows that item's real model)
 				PassId = pass.PassId,
 				Order = pass.Order,
 				Robux = 0, -- the real price is fetched from Roblox by the server (ShopSystem.passPrice)

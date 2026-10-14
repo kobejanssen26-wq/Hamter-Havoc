@@ -25,6 +25,7 @@ local order = {
 	"EmoteController",
 	"PromptController",
 	"WheelWorldController",
+	"MobilityController",
 	"TheftController",
 }
 for _, name in order do

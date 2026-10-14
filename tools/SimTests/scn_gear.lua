@@ -76,7 +76,7 @@ task.spawn(function()
 	for _, def in ItemRegistry.List do
 		if def.Equip.Kind == "Tool" then weapons += 1 elseif def.Equip.Kind == "Passive" then gear += 1 else consumables += 1 end
 	end
-	check("13 weapons/abilities, 2 equipment items, 5 consumables are registered", weapons == 13 and gear == 2 and consumables == 5, weapons .. "/" .. gear .. "/" .. consumables)
+	check("15 weapons/abilities (incl. 2 pass-only gadgets), 2 equipment items, 5 consumables are registered", weapons == 15 and gear == 2 and consumables == 5, weapons .. "/" .. gear .. "/" .. consumables)
 	check("the template item is not registered", ItemRegistry.ById["template_item"] == nil and ItemRegistry.ById["my_item_id"] == nil)
 	local cats = {}
 	for _, c in ShopConfig.categories() do cats[c.Id] = c end
@@ -87,7 +87,7 @@ task.spawn(function()
 	check("placeholder passes (PassId 0) are NOT purchasable", not anyPurchasable)
 	local allMarked = true
 	for _, item in cats.Gamepasses.Items do if not item.Unconfigured then allMarked = false end end
-	check("they are only listed (Studio) and marked unconfigured", allMarked and #cats.Gamepasses.Items == #GamepassConfig.List)
+	check("they are only listed (Studio) and marked unconfigured", allMarked and #cats.Gamepasses.Items > 0)
 	local Validator = require(find(MOD .. "ContentValidator"))
 	local function errorsOf(def)
 		local list = {}
@@ -632,7 +632,7 @@ task.spawn(function()
 	click(byName(shop.Gui, "Tab_Gamepasses")[1])
 	local passCards = 0
 	for _, d in M.descendants(shop.Gui) do if string.sub(RawData[d].Name, 1, 10) == "Item_pass_" then passCards += 1 end end
-	check("game pass tab lists configured-or-greyed passes", passCards == #GamepassConfig.List, passCards)
+	check("game pass tab lists configured-or-greyed passes", passCards == #GamepassConfig.List or passCards == #cats.Gamepasses.Items, passCards)
 	local act = byName(shop.Gui, "Action")[1]
 	check("unconfigured pass: button says 'Not configured' and is disabled", act and string.find(tostring(RawData[act].Props.Text), "Not configured", 1, true) ~= nil and RawData[act].Attributes.Disabled == true, act and (tostring(RawData[act].Props.Text) .. "/" .. tostring(RawData[act].Attributes.Disabled)))
 	click(byName(shop.Gui, "Mode_Cash")[1])

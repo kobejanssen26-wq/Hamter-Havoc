@@ -72,7 +72,13 @@ In hetzelfde bestand: `Range`, `Arc`, `Cooldown`, `Knockback`, `Lift`, `Stun`, `
 ## 8. Een developer product instellen **[Publiceren] + [Config]**
 
 Creator Dashboard → Monetization → Developer Products → maak het product, kopieer het nummer. In `ShopConfig.Items` bij de regel met `Kind = "Product"`: `ProductId = <nummer>` en `GemAmount = <aantal>`. `ProductId = 0` = verborgen. De server geeft de diamanten pas na `ProcessReceipt` en slaat eerst op.
-Premium-items zoals een **glider of raket** bestaan nog **niet** in het spel (ze vragen eigen modellen, animaties en physics en moeten echt getest worden); ze staan als open punt in het rapport.
+**Sky Glider en Rocket Booster** bestaan als Robux-gamepasses (`GamepassConfig`: `Benefit = { Gear = "item_id" }` geeft het item zodra het bezit is geverifieerd). De items staan in `Content/Items/SkyGlider.luau` en `RocketBooster.luau` (Category "Gadget", geen Price/Currency: alleen via pass). De server beslist (MobilitySystem: cooldown, brandstof, bereik); de client past alleen de snelheid toe (MobilityController). Let op: dit is client-eigendom beweging, een aangepaste client kan het misbruiken, en het is nooit permanent vliegen. Zet bij de passes in `GamepassConfig` je echte PassId; tot dan zijn ze zichtbaar maar niet koopbaar. Dit is getest in de simulatie (`scn_gadgets`), niet in echte Studio.
+
+**Bergen**: `MountainBuilder` bouwt gefacetteerde massieven uit driehoeken (`Build.triangle`, twee wedges per driehoek) met kleur per hoogte (bos, rots, sneeuw). Kliffen aan de rand zijn lage massieven (`EnvironmentBuilder.cliffWall`). Een al gepubliceerde place houdt zijn oude `Workspace/Environment` tot je die map verwijdert.
+
+**Visuele controle zonder Studio**: `node tools/WorldPreview/render.js` rendert de gebakken wereld (`world/*.model.json`) en `python3 tools/WorldPreview/tool_sheet.py` maakt een overzicht van alle wapens/gadgets. Dit is een benadering, geen echte Roblox-weergave.
+
+**Telefoons**: de UI schaalt tot 0.35, dus tekst is op kleine telefoons klein (bekende beperking).
 
 ## 9. Een Lucky Wheel-prijs toevoegen **[Config]**
 

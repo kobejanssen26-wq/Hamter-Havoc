@@ -22,7 +22,7 @@ ItemRegistry.ById = {} :: { [string]: any }
 ItemRegistry.Issues = {} :: { ContentValidator.Issue }
 
 -- Which shop category sells an item of this category.
-ItemRegistry.ShopCategory = { Weapon = "Weapons", Equipment = "Equipment", Consumable = "Boosts" }
+ItemRegistry.ShopCategory = { Weapon = "Weapons", Gadget = "Equipment", Equipment = "Equipment", Consumable = "Boosts" }
 
 local assets = game:GetService("ReplicatedStorage"):FindFirstChild("Assets")
 

@@ -20,6 +20,8 @@ CombatTiming.Defaults = {
 	Decoy = { WindUp = 0.1, Active = 0 },
 	Guard = { WindUp = 0.08, Active = 0 },
 	Trap = { WindUp = 0.12, Active = 0 },
+	Glider = { WindUp = 0.05, Active = 0 },
+	Rocket = { WindUp = 0.05, Active = 0 },
 }
 
 -- (windUp, active, recovery) in seconds for a Weapon table (or the bare-paw table).

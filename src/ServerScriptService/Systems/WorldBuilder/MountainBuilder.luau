@@ -1,15 +1,14 @@
 --[[
-	MountainBuilder: angular, layered mountain ranges (no balloons).
+	MountainBuilder: faceted low-poly mountain ranges built from TRIANGLES (every triangle = two WedgeParts, see Build.triangle).
 
-	A mountain ("massif") is a crest of 3-5 PEAKS. Every peak is two crossing A-frame ridges: steep, flat rock slopes
-	leaning against each other, cut into bands that get shorter towards the top, so the peak ends in a point. Bands are
-	coloured: green treeline, dark rock, light rock and snow on tall ones. Low spurs run down the flanks and broad green
-	foothills sit under everything. Peak heights, ridge directions and widths are random but
-	seeded, so the silhouette is jagged and asymmetric. Distant ranges are bigger, hazier and use fewer colour bands. Every part is anchored, non
-	colliding, non shadow casting scenery, so a whole backdrop costs a few hundred cheap parts.
+	A mountain is a height field over an oval footprint: a polar grid (rings x segments) whose corner heights come from a main
+	peak plus a few satellite peaks along a ridge, with a little noise. Neighbouring triangles share corners, so the surface is
+	closed: no gaps, no slabs, no floating pieces. The outer ring sits below the ground (SINK) so the foot always disappears
+	into the terrain. Colour follows height: green treeline at the bottom, rock in the middle, snow on tall peaks. Distant
+	ranges are bigger, hazier and use fewer triangles. Every part is anchored, non colliding, non shadow casting scenery.
 
 	Ranges are placed in a rounded ring around the playable ground and never inside it; lakes can veto positions.
-	Settings: ReplicatedStorage/Modules/EnvironmentConfig.
+	Settings (heights, distances, colours, snow line): ReplicatedStorage/Modules/EnvironmentConfig.
 ]]
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -20,6 +19,7 @@ local Config = require(ReplicatedStorage.Modules.EnvironmentConfig)
 local MountainBuilder = {}
 
 local SCENERY = { CanCollide = false, CanQuery = false, CanTouch = false, CastShadow = false }
+local SINK = 10 -- the outer ring lies this far below the ground
 
 local function between(rng: Random, range: { number }): number
 	return range[1] + (range[2] - range[1]) * rng:NextNumber()
@@ -29,94 +29,136 @@ local function fadeTo(color: Color3, fade: number): Color3
 	return color:Lerp(Config.HazeColor, fade)
 end
 
--- A "frame" is a ridge: two steep rock slopes leaning against each other like an A (a triangle seen from the end).
--- Each slope is cut into `count` bands; band i is shorter than the one below it (`taper`), so the ridge ends in a point
--- like a hip roof instead of a flat crest. `colorAt(f)` gives the colour + material at fraction f (0 foot .. 1 crest).
--- Local coordinates: ridge along X, y up, the two slopes at z = +-halfBase.
-type ColorAt = (number) -> (Color3, Enum.Material)
-local function frame(model: Model, origin: CFrame, length: number, halfBase: number, height: number, count: number, taper: number, colorAt: ColorAt, shadow: number, sink: number)
-	for _, side in { -1, 1 } do
-		local bottom = Vector3.new(0, -sink, side * halfBase)
-		local direction = Vector3.new(0, height + sink, -side * halfBase)
-		local slope = direction.Magnitude
-		local unit = direction / slope
-		local normal = unit:Cross(Vector3.xAxis).Unit
-		local darker = if side < 0 then 0 else shadow -- one slope is in shadow (blend towards black)
-		for band = 1, count do
-			local from, to = (band - 1) / count, band / count
-			local middle = bottom + direction * ((from + to) / 2)
-			local cf = origin * CFrame.fromMatrix(middle, Vector3.xAxis, normal)
-			local color, material = colorAt((from + to) / 2)
-			local thickness = math.max(3, slope * 0.05)
-			local bandLength = length * (1 - taper * to)
-			Build.part(model, "Slope", Vector3.new(bandLength, thickness, (to - from) * slope + 2), cf, color:Lerp(Color3.new(0, 0, 0), darker), material, SCENERY)
-		end
-	end
-end
+-- Detail 1..3 -> (rings, segments)
+local GRID = { { 3, 8 }, { 4, 10 }, { 5, 12 } }
 
--- One mountain. `spec`: Position (base centre, y = ground), Width (length of the crest), Height, Fade, Detail (1-3), Peaks.
+-- One mountain. `spec`: Position (base centre, y = ground), Width, Height, Fade, Detail (1-3), Peaks.
 function MountainBuilder.massif(parent: Instance, spec: { [string]: any }, rng: Random): Model
 	local model = Build.model(parent, "Mountain")
-	local width, height, fade, detail = spec.Width, spec.Height, spec.Fade, spec.Detail
+	local width, height, fade = spec.Width, spec.Height, spec.Fade
+	local detail = math.clamp(spec.Detail, 1, 3)
+	local rings, segments = GRID[detail][1], GRID[detail][2]
 	local yaw = rng:NextNumber() * math.pi * 2
 	local origin = CFrame.new(spec.Position) * CFrame.Angles(0, yaw, 0)
+	-- footprint: never narrower than the slopes need (a tall mountain on a small base would be a needle)
+	local radiusX = math.max(width * 0.55, height * 0.85)
+	local radiusZ = math.max(width * 0.4, height * 0.75)
+
 	local rock = fadeTo(Config.RockColors[rng:NextInteger(1, #Config.RockColors)], fade)
-	local rockDark = rock:Lerp(Color3.fromRGB(64, 66, 88), 0.3)
+	local rockLight = rock:Lerp(Color3.new(1, 1, 1), 0.18)
+	local rockDark = rock:Lerp(Color3.fromRGB(58, 60, 84), 0.32)
 	local treeline = fadeTo(Config.TreelineColor, fade)
+	local treelineDark = treeline:Lerp(Color3.fromRGB(40, 70, 56), 0.35)
 	local snow = fadeTo(Config.SnowColor, fade * 0.5)
 	local snowy = height >= Config.SnowAbove
-	local SINK = 8 -- slopes start below the ground so nothing floats
-	local bands = detail + 1
 
-	local function colorsFor(peakHeight: number): ColorAt
-		local snowLine = if snowy and peakHeight > height * 0.55 then 0.68 else 2
-		return function(f: number)
-			if f >= snowLine then
-				return snow, Enum.Material.Snow
-			elseif f < 0.2 and detail >= 2 then
-				return treeline, Enum.Material.Grass
-			elseif f < 0.45 and detail >= 3 then
-				return rockDark, Enum.Material.Slate
+	-- peaks sit exactly on grid corners (so none falls between two corners and vanishes): the summit in the middle, the
+	-- others on rings 2..rings along a line (a ridge), each with its own height and width of influence
+	type Peak = { Ring: number, Segment: number, Height: number, Reach: number }
+	local peaks: { Peak } = { { Ring = 0, Segment = 0, Height = height, Reach = 0.9 } }
+	local extra = rng:NextInteger(math.max(1, spec.Peaks[1] - 1), math.max(1, spec.Peaks[2] - 1))
+	local ridgeSegment = rng:NextInteger(0, segments - 1)
+	for index = 1, extra do
+		local ring = math.min(rings, 1 + index)
+		local side = if index % 2 == 0 then 0 else segments // 2
+		table.insert(peaks, { Ring = ring, Segment = (ridgeSegment + side + rng:NextInteger(-1, 1)) % segments, Height = height * (0.42 + rng:NextNumber() * 0.38), Reach = 0.55 + rng:NextNumber() * 0.25 })
+	end
+
+	-- grid corners: [ring][segment] (ring 0 = the single centre corner)
+	local function cornerUnit(ring: number, segment: number): Vector3
+		if ring == 0 then
+			return Vector3.zero
+		end
+		local angle = segment / segments * math.pi * 2 + (rng:NextNumber() - 0.5) * (math.pi / segments) * 0.5
+		local reach = ring / rings
+		return Vector3.new(math.cos(angle) * reach, 0, math.sin(angle) * reach)
+	end
+	local units: { { Vector3 } } = {}
+	for ring = 0, rings do
+		units[ring] = {}
+		for segment = 0, if ring == 0 then 0 else segments - 1 do
+			units[ring][segment] = cornerUnit(ring, segment)
+		end
+	end
+	local function unitAt(ring: number, segment: number): Vector3
+		return units[ring][if ring == 0 then 0 else segment % segments]
+	end
+
+	local function heightAt(ring: number, segment: number): number
+		if ring == rings then
+			return -SINK
+		end
+		local unit = unitAt(ring, segment)
+		local best = 0
+		for _, peak in peaks do
+			local at = unitAt(peak.Ring, peak.Segment)
+			local distance = (unit - at).Magnitude / peak.Reach
+			if distance < 1 then
+				best = math.max(best, peak.Height * (1 - distance) ^ 1.12)
 			end
-			return rock, Enum.Material.Slate
+		end
+		-- a little noise on the slopes, none on the summit corner (it stays the highest point)
+		local noise = if ring == 0 then 0 else (rng:NextNumber() - 0.5) * 0.14 * height * (1 - ring / (rings + 1))
+		return math.max(best + noise, 0.04 * height) - (if ring == rings - 1 then 0.04 * height else 0)
+	end
+
+	local corners: { { Vector3 } } = {}
+	local heights: { { number } } = {}
+	for ring = 0, rings do
+		corners[ring], heights[ring] = {}, {}
+		for segment = 0, if ring == 0 then 0 else segments - 1 do
+			local h = heightAt(ring, segment)
+			local unit = units[ring][segment]
+			heights[ring][segment] = h
+			corners[ring][segment] = origin * Vector3.new(unit.X * radiusX, h, unit.Z * radiusZ)
 		end
 	end
-	local foothills: ColorAt = function()
-		return treeline, Enum.Material.Grass
+	local function corner(ring: number, segment: number): Vector3
+		return corners[ring][if ring == 0 then 0 else segment % segments]
+	end
+	local function heightOf(ring: number, segment: number): number
+		return heights[ring][if ring == 0 then 0 else segment % segments]
 	end
 
-	-- foothills: broad, low, green, flat-crested
-	frame(model, origin * CFrame.Angles(0, (rng:NextNumber() - 0.5) * 0.3, 0), width * 1.15, height * (0.8 + rng:NextNumber() * 0.2), height * 0.3, 1, 0, foothills, 0.18, SINK)
-
-	-- the crest: a chain of pyramids of different height; the tallest one in the middle third
-	local peaks = rng:NextInteger(spec.Peaks[1], spec.Peaks[2])
-	local summitIndex = rng:NextInteger(math.ceil(peaks / 3), math.max(1, math.floor(peaks * 2 / 3)))
-	local summitX = 0
-	for index = 1, peaks do
-		local x = -width / 2 + (index - 0.5) * (width / peaks) + (rng:NextNumber() - 0.5) * width * 0.06
-		local isSummit = index == summitIndex
-		local peakHeight = height * (if isSummit then 1 else 0.48 + rng:NextNumber() * 0.38)
-		local halfBase = peakHeight * (0.6 + rng:NextNumber() * 0.25) -- steep faces (about 50-60 degrees)
-		local place = origin * CFrame.new(x, 0, (rng:NextNumber() - 0.5) * width * 0.07) * CFrame.Angles(0, (rng:NextNumber() - 0.5) * 0.7, 0)
-		local colors = colorsFor(peakHeight)
-		frame(model, place, halfBase * (1.8 + rng:NextNumber() * 0.5), halfBase, peakHeight, bands, 0.88, colors, 0.2, SINK)
-		-- a second ridge across it turns the roof into a pointed pyramid and closes the open end of the first A-frame
-		frame(model, place * CFrame.Angles(0, math.pi / 2, 0), halfBase * (1.5 + rng:NextNumber() * 0.4), halfBase * 0.92, peakHeight * 0.96, bands, 0.88, colors, 0.2, SINK)
-		if isSummit then
-			summitX = x
+	local triangles = 0
+	local function facet(a: Vector3, b: Vector3, c: Vector3, fractionA: number, fractionB: number, fractionC: number)
+		local fraction = (fractionA + fractionB + fractionC) / 3
+		local color, material
+		if snowy and fraction > 0.66 then
+			color, material = snow, Enum.Material.Snow
+		elseif fraction < 0.17 then
+			color, material = (if rng:NextNumber() > 0.5 then treeline else treelineDark), Enum.Material.Grass
+		else
+			local roll = rng:NextNumber()
+			color, material = (if roll < 0.34 then rockLight elseif roll < 0.72 then rock else rockDark), Enum.Material.Slate
 		end
+		triangles += Build.triangle(model, a, b, c, color, material, SCENERY, 0.6)
+	end
+	local function fraction(ring: number, segment: number): number
+		return math.clamp(heightOf(ring, segment) / height, 0, 1)
 	end
 
-	-- a few low spurs running down the flanks
-	if detail >= 2 then
-		for _ = 1, 2 do
-			local x = summitX + (rng:NextNumber() - 0.5) * width * 0.6
-			local spurHeight = height * (0.28 + rng:NextNumber() * 0.2)
-			local flank = (if rng:NextNumber() > 0.5 then 1 else -1) * height * 0.5
-			frame(model, origin * CFrame.new(x, 0, flank) * CFrame.Angles(0, math.pi / 2 + (rng:NextNumber() - 0.5) * 0.5, 0), height * 0.7, spurHeight * 0.8, spurHeight, bands - 1, 0.8, colorsFor(0), 0.2, SINK)
+	-- centre fan
+	for segment = 0, segments - 1 do
+		facet(corner(0, 0), corner(1, segment), corner(1, segment + 1), fraction(0, 0), fraction(1, segment), fraction(1, segment + 1))
+	end
+	-- ring bands (two triangles per cell, the diagonal alternates so the surface does not look like a grid)
+	for ring = 1, rings - 1 do
+		for segment = 0, segments - 1 do
+			local a, b = corner(ring, segment), corner(ring, segment + 1)
+			local c, d = corner(ring + 1, segment), corner(ring + 1, segment + 1)
+			local fa, fb, fc, fd = fraction(ring, segment), fraction(ring, segment + 1), fraction(ring + 1, segment), fraction(ring + 1, segment + 1)
+			if (segment + ring) % 2 == 0 then
+				facet(a, b, d, fa, fb, fd)
+				facet(a, d, c, fa, fd, fc)
+			else
+				facet(a, b, c, fa, fb, fc)
+				facet(b, d, c, fb, fd, fc)
+			end
 		end
 	end
 	model:SetAttribute("Height", height)
+	model:SetAttribute("Triangles", triangles)
 	return model
 end
 
@@ -158,7 +200,7 @@ function MountainBuilder.build(parent: Instance, rng: Random, halfX: number, hal
 				blocked = blocked or (position - lake[1]).Magnitude < lake[2] + width * 0.4
 			end
 			if not blocked then
-				MountainBuilder.massif(rangeFolder, { Position = Vector3.new(position.X, -2, position.Z), Width = width, Height = height, Fade = range.Fade, Detail = range.Detail, Peaks = range.Peaks }, rng)
+				MountainBuilder.massif(rangeFolder, { Position = Vector3.new(position.X, 0, position.Z), Width = width, Height = height, Fade = range.Fade, Detail = range.Detail, Peaks = range.Peaks }, rng)
 			end
 			s += width * range.Spacing
 		end

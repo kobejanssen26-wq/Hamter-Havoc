@@ -102,6 +102,17 @@ function ItemView.stats(def: any): { { string } }
 			table.insert(lines, { "Max set", string.format("%d at a time, %d s each", w.MaxActive, w.Duration) })
 			table.insert(lines, { "Cooldown", string.format("%d s", w.Cooldown) })
 			table.insert(lines, { "Limit", "Not while carrying a hamster; not in safe zones" })
+		elseif w.Type == "Glider" then
+			table.insert(lines, { "Ability", "Glide through the air" })
+			table.insert(lines, { "Glide time", string.format("%d s (click again to land)", w.Duration) })
+			table.insert(lines, { "Speed", string.format("%d studs/s, falls only %d studs/s", w.Speed, w.FallSpeed) })
+			table.insert(lines, { "Recharge", string.format("%d s after the glide", w.Cooldown) })
+			table.insert(lines, { "Needs", "You must be in the air to start" })
+		elseif w.Type == "Rocket" then
+			table.insert(lines, { "Ability", "Rocket boost" })
+			table.insert(lines, { "Launch", string.format("%d up, %d forward", w.Boost, w.Forward) })
+			table.insert(lines, { "Cooldown", string.format("%d s", w.Cooldown) })
+			table.insert(lines, { "Not while", "stunned, frozen or in a safe-zone-free fall" })
 		elseif w.Type == "Guard" then
 			table.insert(lines, { "Ability", "Shield: blocks knockback and stun" })
 			table.insert(lines, { "Lasts", string.format("%d s", w.Duration) })

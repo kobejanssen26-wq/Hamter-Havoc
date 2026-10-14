@@ -5,7 +5,8 @@
 	2. Add an entry below (or set the PassId of an existing one). PassId = 0 means "NOT CONFIGURED": the pass is
 	   never purchasable and is only listed (greyed out, "Not configured") while testing in Studio.
 	3. Put its benefit in `Benefit`. Supported benefit stats (read by EconomyMath on the server):
-	     CoinMult (x cash), Luck (x luck), WalkSpeed (+speed), Slots (+hamster display slots), AutoCollect (true)
+	     CoinMult (x cash), Luck (x luck), WalkSpeed (+speed), Slots (+hamster display slots), AutoCollect (true),
+	     Gear = "item_id" (the owner receives that item from Content/Items, for example the Sky Glider)
 	   A benefit that needs new code (a new stat) must be added to EconomyMath first - the shop UI never needs to change.
 	4. Test: see docs/CONTENT_GUIDE.md ("Game passes").
 
@@ -23,6 +24,8 @@ GamepassConfig.List = {
 	{ Key = "AutoCollect", PassId = 0, Name = "Auto Collect", Description = "Automatically claims affordable hamsters in range.", Icon = "bot", Order = 20, Benefit = { AutoCollect = true } },
 	{ Key = "ExtraStorage", PassId = 0, Name = "Extra Storage", Description = "+3 hamster display slots.", Icon = "home", Order = 30, Benefit = { Slots = 3 } },
 	{ Key = "LuckyCharm", PassId = 0, Name = "Lucky Charm", Description = "Permanent x1.25 luck.", Icon = "clover", Order = 40, Benefit = { Luck = 1.25 } },
+	{ Key = "SkyGlider", PassId = 0, Name = "Sky Glider", Description = "A hang glider: jump, click and soar across the plaza for a few seconds. Recharges after every flight.", Icon = "glider", Order = 60, Category = "Equipment", Benefit = { Gear = "sky_glider" } },
+	{ Key = "RocketBooster", PassId = 0, Name = "Rocket Booster", Description = "A hand-held rocket: click to launch yourself up and forward. Short, strong, every few seconds.", Icon = "rocket", Order = 70, Category = "Equipment", Benefit = { Gear = "rocket_booster" } },
 	{ Key = "SpeedRunner", PassId = 0, Name = "Speed Runner", Description = "+4 walk speed.", Icon = "shoe", Order = 50, Benefit = { WalkSpeed = 4 } },
 }
 
@@ -31,7 +34,7 @@ GamepassConfig.ById = {} :: { [number]: any }
 GamepassConfig.Effects = {} :: { [string]: any } -- key -> benefit (EconomyMath reads this)
 GamepassConfig.Issues = {} :: { any }
 
-local SUPPORTED = { CoinMult = true, Luck = true, WalkSpeed = true, Slots = true, AutoCollect = true }
+local SUPPORTED = { CoinMult = true, Luck = true, WalkSpeed = true, Slots = true, AutoCollect = true, Gear = true }
 
 table.sort(GamepassConfig.List, function(a, b)
 	return (a.Order or 100) < (b.Order or 100)

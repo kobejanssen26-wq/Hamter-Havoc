@@ -15,6 +15,7 @@
 	  Channel        progress bar for a steal / pick-up you started
 	  CollectResult  a hamster of yours was secured (reveal + effects)
 	  Knockback      you were slapped or zapped: apply this velocity
+	  Mobility       "Glide" / "GlideEnd" / "Boost": the server allowed you to glide or rocket-boost (MobilitySystem)
 	  Announce       server-wide rare event banners
 	  Notify         small toast messages
 	  OpenUI         opens a menu (from world prompts)
@@ -37,6 +38,7 @@ local EVENTS = {
 	"Channel",
 	"CollectResult",
 	"Knockback",
+	"Mobility",
 	"Announce",
 	"Notify",
 	"OpenUI",

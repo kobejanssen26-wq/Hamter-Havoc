@@ -54,11 +54,12 @@ function LuckyWheelBuilder.build(parent: Instance, rng: Random): Model
 	-- platform: round, stone, golden trim, one low step so it reads as a stage
 	Build.pillar(model, "Base", 13, 0.7, CFrame.new(center.X, 0.35, center.Z), Palette.Stone, Enum.Material.Slate)
 	Build.pillar(model, "BaseTrim", 13.8, 0.3, CFrame.new(center.X, 0.7, center.Z), Palette.Gold, METAL, { CanCollide = false })
-	Build.pillar(model, "BaseTop", 11.8, 0.12, CFrame.new(center.X, 0.78, center.Z), Palette.Cream, Enum.Material.Marble, { CanCollide = false })
+	Build.pillar(model, "BaseTop", 11.8, 0.12, CFrame.new(center.X, 0.93, center.Z), Palette.Cream, Enum.Material.Marble, { CanCollide = false })
 
 	-- stand: a back pillar behind the wheel, braced by two struts, holding the axle
 	local backZ = center.Z + 1.7
-	Build.part(model, "BackPillar", Vector3.new(1.5, HUB_HEIGHT - 0.5, 1.5), CFrame.new(center.X, 0.7 + (HUB_HEIGHT - 0.5) / 2, backZ), Palette.WoodDark, WOOD)
+	local signY = HUB_HEIGHT + RADIUS + 3.2
+	Build.part(model, "BackPillar", Vector3.new(1.5, signY - 0.7, 1.5), CFrame.new(center.X, 0.7 + (signY - 0.7) / 2, backZ), Palette.WoodDark, WOOD)
 	for _, side in { -1, 1 } do
 		-- strut from the platform (x = side * 3.4) up to the pillar (height 4.2)
 		local from = Vector3.new(center.X + side * 3.4, 0.7, backZ)
@@ -107,11 +108,8 @@ function LuckyWheelBuilder.build(parent: Instance, rng: Random): Model
 	Build.light(glow, Color3.fromRGB(255, 230, 170), 1.2, 26)
 
 	-- sign above the wheel with a status line that every client fills in for itself (free spin ready / countdown)
-	local sign = Build.part(model, "Sign", Vector3.new(10, 2.2, 0.5), CFrame.new(center.X, HUB_HEIGHT + RADIUS + 3.2, center.Z + 0.6), Palette.WoodDark, WOOD, { CanCollide = false })
+	local sign = Build.part(model, "Sign", Vector3.new(10, 2.2, 0.5), CFrame.new(center.X, signY, backZ - 1.1), Palette.WoodDark, WOOD, { CanCollide = false })
 	Build.surfaceText(sign, Enum.NormalId.Front, "LUCKY WHEEL", { TextColor = Palette.Gold, PixelsPerStud = 50 })
-	for _, side in { -1, 1 } do
-		Build.deco(model, "SignPost", Vector3.new(0.5, 3.2, 0.5), CFrame.new(center.X + side * 4.2, HUB_HEIGHT + RADIUS + 1.7, center.Z + 0.6), Palette.WoodDark, WOOD)
-	end
 	local status = Build.billboard(sign, "FREE SPIN!", Vector2.new(190, 38), Vector3.new(0, 2.1, -0.6), { MaxDistance = 70, Name = "WheelStatus", TextColor = Color3.fromRGB(110, 255, 140) })
 	status.Name = "Status"
 

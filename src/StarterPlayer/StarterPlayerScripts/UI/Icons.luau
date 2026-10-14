@@ -197,6 +197,27 @@ draw.wheel = function(c)
 	shape(c, 0.44, 0.0, 0.12, 0.16, rgb(235, 64, 72), { Rot = 45, Radius = 0.25, Stroke = rgb(150, 30, 40), Z = 5 })
 end
 
+draw.glider = function(c)
+	local pink = tint(c, rgb(255, 92, 168))
+	shape(c, 0.06, 0.16, 0.88, 0.1, rgb(70, 74, 92), { Radius = 0.5, Z = 3 })
+	shape(c, 0.12, 0.22, 0.76, 0.34, pink, { Radius = 0.35, Top = rgb(255, 150, 200), Stroke = rgb(200, 50, 120), Z = 2 })
+	shape(c, 0.38, 0.22, 0.24, 0.34, rgb(255, 214, 92), { Radius = 0.35, Z = 3 })
+	shape(c, 0.46, 0.5, 0.08, 0.34, rgb(70, 74, 92), { Radius = 0.5, Z = 1 })
+	shape(c, 0.34, 0.8, 0.32, 0.08, rgb(70, 74, 92), { Radius = 0.5, Z = 2 })
+end
+
+draw.rocket = function(c)
+	local red = tint(c, rgb(255, 74, 88))
+	shape(c, 0.34, 0.1, 0.32, 0.62, red, { Radius = 0.5, Top = rgb(255, 130, 140), Stroke = rgb(180, 36, 52), Z = 2 })
+	shape(c, 0.34, 0.05, 0.32, 0.26, WHITE, { Radius = 0.5, Stroke = rgb(170, 170, 190), Z = 3 })
+	shape(c, 0.42, 0.34, 0.16, 0.16, rgb(140, 220, 255), { Circle = true, Stroke = rgb(60, 130, 190), Z = 4 })
+	for _, side in { 0.16, 0.66 } do
+		shape(c, side, 0.5, 0.18, 0.3, rgb(255, 214, 92), { Radius = 0.3, Z = 1 })
+	end
+	shape(c, 0.4, 0.74, 0.2, 0.2, rgb(255, 160, 40), { Circle = true, Z = 1 })
+	shape(c, 0.44, 0.78, 0.12, 0.2, rgb(255, 224, 90), { Circle = true, Z = 2 })
+end
+
 draw.crown = function(c)
 	local gold = tint(c, rgb(255, 205, 70))
 	shape(c, 0.14, 0.58, 0.72, 0.22, gold, { Radius = 0.2, Top = rgb(255, 232, 140), Stroke = rgb(196, 134, 24), Z = 2 })

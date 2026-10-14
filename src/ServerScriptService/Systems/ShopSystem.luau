@@ -194,6 +194,14 @@ local PRICE_TTL = 300
 
 -- Does Roblox say this player owns the pass? Grants it on the profile when yes. Retries a few times because ownership
 -- can lag a moment behind the purchase prompt closing.
+-- A pass whose Benefit carries Gear = "item_id" hands that item to its owner (once; GearSystem.grant ignores an item they already have).
+function ShopSystem.grantPassGear(player: Player, entry: any)
+	local gear = if type(entry.Benefit) == "table" then entry.Benefit.Gear else nil
+	if type(gear) == "string" and ItemRegistry.get(gear) then
+		GearSystem.grant(player, gear)
+	end
+end
+
 function ShopSystem.verifyPass(player: Player, entry: any, attempts: number?): boolean
 	local data = DataSystem.get(player)
 	if not data or not GamepassConfig.configured(entry) then
@@ -204,6 +212,7 @@ function ShopSystem.verifyPass(player: Player, entry: any, attempts: number?): b
 			return MarketplaceService:UserOwnsGamePassAsync(player.UserId, entry.PassId)
 		end)
 		if ok and owns then
+			ShopSystem.grantPassGear(player, entry)
 			if not data.Passes[entry.Key] then
 				data.Passes[entry.Key] = true
 				ReplicationSystem.mark(player, "Passes")
@@ -235,6 +244,9 @@ function ShopSystem.loadPasses(player: Player)
 			end)
 			if ok then
 				data.Passes[entry.Key] = owns or nil
+				if owns then
+					ShopSystem.grantPassGear(player, entry)
+				end
 			end
 		end
 	end

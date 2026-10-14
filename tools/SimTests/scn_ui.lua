@@ -71,6 +71,42 @@ task.spawn(function()
 		end
 	end
 
+	-- every window fits on every screen size we support (phone landscape + portrait, tablet, laptop, desktop)
+	do
+		local cam2 = workspace.CurrentCamera
+		local sizes = { Vector2.new(1920, 1080), Vector2.new(1366, 768), Vector2.new(1024, 768), Vector2.new(844, 390), Vector2.new(667, 375), Vector2.new(390, 844), Vector2.new(360, 640) }
+		local tooBig, detail, measured, shopPhone, minScale = 0, "", 0, nil, 9
+		for _, name in { "Backpack", "Index", "Rebirth", "Upgrades", "Daily", "Quests", "Shop", "Settings", "Codes", "Wheel", "Leaderboards" } do
+			local panel = UIKit.getPanel(name)
+			if panel then
+				for _, vp in sizes do
+					cam2.ViewportSize = vp
+					panel:Open(); adv(0.35)
+					local window = panel.Window
+					-- the window sits in `motion` inside `outer` (design size) which carries the fit UIScale
+					local outer = RawData[RawData[window].Parent].Parent
+					local scale = 1
+					for _, child in M.descendants(outer) do
+						if RawData[child].ClassName == "UIScale" and RawData[child].Parent == outer then scale = RawData[child].Props.Scale end
+					end
+					local w = RawData[outer].Props.Size.X.Offset * scale
+					local h = RawData[outer].Props.Size.Y.Offset * scale
+					minScale = math.min(minScale, scale)
+					measured += 1
+					if name == "Shop" and vp.X == 390 then shopPhone = w end
+					if w > vp.X + 1 or h > vp.Y + 1 then
+						tooBig += 1
+						detail ..= string.format(" [%s %dx%d on %dx%d]", name, w, h, vp.X, vp.Y)
+					end
+					panel:Close(); adv(0.2)
+				end
+			end
+		end
+		check("every window fits the screen on 7 sizes (desktop, laptop, tablet, phone landscape and portrait)", tooBig == 0 and measured >= 70 and shopPhone ~= nil and shopPhone < 390, detail .. string.format(" measured %d, shop on a 390 px phone: %.0f px wide, smallest window scale %.2f", measured, shopPhone or -1, minScale))
+		cam2.ViewportSize = Vector2.new(1280, 720)
+		adv(0.3)
+	end
+
 	-- first person cursor
 	setFirstPerson(false)
 	check("third person: mouse free", mouse() == Default)

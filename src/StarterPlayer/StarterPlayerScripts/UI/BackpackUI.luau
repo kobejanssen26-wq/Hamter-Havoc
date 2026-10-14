@@ -26,7 +26,7 @@ local BackpackUI = {}
 
 local C = UIKit.Colors
 
-local CATEGORY_ORDER = { Weapon = 1, Equipment = 2, Consumable = 3 }
+local CATEGORY_ORDER = { Weapon = 1, Gadget = 2, Equipment = 3, Consumable = 4 }
 
 function BackpackUI.ownedItems(): { any }
 	local list = {}

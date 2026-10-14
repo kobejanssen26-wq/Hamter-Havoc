@@ -38,7 +38,7 @@ local SHAPES = {
 	Raise = { Back = CFrame.Angles(math.rad(-30), 0, 0), Strike = CFrame.Angles(math.rad(-65), 0, 0) * CFrame.new(0, 0.3, 0) },
 }
 
-local DEFAULT_SHAPE = { Melee = "Overhead", Ranged = "Recoil", Freeze = "Thrust", Cloak = "Raise", Decoy = "Raise", Guard = "Raise", Trap = "Overhead" }
+local DEFAULT_SHAPE = { Melee = "Overhead", Ranged = "Recoil", Freeze = "Thrust", Cloak = "Raise", Decoy = "Raise", Guard = "Raise", Trap = "Overhead", Glider = "Raise", Rocket = "Raise" }
 
 local function pawStats(): any
 	return {

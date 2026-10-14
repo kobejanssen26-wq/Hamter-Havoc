@@ -49,6 +49,8 @@ CombatSystem.theftHook = nil :: ((Player, Player) -> boolean)?
 -- Set by TrapSystem: places a trap for the attacker (ok, message) and counts the traps they have out.
 CombatSystem.trapPlacer = nil :: ((Player, any, any) -> (boolean, string?))?
 CombatSystem.trapCount = nil :: ((Player) -> number)?
+-- mobility gadgets (Glider / Rocket), registered by MobilitySystem: use() starts the ability, active() says if a glide is on, stop() ends it
+CombatSystem.gadget = nil :: { use: (Player, any, any) -> (boolean, string?), active: (Player) -> boolean, stop: (Player) -> () }?
 
 local CONTEXT_RADIUS = 34
 local MAX_HEIGHT_DIFFERENCE = 6
@@ -404,6 +406,11 @@ end
 
 function CombatSystem.attack(attacker: Player, rawAim: any)
 	local def, stats = currentAttack(attacker)
+	-- a second click while gliding folds the glider (no cooldown check: landing is always allowed)
+	if stats.Type == "Glider" and CombatSystem.gadget and CombatSystem.gadget.active(attacker) then
+		CombatSystem.gadget.stop(attacker)
+		return
+	end
 	local clock = os.clock()
 	local timers = lastSwing[attacker]
 	if not timers then
@@ -424,7 +431,8 @@ function CombatSystem.attack(attacker: Player, rawAim: any)
 	if not root or PlayerState.isStunned(attacker) or swings[attacker] then
 		return
 	end
-	if CombatSystem.inSafeZone(root.Position) then
+	local isGadget = stats.Type == "Glider" or stats.Type == "Rocket" -- (moving around is fine in a safe zone)
+	if not isGadget and CombatSystem.inSafeZone(root.Position) then
 		Notifier.send(attacker, "You can't attack in a safe zone.", "info")
 		return
 	end
@@ -440,7 +448,7 @@ function CombatSystem.attack(attacker: Player, rawAim: any)
 	end
 
 	-- self abilities: no target needed, they happen right away
-	if stats.Type == "Cloak" or stats.Type == "Decoy" or stats.Type == "Guard" or stats.Type == "Trap" then
+	if stats.Type == "Cloak" or stats.Type == "Decoy" or stats.Type == "Guard" or stats.Type == "Trap" or isGadget then
 		local ok, message
 		if stats.Type == "Cloak" then
 			ok, message = AbilitySystem.cloak(attacker, stats.Duration)
@@ -449,6 +457,12 @@ function CombatSystem.attack(attacker: Player, rawAim: any)
 				ok, message = CombatSystem.trapPlacer(attacker, def, stats)
 			else
 				ok, message = false, "Traps are not available"
+			end
+		elseif isGadget then
+			if CombatSystem.gadget then
+				ok, message = CombatSystem.gadget.use(attacker, def, stats)
+			else
+				ok, message = false, "That gadget is not available"
 			end
 		elseif stats.Type == "Decoy" then
 			ok, message = AbilitySystem.decoy(attacker, stats.Duration)
@@ -463,6 +477,9 @@ function CombatSystem.attack(attacker: Player, rawAim: any)
 			return
 		end
 		Remotes.event("Fx"):FireAllClients("WeaponUse", (def :: any).Id, root.Position, attacker.UserId, root.CFrame.LookVector)
+		if isGadget then
+			return -- MobilitySystem already told the player what happened
+		end
 		if stats.Type == "Trap" then
 			Notifier.send(attacker, string.format("%s set (%d of %d)", (def :: any).DisplayName, if CombatSystem.trapCount then CombatSystem.trapCount(attacker) else 0, stats.MaxActive), "success")
 			return

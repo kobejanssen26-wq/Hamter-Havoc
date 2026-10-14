@@ -18,14 +18,11 @@ local EnvironmentBuilder = {}
 
 local COSMETIC = Enum.Material.Cobblestone
 local GRASS = Enum.Material.Grass
-local ROCK = Enum.Material.Slate
 
 local GROUND_HALF_X = WorldLayout.GroundHalfX
 local GROUND_HALF_Z = WorldLayout.GroundHalfZ
 local LOT_BACK = WorldLayout.GateDistance + WorldLayout.LotDepth -- |z| of the back hedges
 local LOT_OUTER_X = WorldLayout.HouseColumns[#WorldLayout.HouseColumns] + WorldLayout.LotHalfWidth
-
-local ROCK_COLORS = { Color3.fromRGB(132, 128, 142), Color3.fromRGB(150, 144, 156), Color3.fromRGB(118, 116, 132) }
 
 -- True for points that belong to the playable core (road, promenades, lots, plaza annexes, burrow and exit).
 local function isCore(x: number, z: number): boolean
@@ -63,19 +60,23 @@ local function lake(parent: Instance, center: Vector3, radius: number)
 	return model
 end
 
+-- A low rocky ridge hugging an edge of the playable ground: overlapping faceted rock hills (the same triangle mountains as
+-- the big ranges, just small and wide) instead of the old rows of upright boxes.
 local function cliffWall(parent: Instance, center: Vector3, length: number, alongX: boolean, height: number, rng: Random)
 	local model = Build.model(parent, "Cliff")
-	local count = math.floor(length / 20)
+	local spacing = 52
+	local count = math.max(2, math.floor(length / spacing))
 	for index = 1, count do
-		local offset = -length / 2 + (index - 0.5) * (length / count)
-		local w = 22 + rng:NextNumber() * 12
-		local h = height * (0.55 + rng:NextNumber() * 0.7)
-		local pos = center + (if alongX then Vector3.new(offset, h / 2 - 3, 0) else Vector3.new(0, h / 2 - 3, offset)) + Vector3.new((rng:NextNumber() - 0.5) * 6, 0, (rng:NextNumber() - 0.5) * 6)
-		local color = ROCK_COLORS[rng:NextInteger(1, #ROCK_COLORS)]
-		Build.part(model, "Rock", Vector3.new(w, h, w * 0.8), CFrame.new(pos) * CFrame.Angles(math.rad((rng:NextNumber() - 0.5) * 8), rng:NextNumber() * math.pi, math.rad((rng:NextNumber() - 0.5) * 8)), color, ROCK, { CanCollide = false })
-		if rng:NextNumber() > 0.5 then
-			Build.part(model, "Moss", Vector3.new(w * 0.9, 1.4, w * 0.7), CFrame.new(pos + Vector3.new(0, h / 2, 0)), Palette.GrassDark, GRASS, { CanCollide = false })
-		end
+		local offset = -length / 2 + (index - 0.5) * (length / count) + (rng:NextNumber() - 0.5) * 14
+		local position = center + (if alongX then Vector3.new(offset, 0, 0) else Vector3.new(0, 0, offset))
+		MountainBuilder.massif(model, {
+			Position = Vector3.new(position.X, 0, position.Z),
+			Width = 70 + rng:NextNumber() * 44,
+			Height = height * (0.35 + rng:NextNumber() * 0.85),
+			Fade = 0.04,
+			Detail = 2,
+			Peaks = { 2, 3 },
+		}, rng)
 	end
 	return model
 end

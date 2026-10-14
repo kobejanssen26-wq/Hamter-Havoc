@@ -69,7 +69,7 @@ def content(folder, id_key):
         if folder == "Hamsters" and "Rarity" not in text:
             errors.append(f"{rel(path)}: no Rarity")
         if folder == "Items":
-            if 'Kind = "Consume"' not in text and ("Price" not in text or "Currency" not in text):
+            if 'Kind = "Consume"' not in text and 'Category = "Gadget"' not in text and ("Price" not in text or "Currency" not in text):
                 errors.append(f"{rel(path)}: needs Price and Currency")
             price = re.search(r"\bPrice = (\d+)", text)
             if price and int(price.group(1)) <= 0:
