@@ -72,7 +72,7 @@ local function isCreator(userId: number): boolean
 end
 
 -- Staff made in the panel (command setStaff): { [userId] = role }. Loaded from the DataStore at start; AdminConfig.Users always wins.
-local grantedRoles: { [number]: string } = {}
+local grantedRoles: { [number]: string? } = {}
 local STAFF_KEY = "StaffRoles"
 local GRANTABLE = { Admin = true, Moderator = true, Developer = true } -- Owner / CoOwner can only be set in AdminConfig
 
@@ -621,16 +621,18 @@ define("setStaff", {
 	},
 	Run = function(c: Context): Result
 		local userId = c.Params.userId :: number
-		local role = string.gsub(string.lower(string.gsub(c.Params.role :: string, "%s", "")), "^%l", string.upper)
-		if role == "None" then
+		local typed = string.lower((string.gsub(c.Params.role :: string, "%s", "")))
+		local named = string.upper(string.sub(typed, 1, 1)) .. string.sub(typed, 2)
+		local role: string? = named
+		if named == "None" then
 			role = nil
-		elseif not GRANTABLE[role] then
+		elseif not GRANTABLE[named] then
 			return fail("Role must be Admin, Moderator, Developer or None (Owner and CoOwner are set in AdminConfig)")
 		end
 		local allowed, why = mayActOn(c.Admin, userId)
 		if not allowed then return fail(why or "Not allowed") end
 		local mine = roleDef(AdminSystem.roleOf(c.Admin))
-		if role and mine and AdminConfig.Roles[role].Level >= mine.Level then
+		if role and mine and AdminConfig.Roles[named].Level >= mine.Level then
 			return fail("You can only give roles below your own")
 		end
 		if AdminConfig.Users[userId] ~= nil then
