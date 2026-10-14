@@ -44,7 +44,7 @@ local CATEGORY_COLORS = {
 local CURRENCY = {
 	Coins = { Icon = "coin", Name = "Cash", Color = C.Cash },
 	Gems = { Icon = "gem", Name = "Diamonds", Color = C.Purple },
-	Robux = { Icon = "gift", Name = "Robux", Color = C.Gold },
+	Robux = { Icon = "crown", Name = "Robux", Color = C.Gold },
 }
 
 local function balanceOf(currency: string): number
@@ -382,7 +382,7 @@ function ShopUI.start()
 			end
 		end
 		modeButtons = {}
-		for index, def in { { Id = "Cash", Text = "CASH SHOP", Icon = "coin", Color = C.Green }, { Id = "Robux", Text = "ROBUX SHOP", Icon = "gift", Color = C.Gold } } do
+		for index, def in { { Id = "Cash", Text = "CASH SHOP", Icon = "coin", Color = C.Green }, { Id = "Robux", Text = "ROBUX SHOP", Icon = "crown", Color = C.Gold } } do
 			local active = mode == def.Id
 			local button = UIKit.button(modeRow, {
 				Name = "Mode_" .. def.Id,

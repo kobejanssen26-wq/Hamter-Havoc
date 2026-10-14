@@ -45,7 +45,7 @@ function BackpackUI.ownedItems(): { any }
 end
 
 function BackpackUI.start()
-	local panel = UIKit.panel({ Name = "Backpack", Title = "Backpack", Icon = "bat", Design = Vector2.new(920, 620), Accent = Theme.Accents.Backpack, Subtitle = "Your items, hamsters, index and emotes" })
+	local panel = UIKit.panel({ Name = "Backpack", Title = "Backpack", Icon = "backpack", Design = Vector2.new(920, 620), Accent = Theme.Accents.Backpack, Subtitle = "Your items, hamsters, index and emotes" })
 
 	-- two tabs: Items (weapons, equipment, consumables) and Hamsters (the collection + working bench). The tab bar also
 	-- holds the shortcuts to the Hamster Index and the Emote wheel, so those need no buttons of their own on the HUD.

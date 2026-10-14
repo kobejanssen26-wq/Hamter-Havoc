@@ -169,6 +169,7 @@ function TutorialUI.start()
 			UIKit.setButtonContent(action, nil, def.Button or "Next", C.White)
 			card.Visible = true
 			targetName = def.Target or def.Pointer
+			TutorialUI.TargetName = targetName
 		end
 	end
 

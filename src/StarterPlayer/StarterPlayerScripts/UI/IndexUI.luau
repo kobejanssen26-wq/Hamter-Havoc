@@ -52,7 +52,7 @@ local function entriesFor(mode: string): { Entry }
 end
 
 function IndexUI.start()
-	local panel = UIKit.panel({ Name = "Index", Title = "Hamster Index", Icon = "book", Design = Vector2.new(1000, 660), Accent = C.Sky })
+	local panel = UIKit.panel({ Name = "Index", Title = "Hamster Index", Icon = "hamster", Design = Vector2.new(1000, 660), Accent = C.Sky })
 	local body = panel.Body
 
 	-- summary row

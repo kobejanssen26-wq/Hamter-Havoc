@@ -177,6 +177,26 @@ draw.bag = function(c)
 	shape(c, 0.5, 0.58, 0.22, 0.2, WHITE, { Circle = true, Center = true, Alpha = 0.4, Z = 3 })
 end
 
+draw.backpack = function(c)
+	local blue = tint(c, rgb(86, 156, 236))
+	shape(c, 0.38, 0.04, 0.24, 0.26, DARK, { Circle = true, Hollow = true, Stroke = DARK, StrokeScale = 0.07 })
+	shape(c, 0.2, 0.18, 0.6, 0.74, blue, { Radius = 0.28, Top = rgb(140, 196, 255), Stroke = rgb(46, 98, 168), Z = 2 })
+	shape(c, 0.26, 0.3, 0.48, 0.12, rgb(46, 98, 168), { Radius = 0.5, Alpha = 0.55, Z = 3 })
+	shape(c, 0.3, 0.56, 0.4, 0.28, rgb(60, 124, 204), { Radius = 0.22, Stroke = rgb(46, 98, 168), Z = 3 })
+	shape(c, 0.46, 0.64, 0.08, 0.1, rgb(255, 214, 90), { Radius = 0.3, Z = 4 })
+end
+
+draw.wheel = function(c)
+	shape(c, 0.06, 0.1, 0.88, 0.88, tint(c, rgb(255, 205, 70)), { Circle = true, Top = rgb(255, 232, 140), Stroke = rgb(196, 134, 24) })
+	local colors = { rgb(60, 214, 84), rgb(176, 98, 255), rgb(56, 160, 255), rgb(255, 148, 28), rgb(255, 84, 170), rgb(26, 214, 190) }
+	for index, color in colors do
+		local angle = math.rad((index - 1) * 60)
+		shape(c, 0.5 + math.sin(angle) * 0.27, 0.54 - math.cos(angle) * 0.27, 0.22, 0.22, color, { Circle = true, Center = true, Stroke = rgb(255, 250, 230), StrokeScale = 0.04, Z = 2 })
+	end
+	shape(c, 0.5, 0.54, 0.22, 0.22, WHITE, { Circle = true, Center = true, Stroke = rgb(196, 134, 24), Z = 3 })
+	shape(c, 0.44, 0.0, 0.12, 0.16, rgb(235, 64, 72), { Rot = 45, Radius = 0.25, Stroke = rgb(150, 30, 40), Z = 5 })
+end
+
 draw.crown = function(c)
 	local gold = tint(c, rgb(255, 205, 70))
 	shape(c, 0.14, 0.58, 0.72, 0.22, gold, { Radius = 0.2, Top = rgb(255, 232, 140), Stroke = rgb(196, 134, 24), Z = 2 })

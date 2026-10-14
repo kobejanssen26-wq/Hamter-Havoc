@@ -3465,7 +3465,7 @@
             ]
            ]
           },
-          "Text": "TUTORIAL  1 / 7",
+          "Text": "TUTORIAL  1 / 9",
           "TextColor3": [
            1,
            0.839216,
@@ -3475,7 +3475,7 @@
           "TextXAlignment": "Left"
          },
          "Attributes": {
-          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBlack\nPosition=u2:0.000,14,0.000,10\nRichText=true\nSize=u2:1.000,-20,0.000,14\nText=TUTORIAL  1 / 7\nTextColor3=c3:1.000,0.839,0.157\nTextSize=12.000\nTextXAlignment=e:Left"
+          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBlack\nPosition=u2:0.000,14,0.000,10\nRichText=true\nSize=u2:1.000,-20,0.000,14\nText=TUTORIAL  1 / 9\nTextColor3=c3:1.000,0.839,0.157\nTextSize=12.000\nTextXAlignment=e:Left"
          }
         },
         {
@@ -3960,7 +3960,7 @@
           "Size": {
            "UDim2": [
             [
-             0.142857,
+             0.111111,
              0
             ],
             [
@@ -3971,7 +3971,7 @@
           }
          },
          "Attributes": {
-          "CodeProps": "BackgroundColor3=c3:1.000,0.839,0.157\nBorderSizePixel=0.000\nSize=u2:0.143,0,0.000,2"
+          "CodeProps": "BackgroundColor3=c3:1.000,0.839,0.157\nBorderSizePixel=0.000\nSize=u2:0.111,0,0.000,2"
          }
         }
        ]

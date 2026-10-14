@@ -166,10 +166,10 @@ end
 
 local function registerCore()
 	local core = {
-		{ Id = "Wheel", Order = 15, Icon = "clover", Tooltip = "Lucky Wheel: a free spin every few hours", Panel = "Wheel", Badge = wheelBadge },
+		{ Id = "Wheel", Order = 15, Icon = "wheel", Tooltip = "Lucky Wheel: a free spin every few hours", Panel = "Wheel", Badge = wheelBadge },
 		{ Id = "Quests", Order = 10, Icon = "scroll", Tooltip = "Daily Quests", Panel = "Quests", Badge = questsBadge },
-		{ Id = "Backpack", Order = 20, Icon = "bag", Tooltip = "Backpack (I): items, hamsters, index, emotes", Panel = "Backpack" },
-		{ Id = "Shop", Order = 30, Icon = "gift", Tooltip = "Shop", Panel = "Shop" },
+		{ Id = "Backpack", Order = 20, Icon = "backpack", Tooltip = "Backpack (I): items, hamsters, index, emotes", Panel = "Backpack" },
+		{ Id = "Shop", Order = 30, Icon = "bag", Tooltip = "Shop", Panel = "Shop" },
 		{ Id = "Settings", Order = 90, Icon = "gear", Tooltip = "Settings", Panel = "Settings" },
 	}
 	for _, entry in core do

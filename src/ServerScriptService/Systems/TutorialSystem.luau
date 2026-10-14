@@ -82,7 +82,7 @@ function TutorialSystem.check(player: Player)
 	if not step then
 		return
 	end
-	if step.Kind == "Stat" and (data.Stats[step.Stat] or 0) >= step.Target then
+	if step.Kind == "Stat" and (data.Stats[step.Stat] or 0) >= step.Need then
 		advance(player, data)
 	elseif step.Kind == "Equipped" and #data.Equipped >= 1 then
 		advance(player, data)

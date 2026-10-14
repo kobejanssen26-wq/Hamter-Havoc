@@ -24,7 +24,7 @@ local BUBBLE = 66
 local SPIN_SECONDS = 4
 
 function WheelUI.start()
-	local panel = UIKit.panel({ Name = "Wheel", Title = "Lucky Wheel", Icon = "gift", Design = Vector2.new(820, 600), Accent = Theme.Accents.Rebirth, Subtitle = "Spin for cash, diamonds, boosts and items" })
+	local panel = UIKit.panel({ Name = "Wheel", Title = "Lucky Wheel", Icon = "wheel", Design = Vector2.new(820, 600), Accent = Theme.Accents.Rebirth, Subtitle = "Spin for cash, diamonds, boosts and items" })
 	local body = panel.Body
 	local prizes = SpinWheelConfig.Prizes
 	local count = #prizes

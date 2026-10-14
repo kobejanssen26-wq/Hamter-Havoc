@@ -88,7 +88,7 @@ function QuestUI.start()
 			require(script.Parent.MainUI).open("Wheel")
 		end,
 	})
-	UIKit.setButtonContent(wheelButton, "star", "Lucky Wheel", C.White)
+	UIKit.setButtonContent(wheelButton, "wheel", "Lucky Wheel", C.White)
 
 	local scroll = UIKit.scroll(body, { Size = UDim2.new(1, 0, 1, -52), Position = UDim2.fromOffset(0, 50) })
 	UIKit.list(scroll, Enum.FillDirection.Vertical, 8)

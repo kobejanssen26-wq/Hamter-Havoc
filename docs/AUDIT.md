@@ -21,3 +21,11 @@
 | Tutorial | `TutorialSystem`, `TutorialUI`, tagged world targets | `Tutorial.Enabled` was not wired | `scn_tutorial` | - |
 | Theft / security gate | `TheftSystem`, `SecuritySystem` | cooldown scattered | `scn_theft`, `scn_loop` | - |
 | Leaderboards | `LeaderboardService`, hall | route and sign | `scn_lb`, `scn_audit` | live DataStore |
+| Trees (release pass) | `Decor.tree` | **root cause of the "crown floats above the trunk" look: the crown height was scaled twice, so every tree with scale != 1 was disconnected (237 of 717)** | `scn_audit` (checks every tree) | how the scenery looks from the player camera |
+| Fences | `Decor.fenceRun` | picket spacing varied 3.2-4.8 studs | `scn_audit` (no collisions) | look in Studio |
+| Mountains | `MountainBuilder` | angular slab mountains: **not redesigned** | `scn_audit` (floating / intersections only) | **open: needs a visual redesign in Studio (Terrain or MeshParts)** |
+| Physical Lucky Wheel | `LuckyWheelBuilder`, `WheelWorld`, `WheelWorldController` | wheel only existed as a window | `scn_luckywheel` section 7 | how it looks, F prompt in a real client |
+| Discord log | `DiscordLog`, `DiscordConfig` | none existed | `scn_discord` (30) | **real Discord delivery (Discord may block Roblox servers: relay)** |
+| Tutorial | `TutorialConfig`, `TutorialSystem`, `TutorialUI` | **step 2 pointed at nothing (its stat target was used as the marker name)**; no income / wheel step | `scn_tutorial` (44), `scn_loop` | arrows in a real client |
+| Icons | `Icons` (new: wheel, backpack) | shop used a gift, backpack a bag, wheel a gift, index a book | `tools/ReleaseCheck` | taste |
+| Release check | `tools/ReleaseCheck/release_check.py` | - | runs in `run.sh --all` | - |

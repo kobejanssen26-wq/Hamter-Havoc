@@ -1,4 +1,4 @@
--- Tutorial: 7 steps, world markers on the REAL tagged objects, skip, replay, persistence, returning players
+-- Tutorial: 9 steps, world markers on the REAL tagged objects, skip, replay, persistence, returning players
 local Players = game:GetService("Players")
 local CollectionService = game:GetService("CollectionService")
 local adv = M.Sim.advance
@@ -38,14 +38,18 @@ task.spawn(function()
 	local aliceId = RawData[alice].Props.UserId
 
 	section("1. the world is marked for the guide (tags, not coordinates)")
-	for _, name in { "Base", "Bench", "Gate", "Upgrade", "Altar", "Leaderboard" } do
+	for _, name in { "Base", "Bench", "Gate", "Upgrade", "Altar", "Wheel", "Leaderboard" } do
 		local count = 0
 		for _, inst in CollectionService:GetTagged("TutorialTarget") do
 			if inst:GetAttribute("TutorialTarget") == name then count += 1 end
 		end
 		check("tagged objects exist: " .. name, count >= 1, count)
 	end
-	check("the tutorial has the 7 required steps in order", #TutorialConfig.Steps == 7 and TutorialConfig.Steps[1].Id == "base" and TutorialConfig.Steps[2].Id == "hamster" and TutorialConfig.Steps[3].Id == "bench" and TutorialConfig.Steps[4].Id == "gate" and TutorialConfig.Steps[5].Id == "upgrade" and TutorialConfig.Steps[6].Id == "altar" and TutorialConfig.Steps[7].Id == "leaderboard")
+	local order = {}
+	for _, step in TutorialConfig.Steps do table.insert(order, step.Id) end
+	check("the tutorial has the 9 steps in order: base, hamster, bench, income, gate, upgrade, altar, wheel, leaderboard", table.concat(order, ",") == "base,hamster,bench,income,gate,upgrade,altar,wheel,leaderboard", table.concat(order, ","))
+	check("no step uses a time-based advance (only Ack button, Stat, Equipped)", (function() for _, step in TutorialConfig.Steps do if step.Kind ~= "Ack" and step.Kind ~= "Stat" and step.Kind ~= "Equipped" then return false end end return true end)())
+	check("steps that read a stat declare the number needed (Need), so Target stays free for 'what to point at'", (function() for _, step in TutorialConfig.Steps do if step.Kind == "Stat" and type(step.Need) ~= "number" then return false end if type(step.Target) ~= "nil" and type(step.Target) ~= "string" then return false end end return true end)())
 
 	section("2. a returning player never sees it")
 	M.isServer = true
@@ -97,7 +101,7 @@ task.spawn(function()
 	check("when the object is moved the marker follows it", math.abs(mp.Z - tp.Z) < 1.5, string.format("%.1f vs %.1f", mp.Z, tp.Z))
 	RawData[target].Props.CFrame = before
 
-	section("3. walking through all 7 steps")
+	section("3. walking through all 9 steps")
 	M.isServer = false
 	check("a wrong step id can't skip ahead", not as(alice, "TutorialAck", { Step = "gate" }).ok and a.Tutorial.Step == 1)
 	local function nextButtonPress()
@@ -107,6 +111,7 @@ task.spawn(function()
 	nextButtonPress()
 	check("Next on step 1 goes to 'Get your first hamster'", a.Tutorial.Step == 2 and textOf("Title") == "Get your first hamster", textOf("Title"))
 	check("step 2 has no Next button: you must really buy one", RawData[byName(card, "Next")[1]].Props.Visible == false)
+	check("step 2 guides to the hamster balls on the road (target name is \"Hamsters\", not a number)", TutorialUI.TargetName == "Hamsters", tostring(TutorialUI.TargetName))
 	a.Stats.Claimed = 1
 	adv(2.5)
 	check("buying a hamster advances to the working bench", a.Tutorial.Step == 3, a.Tutorial.Step)
@@ -115,16 +120,22 @@ task.spawn(function()
 	check("it waits until a hamster is really placed on the bench", a.Tutorial.Step == 3)
 	a.Equipped = { "brownie" }
 	adv(2.5)
-	check("placing a hamster advances to 'Lock your base'", a.Tutorial.Step == 4 and textOf("Title") == "Lock your base", a.Tutorial.Step)
+	check("placing a hamster advances to 'Earn income'", a.Tutorial.Step == 4 and textOf("Title") == "Earn income", a.Tutorial.Step)
+	a.Stats.CoinsEarned = 5
+	adv(2.5)
+	check("it does NOT advance on a timer: only after the cash was really earned", a.Tutorial.Step == 4)
+	a.Stats.CoinsEarned = 25
+	adv(2.5)
+	check("earning cash advances to 'Lock your base'", a.Tutorial.Step == 5 and textOf("Title") == "Lock your base", a.Tutorial.Step)
 	adv(0.3)
 	check("it points at MY security panel", TutorialUI.CurrentTarget ~= nil and RawData[TutorialUI.CurrentTarget].Attributes.TutorialTarget == "Gate" and ownerOf(TutorialUI.CurrentTarget) == aliceId)
-	for _, entry in { { 5, "Upgrade" }, { 6, "Rebirth altar" }, { 7, "Leaderboard" } } do
+	for _, entry in { { 6, "Upgrade" }, { 7, "Rebirth altar" }, { 8, "Lucky Wheel" }, { 9, "Leaderboard" } } do
 		local expected, label = entry[1], entry[2]
 		nextButtonPress()
 		adv(0.3)
 		check("step " .. expected .. " is '" .. label .. "'", a.Tutorial.Step == expected and textOf("Title") == label, textOf("Title"))
 		local t = TutorialUI.CurrentTarget
-		local want = ({ [5] = "Upgrade", [6] = "Altar", [7] = "Leaderboard" })[expected]
+		local want = ({ [6] = "Upgrade", [7] = "Altar", [8] = "Wheel", [9] = "Leaderboard" })[expected]
 		check("...and points at the real " .. want .. " object", t ~= nil and RawData[t].Attributes.TutorialTarget == want, t and RawData[t].Attributes.TutorialTarget)
 	end
 	nextButtonPress()
