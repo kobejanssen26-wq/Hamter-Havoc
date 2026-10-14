@@ -21,12 +21,14 @@ local RunService = game:GetService("RunService")
 
 local Modules = ReplicatedStorage.Modules
 local GameConfig = require(Modules.GameConfig)
+local HamsterDatabase = require(Modules.HamsterDatabase)
 local ItemRegistry = require(Modules.ItemRegistry)
 local ShopConfig = require(Modules.ShopConfig)
 
 local Remotes = require(ReplicatedStorage.Remotes)
 
 local AdminConfig = require(script.Parent.Parent.Config.AdminConfig)
+local CollectionSystem = require(script.Parent.CollectionSystem)
 local ConfigStore = require(script.Parent.ConfigStore)
 local DataSystem = require(script.Parent.DataSystem)
 local EconomySystem = require(script.Parent.EconomySystem)
@@ -69,6 +71,23 @@ local function isCreator(userId: number): boolean
 	return success and result == true
 end
 
+-- Staff made in the panel (command setStaff): { [userId] = role }. Loaded from the DataStore at start; AdminConfig.Users always wins.
+local grantedRoles: { [number]: string } = {}
+local STAFF_KEY = "StaffRoles"
+local GRANTABLE = { Admin = true, Moderator = true, Developer = true } -- Owner / CoOwner can only be set in AdminConfig
+
+local function configuredRole(id: number): string?
+	local role = AdminConfig.Users[id]
+	if type(role) == "string" and AdminConfig.Roles[role] and role ~= "Owner" then
+		return role
+	end
+	local granted = grantedRoles[id]
+	if granted and AdminConfig.Roles[granted] and GRANTABLE[granted] then
+		return granted
+	end
+	return nil
+end
+
 -- The role of a player: "Owner" | "Admin" | "Moderator" | "Developer" | nil. Decided from UserId only.
 function AdminSystem.roleOf(player: Player): string?
 	local isPlayer, result = pcall(function()
@@ -84,8 +103,8 @@ function AdminSystem.roleOf(player: Player): string?
 	if ownerSet()[id] then
 		return "Owner"
 	end
-	local role = AdminConfig.Users[id]
-	if type(role) == "string" and AdminConfig.Roles[role] and role ~= "Owner" then
+	local role = configuredRole(id)
+	if role then
 		return role -- (an explicit entry wins over the creator rule below)
 	end
 	if isCreator(id) then
@@ -111,8 +130,7 @@ local function levelOf(userId: number): number
 	if ownerSet()[userId] then
 		return AdminConfig.Roles.Owner.Level
 	end
-	local role = AdminConfig.Users[userId]
-	local def = roleDef(if type(role) == "string" then role else nil)
+	local def = roleDef(configuredRole(userId))
 	if def then
 		return def.Level
 	end
@@ -332,6 +350,19 @@ local function checkParam(param: Param, raw: any): (boolean, any)
 			return false, "unknown item"
 		end
 		return true, raw
+	elseif kind == "hamster" then
+		-- accepts the species id ("skyfather") or its display name ("Divine Empress"), any capitalisation
+		if type(raw) ~= "string" then
+			return false, "unknown hamster"
+		end
+		local wanted = string.lower((string.gsub(raw, "^%s*(.-)%s*$", "%1")))
+		local wantedId = string.gsub(wanted, "%s+", "_")
+		for _, species in HamsterDatabase.Species do
+			if string.lower(species.Id) == wantedId or string.lower(species.Name) == wanted then
+				return true, species.Id
+			end
+		end
+		return false, "unknown hamster (use its id or its name, for example Divine Empress)"
 	elseif kind == "shopitem" then
 		if type(raw) ~= "string" or not ShopConfig.ById[raw] then
 			return false, "unknown shop item"
@@ -581,6 +612,63 @@ define("grantItem", {
 	end,
 })
 
+define("setStaff", {
+	Category = "Staff", Label = "Make / remove staff (by UserId)", Permission = "Staff", Confirm = true,
+	Params = {
+		{ Name = "userId", Type = "userid", Label = "UserId of the person" },
+		{ Name = "role", Type = "text", Label = "Role: Admin, Moderator, Developer, or None to remove", Max = 20 },
+		{ Name = "reason", Type = "text", Label = "Reason", Optional = true },
+	},
+	Run = function(c: Context): Result
+		local userId = c.Params.userId :: number
+		local role = string.gsub(string.lower(string.gsub(c.Params.role :: string, "%s", "")), "^%l", string.upper)
+		if role == "None" then
+			role = nil
+		elseif not GRANTABLE[role] then
+			return fail("Role must be Admin, Moderator, Developer or None (Owner and CoOwner are set in AdminConfig)")
+		end
+		local allowed, why = mayActOn(c.Admin, userId)
+		if not allowed then return fail(why or "Not allowed") end
+		if role and AdminConfig.Roles[role].Level >= roleDef(AdminSystem.roleOf(c.Admin)).Level then
+			return fail("You can only give roles below your own")
+		end
+		if AdminConfig.Users[userId] ~= nil then
+			return fail("That person is set in AdminConfig.Users: change them there (the file always wins)")
+		end
+		grantedRoles[userId] = role
+		-- save just this one entry so servers never overwrite each other's changes
+		local saved = false
+		local source = getStore()
+		if source then
+			saved = pcall(function()
+				source:UpdateAsync(STAFF_KEY, function(old)
+					local map = if type(old) == "table" then old else {}
+					map[tostring(userId)] = role
+					return map
+				end)
+			end)
+		end
+		audit(c.Admin, "setStaff", userId, string.format("%d -> %s", userId, role or "none"), c.Params.reason)
+		return ok(string.format("%d is now %s%s", userId, role or "no staff", if saved then "" else " (NOT saved: enable Studio API access / DataStore)"))
+	end,
+})
+
+define("giveHamster", {
+	Category = "Economy", Label = "Give hamster", Permission = "Items",
+	Params = { { Name = "target", Type = "player", Label = "Player" }, { Name = "hamster", Type = "hamster", Label = "Hamster (id or name)" }, { Name = "amount", Type = "int", Label = "How many", Min = 1, Max = 10 }, { Name = "reason", Type = "text", Label = "Reason", Optional = true } },
+	Run = function(c: Context): Result
+		local target, speciesId, amount = c.Params.target :: Player, c.Params.hamster :: string, c.Params.amount :: number
+		if not profile(target) then return fail("Player data is not loaded") end
+		for _ = 1, amount do
+			-- source "Reward": never auto-sold by the player's auto-delete setting
+			if not CollectionSystem.grant(target, speciesId, "Reward") then return fail("Could not give that hamster") end
+		end
+		local species = HamsterDatabase.ById[speciesId]
+		audit(c.Admin, "giveHamster", target.UserId, string.format("%s <- %dx %s", target.Name, amount, speciesId), c.Params.reason)
+		return ok(string.format("Gave %dx %s (%s) to %s", amount, species.Name, species.Rarity, target.Name))
+	end,
+})
+
 define("revokeItem", {
 	Category = "Economy", Label = "Remove owned weapon / gear", Permission = "Items", Confirm = true,
 	Params = { { Name = "target", Type = "player", Label = "Player" }, { Name = "item", Type = "item", Label = "Item id" }, { Name = "reason", Type = "text", Label = "Reason", Optional = true } },
@@ -824,6 +912,17 @@ function AdminSystem.start()
 		warn("[Admin] request failed: " .. tostring(result))
 		return nil
 	end
+	task.spawn(function()
+		local map = read(STAFF_KEY)
+		if type(map) == "table" then
+			for key, role in map do
+				local id = tonumber(key)
+				if id and type(role) == "string" and GRANTABLE[role] then
+					grantedRoles[id] = role
+				end
+			end
+		end
+	end)
 	if next(ownerSet()) == nil and not AdminConfig.CreatorIsOwner then
 		warn("[Admin] no owner is configured: set your Roblox UserId in ServerScriptService/Config/AdminConfig.luau")
 	end

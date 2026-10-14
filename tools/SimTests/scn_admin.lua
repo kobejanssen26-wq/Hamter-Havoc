@@ -179,6 +179,23 @@ task.spawn(function()
 	r = run(dev, "grantItem", { target = victim.UserId, item = "slap_glove" })
 	check("a developer can grant a weapon for testing", r and r.ok and data(victim).Gear.slap_glove == true)
 	check("granting an item that does not exist is refused", (function() local r2 = run(dev, "grantItem", { target = victim.UserId, item = "laser_cannon" }) return r2 and not r2.ok end)())
+	r = run(admin, "giveHamster", { target = victim.UserId, hamster = "Divine Empress", amount = 2 })
+	check("an admin can give a divine hamster by its display name", r and r.ok, r and r.msg)
+	do
+		local owned = 0
+		for id, count in data(victim).Inventory do if string.find(id, "divine_empress", 1, true) then owned += count end end
+		check("the hamster is really in the player's inventory (2 of them)", owned == 2, owned)
+	end
+	check("an unknown hamster name is refused", (function() local r2 = run(admin, "giveHamster", { target = victim.UserId, hamster = "Nope Hamster", amount = 1 }) return r2 and not r2.ok end)())
+	r = run(admin, "setStaff", { userId = victim.UserId, role = "moderator" }, true)
+	check("an Admin can not hand out staff (needs Owner / CoOwner)", r and not r.ok, r and r.msg)
+	r = run(owner, "setStaff", { userId = victim.UserId, role = "moderator" }, true)
+	check("the owner can make somebody Moderator", r and r.ok, r and r.msg)
+	check("that person is now a Moderator in the panel", AdminSystem.roleOf(victim) == "Moderator", AdminSystem.roleOf(victim))
+	r = run(owner, "setStaff", { userId = victim.UserId, role = "Owner" }, true)
+	check("nobody can be made Owner this way", r and not r.ok)
+	r = run(owner, "setStaff", { userId = victim.UserId, role = "none" }, true)
+	check("staff can be removed again", r and r.ok and AdminSystem.roleOf(victim) == nil, r and r.msg)
 	r = run(admin, "inspect", { target = victim.UserId })
 	check("inspect shows progress", r and r.ok and string.find(r.msg, "Rebirths 3", 1, true) ~= nil, r and r.msg)
 	check("the log command works for roles with AuditLog and not for moderators", run(admin, "auditLog", {}).ok and has(mc, "auditLog") == false)

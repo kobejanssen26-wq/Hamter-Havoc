@@ -20,6 +20,9 @@ rebirths / wapens geven of afnemen, aankondigingen, serverinfo, **instellingen l
 Gevaarlijke acties vragen om een tweede klik (**Confirm?**). Alles wat staf doet komt in het logboek (naam, UserId, actie, doelwit, reden, tijd).
 Er is bewust geen "voer code uit"-vak.
 
+**Hamster geven:** tab *Economy* → **Give hamster** → kies de speler, typ de id of naam (bv. `divine_empress`) en hoeveel (max 10). Divine-hamsters staan in `HamsterDatabase` onder `raw.Divine`; de zichtbare namen staan in `HamsterNames` (bv. Radiant Matron).
+**Andere admins maken:** tab *Staff* → **Make / remove staff** (alleen Owner en CoOwner): typ het UserId en de rol `Admin`, `Moderator` of `Developer` (`None` haalt iemand weer weg). Wordt opgeslagen; je kunt alleen rollen onder je eigen rol geven. Wie in `AdminConfig.Users` staat, verander je alleen daar.
+
 Opmerking: *events aan/uitzetten* bestaat nog niet, want het spel heeft (nog) geen event-systeem om aan of uit te zetten.
 
 ## 2. Instellingen veranderen: één plek
