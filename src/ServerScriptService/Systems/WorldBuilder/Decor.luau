@@ -45,7 +45,9 @@ function Decor.tree(parent: Instance, pos: Vector3, kind: string, scale: number,
 		Build.pillar(model, "Trunk", 1.6 * scale, trunkHeight, at(pos + Vector3.new(0, trunkHeight / 2, 0)), Palette.Wood, WOOD)
 		local canopyColor = if kind == "cherry" then Palette.Cherry else Palette.Leaf
 		local canopyDark = if kind == "cherry" then Color3.fromRGB(246, 144, 178) else Palette.LeafDark
-		local top = trunkHeight + 2 * scale
+		-- offsets are in unscaled units and multiplied by `scale` below (the old code scaled the height twice, so every tree
+		-- with scale ~= 1 had a crown that floated off, or sank into, its trunk)
+		local top = 5.5 + 2
 		local blobs = {
 			{ Vector3.new(0, top, 0), 8.5, canopyColor },
 			{ Vector3.new(2.8, top - 0.8, 1.2), 5.6, canopyDark },
@@ -216,7 +218,8 @@ function Decor.fenceRun(parent: Instance, a: Vector3, b: Vector3, options: { Col
 	Build.part(model, "RailTop", Vector3.new(0.3, 0.35, length), runCFrame * CFrame.new(0, 2.7, 0), color, WOOD, { CanCollide = false })
 	Build.part(model, "RailLow", Vector3.new(0.3, 0.35, length), runCFrame * CFrame.new(0, 1.2, 0), color, WOOD, { CanCollide = false })
 
-	local count = math.max(2, math.floor(length / 3.2))
+	-- evenly spaced pickets that always start and end exactly on the run (spacing stays within ~15% of 3.2 studs)
+	local count = math.max(1, math.floor(length / 3.2 + 0.5))
 	for index = 0, count do
 		local point = a + direction * (length * index / count)
 		local tall = if index % 4 == 0 then 3.8 else 3.2

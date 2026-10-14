@@ -31,6 +31,7 @@ local AdminConfig = require(script.Parent.Parent.Config.AdminConfig)
 local CollectionSystem = require(script.Parent.CollectionSystem)
 local ConfigStore = require(script.Parent.ConfigStore)
 local DataSystem = require(script.Parent.DataSystem)
+local DiscordLog = require(script.Parent.DiscordLog)
 local EconomySystem = require(script.Parent.EconomySystem)
 local Events = require(script.Parent.Events)
 local GearSystem = require(script.Parent.GearSystem)
@@ -209,6 +210,7 @@ local function audit(admin: Player, action: string, target: any, detail: string,
 	while #auditLog > MAX_LOG do
 		table.remove(auditLog, 1)
 	end
+	pcall(DiscordLog.fromAudit, entry) -- (never lets a Discord problem touch a staff action)
 	print(string.format("[Admin] %s (%d, %s) %s %s %s", admin.Name, admin.UserId, tostring(entry.Role), action, detail, if reason and reason ~= "" then "- " .. reason else ""))
 	-- one log key per day, appended with UpdateAsync so servers never overwrite each other
 	local source = getStore()
@@ -749,6 +751,15 @@ define("deleteRole", {
 		local saved = StaffStore.deleteRole(name)
 		audit(c.Admin, "deleteRole", nil, string.format("%s (%d members lost it)", name, members), c.Params.reason)
 		return ok(string.format("%s %s%s", name, if def.Custom then "deleted" else "reset to the AdminConfig values", saveNote(saved)))
+	end,
+})
+
+define("discordTest", {
+	Category = "Logs", Label = "Send Discord test message", Permission = "Logging", Params = {},
+	Run = function(c: Context): Result
+		local sent, message = DiscordLog.sendTest(c.Admin.Name)
+		audit(c.Admin, "discordTest", nil, if sent then "ok" else "failed: " .. DiscordLog.redact(message))
+		return { ok = sent, msg = DiscordLog.redact(message) .. " | " .. DiscordLog.status() }
 	end,
 })
 

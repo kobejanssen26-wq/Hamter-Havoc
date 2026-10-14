@@ -7,6 +7,7 @@
 
 local Build = require(script.Parent.Build)
 local Decor = require(script.Parent.Decor)
+local LuckyWheelBuilder = require(script.Parent.LuckyWheelBuilder)
 local Palette = require(script.Parent.Palette)
 
 local PlazaBuilder = {}
@@ -217,6 +218,9 @@ function PlazaBuilder.build(parent: Instance, rng: Random): PlazaInfo
 			Decor.flowers(folder, Vector3.new(sx * 26, 0, sz * 19), 3, 10, rng)
 		end
 	end
+
+	-- the physical Lucky Wheel in the north-east corner of the paving (a bench + flower bed balance the north-west corner)
+	LuckyWheelBuilder.build(folder, rng)
 
 	-- guest spawn on the plaza (players without a house)
 	local spawn = Instance.new("SpawnLocation")

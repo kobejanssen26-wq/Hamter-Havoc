@@ -16,9 +16,11 @@ local SpinWheelConfig = require(ReplicatedStorage.Modules.SpinWheelConfig)
 
 local DataSystem = require(script.Parent.DataSystem)
 local EconomySystem = require(script.Parent.EconomySystem)
+local DiscordLog = require(script.Parent.DiscordLog)
 local Notifier = require(script.Parent.Notifier)
 local ReplicationSystem = require(script.Parent.ReplicationSystem)
 local Rewards = require(script.Parent.Rewards)
+local WheelWorld = require(script.Parent.WheelWorld)
 
 local SpinSystem = {}
 
@@ -32,6 +34,9 @@ function SpinSystem.spin(player: Player, payWithGems: any): (boolean, string, an
 	local data = DataSystem.get(player)
 	if not data then
 		return false, "No data"
+	end
+	if WheelWorld.busy() then
+		return false, "Somebody else is spinning the wheel, try again in a moment"
 	end
 	local clock = os.clock()
 	if busy[player] or clock - (lastRequest[player] or -10) < MIN_GAP then
@@ -77,6 +82,8 @@ function SpinSystem.spin(player: Player, payWithGems: any): (boolean, string, an
 	end
 	DataSystem.markDirty(player)
 	ReplicationSystem.mark(player, "Wheel")
+	pcall(DiscordLog.wheel, player, prize.Id, lines)
+	WheelWorld.spin(index) -- the physical wheel in the plaza turns to the SAME prize (every client animates it)
 	-- the reward message waits until the client's animation is over (it takes about 4 seconds)
 	task.delay(4.4, function()
 		busy[player] = nil

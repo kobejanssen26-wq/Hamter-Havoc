@@ -1202,7 +1202,22 @@ local function jsonDecode(text)
 	end
 	return parseValue()
 end
+-- LogService + scripted HTTP (tests set M.httpResponder = function(request) return { StatusCode = 204, Body = "" } end)
+local LogService = service("LogService")
+RawData[LogService].Signals.MessageOut = newSignal()
+M.httpRequests = {}
+M.httpResponder = function() return { Success = true, StatusCode = 204, Body = "" } end
+RawData[service("HttpService")].Props.HttpEnabled = true
 setMethods(service("HttpService"), {
+	RequestAsync = function(_, request)
+		table.insert(M.httpRequests, request)
+		local response = M.httpResponder(request)
+		if response == "error" then error("HttpError: Timedout") end
+		response.Success = response.StatusCode >= 200 and response.StatusCode < 300
+		response.Headers = response.Headers or {}
+		response.Body = response.Body or ""
+		return response
+	end,
 	GenerateGUID = function() Sim.guid = (Sim.guid or 0) + 1 return "guid-" .. Sim.guid end,
 	JSONEncode = function(_, v) return jsonEncode(v) end,
 	JSONDecode = function(_, text) return jsonDecode(text) end,

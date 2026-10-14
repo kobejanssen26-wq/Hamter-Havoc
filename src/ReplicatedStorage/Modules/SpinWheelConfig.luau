@@ -6,7 +6,7 @@
 	  Wheel.CashCapPercent    (GameConfig, live)  no cash prize may be worth more than this % of the player's NEXT REBIRTH COST
 
 	Prizes: the slices, in order around the wheel. Fields of a prize:
-	  Id, Label, Icon, Color    what the slice shows (Label is a general name, the exact amount is shown to the player and
+	  Id, Short, Label, Icon, Color   what the slice shows (Short = the word printed on the physical wheel in the plaza) (Label is a general name, the exact amount is shown to the player and
 	                            depends on how far they are)
 	  Weight                    how likely, relative to the other prizes that this player can win right now
 	  MinRebirth / MaxRebirth   optional: the prize can only be won from / up to this rebirth (locked slices are greyed out)
@@ -42,16 +42,16 @@ SpinWheelConfig.MaxGems = 5000 -- hard cap on one diamond prize
 SpinWheelConfig.MinCoins = 100 -- a cash prize is never smaller than this
 
 SpinWheelConfig.Prizes = {
-	{ Id = "cash_small", Label = "Cash", Icon = "coin", Color = Color3.fromRGB(60, 214, 84), Weight = 24, Reward = { Coins = { Percent = { 0.12, 0.25 }, Minutes = { 1, 2 } } } },
-	{ Id = "gems_small", Label = "Diamonds", Icon = "gem", Color = Color3.fromRGB(176, 98, 255), Weight = 16, Reward = { Gems = { Min = 25, Max = 40, PerRebirth = 0.15 } } },
-	{ Id = "speed", Label = "Speed Tonic", Icon = "bolt", Color = Color3.fromRGB(56, 160, 255), Weight = 11, Reward = { Items = { "item_speed" } } },
-	{ Id = "cash_mid", Label = "Big Cash", Icon = "pouch", Color = Color3.fromRGB(255, 148, 28), Weight = 13, Reward = { Coins = { Percent = { 0.35, 0.7 }, Minutes = { 3, 6 } } } },
-	{ Id = "luck", Label = "Lucky Boost 15 min", Icon = "clover", Color = Color3.fromRGB(26, 214, 190), Weight = 8, Reward = { Boost = { Id = "Luck2x", Seconds = 900 } } },
-	{ Id = "hamster", Label = "Mystery Hamster", Icon = "heart", Color = Color3.fromRGB(255, 120, 200), Weight = 6, Reward = { HamsterByRebirth = { [0] = "Cute", [1] = "Shiny", [3] = "Rare", [5] = "Epic", [8] = "Ultra", [12] = "Legendary" } } },
-	{ Id = "banana", Label = "Banana Peel", Icon = "banana", Color = Color3.fromRGB(255, 214, 40), Weight = 7, Reward = { Items = { "banana_peel" } } },
-	{ Id = "gems_big", Label = "Many Diamonds", Icon = "gem", Color = Color3.fromRGB(255, 84, 170), Weight = 6, MinRebirth = 1, Reward = { Gems = { Min = 100, Max = 160, PerRebirth = 0.2 } } },
-	{ Id = "cash_big", Label = "Huge Cash", Icon = "crown", Color = Color3.fromRGB(255, 72, 88), Weight = 3, MinRebirth = 1, Reward = { Coins = { Percent = { 1.2, 2.2 }, Minutes = { 10, 18 } } } },
-	{ Id = "jackpot", Label = "JACKPOT", Icon = "gift", Color = Color3.fromRGB(255, 214, 40), Weight = 1, Reward = { Gems = { Min = 400, Max = 600, PerRebirth = 0.2 }, Coins = { Percent = { 3, 5 }, Minutes = { 30, 40 } } } },
+	{ Id = "cash_small", Short = "CASH", Label = "Cash", Icon = "coin", Color = Color3.fromRGB(60, 214, 84), Weight = 24, Reward = { Coins = { Percent = { 0.12, 0.25 }, Minutes = { 1, 2 } } } },
+	{ Id = "gems_small", Short = "GEMS", Label = "Diamonds", Icon = "gem", Color = Color3.fromRGB(176, 98, 255), Weight = 16, Reward = { Gems = { Min = 25, Max = 40, PerRebirth = 0.15 } } },
+	{ Id = "speed", Short = "SPEED", Label = "Speed Tonic", Icon = "bolt", Color = Color3.fromRGB(56, 160, 255), Weight = 11, Reward = { Items = { "item_speed" } } },
+	{ Id = "cash_mid", Short = "BIG CASH", Label = "Big Cash", Icon = "pouch", Color = Color3.fromRGB(255, 148, 28), Weight = 13, Reward = { Coins = { Percent = { 0.35, 0.7 }, Minutes = { 3, 6 } } } },
+	{ Id = "luck", Short = "LUCK", Label = "Lucky Boost 15 min", Icon = "clover", Color = Color3.fromRGB(26, 214, 190), Weight = 8, Reward = { Boost = { Id = "Luck2x", Seconds = 900 } } },
+	{ Id = "hamster", Short = "HAMSTER", Label = "Mystery Hamster", Icon = "heart", Color = Color3.fromRGB(255, 120, 200), Weight = 6, Reward = { HamsterByRebirth = { [0] = "Cute", [1] = "Shiny", [3] = "Rare", [5] = "Epic", [8] = "Ultra", [12] = "Legendary" } } },
+	{ Id = "banana", Short = "BANANA", Label = "Banana Peel", Icon = "banana", Color = Color3.fromRGB(255, 214, 40), Weight = 7, Reward = { Items = { "banana_peel" } } },
+	{ Id = "gems_big", Short = "MANY GEMS", Label = "Many Diamonds", Icon = "gem", Color = Color3.fromRGB(255, 84, 170), Weight = 6, MinRebirth = 1, Reward = { Gems = { Min = 100, Max = 160, PerRebirth = 0.2 } } },
+	{ Id = "cash_big", Short = "HUGE CASH", Label = "Huge Cash", Icon = "crown", Color = Color3.fromRGB(255, 72, 88), Weight = 3, MinRebirth = 1, Reward = { Coins = { Percent = { 1.2, 2.2 }, Minutes = { 10, 18 } } } },
+	{ Id = "jackpot", Short = "JACKPOT", Label = "JACKPOT", Icon = "gift", Color = Color3.fromRGB(255, 214, 40), Weight = 1, Reward = { Gems = { Min = 400, Max = 600, PerRebirth = 0.2 }, Coins = { Percent = { 3, 5 }, Minutes = { 30, 40 } } } },
 }
 
 ---------------------------------------------------------------------------

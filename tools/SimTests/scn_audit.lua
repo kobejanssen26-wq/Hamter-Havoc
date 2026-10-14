@@ -189,6 +189,34 @@ task.spawn(function()
 		return seen >= 1
 	end)())
 
+
+	-- every tree: the trunk reaches INTO a crown (not floating above it, not a gap), stands on one spot, trunk is not wider than the crown
+	local treeCount, treeBad = 0, {}
+	for _, d in M.descendants(workspace) do
+		local data = RawData[d]
+		if data.ClassName == "Model" and string.sub(data.Name, 1, 5) == "Tree_" then
+			treeCount += 1
+			local trunk, crowns = nil, {}
+			for _, child in M.descendants(d) do
+				local name = RawData[child].Name
+				if name == "Trunk" then trunk = child
+				elseif string.sub(name, 1, 6) == "Canopy" or string.sub(name, 1, 7) == "Needles" then table.insert(crowns, child) end
+			end
+			local ok = false
+			if trunk and #crowns > 0 then
+				local tcf, tsz = RawData[trunk].Props.CFrame, RawData[trunk].Props.Size
+				local topY = tcf.Y + tsz.X / 2 -- (a cylinder's length is its X size, standing up)
+				for _, crown in crowns do
+					local ccf, csz = RawData[crown].Props.CFrame, RawData[crown].Props.Size
+					local dx, dy, dz = (tcf.X - ccf.X) / (csz.X / 2), (topY - ccf.Y) / (csz.Y / 2), (tcf.Z - ccf.Z) / (csz.Z / 2)
+					if dx * dx + dy * dy + dz * dz <= 0.8 then ok = true end
+				end
+			end
+			if not ok then table.insert(treeBad, data.Name .. "@" .. (trunk and string.format("%.0f,%.0f", RawData[trunk].Props.CFrame.X, RawData[trunk].Props.CFrame.Z) or "no trunk")) end
+		end
+	end
+	check("all " .. treeCount .. " trees have their trunk reaching into the crown (no floating crowns, any scale)", treeCount > 100 and #treeBad == 0, #treeBad .. " bad, e.g. " .. tostring(treeBad[1]))
+
 	-- the audit must be able to see a real problem: drop a block into the middle of the shop and look for it
 	local shop = workspace.HamsterPlaza:FindFirstChild("ShopHouse")
 	local counter = shop and M.InstanceMethods.FindFirstChild(shop, "Counter")

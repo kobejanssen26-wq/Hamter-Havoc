@@ -49,6 +49,7 @@ AdminConfig.PermissionCatalog = {
 	{ Id = "AuditLog", Label = "View the staff log", Group = "General" },
 	{ Id = "Announce", Label = "Send server announcements", Group = "General" },
 	{ Id = "Settings", Label = "Edit approved live settings + shop prices", Group = "General" },
+	{ Id = "Logging", Label = "Send a Discord test log / see its status", Group = "General" },
 	{ Id = "Warn", Label = "Warn players", Group = "Moderation" },
 	{ Id = "Kick", Label = "Kick players", Group = "Moderation" },
 	{ Id = "History", Label = "View moderation history", Group = "Moderation" },

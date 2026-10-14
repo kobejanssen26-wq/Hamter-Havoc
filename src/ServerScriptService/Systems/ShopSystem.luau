@@ -20,6 +20,7 @@ local CollectionSystem = require(script.Parent.CollectionSystem)
 local DataSystem = require(script.Parent.DataSystem)
 local EconomySystem = require(script.Parent.EconomySystem)
 local GearSystem = require(script.Parent.GearSystem)
+local DiscordLog = require(script.Parent.DiscordLog)
 local Events = require(script.Parent.Events)
 local Notifier = require(script.Parent.Notifier)
 local ReplicationSystem = require(script.Parent.ReplicationSystem)
@@ -210,6 +211,7 @@ function ShopSystem.verifyPass(player: Player, entry: any, attempts: number?): b
 				require(script.Parent.PlayerState).apply(player)
 				DataSystem.markDirty(player)
 				Notifier.send(player, entry.Name .. " unlocked! Thank you!", "reward")
+				pcall(DiscordLog.purchase, player, "Game Pass", entry.Name, "granted")
 			end
 			return true
 		end
@@ -300,8 +302,10 @@ function ShopSystem.start()
 				EconomySystem.addGems(player, item.GemAmount, false)
 				Notifier.send(player, "+" .. item.GemAmount .. " gems - thank you!", "reward")
 				if DataSystem.save(player, false) then
+					pcall(DiscordLog.purchase, player, "Developer product", item.Name, "granted")
 					return Enum.ProductPurchaseDecision.PurchaseGranted
 				end
+				pcall(DiscordLog.purchase, player, "Developer product", item.Name, "saving failed, will retry")
 				return Enum.ProductPurchaseDecision.NotProcessedYet
 			end
 		end

@@ -181,5 +181,48 @@ task.spawn(function()
 	check("the live values are published to the clients (price shown in the window)", game:GetService("ReplicatedStorage"):GetAttribute("Wheel_FreeSpinSeconds") == 600)
 	GameConfig.reset("Wheel", "FreeSpinSeconds")
 
+	section("7. the physical wheel in the plaza")
+	local CollectionService = game:GetService("CollectionService")
+	local WheelWorld = require(find(S .. "WheelWorld"))
+	local wheelModel = CollectionService:GetTagged("LuckyWheel")[1]
+	check("a physical Lucky Wheel exists in the world (tag LuckyWheel)", wheelModel ~= nil)
+	local rotor = wheelModel:FindFirstChild("Rotor")
+	local sliceCount = 0
+	for _, d in M.descendants(rotor) do if string.sub(RawData[d].Name, 1, 6) == "Slice_" then sliceCount += 1 end end
+	check("it has one slice per prize, in the same order as the server draw", sliceCount == #SpinWheelConfig.Prizes and wheelModel:GetAttribute("Slices") == #SpinWheelConfig.Prizes)
+	check("the rotor turns around its hub (PrimaryPart set)", rotor.PrimaryPart ~= nil and rotor.PrimaryPart.Name == "Hub")
+	local pad = wheelModel:FindFirstChild("PromptPad")
+	local prompt = pad and pad:FindFirstChildOfClass("ProximityPrompt")
+	check("an [F] prompt on the pad opens the Wheel window and the tutorial can target it", prompt ~= nil and prompt:GetAttribute("OpenUI") == "Wheel" and pad:GetAttribute("TutorialTarget") == "Wheel")
+	local center = require(find("ServerScriptService.Systems.WorldBuilder.LuckyWheelBuilder")).CENTER
+	check("it stands on the plaza paving (radius 31), clear of the road (z > 13) and of the shop path (x > 5)", center.Z - 6.5 >= 13 and center.X - 6.5 >= 5 and math.sqrt(center.X ^ 2 + center.Z ^ 2) + 6.5 <= 31.01, string.format("%.0f,%.0f", center.X, center.Z))
+
+	-- a new player spins: the physical wheel must stop on the prize the server drew
+	local bob = join("Bob", 7002)
+	adv(8)
+	local b2 = DataSystem.get(bob)
+	adv(6)
+	local carol = join("Carol", 7003)
+	adv(8)
+	local c2 = DataSystem.get(carol)
+	adv(6)
+	local okB, _, resB = SpinSystem.spin(bob, false)
+	check("Bob's spin works", okB and resB ~= nil)
+	local spinTo, spinIndex = wheelModel:GetAttribute("SpinTo"), wheelModel:GetAttribute("SpinIndex")
+	check("the wheel was told to stop on the drawn prize (same index as the result)", spinIndex == resB.Index)
+	local expectedSlice = (resB.Index - 1) * 360 / #SpinWheelConfig.Prizes
+	check("the target angle brings that slice under the pointer (after at least 5 full turns)", math.abs(((-spinTo) % 360) - expectedSlice) < 0.001 and spinTo >= 1800, string.format("%.1f vs %.1f", (-spinTo) % 360, expectedSlice))
+	check("the wheel animates from the server clock (start time and duration are published)", type(wheelModel:GetAttribute("SpinStart")) == "number" and wheelModel:GetAttribute("SpinDuration") == WheelWorld.Duration)
+	local nextBefore = c2.Wheel.NextFreeAt
+	adv(1)
+	local okC, msgC = SpinSystem.spin(carol, false)
+	check("a second player can not spin while the physical wheel is turning, and loses nothing", okC == false and c2.Wheel.NextFreeAt == nextBefore, msgC)
+	adv(6)
+	local okC2 = SpinSystem.spin(carol, false)
+	check("after it stopped the next player can spin", okC2 == true)
+	adv(6)
+	local finalPivot = rotor:GetPivot()
+	check("the server snaps the rotor to the final angle (late joiners see where it stopped)", wheelModel:GetAttribute("Angle") ~= nil and wheelModel:GetAttribute("Angle") < 360)
+
 	print(string.format("\nPASS %d  FAIL %d", results.pass, results.fail))
 end)
