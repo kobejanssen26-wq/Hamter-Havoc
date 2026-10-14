@@ -629,7 +629,8 @@ define("setStaff", {
 		end
 		local allowed, why = mayActOn(c.Admin, userId)
 		if not allowed then return fail(why or "Not allowed") end
-		if role and AdminConfig.Roles[role].Level >= roleDef(AdminSystem.roleOf(c.Admin)).Level then
+		local mine = roleDef(AdminSystem.roleOf(c.Admin))
+		if role and mine and AdminConfig.Roles[role].Level >= mine.Level then
 			return fail("You can only give roles below your own")
 		end
 		if AdminConfig.Users[userId] ~= nil then
