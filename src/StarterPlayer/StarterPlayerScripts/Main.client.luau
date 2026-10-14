@@ -23,6 +23,7 @@ local order = {
 	"AmbientController",
 	"NatureController",
 	"EmoteController",
+	"PromptController",
 	"TheftController",
 }
 for _, name in order do

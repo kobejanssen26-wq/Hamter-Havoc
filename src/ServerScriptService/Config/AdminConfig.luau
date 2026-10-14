@@ -41,6 +41,36 @@ AdminConfig.Users = {
 	A role with  "*"  has every permission.
 	Limits are per role; a bigger number than the limit is refused by the server.
 ]]
+AdminConfig.PermissionCatalog = {
+	{ Id = "Panel", Label = "Open the panel", Group = "General" },
+	{ Id = "Inspect", Label = "View player details", Group = "General" },
+	{ Id = "ServerInfo", Label = "View server info", Group = "General" },
+	{ Id = "SafeTools", Label = "Safe test tools (clear stun / freeze)", Group = "General" },
+	{ Id = "AuditLog", Label = "View the staff log", Group = "General" },
+	{ Id = "Announce", Label = "Send server announcements", Group = "General" },
+	{ Id = "Settings", Label = "Edit approved live settings + shop prices", Group = "General" },
+	{ Id = "Warn", Label = "Warn players", Group = "Moderation" },
+	{ Id = "Kick", Label = "Kick players", Group = "Moderation" },
+	{ Id = "History", Label = "View moderation history", Group = "Moderation" },
+	{ Id = "BanTemp", Label = "Temporarily ban players", Group = "Moderation" },
+	{ Id = "BanPerm", Label = "Permanently ban players", Group = "Moderation" },
+	{ Id = "Unban", Label = "Unban players", Group = "Moderation" },
+	{ Id = "Cash", Label = "Give / remove cash", Group = "Economy" },
+	{ Id = "Diamonds", Label = "Give / remove diamonds", Group = "Economy" },
+	{ Id = "Rebirth", Label = "Change rebirth count", Group = "Economy" },
+	{ Id = "Items", Label = "Grant weapons / gear / boosts", Group = "Economy" },
+	{ Id = "Hamsters", Label = "Grant hamsters", Group = "Economy" },
+	{ Id = "ManageRoles", Label = "Manage ordinary roles + assign them", Group = "Staff" },
+	{ Id = "ManageAdmins", Label = "Manage administrators + elevated roles", Group = "Staff" },
+}
+
+-- Roles made or edited in the panel are saved in a DataStore. true = ignore everything that was saved and use only this file
+-- (the safe recovery path if a saved role ever causes trouble). Owners listed above always work either way.
+AdminConfig.IgnoreSavedRoles = false
+
+-- A custom role's Level (its priority) can be anything from 0.5 up to this: nobody can create a role as strong as CoOwner / Owner.
+AdminConfig.MaxCustomLevel = 3.9
+
 AdminConfig.Roles = {
 	Owner = {
 		Level = 5,
@@ -54,7 +84,7 @@ AdminConfig.Roles = {
 	},
 	Admin = {
 		Level = 3,
-		Permissions = { "Panel", "Inspect", "Warn", "Kick", "History", "BanTemp", "BanPerm", "Unban", "Cash", "Diamonds", "Rebirth", "Items", "Announce", "ServerInfo", "SafeTools", "Settings", "AuditLog" },
+		Permissions = { "Panel", "Inspect", "Warn", "Kick", "History", "BanTemp", "BanPerm", "Unban", "Cash", "Diamonds", "Rebirth", "Items", "Hamsters", "Announce", "ServerInfo", "SafeTools", "Settings", "AuditLog" },
 		Limits = { MaxCash = 1e9, MaxDiamonds = 1e6, MaxRebirths = 25, MaxBanMinutes = math.huge },
 	},
 	Moderator = {
@@ -65,7 +95,7 @@ AdminConfig.Roles = {
 	Developer = {
 		Level = 1,
 		-- testing tools only: no kicking, banning or announcing
-		Permissions = { "Panel", "Inspect", "ServerInfo", "SafeTools", "Settings", "Cash", "Diamonds", "Rebirth", "Items", "AuditLog" },
+		Permissions = { "Panel", "Inspect", "ServerInfo", "SafeTools", "Settings", "Cash", "Diamonds", "Rebirth", "Items", "Hamsters", "AuditLog" },
 		Limits = { MaxCash = 1e8, MaxDiamonds = 1e5, MaxRebirths = 25, MaxBanMinutes = 0 },
 	},
 }

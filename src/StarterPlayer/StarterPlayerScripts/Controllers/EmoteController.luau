@@ -153,6 +153,8 @@ function EmoteController.play(emoteId: string): (boolean, string)
 		end
 	end
 	if not started then
+		warn(string.format("[Emote] '%s' could not start (rig %s, builtin=%s, animationId=%s, animation=%s). Check the Animator, the animation id/ownership and the rig type; docs/HANDLEIDING.md chapter 5.",
+			emoteId, tostring(h.RigType), tostring(def.Builtin), tostring(def.AnimationId), tostring(def.Animation)))
 		return false, def.DisplayName .. " isn't available right now"
 	end
 	playing = emoteId

@@ -36,6 +36,7 @@ local Events = require(script.Parent.Events)
 local GearSystem = require(script.Parent.GearSystem)
 local Notifier = require(script.Parent.Notifier)
 local PlayerState = require(script.Parent.PlayerState)
+local StaffStore = require(script.Parent.StaffStore)
 local ReplicationSystem = require(script.Parent.ReplicationSystem)
 
 local AdminSystem = {}
@@ -71,23 +72,6 @@ local function isCreator(userId: number): boolean
 	return success and result == true
 end
 
--- Staff made in the panel (command setStaff): { [userId] = role }. Loaded from the DataStore at start; AdminConfig.Users always wins.
-local grantedRoles: { [number]: string? } = {}
-local STAFF_KEY = "StaffRoles"
-local GRANTABLE = { Admin = true, Moderator = true, Developer = true } -- Owner / CoOwner can only be set in AdminConfig
-
-local function configuredRole(id: number): string?
-	local role = AdminConfig.Users[id]
-	if type(role) == "string" and AdminConfig.Roles[role] and role ~= "Owner" then
-		return role
-	end
-	local granted = grantedRoles[id]
-	if granted and AdminConfig.Roles[granted] and GRANTABLE[granted] then
-		return granted
-	end
-	return nil
-end
-
 -- The role of a player: "Owner" | "Admin" | "Moderator" | "Developer" | nil. Decided from UserId only.
 function AdminSystem.roleOf(player: Player): string?
 	local isPlayer, result = pcall(function()
@@ -103,7 +87,7 @@ function AdminSystem.roleOf(player: Player): string?
 	if ownerSet()[id] then
 		return "Owner"
 	end
-	local role = configuredRole(id)
+	local role = StaffStore.assignment(id)
 	if role then
 		return role -- (an explicit entry wins over the creator rule below)
 	end
@@ -114,7 +98,7 @@ function AdminSystem.roleOf(player: Player): string?
 end
 
 local function roleDef(role: string?): any?
-	return if role then AdminConfig.Roles[role] else nil
+	return if role then StaffStore.def(role) else nil
 end
 
 function AdminSystem.can(player: Player, permission: string): boolean
@@ -130,7 +114,7 @@ local function levelOf(userId: number): number
 	if ownerSet()[userId] then
 		return AdminConfig.Roles.Owner.Level
 	end
-	local def = roleDef(configuredRole(userId))
+	local def = roleDef(StaffStore.assignment(userId))
 	if def then
 		return def.Level
 	end
@@ -338,6 +322,18 @@ local function checkParam(param: Param, raw: any): (boolean, any)
 		end
 		if (param.Min and raw < param.Min) or (param.Max and raw > param.Max) then
 			return false, string.format("%s must be between %s and %s", param.Label or param.Name, tostring(param.Min), tostring(param.Max))
+		end
+		return true, raw
+	elseif kind == "table" then
+		if type(raw) ~= "table" then
+			return false, (param.Label or param.Name) .. " must be a list"
+		end
+		local count = 0
+		for key, value in raw do
+			count += 1
+			if count > 60 or (type(key) ~= "number" and type(key) ~= "string") or (type(value) ~= "string" and type(value) ~= "number") then
+				return false, (param.Label or param.Name) .. " is not valid"
+			end
 		end
 		return true, raw
 	elseif kind == "bool" then
@@ -601,7 +597,7 @@ define("setRebirths", {
 })
 
 define("grantItem", {
-	Category = "Economy", Label = "Give item (weapon / gear / boost)", Permission = "Items",
+	Category = "Items", Label = "Give item (weapon / gear / boost)", Permission = "Items",
 	Params = { { Name = "target", Type = "player", Label = "Player" }, { Name = "item", Type = "item", Label = "Item id" }, { Name = "reason", Type = "text", Label = "Reason", Optional = true } },
 	Run = function(c: Context): Result
 		local target, itemId = c.Params.target :: Player, c.Params.item :: string
@@ -612,52 +608,152 @@ define("grantItem", {
 	end,
 })
 
+-- ---- roles and staff ------------------------------------------------------
+local function myLevel(admin: Player): number
+	local def = roleDef(AdminSystem.roleOf(admin))
+	return if def then def.Level else 0
+end
+
+local function elevated(permissions: { string }, level: number): boolean
+	return level >= 3 or table.find(permissions, "*") ~= nil or table.find(permissions, "ManageRoles") ~= nil or table.find(permissions, "ManageAdmins") ~= nil
+end
+
+local function saveNote(saved: boolean): string
+	return if saved then "" else " (NOT saved: enable Studio API access / the DataStore is down; it lasts until this server closes)"
+end
+
 define("setStaff", {
-	Category = "Staff", Label = "Make / remove staff (by UserId)", Permission = "Staff", Confirm = true,
+	Category = "Roles", Label = "Give / remove a staff role", Permission = "ManageRoles", Confirm = true,
 	Params = {
-		{ Name = "userId", Type = "userid", Label = "UserId of the person" },
-		{ Name = "role", Type = "text", Label = "Role: Admin, Moderator, Developer, or None to remove", Max = 20 },
+		{ Name = "userId", Type = "userid", Label = "Player" },
+		{ Name = "role", Type = "text", Label = "Role name, or None to remove", Max = 24 },
+		{ Name = "name", Type = "text", Label = "Name (only for the list)", Optional = true, Max = 40 },
 		{ Name = "reason", Type = "text", Label = "Reason", Optional = true },
 	},
 	Run = function(c: Context): Result
 		local userId = c.Params.userId :: number
-		local typed = string.lower((string.gsub(c.Params.role :: string, "%s", "")))
-		local named = string.upper(string.sub(typed, 1, 1)) .. string.sub(typed, 2)
-		local role: string? = named
-		if named == "None" then
-			role = nil
-		elseif not GRANTABLE[named] then
-			return fail("Role must be Admin, Moderator, Developer or None (Owner and CoOwner are set in AdminConfig)")
-		end
+		local typed = string.gsub(c.Params.role :: string, "^%s*(.-)%s*$", "%1")
+		local mine = myLevel(c.Admin)
 		local allowed, why = mayActOn(c.Admin, userId)
 		if not allowed then return fail(why or "Not allowed") end
-		local mine = roleDef(AdminSystem.roleOf(c.Admin))
-		if role and mine and AdminConfig.Roles[named].Level >= mine.Level then
-			return fail("You can only give roles below your own")
-		end
-		if AdminConfig.Users[userId] ~= nil then
+		if StaffStore.isFileAssigned(userId) or ownerSet()[userId] then
 			return fail("That person is set in AdminConfig.Users: change them there (the file always wins)")
 		end
-		grantedRoles[userId] = role
-		-- save just this one entry so servers never overwrite each other's changes
-		local saved = false
-		local source = getStore()
-		if source then
-			saved = pcall(function()
-				source:UpdateAsync(STAFF_KEY, function(old)
-					local map = if type(old) == "table" then old else {}
-					map[tostring(userId)] = role
-					return map
-				end)
-			end)
+		local role: string? = nil
+		if string.lower(typed) ~= "none" then
+			-- role names are matched without caring about capitals
+			for _, name in StaffStore.names() do
+				if string.lower(name) == string.lower(typed) then
+					role = name
+				end
+			end
+			local def = roleDef(role)
+			if not role or not def or StaffStore.isProtected(role) then
+				return fail("Unknown role (Owner and CoOwner can only be set in AdminConfig)")
+			end
+			if def.Level >= mine then return fail("You can only give roles below your own") end
+			if elevated(def.Permissions, def.Level) and not AdminSystem.can(c.Admin, "ManageAdmins") then
+				return fail("Giving an administrator-level role needs the ManageAdmins permission")
+			end
+			for _, permission in def.Permissions do
+				if not AdminSystem.can(c.Admin, permission) then
+					return fail("That role has permissions you do not have yourself (" .. permission .. ")")
+				end
+			end
+		else
+			local current = levelOf(userId)
+			if current >= 3 and not AdminSystem.can(c.Admin, "ManageAdmins") then
+				return fail("Removing an administrator needs the ManageAdmins permission")
+			end
 		end
+		local saved = StaffStore.assign(userId, role, c.Params.name)
 		audit(c.Admin, "setStaff", userId, string.format("%d -> %s", userId, role or "none"), c.Params.reason)
-		return ok(string.format("%d is now %s%s", userId, role or "no staff", if saved then "" else " (NOT saved: enable Studio API access / DataStore)"))
+		local target = Players:GetPlayerByUserId(userId)
+		return ok(string.format("%s is now %s%s", if target then target.Name else tostring(userId), role or "no staff", saveNote(saved)))
+	end,
+})
+
+define("saveRole", {
+	Category = "Roles", Label = "Create / edit a role", Permission = "ManageRoles", Confirm = true,
+	Params = {
+		{ Name = "oldName", Type = "text", Label = "Existing role (blank = new)", Optional = true, Max = 24 },
+		{ Name = "name", Type = "text", Label = "Role name", Max = 24 },
+		{ Name = "level", Type = "number", Label = "Priority (0.5 - 3.9)", Min = 0.5, Max = 99 },
+		{ Name = "permissions", Type = "table", Label = "Permissions" },
+		{ Name = "limits", Type = "table", Label = "Limits", Optional = true },
+		{ Name = "reason", Type = "text", Label = "Reason", Optional = true },
+	},
+	Run = function(c: Context): Result
+		local oldName = string.gsub(c.Params.oldName or "", "^%s*(.-)%s*$", "%1")
+		local name = string.gsub(c.Params.name :: string, "^%s*(.-)%s*$", "%1")
+		local valid, why = StaffStore.validName(name)
+		if not valid then return fail(why or "Invalid name") end
+		local mine = myLevel(c.Admin)
+		local ownName = AdminSystem.roleOf(c.Admin)
+		local editing = if oldName ~= "" then oldName else nil
+		if editing then
+			local existing = roleDef(editing)
+			if not existing or StaffStore.isProtected(editing) then return fail("That role does not exist or can not be edited") end
+			if existing.Level >= mine then return fail("You can only edit roles below your own") end
+			if editing == ownName then return fail("You can not edit your own role") end
+		end
+		if (not editing or editing ~= name) and roleDef(name) then
+			return fail("A role with that name already exists")
+		end
+		if not editing and #StaffStore.names() >= 30 then return fail("Too many roles (30 maximum)") end
+		local level = c.Params.level :: number
+		if level >= mine or level > AdminConfig.MaxCustomLevel then
+			return fail("A role must be lower than your own role")
+		end
+		local permissions = {}
+		for _, id in c.Params.permissions :: any do
+			if type(id) ~= "string" or not StaffStore.permissionKnown(id) then
+				return fail("Unknown permission: " .. tostring(id))
+			end
+			if not AdminSystem.can(c.Admin, id) then
+				return fail("You can not give a permission you do not have yourself (" .. id .. ")")
+			end
+			table.insert(permissions, id)
+		end
+		if #permissions == 0 then return fail("Choose at least one permission") end
+		local limits = {}
+		for key, value in (c.Params.limits or {}) :: any do
+			if type(value) == "number" then
+				limits[key] = math.min(value, limit(c.Admin, key)) -- never above the editor's own limits
+			end
+		end
+		local clean = StaffStore.sanitize(name, { Level = level, Permissions = permissions, Limits = limits })
+		if not clean then return fail("That role definition is not valid") end
+		if elevated(clean.Permissions, clean.Level) and not AdminSystem.can(c.Admin, "ManageAdmins") then
+			return fail("Roles with administrator-level rights need the ManageAdmins permission")
+		end
+		local saved = StaffStore.saveRole(editing, name, clean)
+		audit(c.Admin, "saveRole", nil, string.format("%s (level %s): %s", name, tostring(clean.Level), table.concat(clean.Permissions, ",")), c.Params.reason)
+		return ok(string.format("Role %s saved%s", name, saveNote(saved)))
+	end,
+})
+
+define("deleteRole", {
+	Category = "Roles", Label = "Delete a role (or reset a built-in one)", Permission = "ManageRoles", Confirm = true,
+	Params = { { Name = "name", Type = "text", Label = "Role name", Max = 24 }, { Name = "reason", Type = "text", Label = "Reason", Optional = true } },
+	Run = function(c: Context): Result
+		local name = string.gsub(c.Params.name :: string, "^%s*(.-)%s*$", "%1")
+		local def = roleDef(name)
+		if not def or StaffStore.isProtected(name) then return fail("That role does not exist or can not be deleted") end
+		if def.Level >= myLevel(c.Admin) then return fail("You can only delete roles below your own") end
+		if name == AdminSystem.roleOf(c.Admin) then return fail("You can not delete your own role") end
+		if not def.Custom and not def.Overridden then
+			return fail("That role is built into AdminConfig (edit the file to remove it)")
+		end
+		local members = #StaffStore.members(name)
+		local saved = StaffStore.deleteRole(name)
+		audit(c.Admin, "deleteRole", nil, string.format("%s (%d members lost it)", name, members), c.Params.reason)
+		return ok(string.format("%s %s%s", name, if def.Custom then "deleted" else "reset to the AdminConfig values", saveNote(saved)))
 	end,
 })
 
 define("giveHamster", {
-	Category = "Economy", Label = "Give hamster", Permission = "Items",
+	Category = "Hamsters", Label = "Give hamster", Permission = "Hamsters",
 	Params = { { Name = "target", Type = "player", Label = "Player" }, { Name = "hamster", Type = "hamster", Label = "Hamster (id or name)" }, { Name = "amount", Type = "int", Label = "How many", Min = 1, Max = 10 }, { Name = "reason", Type = "text", Label = "Reason", Optional = true } },
 	Run = function(c: Context): Result
 		local target, speciesId, amount = c.Params.target :: Player, c.Params.hamster :: string, c.Params.amount :: number
@@ -673,7 +769,7 @@ define("giveHamster", {
 })
 
 define("revokeItem", {
-	Category = "Economy", Label = "Remove owned weapon / gear", Permission = "Items", Confirm = true,
+	Category = "Items", Label = "Remove owned weapon / gear", Permission = "Items", Confirm = true,
 	Params = { { Name = "target", Type = "player", Label = "Player" }, { Name = "item", Type = "item", Label = "Item id" }, { Name = "reason", Type = "text", Label = "Reason", Optional = true } },
 	Run = function(c: Context): Result
 		local target, itemId = c.Params.target :: Player, c.Params.item :: string
@@ -693,7 +789,7 @@ define("revokeItem", {
 })
 
 define("inspect", {
-	Category = "Economy", Label = "Inspect progress", Permission = "Inspect",
+	Category = "Players", Label = "Inspect progress", Permission = "Inspect",
 	Params = { { Name = "target", Type = "player", Label = "Player" } },
 	Run = function(c: Context): Result
 		local target = c.Params.target :: Player
@@ -798,7 +894,7 @@ define("resetShopItem", {
 })
 
 define("auditLog", {
-	Category = "Game", Label = "Show admin action log", Permission = "AuditLog", Params = {},
+	Category = "Logs", Label = "Show admin action log", Permission = "AuditLog", Params = {},
 	Run = function(): Result
 		local lines = {}
 		for i = #auditLog, math.max(1, #auditLog - 24), -1 do
@@ -881,7 +977,72 @@ local function panelData(admin: Player): any
 			end
 		end
 	end
-	return { Role = role, Commands = commands, Players = list, Settings = settings, Shop = shop }
+	-- roles screen (only for people who may manage roles): every role with its permissions and members
+	local roles, permissionList = nil, nil
+	if AdminSystem.can(admin, "ManageRoles") then
+		permissionList = AdminConfig.PermissionCatalog
+		roles = {}
+		local mine = myLevel(admin)
+		for _, name in StaffStore.names() do
+			local def = StaffStore.def(name)
+			if def then
+				local members = StaffStore.members(name)
+				for _, member in members do
+					local live = Players:GetPlayerByUserId(member.UserId)
+					if live then
+						member.Name = live.Name
+					end
+				end
+				table.insert(roles, {
+					Name = name, Level = def.Level, Permissions = def.Permissions, Limits = def.Limits, Members = members,
+					Protected = StaffStore.isProtected(name), Custom = def.Custom == true, Overridden = def.Overridden == true,
+					Editable = not StaffStore.isProtected(name) and def.Level < mine and name ~= role,
+				})
+			end
+		end
+	end
+	local staffOnline = 0
+	for _, other in Players:GetPlayers() do
+		if AdminSystem.roleOf(other) then
+			staffOnline += 1
+		end
+	end
+	local dashboard = {
+		Players = #list, Uptime = os.time() - startedAt, Role = role,
+		StaffOnline = staffOnline,
+		RolesSaved = StaffStore.lastSaveOk,
+	}
+	return { Role = role, Commands = commands, Players = list, Settings = settings, Shop = shop, Roles = roles, Permissions = permissionList, Dashboard = dashboard, Level = myLevel(admin) }
+end
+
+-- Username -> UserId through Roblox (works for offline players). Cached; failures are reported, never guessed.
+local lookupCache: { [string]: any } = {}
+local function lookupName(name: any): any
+	if type(name) ~= "string" then
+		return { ok = false, msg = "Type a username" }
+	end
+	local trimmed = string.gsub(name, "^%s*(.-)%s*$", "%1")
+	if #trimmed < 3 or #trimmed > 20 or string.find(trimmed, "^[%w_]+$") == nil then
+		return { ok = false, msg = "Usernames have 3-20 letters, digits or underscores" }
+	end
+	local key = string.lower(trimmed)
+	for _, other in Players:GetPlayers() do
+		if string.lower(other.Name) == key then
+			return { ok = true, UserId = other.UserId, Name = other.Name }
+		end
+	end
+	if lookupCache[key] then
+		return lookupCache[key]
+	end
+	local success, id = pcall(function()
+		return Players:GetUserIdFromNameAsync(trimmed)
+	end)
+	if not success or type(id) ~= "number" then
+		return { ok = false, msg = "Roblox could not find that username right now" }
+	end
+	local result = { ok = true, UserId = id, Name = trimmed }
+	lookupCache[key] = result
+	return result
 end
 
 function AdminSystem.handle(player: Player, action: any, a: any, b: any, c: any): any
@@ -902,6 +1063,11 @@ function AdminSystem.handle(player: Player, action: any, a: any, b: any, c: any)
 		return { ok = true, data = panelData(player) }
 	elseif action == "run" then
 		return AdminSystem.execute(player, a, b, c)
+	elseif action == "lookup" then
+		if not AdminSystem.can(player, "Panel") then
+			return { ok = false, msg = "Not allowed" }
+		end
+		return lookupName(a)
 	end
 	return { ok = false, msg = "Unknown request" }
 end
@@ -915,17 +1081,7 @@ function AdminSystem.start()
 		warn("[Admin] request failed: " .. tostring(result))
 		return nil
 	end
-	task.spawn(function()
-		local map = read(STAFF_KEY)
-		if type(map) == "table" then
-			for key, role in map do
-				local id = tonumber(key)
-				if id and type(role) == "string" and GRANTABLE[role] then
-					grantedRoles[id] = role
-				end
-			end
-		end
-	end)
+	StaffStore.start()
 	if next(ownerSet()) == nil and not AdminConfig.CreatorIsOwner then
 		warn("[Admin] no owner is configured: set your Roblox UserId in ServerScriptService/Config/AdminConfig.luau")
 	end

@@ -894,6 +894,11 @@ setMethods(Players, {
 		for _, p in players do if RawData[p].Props.UserId == id then return p end end
 		return nil
 	end,
+	GetUserIdFromNameAsync = function(_, name)
+		local id = string.match(name, "^User(%d+)$")
+		if not id or name == "User404" then error("HTTP 400 (simulated: no such user)") end
+		return tonumber(id)
+	end,
 	GetNameFromUserIdAsync = function(_, id)
 		if id == 999999 then error("HTTP 404 (simulated)") end
 		return "User" .. id
