@@ -1022,8 +1022,10 @@ local SUBTITLES = {
 	Codes = "Redeem a code for free rewards",
 }
 
-function UIKit.panel(options: { Name: string, Title: string, Subtitle: string?, Icon: string?, Design: Vector2?, Accent: Color3? }): Panel
+-- Dock = "Right": a small info panel on the right edge that does NOT dim or block the world (the 3D object stays visible and usable).
+function UIKit.panel(options: { Name: string, Title: string, Subtitle: string?, Icon: string?, Design: Vector2?, Accent: Color3?, Dock: string? }): Panel
 	local design = options.Design or Vector2.new(860, 560)
+	local docked = options.Dock == "Right"
 	local accent = options.Accent or C.Peach
 
 	local gui = UIKit.screenGui(options.Name .. "UI", { Layer = "Panels", Insets = "None", Enabled = false })
@@ -1042,10 +1044,14 @@ function UIKit.panel(options: { Name: string, Title: string, Subtitle: string?, 
 	-- outer frame: design size + fit scale; inner parts: shadow + window (open/close animation)
 	local outer = UIKit.frame(gui, {
 		Size = UDim2.fromOffset(design.X, design.Y),
-		Position = UDim2.new(0.5, 0, 0.5, 0),
-		AnchorPoint = Vector2.new(0.5, 0.5),
+		Position = if docked then UDim2.new(1, -16, 0.5, 0) else UDim2.new(0.5, 0, 0.5, 0),
+		AnchorPoint = if docked then Vector2.new(1, 0.5) else Vector2.new(0.5, 0.5),
 		BackgroundTransparency = 1,
 	})
+	if docked then
+		dim.Modal = false
+		dim.Visible = false
+	end
 	local fit = UIKit.new("UIScale", { Scale = UIKit.fitScale(design) }, outer)
 	local motion = UIKit.frame(outer, { Size = UDim2.fromScale(1, 1), BackgroundTransparency = 1 })
 	local anim = UIKit.new("UIScale", { Scale = 0.94 }, motion)

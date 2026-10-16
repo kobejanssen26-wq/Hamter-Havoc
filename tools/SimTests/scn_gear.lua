@@ -591,7 +591,8 @@ task.spawn(function()
 		check("cash shop tab exists: " .. name, #byName(shop.Gui, name) == 1)
 	end
 	check("the Cash Shop does not show Robux items (no game pass tab)", #byName(shop.Gui, "Tab_Gamepasses") == 0)
-	check("two shops: a Cash Shop and a Robux Shop switch", #byName(shop.Gui, "Mode_Cash") == 1 and #byName(shop.Gui, "Mode_Robux") == 1)
+	check("the Coins Shop has NO switch or tab leading to the Robux Shop (and no diamond pack tab)", #byName(shop.Gui, "Mode_Cash") == 0 and #byName(shop.Gui, "Mode_Robux") == 0 and #byName(shop.Gui, "ShopSwitch") == 0 and #byName(shop.Gui, "Tab_Diamonds") == 0)
+	check("the Coins Shop has its own window title", UIKit.getPanel("RobuxShop") ~= nil and UIKit.getPanel("RobuxShop") ~= shop)
 	click(byName(shop.Gui, "Tab_Weapons")[1])
 	check("weapon cards listed", #byName(shop.Gui, "Item_gear_foam_bat") == 1 and #byName(shop.Gui, "Item_gear_shadow_cloak") == 1 and #byName(shop.Gui, "Item_gear_seed_slingshot") == 1)
 	check("detail panel shows the selected weapon", string.find(textsOf(byName(shop.Gui, "Detail")[1]), "Cooldown", 1, true) ~= nil and #byName(shop.Gui, "DetailIcon") == 1)
@@ -627,15 +628,19 @@ task.spawn(function()
 	adv(1.5)
 	local unlockedAction = byName(shop.Gui, "Action")[1]
 	check("at the required rebirth it becomes buyable", unlockedAction ~= nil and RawData[unlockedAction].Attributes.Disabled ~= true, unlockedAction and tostring(RawData[unlockedAction].Props.Text))
-	click(byName(shop.Gui, "Mode_Robux")[1])
-	check("the Robux Shop has the Game Passes tab and no cash items", #byName(shop.Gui, "Tab_Gamepasses") == 1 and #byName(shop.Gui, "Tab_Weapons") == 0)
+	shop:Close(); adv(0.5)
+	shop = UIKit.getPanel("RobuxShop")
+	shop:Open(); adv(0.8)
+	check("the Robux Shop is a separate window with the Game Passes tab, no cash items and no switch to the Coins Shop", #byName(shop.Gui, "Tab_Gamepasses") == 1 and #byName(shop.Gui, "Tab_Weapons") == 0 and #byName(shop.Gui, "Tab_Boosts") == 0 and #byName(shop.Gui, "Tab_Hamsters") == 0 and #byName(shop.Gui, "Mode_Cash") == 0 and #byName(shop.Gui, "ShopSwitch") == 0)
 	click(byName(shop.Gui, "Tab_Gamepasses")[1])
 	local passCards = 0
 	for _, d in M.descendants(shop.Gui) do if string.sub(RawData[d].Name, 1, 10) == "Item_pass_" then passCards += 1 end end
 	check("game pass tab lists configured-or-greyed passes", passCards == #GamepassConfig.List or passCards == #cats.Gamepasses.Items, passCards)
 	local act = byName(shop.Gui, "Action")[1]
 	check("unconfigured pass: button says 'Not configured' and is disabled", act and string.find(tostring(RawData[act].Props.Text), "Not configured", 1, true) ~= nil and RawData[act].Attributes.Disabled == true, act and (tostring(RawData[act].Props.Text) .. "/" .. tostring(RawData[act].Attributes.Disabled)))
-	click(byName(shop.Gui, "Mode_Cash")[1])
+	shop:Close(); adv(0.5)
+	shop = UIKit.getPanel("Shop")
+	shop:Open(); adv(0.8)
 	click(byName(shop.Gui, "Tab_Boosts")[1])
 	check("boost cards present", #byName(shop.Gui, "Item_boost_coins") == 1)
 	shop:Close(); adv(0.5)
@@ -681,19 +686,20 @@ task.spawn(function()
 	check("the hotbar fits the screen at 5 resolutions (incl. phone portrait)", resOk, resDetail)
 	cam.ViewportSize = Vector2.new(1280, 720)
 
-	-- lucky wheel (server draw + window)
+	-- lucky wheel (compact info panel; the wheel itself is a physical object in the plaza)
 	local wheel = UIKit.getPanel("Wheel")
 	wheel:Open(); adv(0.8)
-	check("the Lucky Wheel window shows one bubble per prize", #byName(wheel.Gui, "Ring") == 1 and #M.descendants(byName(wheel.Gui, "Ring")[1]) > 20)
-	local spinBtn = byName(wheel.Gui, "Spin")[1]
-	check("a free spin is offered at first", string.find(tostring(RawData[spinBtn].Props.Text), "FREE", 1, true) ~= nil, tostring(RawData[spinBtn].Props.Text))
-	local nextFreeBefore = a.Wheel.NextFreeAt
-	local coinsBeforeSpin, gemsBeforeSpin = a.Coins, a.Gems
-	click(spinBtn)
-	adv(5)
-	check("spinning uses the free spin (next free spin is hours away) and pays a prize decided by the server", a.Wheel.NextFreeAt > nextFreeBefore and a.Wheel.NextFreeAt >= os.time() + 3000)
-	adv(1.2)
-	check("the second spin costs diamonds", string.find(tostring(RawData[byName(wheel.Gui, "Spin")[1]].Props.Text), "gems", 1, true) ~= nil, tostring(RawData[byName(wheel.Gui, "Spin")[1]].Props.Text))
+	check("the Lucky Wheel panel lists every prize with its chance (no big wheel in the window)", #byName(wheel.Gui, "Ring") == 0 and #byName(wheel.Gui, "PrizeList") == 1 and (function()
+		local SpinWheelConfig = require(find(MOD .. "SpinWheelConfig"))
+		for _, prize in SpinWheelConfig.Prizes do if #byName(wheel.Gui, "Row_" .. prize.Id) ~= 1 then return false end end
+		return true
+	end)())
+	check("the panel has NO spin button and NO paid spin: you spin at the physical wheel", #byName(wheel.Gui, "Spin") == 0 and string.find(textsOf(wheel.Gui), "gems", 1, true) == nil and string.find(textsOf(wheel.Gui), "Walk to the wheel", 1, true) ~= nil)
+	check("it shows when the free spin is ready", string.find(tostring(RawData[byName(wheel.Gui, "Status")[1]].Props.Text), "ready", 1, true) ~= nil, tostring(RawData[byName(wheel.Gui, "Status")[1]].Props.Text))
+	a.Wheel.NextFreeAt = os.time() + 7300
+	M.isServer = true; require(find(S .. "ReplicationSystem")).mark(alice, "Wheel"); M.isServer = false
+	adv(2.5)
+	check("...and the countdown while it is not", string.find(tostring(RawData[byName(wheel.Gui, "Status")[1]].Props.Text), "Next free spin in", 1, true) ~= nil, tostring(RawData[byName(wheel.Gui, "Status")[1]].Props.Text))
 	wheel:Close(); adv(0.5)
 
 	print(string.format("PASS %d  FAIL %d", results.pass, results.fail))

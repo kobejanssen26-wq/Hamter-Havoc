@@ -71,6 +71,19 @@ function DataController.rebirthCheck(n: number)
 	return RebirthConfig.check({ Inventory = DataController.Data.Inventory or {}, Coins = DataController.coins() }, n)
 end
 
+-- Time played in this experience (seconds). The SERVER counts it and publishes it as the player attribute PlaytimeSeconds
+-- (every few seconds); between two updates this adds the local time that passed, so the window shows a smooth counter.
+local playtimeAt = os.clock()
+function DataController.playtimeSeconds(): number
+	local player = game.Players.LocalPlayer
+	local published = player:GetAttribute("PlaytimeSeconds")
+	if type(published) ~= "number" then
+		local profile = DataController.Data.Playtime
+		return if profile then profile.Seconds or 0 else 0
+	end
+	return published + math.min(os.clock() - playtimeAt, 6)
+end
+
 -- Asks the server to do something. Returns { ok, msg, extra }. Never throws.
 function DataController.request(action: string, payload: { [string]: any }?): { ok: boolean, msg: string, extra: any }
 	local ok, response = pcall(function()
@@ -83,6 +96,9 @@ function DataController.request(action: string, payload: { [string]: any }?): { 
 end
 
 function DataController.start()
+	game.Players.LocalPlayer:GetAttributeChangedSignal("PlaytimeSeconds"):Connect(function()
+		playtimeAt = os.clock()
+	end)
 	Remotes.event("DataUpdate").OnClientEvent:Connect(function(payload: { [string]: any }, full: boolean)
 		local changed = {}
 		for key, value in payload do

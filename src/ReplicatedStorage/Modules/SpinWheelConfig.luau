@@ -1,13 +1,17 @@
 --[[
 	SpinWheelConfig: the Lucky Wheel. Edit the numbers here (or the two live ones in the admin panel: Settings -> Wheel).
 
-	  Wheel.FreeSpinSeconds   (GameConfig, live)  one free spin becomes available this often. Default 3600 = every hour.
-	  Wheel.ExtraSpinGems     (GameConfig, live)  price of an extra spin with diamonds while the free one is not ready (0 = none)
+	  Wheel.FreeSpinSeconds   (GameConfig, live)  one free spin becomes available this often. Default 10800 = every 3 hours.
+	                          There is ONE free spin per period and nothing to pay for another one.
+	  Wheel.Clockwise         (GameConfig, live)  which way the wheel turns, seen from the front. Flip it if it turns the wrong way.
+	  Wheel.SpinSeconds       (GameConfig, live)  how long a spin takes
 	  Wheel.CashCapPercent    (GameConfig, live)  no cash prize may be worth more than this % of the player's NEXT REBIRTH COST
 
 	Prizes: the slices, in order around the wheel. Fields of a prize:
-	  Id, Short, Label, Icon, Color   what the slice shows (Short = the word printed on the physical wheel in the plaza) (Label is a general name, the exact amount is shown to the player and
-	                            depends on how far they are)
+	  Id, Label, Icon, Color    what the slice shows (Label is a general name, the exact amount is shown to the player and depends
+	                            on how far they are). The physical wheel shows a PICTURE: Icon names a drawn icon (UI/Icons) that is
+	                            used until you set Image = "rbxassetid://<your image>" - that image (uploaded by you) replaces it.
+	  Short                     only the fallback word for places that cannot draw pictures (the exported standalone model)
 	  Weight                    how likely, relative to the other prizes that this player can win right now
 	  MinRebirth / MaxRebirth   optional: the prize can only be won from / up to this rebirth (locked slices are greyed out)
 	  Reward                    what it pays. Any of:
@@ -60,24 +64,75 @@ SpinWheelConfig.Prizes = {
 
 -- The server reads GameConfig directly; clients get the live values from attributes the server publishes (SpinSystem), so the
 -- window shows the real price even after an admin changed it.
-local function setting(key: string): number
+local function setting(key: string): any
 	if not RunService:IsServer() then
 		local published = ReplicatedStorage:GetAttribute("Wheel_" .. key)
-		if type(published) == "number" then
+		if published ~= nil then
 			return published
 		end
 	end
 	return GameConfig.get("Wheel", key)
 end
 
-SpinWheelConfig.Settings = { "FreeSpinSeconds", "ExtraSpinGems", "CashCapPercent" }
+SpinWheelConfig.Settings = { "FreeSpinSeconds", "CashCapPercent", "Clockwise", "SpinSeconds" }
 
 function SpinWheelConfig.freeSpinSeconds(): number
 	return setting("FreeSpinSeconds")
 end
 
-function SpinWheelConfig.extraSpinGems(): number
-	return setting("ExtraSpinGems")
+-- true = the wheel turns clockwise seen from the FRONT (the side with the prizes).
+function SpinWheelConfig.clockwise(): boolean
+	return setting("Clockwise") == true
+end
+
+function SpinWheelConfig.spinSeconds(): number
+	return setting("SpinSeconds")
+end
+
+---------------------------------------------------------------------------
+-- how the physical wheel turns (ONE place, used by the server, every client and the tests)
+---------------------------------------------------------------------------
+
+SpinWheelConfig.Turns = 6 -- full rounds before it stops
+
+-- Angles are in DEGREES, positive = clockwise seen from the front of the wheel. The wheel plane faces -Z (towards the road), and
+-- a positive rotation about +Z turns clockwise for somebody standing at -Z, so this is just base * Angles(0, 0, rad(degrees)).
+function SpinWheelConfig.rotorCFrame(base: CFrame, degrees: number): CFrame
+	return base * CFrame.Angles(0, 0, math.rad(degrees))
+end
+
+-- Where the rotor has to stop so that prize `index` (slice i sits (i-1) * 360 / count degrees clockwise from the top) is under the
+-- fixed pointer at the top, after at least `turns` rounds in the configured direction, starting from angle `current`.
+function SpinWheelConfig.targetAngle(current: number, index: number, count: number, clockwise: boolean?, turns: number?): number
+	local slice = (index - 1) * 360 / count
+	local rounds = 360 * (turns or SpinWheelConfig.Turns)
+	if clockwise == nil then
+		clockwise = SpinWheelConfig.clockwise()
+	end
+	if clockwise then
+		return current + rounds + ((360 - slice - current % 360) % 360)
+	end
+	return current - rounds - ((current % 360 + slice) % 360)
+end
+
+-- Which prize index is under the pointer when the rotor stands at `angle`.
+function SpinWheelConfig.indexAt(angle: number, count: number): number
+	local step = 360 / count
+	return math.floor(((-angle) % 360) / step + 0.5) % count + 1
+end
+
+-- Progress of the turn (0..1) from the progress of the time (0..1): the wheel speeds up for the first part, then slows down to a stop
+-- (velocity ramps up linearly, then falls off smoothly; this is the integral of that, so position and speed are both continuous).
+local ACCELERATE = 0.12
+local TOTAL = ACCELERATE / 2 + (1 - ACCELERATE) / 4
+function SpinWheelConfig.ease(t: number): number
+	t = math.clamp(t, 0, 1)
+	if t < ACCELERATE then
+		return (t * t / (2 * ACCELERATE)) / TOTAL
+	end
+	local rest = (1 - ACCELERATE)
+	local s = (t - ACCELERATE) / rest -- 0..1 over the slowing part
+	return (ACCELERATE / 2 + rest * (1 - (1 - s) ^ 4) / 4) / TOTAL
 end
 
 ---------------------------------------------------------------------------
@@ -107,6 +162,9 @@ end
 function SpinWheelConfig.problem(prize: any): string?
 	if type(prize) ~= "table" or type(prize.Id) ~= "string" or prize.Id == "" then
 		return "a prize has no Id"
+	end
+	if prize.Image ~= nil and (type(prize.Image) ~= "string" or string.match(prize.Image, "^rbxassetid://%d+$") == nil) then
+		return prize.Id .. ': Image must look like "rbxassetid://1234567" (or be left out to use the drawn Icon)'
 	end
 	if type(prize.Weight) ~= "number" or prize.Weight ~= prize.Weight or prize.Weight <= 0 or prize.Weight > 1e6 then
 		return prize.Id .. ": Weight must be a number above 0"

@@ -85,10 +85,30 @@ Creator Dashboard → Monetization → Developer Products → maak het product, 
 
 `Modules/SpinWheelConfig.luau`, lijst `Prizes`. Kopieer een regel: `Id`, `Short` (woord op het fysieke rad), `Label`, `Icon`, `Color`, `Weight` (kans, relatief), `Reward`. Voorbeelden van `Reward`: `{ Gems = { Min = 25, Max = 40, PerRebirth = 0.15 } }`, `{ Coins = { Percent = {0.2, 0.4}, Minutes = {1, 2} } }`, `{ Items = { "banana_peel" } }`, `{ HamsterByRebirth = { [0] = "Cute", [3] = "Rare" } }`. `MinRebirth` = pas winbaar vanaf die rebirth. Het fysieke rad in het plein krijgt het extra vakje vanzelf; een kapotte regel wordt overgeslagen en gemeld in de Output (`[Wheel] ...`).
 
-## 10. Rad-cooldown en schaling aanpassen **[Config]**
+## 10. Rad: cooldown, richting, plaatjes en schaling **[Config]**
 
-* Cooldown: `GameConfig` → `Wheel.FreeSpinSeconds` (3600 = 1 uur). Los model voor andere games/places: `ModelLibrary/Wheels/Lucky_Wheel.rbxm` (Insert from File; draait zelfstandig met 1 gratis draai per uur, hang je eigen beloningen aan `Won`). Ook live in het admin-paneel (Settings). Prijs van een extra draai: `Wheel.ExtraSpinGems`.
-* Schaling: cash = het grootste van "x% van je volgende rebirth-kosten" en "x minuten van je inkomen", nooit boven `Wheel.CashCapPercent` van die rebirth-kosten. Percentages en minuten zet je per prijs in `Reward.Coins`.
+Het rad is een **echt object** achter de twee winkels (loop erheen en druk F). Er is **één gratis draai per periode** en niets om voor te betalen. Het kleine paneel (rail-icoon met het wiel) toont alleen wat je kunt winnen, de kansen en de timer.
+
+* **Cooldown:** `GameConfig` → `Wheel.FreeSpinSeconds` (standaard 10800 = 3 uur; 7200 = 2 uur). Ook live te veranderen in het admin-paneel (Settings). De server bewaart per speler wanneer de volgende draai klaar is (`profile.Wheel.NextFreeAt`).
+* **Draairichting:** `GameConfig` → `Wheel.Clockwise` (`false` = tegen de klok in, gezien vanaf de voorkant waar de prijzen staan; `true` = met de klok mee). Staat het rad bij jou toch de verkeerde kant op, zet dit dan om: dat is alles. Duur van een draai: `Wheel.SpinSeconds`. Hoe de draai versnelt en vertraagt staat in `SpinWheelConfig.ease`; het aantal rondes in `SpinWheelConfig.Turns`.
+* **Plaatjes in de vakken:** per prijs in `SpinWheelConfig.Prizes`. `Icon` = een getekend icoon (`UI/Icons`, werkt zonder upload); wil je een eigen plaatje, upload het naar Roblox en zet `Image = "rbxassetid://<jouw id>"` bij die prijs (er wordt geen id verzonnen: zonder `Image` zie je het getekende icoon). Plaatjes worden nooit uitgerekt (`ScaleType = Fit`).
+* **Een eigen kopie van het rad** voor een ander place: `ModelLibrary/Wheels/Lucky_Wheel.rbxm` (Insert from File). Draait zelfstandig met 1 gratis draai per uur (attribuut `CooldownSeconds`) en meldt de winnaar op `Won`; daar hang je je eigen beloningen aan.
+* **Schaling:** cash = het grootste van "x% van je volgende rebirth-kosten" en "x minuten van je inkomen", nooit boven `Wheel.CashCapPercent` van die rebirth-kosten. Percentages en minuten zet je per prijs in `Reward.Coins`.
+* **Studio:** het rad is van jou (map `HamsterPlaza/LuckyWheel`): verplaatsen of draaien in Studio mag; de server onthoudt de rustpositie bij de start (`BaseCFrame`).
+
+## 10b. Playtime-beloningen **[Config]**
+
+`Modules/PlaytimeConfig.luau`: acht mijlpalen (10 min, 30 min, 1, 2, 3, 4, 6 en 8 uur). Per mijlpaal `Minutes`, `Icon` en `Reward` (`Coins`, `Gems`, `Boost`, `Items`, `HamsterRarity`; alleen bestaande valuta en items). De regels (uitleg bovenaan het bestand):
+
+* Alleen tijd **in dit spel** telt; de **server** telt (elke 5 seconden), de speler kan het niet aanpassen.
+* De tijd wordt bewaard: 8 uur mag over meerdere bezoeken verdeeld zijn.
+* **Elke mijlpaal kan één keer per speler** worden geclaimd (permanente reeks, niet dagelijks, niet per seizoen). Rebirth zet het niet terug.
+* Claimen gebeurt op de server: de mijlpaal wordt gemarkeerd voordat er betaald wordt en teruggedraaid als het betalen mislukt; claim en beloning staan in hetzelfde opgeslagen profiel.
+* Het venster (zandloper in de rail) opent nooit vanzelf; een bolletje op het icoon laat zien dat er iets klaarstaat. Teksten staan bovenaan `UI/PlaytimeUI`.
+
+## 10c. Like & Favorite-bord **[Config]**
+
+Het bord staat naast de gast-spawn op het plein (`HamsterPlaza/FavoritesBoard`); teksten en iconen in `Modules/FavoritesConfig`. Roblox geeft een spel **geen** manier om "Like" of "Favoriet" voor een speler in te drukken, en "een server favoriet maken" bestaat niet als Roblox-functie. Het bord zegt daarom alleen waar de knoppen staan (op de spelpagina) en claimt of beloont niets. Wat wél officieel kan: het uitnodigingsvenster van Roblox (`SocialService:PromptGameInvite`, alleen als `CanSendGameInviteAsync` het toestaat); dat opent de F-knop bij het bord.
 
 ## 11. Poort-cooldowns en andere spelinstellingen **[Config]**
 

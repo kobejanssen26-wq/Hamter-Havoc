@@ -21,6 +21,7 @@ local RunService = game:GetService("RunService")
 local Modules = ReplicatedStorage:WaitForChild("Modules")
 local AchievementConfig = require(Modules:WaitForChild("AchievementConfig"))
 local DailyRewardConfig = require(Modules:WaitForChild("DailyRewardConfig"))
+local PlaytimeConfig = require(Modules:WaitForChild("PlaytimeConfig"))
 local Format = require(Modules:WaitForChild("Format"))
 local QuestConfig = require(Modules:WaitForChild("QuestConfig"))
 local RarityConfig = require(Modules:WaitForChild("RarityConfig"))
@@ -164,12 +165,29 @@ local function wheelBadge(): boolean
 	return data.Wheel ~= nil and DataController.now() >= (data.Wheel.NextFreeAt or 0)
 end
 
+-- a playtime reward is ready (the window never opens by itself: this only lights the dot on the rail icon)
+local function playtimeBadge(): boolean
+	local data = DataController.Data
+	if not data.Playtime then
+		return false
+	end
+	local list = PlaytimeConfig.state(data.Playtime, DataController.playtimeSeconds())
+	for _, entry in list do
+		if entry.Status == "ready" then
+			return true
+		end
+	end
+	return false
+end
+
 local function registerCore()
 	local core = {
 		{ Id = "Wheel", Order = 15, Icon = "wheel", Tooltip = "Lucky Wheel: a free spin every few hours", Panel = "Wheel", Badge = wheelBadge },
+		{ Id = "Playtime", Order = 17, Icon = "hourglass", Tooltip = "Playtime Rewards: stay in the game for rewards", Panel = "Playtime", Badge = playtimeBadge },
 		{ Id = "Quests", Order = 10, Icon = "scroll", Tooltip = "Daily Quests", Panel = "Quests", Badge = questsBadge },
 		{ Id = "Backpack", Order = 20, Icon = "backpack", Tooltip = "Backpack (I): items, hamsters, index, emotes", Panel = "Backpack" },
-		{ Id = "Shop", Order = 30, Icon = "bag", Tooltip = "Shop", Panel = "Shop" },
+		{ Id = "Shop", Order = 30, Icon = "bag", Tooltip = "Coins Shop", Panel = "Shop" },
+		{ Id = "RobuxShop", Order = 32, Icon = "crown", Tooltip = "Robux Shop: diamond packs and game passes", Panel = "RobuxShop" },
 		{ Id = "Settings", Order = 90, Icon = "gear", Tooltip = "Settings", Panel = "Settings" },
 	}
 	for _, entry in core do
@@ -224,7 +242,7 @@ function MainUI.start()
 	UIKit.list(topBar, Enum.FillDirection.Horizontal, 8, Enum.HorizontalAlignment.Center, Enum.VerticalAlignment.Center)
 	local coinsPill = UIKit.pill(topBar, { Icon = "coin", Color = C.Cash, Size = UDim2.fromOffset(140, Theme.Size.Pill), LayoutOrder = 1, Big = true })
 	local incomePill = UIKit.pill(topBar, { Icon = "cash", Color = C.Cash, Size = UDim2.fromOffset(116, Theme.Size.Pill), LayoutOrder = 2 })
-	local gemsPill = UIKit.pill(topBar, { Icon = "gem", Color = C.Purple, Size = UDim2.fromOffset(112, Theme.Size.Pill), LayoutOrder = 3, OnPlus = function() MainUI.open("Shop", "Diamonds") end })
+	local gemsPill = UIKit.pill(topBar, { Icon = "gem", Color = C.Purple, Size = UDim2.fromOffset(112, Theme.Size.Pill), LayoutOrder = 3, OnPlus = function() MainUI.open("RobuxShop", "Diamonds") end })
 	local rebirthPill = UIKit.pill(topBar, { Icon = "rebirth", Color = C.Bronze, Size = UDim2.fromOffset(104, Theme.Size.Pill), LayoutOrder = 4 })
 	UIKit.tooltip(coinsPill.Frame, "Cash", "Below")
 	UIKit.tooltip(incomePill.Frame, "Money per second (all hamsters working on your bench)", "Below")

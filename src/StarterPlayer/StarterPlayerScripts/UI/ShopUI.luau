@@ -1,5 +1,10 @@
 --[[
-	ShopUI: the centered shop window. Top row = category tabs (Weapons, Equipment, Boosts, Hamsters, Diamonds, Game
+	ShopUI: TWO separate shop windows built from one layout: the Coins Shop (panel "Shop": weapons, equipment, boosts, hamsters,
+	cosmetics, limited - paid with the coins/diamonds you earn) and the Robux Shop (panel "RobuxShop": diamond packs and game
+	passes - paid through Roblox). Each window only knows its own categories: there is no switch between them, and neither
+	shows the other's items. The world buildings, the rail buttons and the "+" next to the diamond counter open the right one.
+
+	Layout of one window. Top row = category tabs (Weapons, Equipment, Boosts, Hamsters, Diamonds, Game
 	Passes, Cosmetics, Limited), below it a grid of item cards on the left and a detail panel on the right
 	(icon, name, description, real stats, price, state button).
 
@@ -42,7 +47,7 @@ local CATEGORY_COLORS = {
 }
 
 local CURRENCY = {
-	Coins = { Icon = "coin", Name = "Cash", Color = C.Cash },
+	Coins = { Icon = "coin", Name = "Coins", Color = C.Cash },
 	Gems = { Icon = "gem", Name = "Diamonds", Color = C.Purple },
 	Robux = { Icon = "crown", Name = "Robux", Color = C.Gold },
 }
@@ -56,20 +61,27 @@ local function balanceOf(currency: string): number
 	return math.huge
 end
 
-function ShopUI.start()
-	local panel = UIKit.panel({ Name = "Shop", Title = "Shop", Icon = "bag", Design = Vector2.new(1000, 690), Accent = Theme.Accents.Shop, Subtitle = "Weapons, equipment and boosts for cash and diamonds - passes and diamond packs for Robux" })
-	local body = panel.Body
+-- Texts and look of the two shops (edit here).
+ShopUI.Shops = {
+	Cash = { Panel = "Shop", Title = "Coins Shop", Icon = "coin", Subtitle = "Spend the coins and diamonds you earn playing", Empty = "Nothing to buy here right now." },
+	Robux = { Panel = "RobuxShop", Title = "Robux Shop", Icon = "crown", Subtitle = "Real purchases through Roblox - prices are set by Roblox", Empty = "Nothing to buy here right now." },
+}
 
-	-- TWO SHOPS in one window: the Cash Shop (spend what you earned in the game) and the Robux Shop (real purchases, Roblox's own prompt)
-	local mode = "Cash"
-	local modeRow = UIKit.frame(body, { Name = "ShopSwitch", Size = UDim2.new(1, 0, 0, 40), BackgroundTransparency = 1 })
-	UIKit.list(modeRow, Enum.FillDirection.Horizontal, 8, Enum.HorizontalAlignment.Left, Enum.VerticalAlignment.Center)
-	local modeButtons: { [string]: TextButton } = {}
+-- which shop a category belongs to (the ONLY place that decides it)
+local ROBUX_CATEGORIES = { Gamepasses = true, Diamonds = true }
+function ShopUI.shopOf(categoryId: string): string
+	return if ROBUX_CATEGORIES[categoryId] then "Robux" else "Cash"
+end
+
+local function buildShop(mode: string)
+	local look = ShopUI.Shops[mode]
+	local panel = UIKit.panel({ Name = look.Panel, Title = look.Title, Icon = look.Icon, Design = Vector2.new(1000, 650), Accent = Theme.Accents.Shop, Subtitle = look.Subtitle })
+	local body = panel.Body
 
 	-- category tabs (scroll sideways on narrow screens)
 	local tabs = UIKit.new("ScrollingFrame", {
 		Name = "Tabs",
-		Position = UDim2.fromOffset(0, 46),
+		Position = UDim2.fromOffset(0, 0),
 		Size = UDim2.new(1, 0, 0, 44),
 		BackgroundTransparency = 1,
 		BorderSizePixel = 0,
@@ -81,20 +93,20 @@ function ShopUI.start()
 	UIKit.list(tabs, Enum.FillDirection.Horizontal, 6, Enum.HorizontalAlignment.Left, Enum.VerticalAlignment.Center)
 
 	-- sub header: category title (left) and balances (right)
-	local subtitle = UIKit.label(body, { Name = "CategoryTitle", Size = UDim2.fromOffset(360, 30), Position = UDim2.fromOffset(2, 96), Font = UIKit.Fonts.Title, TextSize = 20 })
-	local balances = UIKit.frame(body, { Size = UDim2.fromOffset(420, 34), Position = UDim2.new(1, 0, 0, 94), AnchorPoint = Vector2.new(1, 0), BackgroundTransparency = 1 })
+	local subtitle = UIKit.label(body, { Name = "CategoryTitle", Size = UDim2.fromOffset(360, 30), Position = UDim2.fromOffset(2, 50), Font = UIKit.Fonts.Title, TextSize = 20 })
+	local balances = UIKit.frame(body, { Size = UDim2.fromOffset(420, 34), Position = UDim2.new(1, 0, 0, 48), AnchorPoint = Vector2.new(1, 0), BackgroundTransparency = 1 })
 	UIKit.list(balances, Enum.FillDirection.Horizontal, 8, Enum.HorizontalAlignment.Right, Enum.VerticalAlignment.Center)
 	local cashPill = UIKit.pill(balances, { Icon = "coin", Color = C.Cash, Size = UDim2.fromOffset(190, 32), LayoutOrder = 1 })
 	local gemPill = UIKit.pill(balances, { Icon = "gem", Color = C.Purple, Size = UDim2.fromOffset(150, 32), LayoutOrder = 2 })
 
-	local grid = UIKit.scroll(body, { Name = "Items", Size = UDim2.new(1, -330, 1, -138), Position = UDim2.fromOffset(0, 134) })
-	local empty = UIKit.label(body, { Name = "Empty", Size = UDim2.new(1, -330, 0, 120), Position = UDim2.fromOffset(0, 230), Text = "", TextWrapped = true, TextSize = 18, TextColor3 = C.Muted, Font = UIKit.Fonts.Title, TextXAlignment = Enum.TextXAlignment.Center, Visible = false })
+	local grid = UIKit.scroll(body, { Name = "Items", Size = UDim2.new(1, -330, 1, -92), Position = UDim2.fromOffset(0, 88) })
+	local empty = UIKit.label(body, { Name = "Empty", Size = UDim2.new(1, -330, 0, 120), Position = UDim2.fromOffset(0, 190), Text = "", TextWrapped = true, TextSize = 18, TextColor3 = C.Muted, Font = UIKit.Fonts.Title, TextXAlignment = Enum.TextXAlignment.Center, Visible = false })
 
-	local detail = UIKit.frame(body, { Name = "Detail", Size = UDim2.new(0, 314, 1, -138), Position = UDim2.new(1, 0, 0, 134), AnchorPoint = Vector2.new(1, 0), BackgroundColor3 = C.CreamDark })
+	local detail = UIKit.frame(body, { Name = "Detail", Size = UDim2.new(0, 314, 1, -92), Position = UDim2.new(1, 0, 0, 88), AnchorPoint = Vector2.new(1, 0), BackgroundColor3 = C.CreamDark })
 	UIKit.corner(detail, 10)
 	UIKit.stroke(detail, C.Line, 1.5)
 
-	local selected = "Weapons"
+	local selected = if mode == "Robux" then "Diamonds" else "Weapons"
 	local selectedItem: string? = nil
 	local inFlight: { [string]: boolean } = {}
 	local passPrices: { [string]: any } = {}
@@ -369,43 +381,6 @@ function ShopUI.start()
 		end
 	end
 
-	-- which shop a category belongs to
-	local ROBUX_CATEGORIES = { Gamepasses = true, Diamonds = true }
-	local function shopOf(categoryId: string): string
-		return if ROBUX_CATEGORIES[categoryId] then "Robux" else "Cash"
-	end
-
-	local function buildModeSwitch()
-		for _, child in modeRow:GetChildren() do
-			if child:IsA("GuiObject") then
-				child:Destroy()
-			end
-		end
-		modeButtons = {}
-		for index, def in { { Id = "Cash", Text = "CASH SHOP", Icon = "coin", Color = C.Green }, { Id = "Robux", Text = "ROBUX SHOP", Icon = "crown", Color = C.Gold } } do
-			local active = mode == def.Id
-			local button = UIKit.button(modeRow, {
-				Name = "Mode_" .. def.Id,
-				Text = "",
-				Size = UDim2.fromOffset(190, 36),
-				Color = if active then def.Color else C.Card,
-				LayoutOrder = index,
-				OnClick = function()
-					if mode ~= def.Id then
-						mode = def.Id
-						selected = ""
-						selectedItem = nil
-						render()
-					end
-				end,
-			})
-			UIKit.icon(button, def.Icon, { Size = UDim2.fromOffset(22, 22), Position = UDim2.new(0, 12, 0.5, 0), AnchorPoint = Vector2.new(0, 0.5), ZIndex = 3 })
-			UIKit.label(button, { Size = UDim2.new(1, -44, 1, 0), Position = UDim2.fromOffset(40, 0), Text = def.Text, Font = UIKit.Fonts.Title, TextSize = 15, TextColor3 = if active then C.BrownDark else C.White, ZIndex = 3 })
-			modeButtons[def.Id] = button
-		end
-		UIKit.label(modeRow, { Size = UDim2.fromOffset(380, 36), LayoutOrder = 3, Text = if mode == "Robux" then "Real purchases through Roblox. Prices are set by Roblox." else "Spend the cash and diamonds you earn playing.", TextSize = 13, TextColor3 = C.Muted, Font = UIKit.Fonts.Soft })
-	end
-
 	local function buildTabs(categories: { any })
 		for _, child in tabs:GetChildren() do
 			if child:IsA("GuiObject") then
@@ -440,11 +415,10 @@ function ShopUI.start()
 
 		local categories = {}
 		for _, category in ShopConfig.categories() do
-			if shopOf(category.Id) == mode then
+			if ShopUI.shopOf(category.Id) == mode then
 				table.insert(categories, category)
 			end
 		end
-		buildModeSwitch()
 		local current
 		for _, category in categories do
 			if category.Id == selected then
@@ -456,9 +430,9 @@ function ShopUI.start()
 			selected = current.Id
 		end
 		buildTabs(categories)
-		subtitle.Text = if current then current.Name else (if mode == "Robux" then "Robux Shop" else "Cash Shop")
-		cashPill.Frame.Visible = mode == "Cash"
-		gemPill.Frame.Visible = true
+		subtitle.Text = if current then current.Name else look.Title
+		cashPill.Frame.Visible = mode == "Cash" -- the Robux Shop shows no in-game balances: it sells for Robux
+		gemPill.Frame.Visible = mode == "Cash"
 
 		grid:ClearAllChildren()
 		UIKit.new("UIGridLayout", {
@@ -489,7 +463,7 @@ function ShopUI.start()
 		end
 		empty.Visible = #items == 0
 		if #items == 0 then
-			empty.Text = if selected == "Gamepasses" then "No game passes are available yet.\nThey appear here as soon as a PassId is configured." elseif selected == "Diamonds" then "Diamond packs appear here as soon as a ProductId is configured." else "Nothing to buy here right now."
+			empty.Text = if selected == "Gamepasses" then "No game passes are available yet.\nThey appear here as soon as a PassId is configured." elseif selected == "Diamonds" then "Diamond packs appear here as soon as a ProductId is configured." else look.Empty
 		end
 		buildDetail(chosen, data)
 		if selected == "Gamepasses" then
@@ -499,9 +473,10 @@ function ShopUI.start()
 
 	panel.OnOpen[1] = function()
 		if panel.Focus then
-			selected = panel.Focus
-			mode = shopOf(selected)
-			selectedItem = nil
+			if ShopUI.shopOf(panel.Focus) == mode then -- a category of the OTHER shop is ignored, never shown here
+				selected = panel.Focus
+				selectedItem = nil
+			end
 			panel.Focus = nil
 		end
 		render()
@@ -519,6 +494,11 @@ function ShopUI.start()
 			end
 		end)
 	end
+end
+
+function ShopUI.start()
+	buildShop("Cash")
+	buildShop("Robux")
 end
 
 return ShopUI

@@ -42,7 +42,7 @@ export type Definition = {
 }
 
 UIRegistry.Slots = {
-	RightRail = { Capacity = 8, Kinds = { IconButton = true } },
+	RightRail = { Capacity = 10, Kinds = { IconButton = true } },
 	TopBar = { Capacity = 4, Kinds = { Indicator = true } },
 }
 

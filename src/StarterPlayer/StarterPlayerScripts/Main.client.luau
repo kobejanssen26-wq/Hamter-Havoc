@@ -25,6 +25,7 @@ local order = {
 	"EmoteController",
 	"PromptController",
 	"WheelWorldController",
+	"FavoritesController",
 	"MobilityController",
 	"TheftController",
 }
@@ -48,6 +49,7 @@ local screens = {
 	"QuestUI",
 	"DailyRewardUI",
 	"WheelUI",
+	"PlaytimeUI",
 	"HamsterHUD",
 	"AnnouncementUI",
 	"HotbarUI",

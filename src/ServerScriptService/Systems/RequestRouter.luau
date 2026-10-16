@@ -18,6 +18,7 @@ local RewardSystem = require(script.Parent.RewardSystem)
 local Rewards = require(script.Parent.Rewards)
 local SettingsSystem = require(script.Parent.SettingsSystem)
 local SpinSystem = require(script.Parent.SpinSystem)
+local PlaytimeSystem = require(script.Parent.PlaytimeSystem)
 local ShopSystem = require(script.Parent.ShopSystem)
 local ItemSystem = require(script.Parent.ItemSystem)
 local GearSystem = require(script.Parent.GearSystem)
@@ -163,7 +164,12 @@ actions.ShopBuy = function(player, payload)
 end
 
 actions.SpinWheel = function(player, payload)
-	local ok, message, extra = SpinSystem.spin(player, payload.Pay)
+	local ok, message, extra = SpinSystem.spin(player)
+	return result(ok, message, extra)
+end
+
+actions.ClaimPlaytime = function(player, payload)
+	local ok, message, extra = PlaytimeSystem.claim(player, payload.Id)
 	return result(ok, message, extra)
 end
 

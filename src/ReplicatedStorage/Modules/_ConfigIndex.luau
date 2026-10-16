@@ -16,8 +16,10 @@
 	Combat / weapon animations             docs/COMBAT_GUIDE.md, Content/Animations/Weapon_*, CombatTiming
 	Admin owner UserId, default roles,     ServerScriptService/Config/AdminConfig   (server only; panel: F10 or /admin; roles are also
 	  permission list                        created / edited / assigned in the panel, tab Roles)
-	Lucky Wheel (prizes, odds, scaling,    SpinWheelConfig + GameConfig (Wheel: FreeSpinSeconds, ExtraSpinGems, CashCapPercent)
+	Lucky Wheel (prizes, odds, scaling,    SpinWheelConfig + GameConfig (Wheel: FreeSpinSeconds, Clockwise, SpinSeconds, CashCapPercent)
 	  cooldown)
+	Playtime rewards (8 hours)             PlaytimeConfig
+	Like & Favorite board texts            FavoritesConfig
 	Hamster auras (glow, sparkles, ring)   AuraConfig (rarity defaults) + `Look.Aura` in a hamster file
 	Game passes (Robux)                    GamepassConfig
 	Rebirth cost, requirements, rewards    RebirthConfig        (what resets / is kept: RebirthConfig.ResetList / KeepList)

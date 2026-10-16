@@ -1,17 +1,17 @@
 --[[
-	WheelUI: the Lucky Wheel window. The prizes come from SpinWheelConfig (edit the numbers there); the draw is made by the
-	server (SpinSystem) - this window only asks, then spins the wheel so that the prize the server chose ends up under the pointer.
-	Open it from the Quests window (Lucky Wheel button).
+	WheelUI: a SMALL info panel for the Lucky Wheel, docked on the right edge of the screen. The wheel itself is the physical object
+	behind the shops: you walk there, press [F] and watch it turn in the world. This panel only shows what can be won (picture,
+	name, chance), when your next free spin is ready, and what you won last. It has no spin button and never covers the wheel.
+	The prizes come from SpinWheelConfig; the draw is made by the server (SpinSystem).
+	Open it with the wheel icon in the right rail.
 ]]
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local RunService = game:GetService("RunService")
 
 local Modules = ReplicatedStorage:WaitForChild("Modules")
 local Format = require(Modules:WaitForChild("Format"))
 local SpinWheelConfig = require(Modules:WaitForChild("SpinWheelConfig"))
 
-local AudioController = require(script.Parent.Parent.Controllers.AudioController)
 local DataController = require(script.Parent.Parent.Controllers.DataController)
 local Theme = require(script.Parent.Theme)
 local UIKit = require(script.Parent.UIKit)
@@ -19,97 +19,49 @@ local UIKit = require(script.Parent.UIKit)
 local WheelUI = {}
 
 local C = UIKit.Colors
-local RADIUS = 138
-local BUBBLE = 66
-local SPIN_SECONDS = 4
+
+-- Texts of the panel (edit here).
+WheelUI.Texts = {
+	Title = "Lucky Wheel",
+	Subtitle = "One free spin every few hours",
+	Ready = "Your free spin is ready!",
+	Where = "Walk to the wheel behind the shops and press F.",
+	Next = "Next free spin in",
+	Prizes = "WHAT YOU CAN WIN",
+}
 
 function WheelUI.start()
-	local panel = UIKit.panel({ Name = "Wheel", Title = "Lucky Wheel", Icon = "wheel", Design = Vector2.new(820, 600), Accent = Theme.Accents.Rebirth, Subtitle = "Spin for cash, diamonds, boosts and items" })
+	local texts = WheelUI.Texts
+	local panel = UIKit.panel({ Name = "Wheel", Title = texts.Title, Icon = "wheel", Design = Vector2.new(340, 600), Accent = Theme.Accents.Rebirth, Subtitle = texts.Subtitle, Dock = "Right" })
 	local body = panel.Body
 	local prizes = SpinWheelConfig.Prizes
-	local count = #prizes
 
-	-- the wheel: a disc with one bubble per prize, rotated as a group
-	local stage = UIKit.frame(body, { Name = "Stage", Size = UDim2.fromOffset(RADIUS * 2 + BUBBLE + 16, RADIUS * 2 + BUBBLE + 16), Position = UDim2.fromOffset(0, 14), BackgroundTransparency = 1 })
-	local centerX = (RADIUS * 2 + BUBBLE + 16) / 2
-	local disc = UIKit.frame(stage, { Name = "Disc", Size = UDim2.fromOffset(RADIUS * 2 + 20, RADIUS * 2 + 20), Position = UDim2.fromOffset(centerX, centerX), AnchorPoint = Vector2.new(0.5, 0.5), BackgroundColor3 = C.CreamDark })
-	UIKit.corner(disc, 99)
-	UIKit.stroke(disc, Theme.Accents.Rebirth, Theme.Outline.Thick)
-	local ring = UIKit.frame(stage, { Name = "Ring", Size = UDim2.fromOffset(RADIUS * 2 + BUBBLE, RADIUS * 2 + BUBBLE), Position = UDim2.fromOffset(centerX, centerX), AnchorPoint = Vector2.new(0.5, 0.5), BackgroundTransparency = 1 })
-	local bubbles: { Frame } = {}
-	for index, prize in prizes do
-		local angle = math.rad((index - 1) * 360 / count)
-		local bubble = UIKit.frame(ring, {
-			Name = "Prize_" .. prize.Id,
-			Size = UDim2.fromOffset(BUBBLE, BUBBLE),
-			Position = UDim2.fromOffset((RADIUS * 2 + BUBBLE) / 2 + math.sin(angle) * RADIUS, (RADIUS * 2 + BUBBLE) / 2 - math.cos(angle) * RADIUS),
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			BackgroundColor3 = prize.Color,
-		})
-		UIKit.corner(bubble, 99)
-		UIKit.stroke(bubble, C.Line, Theme.Outline.Thick)
-		UIKit.icon(bubble, prize.Icon, { Size = UDim2.fromOffset(38, 38), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5), ZIndex = 3 })
-		bubbles[index] = bubble
-	end
-	-- pointer at the top
-	local pointer = UIKit.frame(stage, { Name = "Pointer", Size = UDim2.fromOffset(34, 34), Position = UDim2.fromOffset(centerX, 6), AnchorPoint = Vector2.new(0.5, 0.5), Rotation = 45, BackgroundColor3 = C.Red, ZIndex = 8 })
-	UIKit.corner(pointer, 6)
-	UIKit.stroke(pointer, C.Line, Theme.Outline.Thick)
+	local status = UIKit.label(body, { Name = "Status", Size = UDim2.new(1, 0, 0, 26), Text = "", Font = UIKit.Fonts.Title, TextSize = 17, TextXAlignment = Enum.TextXAlignment.Center })
+	local hint = UIKit.label(body, { Name = "Where", Size = UDim2.new(1, 0, 0, 36), Position = UDim2.fromOffset(0, 28), Text = texts.Where, TextSize = 13, TextColor3 = C.Muted, TextWrapped = true, TextXAlignment = Enum.TextXAlignment.Center })
+	UIKit.label(body, { Size = UDim2.new(1, 0, 0, 20), Position = UDim2.fromOffset(0, 72), Text = texts.Prizes, Font = UIKit.Fonts.Title, TextSize = UIKit.Type.Caption, TextColor3 = C.Muted })
 
-	local spinButton = UIKit.button(stage, {
-		Name = "Spin",
-		Text = "SPIN",
-		Size = UDim2.fromOffset(112, 112),
-		Position = UDim2.fromOffset(centerX, centerX),
-		AnchorPoint = Vector2.new(0.5, 0.5),
-		Color = C.Green,
-		Corner = 99,
-		TextSize = 24,
-		OnClick = function() end,
-	})
-	spinButton.ZIndex = 6
-
-	-- right column: what is on the wheel and how likely it is
-	local listTitle = UIKit.label(body, { Position = UDim2.fromOffset(RADIUS * 2 + BUBBLE + 40, 14), Size = UDim2.new(1, -(RADIUS * 2 + BUBBLE + 40), 0, 26), Text = "PRIZES", Font = UIKit.Fonts.Title, TextSize = UIKit.Type.Caption, TextColor3 = C.Muted })
-	local list = UIKit.frame(body, { Name = "PrizeList", Position = UDim2.fromOffset(RADIUS * 2 + BUBBLE + 40, 42), Size = UDim2.new(1, -(RADIUS * 2 + BUBBLE + 40), 0, 330), BackgroundTransparency = 1 })
+	local list = UIKit.scroll(body, { Size = UDim2.new(1, 0, 1, -100), Position = UDim2.fromOffset(0, 94) })
+	list.Name = "PrizeList"
 	UIKit.list(list, Enum.FillDirection.Vertical, 4)
-	local rows: { { Frame: Frame, Label: TextLabel, Chance: TextLabel } } = {}
+	local rows: { { Frame: Frame, Label: TextLabel, Chance: TextLabel, Icon: Frame } } = {}
 	for index, prize in prizes do
-		local row = UIKit.frame(list, { Name = "Row_" .. prize.Id, Size = UDim2.new(1, 0, 0, 32), LayoutOrder = index, BackgroundColor3 = C.Card })
+		local row = UIKit.frame(list, { Name = "Row_" .. prize.Id, Size = UDim2.new(1, -8, 0, 44), LayoutOrder = index, BackgroundColor3 = C.Card })
 		UIKit.corner(row, 8)
-		UIKit.frame(row, { Size = UDim2.fromOffset(8, 32), BackgroundColor3 = prize.Color, ZIndex = 2 })
-		local label = UIKit.label(row, { Size = UDim2.new(1, -80, 1, 0), Position = UDim2.fromOffset(16, 0), Text = prize.Label, Font = UIKit.Fonts.Title, TextSize = 13, TextTruncate = Enum.TextTruncate.AtEnd })
-		local chance = UIKit.label(row, { Size = UDim2.fromOffset(60, 32), Position = UDim2.new(1, -64, 0, 0), Text = "", TextSize = 12, TextColor3 = C.Muted, TextXAlignment = Enum.TextXAlignment.Right })
-		rows[index] = { Frame = row, Label = label, Chance = chance }
-	end
-
-	local info = UIKit.label(body, { Name = "Info", Size = UDim2.new(1, 0, 0, 30), Position = UDim2.new(0, 0, 1, -34), Text = "", Font = UIKit.Fonts.Title, TextSize = 17, TextXAlignment = Enum.TextXAlignment.Center })
-
-	local spinning = false
-	local rotation = 0
-	-- keep every bubble upright while the ring turns
-	RunService.RenderStepped:Connect(function()
-		if panel.IsOpen then
-			for _, bubble in bubbles do
-				bubble.Rotation = -ring.Rotation
-			end
-		end
-	end)
-
-	local function state(): (boolean, number)
-		local data = DataController.Data
-		local nextFree = if data.Wheel then data.Wheel.NextFreeAt else 0
-		local now = DataController.now()
-		return now >= nextFree, math.max(0, nextFree - now)
+		UIKit.frame(row, { Size = UDim2.fromOffset(6, 44), BackgroundColor3 = prize.Color, ZIndex = 2 })
+		local icon = UIKit.icon(row, prize.Icon, { Size = UDim2.fromOffset(30, 30), Position = UDim2.fromOffset(16, 7), ZIndex = 3 })
+		local label = UIKit.label(row, { Size = UDim2.new(1, -118, 1, 0), Position = UDim2.fromOffset(54, 0), Text = prize.Label, Font = UIKit.Fonts.Title, TextSize = 13, TextWrapped = true, TextTruncate = Enum.TextTruncate.AtEnd })
+		local chance = UIKit.label(row, { Size = UDim2.fromOffset(56, 44), Position = UDim2.new(1, -60, 0, 0), Text = "", TextSize = 12, TextColor3 = C.Muted, TextXAlignment = Enum.TextXAlignment.Right })
+		rows[index] = { Frame = row, Label = label, Chance = chance, Icon = icon }
 	end
 
 	-- what each prize is worth to THIS player (cash scales with progress) and whether it is unlocked yet
-	local function refreshPrizes()
+	local function refresh()
 		local data = DataController.Data
-		if not data or not data.Rebirths then
+		if not data or not data.Rebirths or not data.Wheel then
 			return
 		end
-		local ctx = SpinWheelConfig.context(data, DataController.now())
+		local now = DataController.now()
+		local ctx = SpinWheelConfig.context(data, now)
 		local total = SpinWheelConfig.totalWeight(ctx)
 		for index, prize in prizes do
 			local row = rows[index]
@@ -117,65 +69,21 @@ function WheelUI.start()
 			row.Label.Text = SpinWheelConfig.preview(prize, ctx)
 			row.Label.TextColor3 = if open then C.Ink else C.Muted
 			row.Chance.Text = if open and total > 0 then string.format("%.1f%%", prize.Weight / total * 100) else "locked"
-			bubbles[index].BackgroundTransparency = if open then 0 else 0.55
+			row.Frame.BackgroundTransparency = if open then 0 else 0.5
 		end
-	end
-
-	local function refresh()
-		refreshPrizes()
-		local free, wait = state()
-		if spinning then
-			return
-		end
-		if free then
-			spinButton.Text = "SPIN\nFREE!"
-			UIKit.setButtonColor(spinButton, C.Green)
-			info.Text = '<font color="#60e070">Your free spin is ready!</font>'
-		elseif SpinWheelConfig.extraSpinGems() > 0 then
-			spinButton.Text = string.format("SPIN\n%d gems", SpinWheelConfig.extraSpinGems())
-			UIKit.setButtonColor(spinButton, C.Purple)
-			info.Text = "Next free spin in " .. Format.clock(wait)
+		local nextFree = data.Wheel.NextFreeAt or 0
+		if now >= nextFree then
+			status.Text = string.format('<font color="#60c47e">%s</font>', texts.Ready)
+			hint.Visible = true
 		else
-			spinButton.Text = "WAIT"
-			UIKit.setButtonColor(spinButton, C.CardHover)
-			info.Text = "Next free spin in " .. Format.clock(wait)
+			status.Text = string.format("%s %s", texts.Next, Format.clock(nextFree - now))
+			hint.Visible = true
 		end
 	end
-
-	local function spin()
-		if spinning then
-			return
-		end
-		local free = state()
-		local result = DataController.request("SpinWheel", { Pay = not free })
-		if not result.ok then
-			require(script.Parent.MainUI).toast(result.msg, "error")
-			AudioController.play("Error")
-			return
-		end
-		spinning = true
-		spinButton.Text = "..."
-		local index = result.extra.Index
-		-- bring prize `index` (at angle (index-1)*360/count from the top) under the pointer after 5 full turns
-		local target = rotation + 360 * 5 + (360 - ((index - 1) * 360 / count) - (rotation % 360))
-		rotation = target
-		AudioController.play("Open")
-		UIKit.tween(ring, SPIN_SECONDS, { Rotation = target }, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
-		task.delay(SPIN_SECONDS + 0.1, function()
-			spinning = false
-			AudioController.play("Reward")
-			for rowIndex, row in rows do
-				row.Frame.BackgroundColor3 = if rowIndex == index then prizes[index].Color else C.Card
-			end
-			local won = if result.extra.Lines and #result.extra.Lines > 0 then table.concat(result.extra.Lines, ", ") else prizes[index].Label
-			info.Text = string.format('<font color="#ffe060">You won: %s!</font>', won)
-		end)
-	end
-	spinButton.Activated:Connect(spin)
 
 	panel.OnOpen[1] = refresh
 	DataController.onChanged(function(keys)
-		if panel.IsOpen and keys.Wheel then
+		if panel.IsOpen and (keys.Wheel or keys.Rebirths) then
 			refresh()
 		end
 	end)
@@ -187,7 +95,6 @@ function WheelUI.start()
 			end
 		end
 	end)
-	local _ = listTitle
 end
 
 return WheelUI

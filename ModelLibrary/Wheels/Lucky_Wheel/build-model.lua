@@ -7,7 +7,7 @@ return function(ctx)
 	local Builder = ctx.module("ServerScriptService.Systems.WorldBuilder.LuckyWheelBuilder")
 
 	local scratch = ctx.new("Folder", "Scratch", ctx.Scratch)
-	local model = Builder.build(scratch, Random.new(1))
+	local model = Builder.build(scratch, Random.new(1), { TextFallback = true }) -- (no client in a standalone model: the slices get a short word)
 	-- the builder also adds a bench and flowers to the plaza next to it: not part of the wheel
 	for _, child in scratch:GetChildren() do
 		if child ~= model then
@@ -31,12 +31,17 @@ return function(ctx)
 	model.PrimaryPart = base
 	base.PivotOffset = CFrame.new(0, -base.Size.Y / 2, 0)
 	local pad = model:FindFirstChild("PromptPad")
+	local prompt = pad and pad:FindFirstChildOfClass("ProximityPrompt")
+	if prompt then
+		prompt:SetAttribute("SpinWheel", nil)
+	end
 	if pad then
 		pad:SetAttribute("TutorialTarget", nil)
 		pad:RemoveTag("TutorialTarget")
 	end
 	model:SetAttribute("CooldownSeconds", 3600)
-	model:SetAttribute("SpinSeconds", 6)
+	model:SetAttribute("SpinSeconds", 7)
+	model:SetAttribute("Clockwise", false)
 	model:SetAttribute("BaseCFrame", nil)
 	model:RemoveTag("LuckyWheel")
 

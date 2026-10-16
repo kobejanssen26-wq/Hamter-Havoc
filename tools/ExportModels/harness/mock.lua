@@ -274,6 +274,10 @@ CFrame.identity = cf(0, 0, 0)
 CFrame.new = function(a, b, c)
 	if a == nil then return cf(0, 0, 0) end
 	if type(a) == "number" then return cf(a, b, c) end
+CFrame.fromMatrix = function(pos, x, y, z)
+	z = z or Vector3.Cross(x, y)
+	return cf(pos.X, pos.Y, pos.Z, { x.X, y.X, z.X, x.Y, y.Y, z.Y, x.Z, y.Z, z.Z })
+end
 	if b ~= nil and getmetatable(b) == V3mt then return CFrame.lookAt(a, b) end
 	return cf(a.X, a.Y, a.Z)
 end
@@ -671,9 +675,10 @@ local function partsOf(model)
 end
 function InstanceMethods.GetPivot(self)
 	local data = RawData[self]
-	if isA(data.ClassName, "BasePart") then return data.Props.CFrame or CFrame.identity end
+	-- like Roblox: the pivot of a part is its CFrame * PivotOffset; the pivot of a model is its PrimaryPart's pivot
+	if isA(data.ClassName, "BasePart") then return (data.Props.CFrame or CFrame.identity) * (data.Props.PivotOffset or CFrame.identity) end
 	local primary = data.Props.PrimaryPart
-	if primary then return RawData[primary].Props.CFrame or CFrame.identity end
+	if primary then return (RawData[primary].Props.CFrame or CFrame.identity) * (RawData[primary].Props.PivotOffset or CFrame.identity) end
 	local parts = partsOf(self)
 	if #parts == 0 then return CFrame.identity end
 	local sx, sy, sz = 0, 0, 0
@@ -686,7 +691,7 @@ end
 function InstanceMethods.PivotTo(self, target)
 	local data = RawData[self]
 	if isA(data.ClassName, "BasePart") then
-		data.Props.CFrame = target
+		data.Props.CFrame = target * (data.Props.PivotOffset or CFrame.identity):Inverse()
 		return
 	end
 	local pivot = InstanceMethods.GetPivot(self)

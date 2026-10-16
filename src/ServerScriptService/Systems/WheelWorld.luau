@@ -8,13 +8,20 @@
 ]]
 
 local CollectionService = game:GetService("CollectionService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
+
+local SpinWheelConfig = require(ReplicatedStorage.Modules.SpinWheelConfig)
 
 local WheelWorld = {}
 
-WheelWorld.Duration = 4 -- seconds the wheel turns (the window animation uses the same number)
-local TURNS = 5
+WheelWorld.USE_DISTANCE = 22 -- a player must stand this close to the wheel (studs) to spin it
 local busyUntil = 0
+
+-- how long one spin takes (live setting Wheel.SpinSeconds)
+function WheelWorld.duration(): number
+	return SpinWheelConfig.spinSeconds()
+end
 
 function WheelWorld.model(): Model?
 	for _, instance in CollectionService:GetTagged("LuckyWheel") do
@@ -29,10 +36,41 @@ function WheelWorld.busy(): boolean
 	return WheelWorld.model() ~= nil and os.clock() < busyUntil
 end
 
--- Degrees (clockwise seen from the road) at which slice `index` has to be under the pointer, from the current angle.
+-- Is the player standing at the wheel? (A spin asked from the other end of the map is refused. A player without a body
+-- yet counts as not near, except when there is no wheel in the world at all.)
+function WheelWorld.isNear(player: Player): boolean
+	local model = WheelWorld.model()
+	if not model then
+		return true
+	end
+	local character = player.Character
+	local root = character and character:FindFirstChild("HumanoidRootPart")
+	if not root or not root:IsA("BasePart") then
+		return false
+	end
+	local pad = model:FindFirstChild("PromptPad")
+	local at = if pad and pad:IsA("BasePart") then pad.Position else model:GetPivot().Position
+	local flat = Vector3.new(root.Position.X - at.X, 0, root.Position.Z - at.Z)
+	return flat.Magnitude <= WheelWorld.USE_DISTANCE
+end
+
+-- Degrees at which slice `index` has to be under the pointer, from the current angle (see SpinWheelConfig.targetAngle).
 function WheelWorld.targetAngle(current: number, index: number, slices: number): number
-	local slice = (index - 1) * 360 / slices
-	return current + 360 * TURNS + ((360 - slice - current % 360) % 360)
+	return SpinWheelConfig.targetAngle(current, index, slices, SpinWheelConfig.clockwise(), SpinWheelConfig.Turns)
+end
+
+-- Remembers where the rotor rests (its pivot at angle 0) so the wheel can be moved, turned or rebuilt in Studio: nothing is stored in
+-- the place file. Published as the attribute BaseCFrame for the clients. Called at server start and before every spin.
+function WheelWorld.prepare()
+	for _, instance in CollectionService:GetTagged("LuckyWheel") do
+		local found = instance:FindFirstChild("Rotor")
+		if instance:IsA("Model") and found and found:IsA("Model") and instance:GetAttribute("SpinId") == nil then
+			local angle = (instance:GetAttribute("Angle") :: number?) or 0
+			instance:SetAttribute("Angle", angle % 360)
+			instance:SetAttribute("BaseCFrame", SpinWheelConfig.rotorCFrame(found:GetPivot(), -angle))
+			instance:SetAttribute("Slices", #SpinWheelConfig.Prizes)
+		end
+	end
 end
 
 local function rotor(model: Model): Model?
@@ -44,7 +82,7 @@ local function setAngle(model: Model, degrees: number)
 	local part = rotor(model)
 	local base = model:GetAttribute("BaseCFrame")
 	if part and typeof(base) == "CFrame" then
-		part:PivotTo(base * CFrame.Angles(0, 0, math.rad(degrees)))
+		part:PivotTo(SpinWheelConfig.rotorCFrame(base, degrees))
 	end
 end
 
@@ -54,20 +92,24 @@ function WheelWorld.spin(index: number): boolean
 	if not model or os.clock() < busyUntil then
 		return false
 	end
+	if typeof(model:GetAttribute("BaseCFrame")) ~= "CFrame" then
+		WheelWorld.prepare()
+	end
 	local slices = (model:GetAttribute("Slices") :: number?) or 0
 	if slices < 1 or index < 1 or index > slices then
 		return false
 	end
+	local duration = WheelWorld.duration()
 	local from = (model:GetAttribute("Angle") :: number?) or 0
 	local to = WheelWorld.targetAngle(from, index, slices)
-	busyUntil = os.clock() + WheelWorld.Duration + 0.4
+	busyUntil = os.clock() + duration + 0.4
 	model:SetAttribute("SpinFrom", from)
 	model:SetAttribute("SpinTo", to)
 	model:SetAttribute("SpinIndex", index)
 	model:SetAttribute("SpinStart", Workspace:GetServerTimeNow())
-	model:SetAttribute("SpinDuration", WheelWorld.Duration)
+	model:SetAttribute("SpinDuration", duration)
 	model:SetAttribute("SpinId", ((model:GetAttribute("SpinId") :: number?) or 0) + 1)
-	task.delay(WheelWorld.Duration + 0.15, function()
+	task.delay(duration + 0.15, function()
 		if model.Parent then
 			setAngle(model, to)
 			model:SetAttribute("Angle", to % 360)

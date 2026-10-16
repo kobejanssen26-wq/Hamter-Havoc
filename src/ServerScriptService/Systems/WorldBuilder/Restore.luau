@@ -9,6 +9,7 @@
 	  attribute AnimTag             -> that tag             (Sway / SpinModel / Bob, read by the client)
 	  Model "Tree_*"                -> TreeSway             Model "Cloud" -> Cloud
 	  Model "LuckyWheel"            -> LuckyWheel           Part "SafeZone" -> SafeZone (no fighting inside)
+	  Model "FavoritesBoard"        -> FavoritesBoard       Frame with attribute IconName -> WorldIcon (the client draws its picture)
 	  Part "Fireflies"              -> firefly emitter      Part "BurrowGlow" -> sparkle emitter
 ]]
 
@@ -26,9 +27,14 @@ function Restore.apply(root: Instance)
 		if type(animation) == "string" then
 			instance:AddTag(animation)
 		end
+		if instance:IsA("GuiObject") and type(instance:GetAttribute("IconName")) == "string" then
+			instance:AddTag("WorldIcon")
+		end
 		if instance:IsA("Model") then
 			if instance.Name == "LuckyWheel" then
 				instance:AddTag("LuckyWheel")
+			elseif instance.Name == "FavoritesBoard" then
+				instance:AddTag("FavoritesBoard")
 			elseif instance.Name == "Cloud" then
 				instance:AddTag("Cloud")
 			elseif string.sub(instance.Name, 1, 5) == "Tree_" then

@@ -394,6 +394,15 @@ draw.heart = function(c)
 	shape(c, 0.5, 0.52, 0.5, 0.5, pink, { Rot = 45, Radius = 0.08, Center = true })
 end
 
+draw.thumb = function(c)
+	local blue = tint(c, rgb(70, 140, 255))
+	shape(c, 0.08, 0.46, 0.2, 0.46, rgb(52, 98, 190), { Radius = 0.18 })
+	shape(c, 0.32, 0.44, 0.6, 0.48, blue, { Radius = 0.2, Top = rgb(130, 180, 255) })
+	shape(c, 0.38, 0.1, 0.2, 0.46, blue, { Radius = 0.5, Top = rgb(130, 180, 255), Rot = -12 })
+	shape(c, 0.36, 0.62, 0.5, 0.06, rgb(52, 98, 190), { Radius = 0.5, Z = 2 })
+	shape(c, 0.36, 0.76, 0.46, 0.06, rgb(52, 98, 190), { Radius = 0.5, Z = 2 })
+end
+
 draw.moon = function(c)
 	shape(c, 0.1, 0.1, 0.8, 0.8, tint(c, rgb(255, 232, 150)), { Circle = true, Top = rgb(255, 248, 200), Stroke = rgb(214, 180, 90) })
 	for _, spot in { { 0.34, 0.3, 0.16 }, { 0.54, 0.54, 0.2 }, { 0.3, 0.62, 0.1 } } do

@@ -532,20 +532,23 @@ task.spawn(function()
 	end)())
 	local SpinSystem = require(find(S .. "SpinSystem"))
 	local d3 = data(bob); d3.Wheel = { NextFreeAt = 0 }; d3.Gems = 100
-	local ok1, _, info1 = SpinSystem.spin(bob, false)
-	check("a free spin works once and returns the prize slice", ok1 and info1.Free and info1.Index >= 1)
+	local function standAt(player, position)
+		local character = RawData[player].Props.Character
+		for _, d in M.descendants(character) do
+			if RawData[d].Name == "HumanoidRootPart" then RawData[d].Props.CFrame = CFrame.new(position) end
+		end
+	end
+	local okFar = SpinSystem.spin(bob)
+	check("a spin from far away (not at the wheel) is refused and keeps the free spin", not okFar and d3.Wheel.NextFreeAt == 0)
+	standAt(bob, Vector3.new(0, 3, 74))
+	local ok1, _, info1 = SpinSystem.spin(bob)
+	check("a free spin at the wheel works once and returns the prize slice", ok1 and info1.Index >= 1)
 	adv(5)
-	local ok2 = SpinSystem.spin(bob, false)
-	check("a second free spin is refused until the timer is over", not ok2)
-	adv(1)
-	local gemsBefore2 = d3.Gems
-	local ok3, _, info3 = SpinSystem.spin(bob, true)
-	check("an extra spin costs " .. SpinWheelConfig.extraSpinGems() .. " diamonds", ok3 and not info3.Free and d3.Gems <= gemsBefore2 - SpinWheelConfig.extraSpinGems() + 600)
-	adv(5)
-	adv(1)
-	d3.Gems = 0; d3.Wheel.NextFreeAt = os.time() + 1000
-	check("without diamonds an extra spin is refused", not SpinSystem.spin(bob, true))
-	check("a forged 'pay' value (string) does not buy a spin", not SpinSystem.spin(bob, "yes"))
+	local ok2 = SpinSystem.spin(bob)
+	check("a second spin is refused until the timer is over", not ok2)
+	adv(4)
+	d3.Gems = 100
+	check("there is no paid spin: with diamonds the spin is still refused while the timer runs", not SpinSystem.spin(bob) and d3.Gems == 100)
 
 	-----------------------------------------------------------------
 	section("16. hamster body types (height and silhouette)")

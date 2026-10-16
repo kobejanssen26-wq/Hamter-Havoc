@@ -5,13 +5,13 @@
 	  * One free spin per player per hour. Change the time with the attribute CooldownSeconds on the model.
 	  * The cooldown is saved (DataStore "LuckyWheel_v1"); without API access (Studio) it is kept per server only.
 	  * Your own game hooks in with:  model.Won.Event:Connect(function(player, prizeId, prizeName) ... end)  (a server script)
-	  * Slices: the parts Rotor/Slice_*. Rename, recolour or duplicate them; the first one is the 12 o'clock slice, then clockwise.
-	  * Optional attribute Weight on a slice part (default 1) makes it more or less likely.
+	  * Slices: the models Rotor/Slice_* (each has an IconPlate; the first one is the 12 o'clock slice, then clockwise as seen from the front).
+	    Rename, recolour or duplicate them and the script adapts. Optional attribute Weight on a slice (default 1) = more / less likely.
+	  * Attributes on the model: CooldownSeconds (3600), SpinSeconds (7), Clockwise (false = counter-clockwise seen from the front).
 ]]
 
 local DataStoreService = game:GetService("DataStoreService")
 local Players = game:GetService("Players")
-local TweenService = game:GetService("TweenService")
 
 local model = script.Parent
 local rotor = model:WaitForChild("Rotor") :: Model
@@ -26,16 +26,19 @@ local base = rotor:GetPivot()
 local rng = Random.new()
 
 -- slices with their angle (degrees, clockwise seen from the front) measured from the geometry at start
-local slices: { { Part: BasePart, Angle: number, Weight: number } } = {}
-for _, part in rotor:GetChildren() do
-	if part:IsA("BasePart") and string.sub(part.Name, 1, 6) == "Slice_" then
-		local offset = base:PointToObjectSpace(part.Position)
-		local angle = math.deg(math.atan2(-offset.X, offset.Y)) % 360
-		local weight = part:GetAttribute("Weight")
-		table.insert(slices, { Part = part, Angle = angle, Weight = if type(weight) == "number" and weight > 0 then weight else 1 })
+local slices: { { Slice: Instance, Angle: number, Weight: number } } = {}
+for _, slice in rotor:GetChildren() do
+	if string.sub(slice.Name, 1, 6) == "Slice_" then
+		local plate = if slice:IsA("BasePart") then slice else slice:FindFirstChild("IconPlate")
+		if plate and plate:IsA("BasePart") then
+			local offset = base:PointToObjectSpace(plate.Position)
+			local angle = math.deg(math.atan2(-offset.X, offset.Y)) % 360
+			local weight = slice:GetAttribute("Weight")
+			table.insert(slices, { Slice = slice, Angle = angle, Weight = if type(weight) == "number" and weight > 0 then weight else 1 })
+		end
 	end
 end
-assert(#slices > 0, "LuckyWheel: no Rotor/Slice_* parts found")
+assert(#slices > 0, "LuckyWheel: no Rotor/Slice_* found")
 
 local store: DataStore? = nil
 pcall(function()
@@ -110,21 +113,40 @@ local function spin(player: Player)
 	nextFree[player.UserId] = now + cooldown()
 	local slice = pick()
 	local from = current
-	local target = from + 360 * 5 + ((360 - slice.Angle - from % 360) % 360)
+	local clockwise = model:GetAttribute("Clockwise") == true
+	local target = if clockwise then from + 360 * 6 + ((360 - slice.Angle - from % 360) % 360) else from - 360 * 6 - ((from % 360 + slice.Angle) % 360)
 	local duration = model:GetAttribute("SpinSeconds")
 	local value = Instance.new("NumberValue")
 	value.Value = from
 	value.Changed:Connect(function(degrees)
 		rotor:PivotTo(base * CFrame.Angles(0, 0, math.rad(degrees)))
 	end)
-	local tween = TweenService:Create(value, TweenInfo.new(if type(duration) == "number" then duration else 6, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), { Value = target })
-	tween:Play()
-	tween.Completed:Wait()
+	local seconds = if type(duration) == "number" then duration else 7
+	local startedAt = os.clock()
+	-- speeds up for the first part, then slows down smoothly to a stop (same curve as the game's wheel)
+	local ACCELERATE = 0.12
+	local TOTAL = ACCELERATE / 2 + (1 - ACCELERATE) / 4
+	while true do
+		local t = math.clamp((os.clock() - startedAt) / seconds, 0, 1)
+		local progress
+		if t < ACCELERATE then
+			progress = (t * t / (2 * ACCELERATE)) / TOTAL
+		else
+			local s2 = (t - ACCELERATE) / (1 - ACCELERATE)
+			progress = (ACCELERATE / 2 + (1 - ACCELERATE) * (1 - (1 - s2) ^ 4) / 4) / TOTAL
+		end
+		value.Value = from + (target - from) * progress
+		if t >= 1 then
+			break
+		end
+		task.wait()
+	end
 	value:Destroy()
 	current = target % 360
 	rotor:PivotTo(base * CFrame.Angles(0, 0, math.rad(current)))
-	local prizeName = slice.Part.Name
-	local label = slice.Part:FindFirstChildWhichIsA("SurfaceGui")
+	local prizeName = string.sub(slice.Slice.Name, 7)
+	local plate = slice.Slice:FindFirstChild("IconPlate")
+	local label = plate and plate:FindFirstChildWhichIsA("SurfaceGui")
 	local text = label and label:FindFirstChildWhichIsA("TextLabel")
 	if text and text.Text ~= "" then
 		prizeName = text.Text
@@ -132,7 +154,7 @@ local function spin(player: Player)
 	model:SetAttribute("LastPrize", prizeName)
 	model:SetAttribute("LastWinner", player.Name)
 	say(player, "You won: " .. prizeName)
-	won:Fire(player, string.sub(slice.Part.Name, 7), prizeName)
+	won:Fire(player, string.sub(slice.Slice.Name, 7), prizeName)
 	busy = false
 	task.spawn(save, player)
 end

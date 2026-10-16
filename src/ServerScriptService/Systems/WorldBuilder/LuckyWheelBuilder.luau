@@ -1,14 +1,17 @@
 --[[
-	LuckyWheelBuilder: the physical Lucky Wheel in the plaza (on its own platform in the green area behind the Coins Shop and Robux Shop, facing the hamster road).
+	LuckyWheelBuilder: the physical Lucky Wheel (on its own platform in the green area behind the Coins Shop and Robux Shop, facing the hamster road).
 
 	  LuckyWheel (Model, tag "LuckyWheel")
-	    Base, trim, back pillar + two struts, axle, pointer, sign, bulbs    fixed
-	    Rotor (Model, PrimaryPart Hub)                                        turns: backplate, rim, one coloured slice per prize
-	    PromptPad                                                             invisible pad with the [F] prompt (opens the wheel window)
+	    Base, trim, back pillar + two struts, axle, FIXED pointer, sign, bulbs   fixed
+	    Rotor (Model, PrimaryPart Hub)                                           turns: backplate, rim, gold dividers and one Slice_<prize> model per prize
+	      Slice_<prize> (Model)  two wedge facets in the prize colour + IconPlate (an invisible plate with a SurfaceGui "PrizeIcon")
+	    PromptPad                                                                invisible pad with the [F] prompt (attribute SpinWheel = true)
 
-	The slices come from SpinWheelConfig.Prizes (same list, same order as the window and the server draw), so adding a prize
-	adds a slice. The wheel never decides anything: SpinSystem draws, WheelWorld tells every client where to stop.
-	Geometry: the wheel plane faces -Z (the road). Slice i sits i * 360 / count degrees clockwise (seen from the road) from the top.
+	The slices come from SpinWheelConfig.Prizes (same list, same order as the server draw), so adding a prize adds a slice. A slice shows a
+	PICTURE: the client (WheelWorldController) draws the prize Icon (or the Image you set in SpinWheelConfig) on the IconPlate. Only the
+	exported standalone model, which has no client, gets a short word instead (options.TextFallback). The wheel never decides anything:
+	SpinSystem draws, WheelWorld tells every client where to stop.
+	Geometry: the wheel plane faces -Z (the road). Slice i sits (i-1) * 360 / count degrees clockwise (seen from the road) from the top.
 ]]
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -40,7 +43,8 @@ local function ofCylinder(parent: Instance, name: string, diameter: number, thic
 	return Build.part(parent, name, Vector3.new(thickness, diameter, diameter), cframe * CFrame.Angles(0, math.rad(90), 0), color, material, merged)
 end
 
-function LuckyWheelBuilder.build(parent: Instance, rng: Random): Model
+function LuckyWheelBuilder.build(parent: Instance, rng: Random, options: { TextFallback: boolean? }?): Model
+	local textFallback = options ~= nil and options.TextFallback == true
 	local model = Build.model(parent, "LuckyWheel")
 	model:AddTag("LuckyWheel")
 	local center = LuckyWheelBuilder.CENTER
@@ -72,29 +76,70 @@ function LuckyWheelBuilder.build(parent: Instance, rng: Random): Model
 
 	-- the rotating wheel
 	local rotor = Build.model(model, "Rotor")
-	local hubPart = ofCylinder(rotor, "Hub", 1.8, 0.9, hub * CFrame.new(0, 0, -0.55), Palette.Gold, METAL, { CanCollide = false })
+	local hubPart = ofCylinder(rotor, "Hub", 2.6, 0.9, hub * CFrame.new(0, 0, -0.85), Palette.Gold, METAL, { CanCollide = false })
 	rotor.PrimaryPart = hubPart
+	-- The Rotor's pivot must be the centre of the wheel with the SAME orientation as `hub` (the cylinder part itself is turned to lie
+	-- in the wheel plane). Without this, the first PivotTo would tip the whole wheel over onto its edge instead of turning it.
+	hubPart.PivotOffset = hubPart.CFrame:Inverse() * hub
 	ofCylinder(rotor, "Rim", RADIUS * 2 + 1.5, 0.9, hub * CFrame.new(0, 0, 0.1), Palette.Gold, METAL, { CanCollide = false })
-	ofCylinder(rotor, "Backplate", RADIUS * 2 + 0.5, 0.7, hub * CFrame.new(0, 0, -0.05), Palette.WoodDark, WOOD, { CanCollide = false })
-	local innerRadius, outerRadius = RADIUS * 0.2, RADIUS - 0.2
-	local middle = (innerRadius + outerRadius) / 2
-	local sliceLength = outerRadius - innerRadius
-	local sliceWidth = 2 * middle * math.tan(math.pi / count) * 0.94
-	for index, prize in prizes do
-		local theta = math.rad((index - 1) * 360 / count)
-		local direction = Vector3.new(-math.sin(theta), math.cos(theta), 0)
-		local slice = Build.part(rotor, "Slice_" .. prize.Id, Vector3.new(sliceWidth, sliceLength, 0.3), hub * CFrame.new(direction * middle + Vector3.new(0, 0, -0.45)) * CFrame.Angles(0, 0, theta), prize.Color, PLASTIC, { CanCollide = false })
-		Build.surfaceText(slice, Enum.NormalId.Front, prize.Short or prize.Label, { TextColor = Palette.Ink, PixelsPerStud = 60, Font = Enum.Font.FredokaOne })
-		-- peg between two slices
-		local pegAngle = theta + math.pi / count
-		local peg = Vector3.new(-math.sin(pegAngle), math.cos(pegAngle), 0) * (outerRadius + 0.05)
-		Build.blob(rotor, "Peg", Vector3.new(0.5, 0.5, 0.5), hub * CFrame.new(peg + Vector3.new(0, 0, -0.55)), Palette.Gold, METAL, { CanCollide = false })
+	ofCylinder(rotor, "RimInner", RADIUS * 2 + 0.6, 1.0, hub * CFrame.new(0, 0, 0.0), Palette.WoodDark, WOOD, { CanCollide = false })
+	ofCylinder(rotor, "Backplate", RADIUS * 2 + 0.2, 0.7, hub * CFrame.new(0, 0, -0.05), Palette.WoodDark, WOOD, { CanCollide = false })
+	local outerRadius = RADIUS - 0.1
+	local half = math.pi / count
+	-- a point of the wheel plane: `angle` clockwise from the top, seen from the front (the wheel faces -Z)
+	local function ring(angle: number, radius: number, z: number): Vector3
+		return Vector3.new(-math.sin(angle) * radius, math.cos(angle) * radius, z)
 	end
+	for index, prize in prizes do
+		local theta = (index - 1) * 2 * half
+		local slice = Build.model(rotor, "Slice_" .. prize.Id)
+		slice:SetAttribute("PrizeId", prize.Id)
+		slice:SetAttribute("Index", index)
+		-- the segment: a clean wedge from the hub to the rim (two wedge parts) with a lighter outer half, so it reads as a petal
+		local centre = hub:PointToWorldSpace(Vector3.new(0, 0, -0.45))
+		local left, right = hub:PointToWorldSpace(ring(theta - half, outerRadius, -0.45)), hub:PointToWorldSpace(ring(theta + half, outerRadius, -0.45))
+		Build.triangle(slice, centre, left, right, prize.Color, PLASTIC, { CanCollide = false, CastShadow = false }, 0.3)
+		local outerLeft, outerRight = hub:PointToWorldSpace(ring(theta - half, outerRadius * 0.97, -0.5)), hub:PointToWorldSpace(ring(theta + half, outerRadius * 0.97, -0.5))
+		local mid = hub:PointToWorldSpace(ring(theta, outerRadius * 0.45, -0.5))
+		Build.triangle(slice, mid, outerLeft, outerRight, prize.Color:Lerp(Color3.new(1, 1, 1), 0.18), PLASTIC, { CanCollide = false, CastShadow = false }, 0.3)
+		-- the picture plate: lies on the slice (its top points to the rim) and shows the prize picture
+		local plateAt = hub * CFrame.new(ring(theta, outerRadius * 0.66, -0.7)) * CFrame.Angles(0, 0, theta)
+		local plate = Build.part(slice, "IconPlate", Vector3.new(2.5, 2.5, 0.1), plateAt, prize.Color, PLASTIC, { Transparency = 1, CanCollide = false, CanQuery = false, CastShadow = false })
+		plate:SetAttribute("PrizeId", prize.Id)
+		plate:SetAttribute("IconName", prize.Icon)
+		plate:SetAttribute("Backdrop", prize.Color)
+		if prize.Image then
+			plate:SetAttribute("Image", prize.Image)
+		end
+		if textFallback then
+			Build.surfaceText(plate, Enum.NormalId.Front, prize.Short or prize.Label, { TextColor = Palette.Ink, PixelsPerStud = 60, Font = Enum.Font.FredokaOne })
+		else
+			local gui = Instance.new("SurfaceGui")
+			gui.Name = "PrizeIcon"
+			gui.Face = Enum.NormalId.Front
+			gui.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
+			gui.PixelsPerStud = 60
+			gui.LightInfluence = 0
+			gui.Parent = plate
+		end
+		-- a gold divider between this slice and the next, with a peg on the rim
+		local dividerAngle = theta + half
+		local dividerAt = hub * CFrame.new(ring(dividerAngle, outerRadius / 2, -0.62)) * CFrame.Angles(0, 0, dividerAngle)
+		Build.part(rotor, "Divider", Vector3.new(0.22, outerRadius, 0.22), dividerAt, Palette.Gold, METAL, { CanCollide = false })
+		Build.blob(rotor, "Peg", Vector3.new(0.5, 0.5, 0.5), hub * CFrame.new(ring(dividerAngle, outerRadius + 0.15, -0.6)), Palette.Gold, METAL, { CanCollide = false })
+	end
+	ofCylinder(rotor, "HubCap", 1.5, 0.5, hub * CFrame.new(0, 0, -1.3), Color3.fromRGB(235, 64, 72), PLASTIC, { CanCollide = false })
+	Build.blob(rotor, "HubGem", Vector3.new(0.7, 0.7, 0.5), hub * CFrame.new(0, 0, -1.65), Palette.Cream, Enum.Material.Neon, { CanCollide = false })
 	model:SetAttribute("BaseCFrame", hub) -- the rotor's resting pivot (the server / clients rotate relative to it)
 
-	-- pointer at the top (fixed): a red diamond pointing down onto the slice under it
-	Build.part(model, "Pointer", Vector3.new(1.2, 1.2, 0.6), hub * CFrame.new(0, RADIUS + 0.55, -0.7) * CFrame.Angles(0, 0, math.rad(45)), Color3.fromRGB(235, 64, 72), PLASTIC, { CanCollide = false })
-	Build.deco(model, "PointerGem", Vector3.new(0.5, 0.5, 0.3), hub * CFrame.new(0, RADIUS + 0.55, -1.1) * CFrame.Angles(0, 0, math.rad(45)), Palette.Gold, METAL)
+	-- the pointer at the top is FIXED (not part of the rotor): a red flapper pointing down onto the slice under it, on a gold pivot
+	local tip = hub:PointToWorldSpace(Vector3.new(0, RADIUS - 0.4, -1.1))
+	local topLeft = hub:PointToWorldSpace(Vector3.new(-0.9, RADIUS + 1.5, -1.1))
+	local topRight = hub:PointToWorldSpace(Vector3.new(0.9, RADIUS + 1.5, -1.1))
+	local pointer = Build.model(model, "Pointer")
+	Build.triangle(pointer, topLeft, topRight, tip, Color3.fromRGB(235, 64, 72), PLASTIC, { CanCollide = false }, 0.5)
+	Build.blob(pointer, "PointerPivot", Vector3.new(1.2, 1.2, 0.7), hub * CFrame.new(0, RADIUS + 1.35, -1.3), Palette.Gold, METAL, { CanCollide = false })
+	Build.blob(pointer, "PointerGem", Vector3.new(0.5, 0.5, 0.4), hub * CFrame.new(0, RADIUS + 1.35, -1.7), Palette.Cream, Enum.Material.Neon, { CanCollide = false })
 
 	-- bulbs round the rim (neon), fixed to the stand so they stay still while the wheel turns
 	local bulbs = 20
@@ -122,7 +167,7 @@ function LuckyWheelBuilder.build(parent: Instance, rng: Random): Model
 	prompt.MaxActivationDistance = 14
 	prompt.RequiresLineOfSight = false
 	prompt.Exclusivity = Enum.ProximityPromptExclusivity.OnePerButton
-	prompt:SetAttribute("OpenUI", "Wheel")
+	prompt:SetAttribute("SpinWheel", true) -- SpinSystem answers this prompt (nothing opens on the client)
 	prompt.Parent = pad
 	Build.target(pad, "Wheel") -- the tutorial points here
 

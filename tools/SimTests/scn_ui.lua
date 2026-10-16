@@ -60,7 +60,7 @@ task.spawn(function()
 	check("every shop item has a drawn icon", missingIcon == 0, missingIcon .. " missing")
 
 	-- every panel opens and closes
-	for _, name in { "Backpack", "Index", "Rebirth", "Upgrades", "Daily", "Quests", "Shop", "Settings", "Codes", "Wheel" } do
+	for _, name in { "Backpack", "Index", "Rebirth", "Upgrades", "Daily", "Quests", "Shop", "RobuxShop", "Settings", "Codes", "Wheel" } do
 		local panel = UIKit.getPanel(name)
 		check("panel exists: " .. name, panel ~= nil)
 		if panel then
@@ -76,7 +76,7 @@ task.spawn(function()
 		local cam2 = workspace.CurrentCamera
 		local sizes = { Vector2.new(1920, 1080), Vector2.new(1366, 768), Vector2.new(1024, 768), Vector2.new(844, 390), Vector2.new(667, 375), Vector2.new(390, 844), Vector2.new(360, 640) }
 		local tooBig, detail, measured, shopPhone, minScale = 0, "", 0, nil, 9
-		for _, name in { "Backpack", "Index", "Rebirth", "Upgrades", "Daily", "Quests", "Shop", "Settings", "Codes", "Wheel", "Leaderboards" } do
+		for _, name in { "Backpack", "Index", "Rebirth", "Upgrades", "Daily", "Quests", "Shop", "RobuxShop", "Settings", "Codes", "Wheel", "Leaderboards" } do
 			local panel = UIKit.getPanel(name)
 			if panel then
 				for _, vp in sizes do
@@ -166,7 +166,7 @@ task.spawn(function()
 		local UIRegistry = require(find("StarterPlayer.StarterPlayerScripts.UI.UIRegistry"))
 		local ids = {}
 		for _, def in UIRegistry.list("RightRail") do table.insert(ids, def.Id) end
-		check("the right rail holds ONLY Quests, Lucky Wheel, Backpack, Shop, Leaderboards, Settings", table.concat(ids, ",") == "Quests,Wheel,Backpack,Shop,Leaderboards,Settings", table.concat(ids, ","))
+		check("the right rail holds ONLY Quests, Lucky Wheel, Playtime, Backpack, Coins Shop, Robux Shop, Leaderboards, Settings", table.concat(ids, ",") == "Quests,Wheel,Playtime,Backpack,Shop,RobuxShop,Leaderboards,Settings", table.concat(ids, ","))
 		local backpack = UIKit.getPanel("Backpack")
 		check("Hamsters, Hamster Index and Emotes moved into the Backpack", #byName(backpack.Gui, "Tab_Hamsters") == 1 and #byName(backpack.Gui, "OpenIndex") == 1 and #byName(backpack.Gui, "OpenEmotes") == 1)
 		check("the old 'My Hamsters' window is gone (alias opens the Backpack tab)", UIKit.getPanel("Inventory") == nil)
@@ -224,7 +224,7 @@ task.spawn(function()
 	-- shop
 	local shop = UIKit.getPanel("Shop")
 	shop:Open(); adv(0.6)
-	check("cash shop has category tabs: Weapons / Equipment / Boosts / Hamsters / Cosmetics (+ a Robux Shop switch)", #byName(shop.Gui, "Tab_Weapons") == 1 and #byName(shop.Gui, "Tab_Equipment") == 1 and #byName(shop.Gui, "Tab_Boosts") == 1 and #byName(shop.Gui, "Tab_Hamsters") == 1 and #byName(shop.Gui, "Tab_Cosmetics") == 1 and #byName(shop.Gui, "Mode_Robux") == 1)
+	check("cash shop has category tabs: Weapons / Equipment / Boosts / Hamsters / Cosmetics (and nothing that leads to the Robux Shop)", #byName(shop.Gui, "Tab_Weapons") == 1 and #byName(shop.Gui, "Tab_Equipment") == 1 and #byName(shop.Gui, "Tab_Boosts") == 1 and #byName(shop.Gui, "Tab_Hamsters") == 1 and #byName(shop.Gui, "Tab_Cosmetics") == 1 and #byName(shop.Gui, "Mode_Robux") == 0 and #byName(shop.Gui, "Tab_Gamepasses") == 0)
 	check("empty categories are not shown", #byName(shop.Gui, "Tab_Limited") == 0 and #byName(shop.Gui, "Tab_Diamonds") == 0)
 	shop:Close(); adv(0.4)
 

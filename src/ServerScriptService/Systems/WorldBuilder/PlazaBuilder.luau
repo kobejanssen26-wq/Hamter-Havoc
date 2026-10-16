@@ -6,12 +6,15 @@
 	has no building: it is a tab in the Backpack. Everything is mirror-symmetric, nothing else is placed on purpose.
 ]]
 
+local FavoritesConfig = require(game:GetService("ReplicatedStorage").Modules.FavoritesConfig)
 local Build = require(script.Parent.Build)
 local Decor = require(script.Parent.Decor)
 local LuckyWheelBuilder = require(script.Parent.LuckyWheelBuilder)
 local Palette = require(script.Parent.Palette)
 
 local PlazaBuilder = {}
+
+PlazaBuilder.FAVORITES_BOARD = CFrame.new(-34, 0, -21) * CFrame.Angles(0, math.rad(-90), 0) -- west of the guest spawn, facing it
 
 -- where the golden statue stands (on top of the arch): the statue itself is created at every start
 PlazaBuilder.STATUE_CFRAME = CFrame.new(0, 19.2, 0) * CFrame.Angles(0, math.rad(90), 0)
@@ -53,7 +56,8 @@ export type ShopStyle = {
 	Accent: Color3, -- emblem and lantern glow
 	Emblem: "coin" | "gem",
 	ObjectText: string,
-	Focus: string, -- shop category the window opens on (decides Coins or Robux shop)
+	Menu: string, -- which window the door opens: "Shop" (Coins Shop) or "RobuxShop"
+	Focus: string, -- the category that window opens on
 }
 
 -- Edit these two tables to restyle the shops (colours, names, which shop the door opens).
@@ -65,6 +69,7 @@ PlazaBuilder.CoinsShop = {
 	Accent = Color3.fromRGB(255, 205, 70),
 	Emblem = "coin",
 	ObjectText = "Coins Shop",
+	Menu = "Shop",
 	Focus = "Weapons",
 } :: ShopStyle
 PlazaBuilder.RobuxShop = {
@@ -75,6 +80,7 @@ PlazaBuilder.RobuxShop = {
 	Accent = Color3.fromRGB(80, 200, 255),
 	Emblem = "gem",
 	ObjectText = "Robux Shop",
+	Menu = "RobuxShop",
 	Focus = "Gamepasses",
 } :: ShopStyle
 PlazaBuilder.ShopX = 15 -- the shops stand at x = -ShopX (Coins) and +ShopX (Robux), z = ShopZ
@@ -174,7 +180,7 @@ local function buildShop(parent: Instance, cframe: CFrame, style: ShopStyle)
 	Build.deco(model, "CrateStack", Vector3.new(1.6, 1.6, 1.6), cframe * CFrame.new(-8.6, 1.4, -0.4), Palette.WoodLight, WOOD)
 	Build.deco(model, "CrateSmall", Vector3.new(1.1, 1.1, 1.1), cframe * CFrame.new(-8.4, 2.75, -0.5) * CFrame.Angles(0, math.rad(18), 0), Palette.Wood, WOOD)
 
-	local prompt = publicPrompt(counter, style.ObjectText, "Browse", "Shop", 14)
+	local prompt = publicPrompt(counter, style.ObjectText, "Browse", style.Menu, 14)
 	prompt:SetAttribute("Focus", style.Focus)
 	return model
 end
@@ -203,6 +209,85 @@ local function buildFountain(parent: Instance, cframe: CFrame, rng: Random)
 		Decor.flowers(model, Vector3.new(center.X + side * 9, 0, center.Z + 9.5), 2.5, 8, rng)
 		Decor.flowers(model, Vector3.new(center.X + side * 9, 0, center.Z - 9.5), 2.5, 8, rng)
 	end
+	return model
+end
+
+-- The Like & Favorite board (see Modules/FavoritesConfig for what it can and can not do): two posts, a wooden board, three picture rows.
+-- The pictures are drawn by the client (frames named IconHost with the attribute IconName); the texts come from FavoritesConfig.
+-- `cframe`: the ground point under the middle of the board; the front of the board looks along -Z of this frame.
+local function buildFavoritesBoard(parent: Instance, cframe: CFrame)
+	local model = Build.model(parent, "FavoritesBoard")
+	model:AddTag("FavoritesBoard")
+	local width, height = 8.6, 6.4
+	for _, side in { -1, 1 } do
+		Build.part(model, "Post", Vector3.new(0.7, 6.8, 0.7), cframe * CFrame.new(side * 3.7, 3.4, 0.6), Palette.WoodDark, WOOD)
+		Build.deco(model, "PostCap", Vector3.new(1.0, 0.35, 1.0), cframe * CFrame.new(side * 3.7, 6.95, 0.6), Palette.Gold, Enum.Material.Metal)
+	end
+	Build.deco(model, "Frame", Vector3.new(width + 0.6, height + 0.6, 0.5), cframe * CFrame.new(0, 4.4, 0.4), Palette.Wood, WOOD)
+	local board = Build.part(model, "Board", Vector3.new(width, height, 0.4), cframe * CFrame.new(0, 4.4, 0.1), Color3.fromRGB(34, 36, 60), PLASTIC, { CanCollide = false })
+	Build.light(board, Color3.fromRGB(200, 210, 255), 0.5, 18)
+	Build.deco(model, "Glow", Vector3.new(width + 0.2, 0.25, 0.5), cframe * CFrame.new(0, 7.75, 0.1), Palette.Gold, NEON)
+	Build.deco(model, "Base", Vector3.new(8.8, 0.3, 2.2), cframe * CFrame.new(0, 0.15, 0.3), Palette.Stone, Enum.Material.Slate)
+
+	local gui = Instance.new("SurfaceGui")
+	gui.Name = "BoardGui"
+	gui.Face = Enum.NormalId.Front
+	gui.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
+	gui.PixelsPerStud = 50
+	gui.LightInfluence = 0.1
+	gui.MaxDistance = 70
+	gui.Parent = board
+	local function text(parent: Instance, name: string, content: string, size: UDim2, position: UDim2, textSize: number, color: Color3, font: Enum.Font, alignment: Enum.TextXAlignment): TextLabel
+		local textLabel = Instance.new("TextLabel")
+		textLabel.Name = name
+		textLabel.BackgroundTransparency = 1
+		textLabel.Size = size
+		textLabel.Position = position
+		textLabel.Text = content
+		textLabel.TextSize = textSize
+		textLabel.TextColor3 = color
+		textLabel.Font = font
+		textLabel.TextXAlignment = alignment
+		textLabel.TextTruncate = Enum.TextTruncate.AtEnd
+		textLabel.Parent = parent
+		return textLabel
+	end
+	text(gui, "Title", FavoritesConfig.Title, UDim2.new(1, 0, 0, 56), UDim2.fromOffset(0, 8), 38, Palette.Gold, Enum.Font.FredokaOne, Enum.TextXAlignment.Center)
+	for index, row in FavoritesConfig.Rows do
+		local holder = Instance.new("Frame")
+		holder.Name = "Row_" .. row.Id
+		holder.BackgroundColor3 = Color3.fromRGB(52, 56, 92)
+		holder.BorderSizePixel = 0
+		holder.Size = UDim2.new(1, -28, 0, 66)
+		holder.Position = UDim2.fromOffset(14, 74 + (index - 1) * 74)
+		holder.Parent = gui
+		local corner = Instance.new("UICorner")
+		corner.CornerRadius = UDim.new(0, 12)
+		corner.Parent = holder
+		local host = Instance.new("Frame")
+		host.Name = "IconHost"
+		host.BackgroundTransparency = 1
+		host.Size = UDim2.fromOffset(52, 52)
+		host.Position = UDim2.fromOffset(10, 7)
+		host:SetAttribute("IconName", row.Icon)
+		host.Parent = holder
+		text(holder, "RowTitle", row.Title, UDim2.new(1, -86, 0, 30), UDim2.fromOffset(72, 6), 26, Color3.new(1, 1, 1), Enum.Font.FredokaOne, Enum.TextXAlignment.Left)
+		text(holder, "RowText", row.Text, UDim2.new(1, -86, 0, 24), UDim2.fromOffset(72, 36), 17, Color3.fromRGB(190, 198, 235), Enum.Font.GothamMedium, Enum.TextXAlignment.Left)
+	end
+	text(gui, "Footer", FavoritesConfig.Footer, UDim2.new(1, 0, 0, 24), UDim2.new(0, 0, 1, -30), 16, Color3.fromRGB(150, 158, 200), Enum.Font.GothamMedium, Enum.TextXAlignment.Center)
+
+	-- the interaction: invite friends (Roblox's own invite window; the client asks Roblox first whether it is allowed)
+	Build.deco(model, "PromptPad", Vector3.new(6, 1, 3), cframe * CFrame.new(0, 1.2, -2.6), Color3.new(1, 1, 1), PLASTIC, { Transparency = 1, CanQuery = false })
+	local prompt = Instance.new("ProximityPrompt")
+	prompt.ObjectText = FavoritesConfig.PromptObject
+	prompt.ActionText = FavoritesConfig.PromptAction
+	prompt.KeyboardKeyCode = Enum.KeyCode.F
+	prompt.HoldDuration = 0
+	prompt.MaxActivationDistance = 12
+	prompt.RequiresLineOfSight = false
+	prompt.Exclusivity = Enum.ProximityPromptExclusivity.OnePerButton
+	prompt:SetAttribute("InviteFriends", true) -- answered by the client (Controllers/FavoritesController)
+	prompt.Parent = model:FindFirstChild("PromptPad")
 	return model
 end
 
@@ -296,6 +381,9 @@ function PlazaBuilder.build(parent: Instance, rng: Random): PlazaInfo
 
 	-- the physical Lucky Wheel on its own platform in the green area behind the two shops
 	LuckyWheelBuilder.build(folder, rng)
+
+	-- the Like & Favorite board next to the guest spawn
+	buildFavoritesBoard(folder, PlazaBuilder.FAVORITES_BOARD)
 
 	-- guest spawn on the plaza (players without a house); WorldBuilder moves it to Workspace/SpawnLocations
 	PlazaBuilder.makeSpawn(folder)

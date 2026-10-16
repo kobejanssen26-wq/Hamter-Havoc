@@ -1396,7 +1396,7 @@
       ],
       [
        0,
-       460
+       578
       ]
      ]
     },
@@ -1404,7 +1404,7 @@
     "ZIndex": 1
    },
    "Attributes": {
-    "CodeProps": "AnchorPoint=v2:1.000,0.000\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nPosition=u2:1.000,-12,0.000,8\nSize=u2:0.000,50,0.000,460\nVisible=true\nZIndex=1.000",
+    "CodeProps": "AnchorPoint=v2:1.000,0.000\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nPosition=u2:1.000,-12,0.000,8\nSize=u2:0.000,50,0.000,578\nVisible=true\nZIndex=1.000",
     "Responsive": true
    },
    "Children": [
@@ -1422,13 +1422,13 @@
         ],
         [
          0,
-         424
+         532
         ]
        ]
       }
      },
      "Attributes": {
-      "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nSize=u2:0.000,46,0.000,424"
+      "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nSize=u2:0.000,46,0.000,532"
      },
      "Children": [
       {
@@ -1896,6 +1896,223 @@
       },
       {
        "ClassName": "TextButton",
+       "Name": "PlaytimeButton",
+       "Properties": {
+        "AnchorPoint": [
+         0,
+         0
+        ],
+        "AutoButtonColor": false,
+        "BackgroundColor3": [
+         0.227451,
+         0.14902,
+         0.462745
+        ],
+        "BackgroundTransparency": 0.06,
+        "BorderSizePixel": 0,
+        "Font": "GothamBlack",
+        "LayoutOrder": 17,
+        "Position": {
+         "UDim2": [
+          [
+           0,
+           0
+          ],
+          [
+           0,
+           0
+          ]
+         ]
+        },
+        "RichText": true,
+        "Size": {
+         "UDim2": [
+          [
+           0,
+           46
+          ],
+          [
+           0,
+           46
+          ]
+         ]
+        },
+        "Text": "",
+        "TextColor3": [
+         1,
+         1,
+         1
+        ],
+        "TextSize": 16,
+        "TextStrokeColor3": [
+         0.101961,
+         0.0470588,
+         0.243137
+        ],
+        "TextStrokeTransparency": 0.15,
+        "Visible": true
+       },
+       "Attributes": {
+        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.149,0.463\nBorderSizePixel=0.000\nFont=e:GothamBlack\nLayoutOrder=17.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,46,0.000,46\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
+       },
+       "Children": [
+        {
+         "ClassName": "UICorner",
+         "Name": "UICorner",
+         "Properties": {
+          "CornerRadius": {
+           "UDim": [
+            0,
+            99
+           ]
+          }
+         },
+         "Attributes": {
+          "CodeProps": "CornerRadius=u:0.000,99"
+         }
+        },
+        {
+         "ClassName": "UIStroke",
+         "Name": "Edge",
+         "Properties": {
+          "ApplyStrokeMode": "Border",
+          "Color": [
+           0.101961,
+           0.0470588,
+           0.243137
+          ],
+          "Thickness": 2.5,
+          "Transparency": 0
+         },
+         "Attributes": {
+          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.102,0.047,0.243\nThickness=2.500\nTransparency=0.000"
+         }
+        },
+        {
+         "ClassName": "UIGradient",
+         "Name": "UIGradient",
+         "Properties": {
+          "Color": {
+           "ColorSequence": {
+            "keypoints": [
+             {
+              "time": 0,
+              "color": [
+               1,
+               1,
+               1
+              ]
+             },
+             {
+              "time": 1,
+              "color": [
+               0.803922,
+               0.803922,
+               0.843137
+              ]
+             }
+            ]
+           }
+          },
+          "Rotation": 90
+         },
+         "Attributes": {
+          "CodeProps": "Color=seq:0.000=c3:1.000,1.000,1.000|1.000=c3:0.804,0.804,0.843\nRotation=90.000"
+         }
+        },
+        {
+         "ClassName": "UIScale",
+         "Name": "UIScale",
+         "Properties": {
+          "Scale": 1
+         },
+         "Attributes": {
+          "CodeProps": "Scale=1.000"
+         }
+        },
+        {
+         "ClassName": "Frame",
+         "Name": "NotifyDot",
+         "Properties": {
+          "AnchorPoint": [
+           1,
+           0
+          ],
+          "BackgroundColor3": [
+           1,
+           0.282353,
+           0.345098
+          ],
+          "BorderSizePixel": 0,
+          "Position": {
+           "UDim2": [
+            [
+             1,
+             -1
+            ],
+            [
+             0,
+             1
+            ]
+           ]
+          },
+          "Size": {
+           "UDim2": [
+            [
+             0,
+             14
+            ],
+            [
+             0,
+             14
+            ]
+           ]
+          },
+          "Visible": false,
+          "ZIndex": 10
+         },
+         "Attributes": {
+          "CodeProps": "AnchorPoint=v2:1.000,0.000\nBackgroundColor3=c3:1.000,0.282,0.345\nBorderSizePixel=0.000\nPosition=u2:1.000,-1,0.000,1\nSize=u2:0.000,14,0.000,14\nVisible=false\nZIndex=10.000"
+         },
+         "Children": [
+          {
+           "ClassName": "UICorner",
+           "Name": "UICorner",
+           "Properties": {
+            "CornerRadius": {
+             "UDim": [
+              0,
+              99
+             ]
+            }
+           },
+           "Attributes": {
+            "CodeProps": "CornerRadius=u:0.000,99"
+           }
+          },
+          {
+           "ClassName": "UIStroke",
+           "Name": "UIStroke",
+           "Properties": {
+            "ApplyStrokeMode": "Border",
+            "Color": [
+             0.227451,
+             0.14902,
+             0.462745
+            ],
+            "Thickness": 2,
+            "Transparency": 0
+           },
+           "Attributes": {
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.227,0.149,0.463\nThickness=2.000\nTransparency=0.000"
+           }
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "ClassName": "TextButton",
        "Name": "BackpackButton",
        "Properties": {
         "AnchorPoint": [
@@ -2171,6 +2388,223 @@
        },
        "Attributes": {
         "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.149,0.463\nBorderSizePixel=0.000\nFont=e:GothamBlack\nLayoutOrder=30.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,46,0.000,46\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
+       },
+       "Children": [
+        {
+         "ClassName": "UICorner",
+         "Name": "UICorner",
+         "Properties": {
+          "CornerRadius": {
+           "UDim": [
+            0,
+            99
+           ]
+          }
+         },
+         "Attributes": {
+          "CodeProps": "CornerRadius=u:0.000,99"
+         }
+        },
+        {
+         "ClassName": "UIStroke",
+         "Name": "Edge",
+         "Properties": {
+          "ApplyStrokeMode": "Border",
+          "Color": [
+           0.101961,
+           0.0470588,
+           0.243137
+          ],
+          "Thickness": 2.5,
+          "Transparency": 0
+         },
+         "Attributes": {
+          "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.102,0.047,0.243\nThickness=2.500\nTransparency=0.000"
+         }
+        },
+        {
+         "ClassName": "UIGradient",
+         "Name": "UIGradient",
+         "Properties": {
+          "Color": {
+           "ColorSequence": {
+            "keypoints": [
+             {
+              "time": 0,
+              "color": [
+               1,
+               1,
+               1
+              ]
+             },
+             {
+              "time": 1,
+              "color": [
+               0.803922,
+               0.803922,
+               0.843137
+              ]
+             }
+            ]
+           }
+          },
+          "Rotation": 90
+         },
+         "Attributes": {
+          "CodeProps": "Color=seq:0.000=c3:1.000,1.000,1.000|1.000=c3:0.804,0.804,0.843\nRotation=90.000"
+         }
+        },
+        {
+         "ClassName": "UIScale",
+         "Name": "UIScale",
+         "Properties": {
+          "Scale": 1
+         },
+         "Attributes": {
+          "CodeProps": "Scale=1.000"
+         }
+        },
+        {
+         "ClassName": "Frame",
+         "Name": "NotifyDot",
+         "Properties": {
+          "AnchorPoint": [
+           1,
+           0
+          ],
+          "BackgroundColor3": [
+           1,
+           0.282353,
+           0.345098
+          ],
+          "BorderSizePixel": 0,
+          "Position": {
+           "UDim2": [
+            [
+             1,
+             -1
+            ],
+            [
+             0,
+             1
+            ]
+           ]
+          },
+          "Size": {
+           "UDim2": [
+            [
+             0,
+             14
+            ],
+            [
+             0,
+             14
+            ]
+           ]
+          },
+          "Visible": false,
+          "ZIndex": 10
+         },
+         "Attributes": {
+          "CodeProps": "AnchorPoint=v2:1.000,0.000\nBackgroundColor3=c3:1.000,0.282,0.345\nBorderSizePixel=0.000\nPosition=u2:1.000,-1,0.000,1\nSize=u2:0.000,14,0.000,14\nVisible=false\nZIndex=10.000"
+         },
+         "Children": [
+          {
+           "ClassName": "UICorner",
+           "Name": "UICorner",
+           "Properties": {
+            "CornerRadius": {
+             "UDim": [
+              0,
+              99
+             ]
+            }
+           },
+           "Attributes": {
+            "CodeProps": "CornerRadius=u:0.000,99"
+           }
+          },
+          {
+           "ClassName": "UIStroke",
+           "Name": "UIStroke",
+           "Properties": {
+            "ApplyStrokeMode": "Border",
+            "Color": [
+             0.227451,
+             0.14902,
+             0.462745
+            ],
+            "Thickness": 2,
+            "Transparency": 0
+           },
+           "Attributes": {
+            "CodeProps": "ApplyStrokeMode=e:Border\nColor=c3:0.227,0.149,0.463\nThickness=2.000\nTransparency=0.000"
+           }
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "ClassName": "TextButton",
+       "Name": "RobuxShopButton",
+       "Properties": {
+        "AnchorPoint": [
+         0,
+         0
+        ],
+        "AutoButtonColor": false,
+        "BackgroundColor3": [
+         0.227451,
+         0.14902,
+         0.462745
+        ],
+        "BackgroundTransparency": 0.06,
+        "BorderSizePixel": 0,
+        "Font": "GothamBlack",
+        "LayoutOrder": 32,
+        "Position": {
+         "UDim2": [
+          [
+           0,
+           0
+          ],
+          [
+           0,
+           0
+          ]
+         ]
+        },
+        "RichText": true,
+        "Size": {
+         "UDim2": [
+          [
+           0,
+           46
+          ],
+          [
+           0,
+           46
+          ]
+         ]
+        },
+        "Text": "",
+        "TextColor3": [
+         1,
+         1,
+         1
+        ],
+        "TextSize": 16,
+        "TextStrokeColor3": [
+         0.101961,
+         0.0470588,
+         0.243137
+        ],
+        "TextStrokeTransparency": 0.15,
+        "Visible": true
+       },
+       "Attributes": {
+        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.149,0.463\nBorderSizePixel=0.000\nFont=e:GothamBlack\nLayoutOrder=32.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,46,0.000,46\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
        },
        "Children": [
         {

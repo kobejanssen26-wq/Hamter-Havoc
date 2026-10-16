@@ -118,6 +118,7 @@ task.spawn(function()
 	check("the bench step points at the first bench slot", TutorialUI.CurrentTarget ~= nil and RawData[TutorialUI.CurrentTarget].Attributes.TutorialTarget == "Bench" and ownerOf(TutorialUI.CurrentTarget) == aliceId)
 	adv(2.5)
 	check("it waits until a hamster is really placed on the bench", a.Tutorial.Step == 3)
+	a.Stats.CoinsEarned = 0 -- (the base income of the last seconds does not count: only what is earned from now on)
 	a.Equipped = { "brownie" }
 	adv(2.5)
 	check("placing a hamster advances to 'Earn income'", a.Tutorial.Step == 4 and textOf("Title") == "Earn income", a.Tutorial.Step)

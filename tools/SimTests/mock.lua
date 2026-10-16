@@ -688,9 +688,10 @@ local function partsOf(model)
 end
 function InstanceMethods.GetPivot(self)
 	local data = RawData[self]
-	if isA(data.ClassName, "BasePart") then return data.Props.CFrame or CFrame.identity end
+	-- like Roblox: the pivot of a part is its CFrame * PivotOffset; the pivot of a model is its PrimaryPart's pivot
+	if isA(data.ClassName, "BasePart") then return (data.Props.CFrame or CFrame.identity) * (data.Props.PivotOffset or CFrame.identity) end
 	local primary = data.Props.PrimaryPart
-	if primary then return RawData[primary].Props.CFrame or CFrame.identity end
+	if primary then return (RawData[primary].Props.CFrame or CFrame.identity) * (RawData[primary].Props.PivotOffset or CFrame.identity) end
 	local parts = partsOf(self)
 	if #parts == 0 then return CFrame.identity end
 	local sx, sy, sz = 0, 0, 0
@@ -703,7 +704,7 @@ end
 function InstanceMethods.PivotTo(self, target)
 	local data = RawData[self]
 	if isA(data.ClassName, "BasePart") then
-		data.Props.CFrame = target
+		data.Props.CFrame = target * (data.Props.PivotOffset or CFrame.identity):Inverse()
 		return
 	end
 	local pivot = InstanceMethods.GetPivot(self)
