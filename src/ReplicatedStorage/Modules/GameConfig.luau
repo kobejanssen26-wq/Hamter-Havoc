@@ -58,7 +58,7 @@ GameConfig.Schema = {
 		GuardImmunityFromKnockback = { Default = true, Live = true, Doc = "true = an active shield blocks knockback and stun." },
 	},
 	Wheel = {
-		FreeSpinSeconds = { Default = 7200, Min = 60, Max = 604800, Live = true, Doc = "Seconds between two FREE Lucky Wheel spins (7200 = 2 hours). Applies from the next spin a player makes." },
+		FreeSpinSeconds = { Default = 3600, Min = 60, Max = 604800, Live = true, Doc = "Seconds between two FREE Lucky Wheel spins (3600 = 1 hour). Applies from the next spin a player makes." },
 		ExtraSpinGems = { Default = 40, Min = 0, Max = 1000, Live = true, Doc = "Diamonds an extra spin costs while the free one is not ready (0 = no paid spins)." },
 		CashCapPercent = { Default = 6, Min = 0.1, Max = 100, Live = true, Doc = "A cash prize can never be worth more than this percent of the player's next rebirth cost." },
 	},

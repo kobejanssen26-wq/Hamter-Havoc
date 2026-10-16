@@ -1,7 +1,7 @@
 --[[
 	SpinWheelConfig: the Lucky Wheel. Edit the numbers here (or the two live ones in the admin panel: Settings -> Wheel).
 
-	  Wheel.FreeSpinSeconds   (GameConfig, live)  one free spin becomes available this often. Default 7200 = every 2 hours.
+	  Wheel.FreeSpinSeconds   (GameConfig, live)  one free spin becomes available this often. Default 3600 = every hour.
 	  Wheel.ExtraSpinGems     (GameConfig, live)  price of an extra spin with diamonds while the free one is not ready (0 = none)
 	  Wheel.CashCapPercent    (GameConfig, live)  no cash prize may be worth more than this % of the player's NEXT REBIRTH COST
 

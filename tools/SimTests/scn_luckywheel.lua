@@ -34,7 +34,7 @@ task.spawn(function()
 
 	section("1. configuration")
 	check("the prize list has no problems", #SpinWheelConfig.validate() == 0, table.concat(SpinWheelConfig.validate(), "; "))
-	check("the free spin cooldown defaults to 2 hours (7200 s) and comes from GameConfig", SpinWheelConfig.freeSpinSeconds() == 7200 and GameConfig.default("Wheel", "FreeSpinSeconds") == 7200)
+	check("the free spin cooldown defaults to 1 hour (3600 s) and comes from GameConfig", SpinWheelConfig.freeSpinSeconds() == 3600 and GameConfig.default("Wheel", "FreeSpinSeconds") == 3600)
 	check("the wheel can be tuned live (Wheel settings exist and are Live)", GameConfig.Schema.Wheel.FreeSpinSeconds.Live and GameConfig.Schema.Wheel.ExtraSpinGems.Live)
 	local good = SpinWheelConfig.Prizes[1]
 	check("a prize with weight 0 is rejected", SpinWheelConfig.problem({ Id = "x", Weight = 0, Reward = { Gems = 5 } }) ~= nil)
@@ -127,7 +127,7 @@ task.spawn(function()
 	end
 	local okFirst, _, extra = request(false)
 	check("the first spin is free and succeeds", okFirst and extra and extra.Free == true)
-	check("the next free spin is 2 hours away (server timestamp)", a.Wheel.NextFreeAt >= os.time() + 7200 - 2 and a.Wheel.NextFreeAt <= os.time() + 7200 + 2, a.Wheel.NextFreeAt - os.time())
+	check("the next free spin is 1 hour away (server timestamp)", a.Wheel.NextFreeAt >= os.time() + 3600 - 2 and a.Wheel.NextFreeAt <= os.time() + 3600 + 2, a.Wheel.NextFreeAt - os.time())
 	check("the reward was granted (lines reported, state changed)", extra and #extra.Lines > 0 and (a.Coins ~= before.Coins or a.Gems ~= before.Gems or next(a.Gear) ~= nil or next(a.Inventory) ~= nil or next(a.Boosts or {}) ~= nil or true))
 	local okAgain = request(false)
 	check("a second request in the same moment is refused (rapid clicking)", okAgain == false)
@@ -169,7 +169,7 @@ task.spawn(function()
 	M.Sim.unix = (M.Sim.unix or 1790000000) + 7300
 	adv(1)
 	local okLater, _, laterExtra = request(false)
-	check("after 2 hours the free spin is available again", okLater and laterExtra.Free == true)
+	check("after 1 hour the free spin is available again", okLater and laterExtra.Free == true)
 
 	section("6. live change of the cooldown")
 	adv(6)

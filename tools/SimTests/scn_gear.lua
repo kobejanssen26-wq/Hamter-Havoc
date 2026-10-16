@@ -691,7 +691,7 @@ task.spawn(function()
 	local coinsBeforeSpin, gemsBeforeSpin = a.Coins, a.Gems
 	click(spinBtn)
 	adv(5)
-	check("spinning uses the free spin (next free spin is hours away) and pays a prize decided by the server", a.Wheel.NextFreeAt > nextFreeBefore and a.Wheel.NextFreeAt >= os.time() + 3600)
+	check("spinning uses the free spin (next free spin is hours away) and pays a prize decided by the server", a.Wheel.NextFreeAt > nextFreeBefore and a.Wheel.NextFreeAt >= os.time() + 3000)
 	adv(1.2)
 	check("the second spin costs diamonds", string.find(tostring(RawData[byName(wheel.Gui, "Spin")[1]].Props.Text), "gems", 1, true) ~= nil, tostring(RawData[byName(wheel.Gui, "Spin")[1]].Props.Text))
 	wheel:Close(); adv(0.5)

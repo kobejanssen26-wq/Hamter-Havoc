@@ -1,5 +1,5 @@
 --[[
-	SpinSystem: the Lucky Wheel on the server. One free spin every Wheel.FreeSpinSeconds (GameConfig, default 2 hours), extra
+	SpinSystem: the Lucky Wheel on the server. One free spin every Wheel.FreeSpinSeconds (GameConfig, default 1 hour), extra
 	spins for diamonds. The prize is drawn HERE (the client only plays the animation of a result it was told), scaled to the
 	player's progress by SpinWheelConfig, granted through the same Rewards.grant as quests and daily rewards, and the
 	next-free-spin time is saved in profile.Wheel.NextFreeAt (a server timestamp: rejoining, switching servers, respawning or

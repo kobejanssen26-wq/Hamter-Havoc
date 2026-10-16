@@ -156,6 +156,25 @@ do
 	check("icons module: create() draws an icon (no emoji, no assets)", frame ~= nil and #frame:GetChildren() > 2)
 end
 
+print("== Lucky_Wheel: standalone, centred, one spin per hour ==")
+do
+	local lucky = build("Lucky_Wheel")
+	local rotor = lucky:FindFirstChild("Rotor")
+	local slices = 0
+	if rotor then
+		for _, c in rotor:GetChildren() do
+			if string.sub(c.Name, 1, 6) == "Slice_" then slices += 1 end
+		end
+	end
+	local base = lucky:FindFirstChild("Base")
+	local script = lucky:FindFirstChild("LuckyWheel")
+	check("Lucky_Wheel: has a rotor with at least 6 slices", rotor ~= nil and slices >= 6, slices)
+	check("Lucky_Wheel: pivot is the ground point under the platform", base ~= nil and lucky.PrimaryPart == base and near(base.Position.X, 0) and near(base.Position.Z, 0))
+	check("Lucky_Wheel: default cooldown is one hour", lucky:GetAttribute("CooldownSeconds") == 3600)
+	check("Lucky_Wheel: bundled server script and a prompt", script ~= nil and script.ClassName == "Script" and lucky:FindFirstChild("PromptPad", true) ~= nil and lucky:FindFirstChild("PromptPad", true):FindFirstChildWhichIsA("ProximityPrompt") ~= nil, tostring(script and script.ClassName))
+	check("Lucky_Wheel: no game-only tags left", #lucky:GetTags() == 0)
+end
+
 print("== library hygiene ==")
 for _, a in ASSETS do
 	local problems = 0

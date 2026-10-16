@@ -86,7 +86,7 @@ Creator Dashboard → Monetization → Developer Products → maak het product, 
 
 ## 10. Rad-cooldown en schaling aanpassen **[Config]**
 
-* Cooldown: `GameConfig` → `Wheel.FreeSpinSeconds` (7200 = 2 uur). Ook live in het admin-paneel (Settings). Prijs van een extra draai: `Wheel.ExtraSpinGems`.
+* Cooldown: `GameConfig` → `Wheel.FreeSpinSeconds` (3600 = 1 uur). Los model voor andere games/places: `ModelLibrary/Wheels/Lucky_Wheel.rbxm` (Insert from File; draait zelfstandig met 1 gratis draai per uur, hang je eigen beloningen aan `Won`). Ook live in het admin-paneel (Settings). Prijs van een extra draai: `Wheel.ExtraSpinGems`.
 * Schaling: cash = het grootste van "x% van je volgende rebirth-kosten" en "x minuten van je inkomen", nooit boven `Wheel.CashCapPercent` van die rebirth-kosten. Percentages en minuten zet je per prijs in `Reward.Coins`.
 
 ## 11. Poort-cooldowns en andere spelinstellingen **[Config]**
