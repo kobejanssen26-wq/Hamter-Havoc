@@ -3,16 +3,14 @@
 Open `HamsterPlaza.rbxl` in Roblox Studio → **View → Explorer**. Je ziet de wereld nu ook **zonder op Play te drukken**.
 
 > **Nieuw:** `Workspace/Environment` (bergen, bos, meren, wolken, grond) en de **Lighting**-service zijn nu echt van jou: pas ze in Studio aan, ze blijven staan bij Play (attribuut `StudioOwned = true`). Zie `docs/STUDIO_GUIDE.md`.
-> Huizen, wielen/werkbank, plein en weg worden nog steeds bij Play opnieuw gebouwd.
->
-> Let op: dit is voor huizen/plein/weg een **voorbeeldkopie**. Bij Play bouwt het spel de wereld opnieuw op vanuit de code (`WorldBuilder`).
-> Wil je iets blijvend veranderen, pas dan de bouwcode aan (zie "Welk bestand pas ik aan?"), niet de modellen in de Explorer.
+> **Ook van jou:** `HamsterPlaza` (Coins Shop, Robux Shop, rad, boog, fontein), `LeaderboardHall`, `HamsterPath` en `SpawnLocations`. Pas ze aan in Studio, druk Play, het blijft staan (attribuut `StudioOwned = true`).
+> Alleen `PlayerHouses` (de appartementen per speler) en het gouden standbeeld worden bij elke Play opnieuw gebouwd, omdat ze leven. Wil je een map terug naar de code: verwijder hem of zet `StudioOwned` op false.
 
 ## Workspace (de 3D-wereld)
 
 | Explorer-pad | Wat is het |
 |---|---|
-| `Workspace/HamsterPlaza` | Het plein: boog met gouden hamster (`PlazaArch`), `ShopHouse` (winkelgebouw), `PlazaFountain` (fontein, naast de looproute naar de ranglijsten), `ReadingNook`. De Hamster Index heeft geen gebouw meer: hij zit in de Backpack |
+| `Workspace/HamsterPlaza` | Het plein: boog met gouden hamster (`PlazaArch`), `CoinsShop` (links) en `RobuxShop` (rechts), met het rad (`LuckyWheel`) erachter, `PlazaFountain` (fontein, naast de looproute naar de ranglijsten), `ReadingNook`. De Hamster Index heeft geen gebouw meer: hij zit in de Backpack |
 | `Workspace/LeaderboardHall` | De hal aan het eind van de vrije looproute (x = 0) met 3 leaderboards (Most Hamsters / Most Steals / Most Money), een poort met bord waar je onderdoor loopt (`GatePost`, `HallSign`), een kiosk die het volledige scherm opent en de veilige zone `SafeZone` |
 | `Workspace/HamsterPath` | De weg met pijlen (`Road`, `Arrow`), het hol waar hamsters beginnen (`BurrowHill`, `BurrowHole`) en de uitgangstunnel (`ExitHill`) |
 | `Workspace/PlayerHouses/House1 … House8` | De 8 appartementen-torens. 1-4 = noordrij, 5-8 = zuidrij. In de voorbeeldkopie hebben ze 1,2,3,4,5,3,2,1 verdiepingen zodat je ziet hoe het gebouw groeit (bij Play start iedereen met 1 verdieping) |

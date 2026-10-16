@@ -24,6 +24,35 @@ local GROUND_HALF_Z = WorldLayout.GroundHalfZ
 local LOT_BACK = WorldLayout.GateDistance + WorldLayout.LotDepth -- |z| of the back hedges
 local LOT_OUTER_X = WorldLayout.HouseColumns[#WorldLayout.HouseColumns] + WorldLayout.LotHalfWidth
 
+-- Keeps scenery from overlapping: every tree / bush / rock claims a circle on the ground and a candidate that would overlap
+-- an earlier one (crown into a neighbour's trunk, rock under a crown) is skipped.
+local function newFootprints()
+	local cells: { [string]: { { number } } } = {}
+	local CELL = 24
+	local self = {}
+	function self.tryPlace(x: number, z: number, radius: number): boolean
+		local cx, cz = math.floor(x / CELL), math.floor(z / CELL)
+		for dx = -1, 1 do
+			for dz = -1, 1 do
+				local list = cells[(cx + dx) .. "," .. (cz + dz)]
+				if list then
+					for _, other in list do
+						local gap = math.sqrt((other[1] - x) ^ 2 + (other[2] - z) ^ 2)
+						if gap < other[3] + radius then
+							return false
+						end
+					end
+				end
+			end
+		end
+		local key = cx .. "," .. cz
+		cells[key] = cells[key] or {}
+		table.insert(cells[key], { x, z, radius })
+		return true
+	end
+	return self
+end
+
 -- True for points that belong to the playable core (road, promenades, lots, plaza annexes, burrow and exit).
 local function isCore(x: number, z: number): boolean
 	if math.abs(z) < 40 and math.abs(x) > LOT_OUTER_X - 20 then
@@ -142,7 +171,7 @@ end
 -- Ground transitions: the lawn does not stop at a hard line. Outside the walls grass breaks up into dirt, then scree and
 -- boulders towards the foot of the mountains; inside, flower beds soften the edge of the forest. All flat, non-colliding
 -- patches (a few hundred cheap parts) plus boulders.
-local function buildTransitions(folder: Folder, rng: Random)
+local function buildTransitions(folder: Folder, rng: Random, footprints: any)
 	local transitions = Build.folder(folder, "Transitions")
 	local DIRT = Color3.fromRGB(158, 126, 92)
 	local SCREE = Color3.fromRGB(132, 126, 134)
@@ -166,7 +195,11 @@ local function buildTransitions(folder: Folder, rng: Random)
 		local material = if t < 0.45 then Enum.Material.Ground else Enum.Material.Slate
 		patch(x, z, 5 + rng:NextNumber() * 12, if t < 0.45 then DIRT else SCREE, material)
 		if rng:NextNumber() < 0.28 + t * 0.4 then
-			Decor.rock(transitions, Vector3.new(x + (rng:NextNumber() - 0.5) * 10, 0, z + (rng:NextNumber() - 0.5) * 10), 1.2 + rng:NextNumber() * 2.2 * (0.5 + t), rng)
+			local rx, rz = x + (rng:NextNumber() - 0.5) * 10, z + (rng:NextNumber() - 0.5) * 10
+			local scale = 1.2 + rng:NextNumber() * 2.2 * (0.5 + t)
+			if footprints.tryPlace(rx, rz, 1.6 * scale + 0.6) then
+				Decor.rock(transitions, Vector3.new(rx, 0, rz), scale, rng)
+			end
 		end
 	end
 	-- flower beds just inside the forest edge, away from lots and paths
@@ -226,6 +259,7 @@ function EnvironmentBuilder.build(parent: Instance, rng: Random): Folder
 
 	-- forest in the ring between the lots and the edge of the ground
 	local forest = Build.folder(folder, "Forest")
+	local footprints = newFootprints()
 	local step = 13
 	for x = -GROUND_HALF_X + 6, GROUND_HALF_X - 6, step do
 		for z = -GROUND_HALF_Z + 6, GROUND_HALF_Z - 6, step do
@@ -236,11 +270,22 @@ function EnvironmentBuilder.build(parent: Instance, rng: Random): Folder
 				local pos = Vector3.new(px, 0, pz)
 				if roll < 0.55 then
 					local kinds = { "round", "pine", "pine", "cherry", "round" }
-					Decor.tree(forest, pos, kinds[rng:NextInteger(1, #kinds)], 1 + rng:NextNumber() * 0.9, rng)
+					local scale = 1 + rng:NextNumber() * 0.9
+					local kind = kinds[rng:NextInteger(1, #kinds)]
+					if footprints.tryPlace(px, pz, 4.4 * scale + 0.6) then
+						Decor.tree(forest, pos, kind, scale, rng)
+					end
 				elseif roll < 0.7 then
-					Decor.bush(forest, pos, 0.9 + rng:NextNumber() * 0.5, rng, rng:NextNumber() > 0.6)
+					local scale = 0.9 + rng:NextNumber() * 0.5
+					local berries = rng:NextNumber() > 0.6
+					if footprints.tryPlace(px, pz, 3 * scale) then
+						Decor.bush(forest, pos, scale, rng, berries)
+					end
 				elseif roll < 0.8 then
-					Decor.rock(forest, pos, 1 + rng:NextNumber() * 2, rng)
+					local scale = 1 + rng:NextNumber() * 2
+					if footprints.tryPlace(px, pz, 1.6 * scale + 0.6) then
+						Decor.rock(forest, pos, scale, rng)
+					end
 				end
 			end
 		end
@@ -254,14 +299,18 @@ function EnvironmentBuilder.build(parent: Instance, rng: Random): Folder
 			if math.abs(x) > GROUND_HALF_X + 8 or math.abs(z) > GROUND_HALF_Z + 8 then
 				local pos = Vector3.new(x + (rng:NextNumber() - 0.5) * 14, 0, z + (rng:NextNumber() - 0.5) * 14)
 				if rng:NextNumber() < 0.7 then
-					Decor.tree(outer, pos, if rng:NextNumber() > 0.3 then "pine" else "round", 1.4 + rng:NextNumber() * 1.1, rng)
+					local kind = if rng:NextNumber() > 0.3 then "pine" else "round"
+					local scale = 1.4 + rng:NextNumber() * 1.1
+					if footprints.tryPlace(pos.X, pos.Z, 4.4 * scale + 0.6) then
+						Decor.tree(outer, pos, kind, scale, rng)
+					end
 				end
 			end
 		end
 	end
 
 	buildBackdrop(folder, rng)
-	buildTransitions(folder, rng)
+	buildTransitions(folder, rng, footprints)
 
 	-- invisible boundary so nobody wanders off the map
 	local boundary = Build.folder(folder, "Boundary")

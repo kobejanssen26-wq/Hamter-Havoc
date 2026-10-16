@@ -1,7 +1,8 @@
 --[[
 	Hamster Plaza: the calm centre of the map. The hamster road runs straight through a paved circle and
 	under a big golden-hamster arch; two short annex paths lead to the two places that matter
-	(the Shop building in the north, a fountain in the south that leads on to the Leaderboard Hall). The Hamster Index
+	(the two shops in the north - Coins Shop on the left, Robux Shop on the right, with the Lucky Wheel on its own platform behind them -
+	and a fountain in the south that leads on to the Leaderboard Hall). The Hamster Index
 	has no building: it is a tab in the Backpack. Everything is mirror-symmetric, nothing else is placed on purpose.
 ]]
 
@@ -11,6 +12,9 @@ local LuckyWheelBuilder = require(script.Parent.LuckyWheelBuilder)
 local Palette = require(script.Parent.Palette)
 
 local PlazaBuilder = {}
+
+-- where the golden statue stands (on top of the arch): the statue itself is created at every start
+PlazaBuilder.STATUE_CFRAME = CFrame.new(0, 19.2, 0) * CFrame.Angles(0, math.rad(90), 0)
 
 local WOOD = Enum.Material.WoodPlanks
 local PLASTIC = Enum.Material.SmoothPlastic
@@ -41,10 +45,45 @@ local function darker(color: Color3): Color3
 	return color:Lerp(Color3.new(0, 0, 0), 0.25)
 end
 
-local function buildShop(parent: Instance, cframe: CFrame)
-	local model = Build.model(parent, "ShopHouse")
-	local wall = Palette.Wall
-	local roofColor = Palette.RoofColors[2]
+export type ShopStyle = {
+	Name: string, -- model name in Workspace/HamsterPlaza
+	Title: string, -- text on the sign
+	Wall: Color3,
+	Roof: Color3,
+	Accent: Color3, -- emblem and lantern glow
+	Emblem: "coin" | "gem",
+	ObjectText: string,
+	Focus: string, -- shop category the window opens on (decides Coins or Robux shop)
+}
+
+-- Edit these two tables to restyle the shops (colours, names, which shop the door opens).
+PlazaBuilder.CoinsShop = {
+	Name = "CoinsShop",
+	Title = "COINS SHOP",
+	Wall = Palette.Wall,
+	Roof = Color3.fromRGB(222, 142, 44),
+	Accent = Color3.fromRGB(255, 205, 70),
+	Emblem = "coin",
+	ObjectText = "Coins Shop",
+	Focus = "Weapons",
+} :: ShopStyle
+PlazaBuilder.RobuxShop = {
+	Name = "RobuxShop",
+	Title = "ROBUX SHOP",
+	Wall = Color3.fromRGB(222, 236, 250),
+	Roof = Color3.fromRGB(52, 104, 196),
+	Accent = Color3.fromRGB(80, 200, 255),
+	Emblem = "gem",
+	ObjectText = "Robux Shop",
+	Focus = "Gamepasses",
+} :: ShopStyle
+PlazaBuilder.ShopX = 15 -- the shops stand at x = -ShopX (Coins) and +ShopX (Robux), z = ShopZ
+PlazaBuilder.ShopZ = 52
+
+local function buildShop(parent: Instance, cframe: CFrame, style: ShopStyle)
+	local model = Build.model(parent, style.Name)
+	local wall = style.Wall
+	local roofColor = style.Roof
 	-- everything is built from a few modular pieces: foundation, 4 walls with a door gap, two roof slopes, gable ends
 	Build.part(model, "Foundation", Vector3.new(16, 0.6, 11.4), cframe * CFrame.new(0, 0.3, 5), Palette.StoneDark, Enum.Material.Cobblestone)
 	Build.part(model, "Floor", Vector3.new(14.6, 0.2, 10), cframe * CFrame.new(0, 0.65, 5), Palette.WoodLight, WOOD, { CanCollide = false })
@@ -113,7 +152,15 @@ local function buildShop(parent: Instance, cframe: CFrame)
 
 	-- hanging blade sign + painted fascia
 	local sign = Build.part(model, "Sign", Vector3.new(9.5, 2.4, 0.5), cframe * CFrame.new(0, 10.4, -0.7), Palette.WoodDark, WOOD, { CanCollide = false })
-	Build.surfaceText(sign, Enum.NormalId.Front, "HAMSTER SHOP", { TextColor = Palette.Cream, PixelsPerStud = 50 })
+	Build.surfaceText(sign, Enum.NormalId.Front, style.Title, { TextColor = Palette.Cream, PixelsPerStud = 50 })
+	-- emblem above the sign so the two shops are told apart from a distance
+	local emblemAt = cframe * CFrame.new(0, 13.4, -0.7)
+	if style.Emblem == "coin" then
+		Build.pillar(model, "Emblem", 3, 0.5, emblemAt * CFrame.Angles(math.rad(90), 0, 0), style.Accent, Enum.Material.Metal, { CanCollide = false })
+		Build.pillar(model, "EmblemFace", 2.2, 0.56, emblemAt * CFrame.Angles(math.rad(90), 0, 0), darker(style.Accent), Enum.Material.Metal, { CanCollide = false })
+	else
+		Build.deco(model, "Emblem", Vector3.new(2.2, 2.2, 0.6), emblemAt * CFrame.Angles(0, 0, math.rad(45)), style.Accent, NEON, { CanCollide = false })
+	end
 	for _, side in { -1, 1 } do
 		Build.deco(model, "SignPost", Vector3.new(0.4, 1.6, 0.4), cframe * CFrame.new(side * 4.2, 9.5, -0.5), Palette.WoodDark, WOOD)
 	end
@@ -122,12 +169,13 @@ local function buildShop(parent: Instance, cframe: CFrame)
 	for _, side in { -1, 1 } do
 		Build.pillar(model, "Barrel", 1.7, 2, cframe * CFrame.new(side * 5.4, 1.6, -1.6), Palette.Wood, WOOD)
 		Build.deco(model, "BarrelBand", Vector3.new(1.85, 0.15, 1.85), cframe * CFrame.new(side * 5.4, 1.9, -1.6), Palette.StoneDark, Enum.Material.Metal)
-		Build.blob(model, "Lantern", Vector3.new(0.8, 1.0, 0.8), cframe * CFrame.new(side * 7.2, 4, -0.5), Color3.fromRGB(255, 226, 150), NEON, { CanCollide = false })
+		Build.blob(model, "Lantern", Vector3.new(0.8, 1.0, 0.8), cframe * CFrame.new(side * 7.2, 4, -0.5), style.Accent:Lerp(Color3.new(1, 1, 1), 0.5), NEON, { CanCollide = false })
 	end
 	Build.deco(model, "CrateStack", Vector3.new(1.6, 1.6, 1.6), cframe * CFrame.new(-8.6, 1.4, -0.4), Palette.WoodLight, WOOD)
 	Build.deco(model, "CrateSmall", Vector3.new(1.1, 1.1, 1.1), cframe * CFrame.new(-8.4, 2.75, -0.5) * CFrame.Angles(0, math.rad(18), 0), Palette.Wood, WOOD)
 
-	publicPrompt(counter, "Hamster Shop", "Browse", "Shop", 14)
+	local prompt = publicPrompt(counter, style.ObjectText, "Browse", "Shop", 14)
+	prompt:SetAttribute("Focus", style.Focus)
 	return model
 end
 
@@ -173,7 +221,22 @@ local function buildArch(parent: Instance): CFrame
 		Build.surfaceText(beam, face, "HAMSTER PLAZA", { TextColor = Palette.WoodDark, PixelsPerStud = 40 })
 	end
 	Build.part(model, "StatuePlinth", Vector3.new(6, 1, 6), CFrame.new(0, 18.7, 0), Palette.Gold, Enum.Material.Metal)
-	return CFrame.new(0, 19.2, 0) * CFrame.Angles(0, math.rad(90), 0)
+	return PlazaBuilder.STATUE_CFRAME
+end
+
+-- The guest spawn on the plaza (players without a house).
+function PlazaBuilder.makeSpawn(parent: Instance): SpawnLocation
+	local spawn = Instance.new("SpawnLocation")
+	spawn.Name = "PlazaSpawn"
+	spawn.Size = Vector3.new(8, 1, 8)
+	spawn.Position = Vector3.new(-24, 0.7, -21)
+	spawn.Anchored = true
+	spawn.Neutral = true
+	spawn.Duration = 0
+	spawn.Transparency = 1
+	spawn.CanCollide = false
+	spawn.Parent = parent
+	return spawn
 end
 
 function PlazaBuilder.build(parent: Instance, rng: Random): PlazaInfo
@@ -190,8 +253,19 @@ function PlazaBuilder.build(parent: Instance, rng: Random): PlazaInfo
 	for _, sign in { 1, -1 } do
 		Build.part(folder, "AnnexPath", Vector3.new(10, 0.2, 30), CFrame.new(0, 0.12, sign * 40), Palette.Pavement, Enum.Material.Cobblestone, { CanCollide = false })
 	end
-	local north = CFrame.new(0, 0, 52)
-	buildShop(folder, north)
+	-- two shops side by side with a gap between them: Coins (left) and Robux (right). The annex path leads to a wide
+	-- approach in front of both doors, and a path continues between them to the Lucky Wheel platform behind.
+	local shopX, shopZ = PlazaBuilder.ShopX, PlazaBuilder.ShopZ
+	buildShop(folder, CFrame.new(-shopX, 0, shopZ), PlazaBuilder.CoinsShop)
+	buildShop(folder, CFrame.new(shopX, 0, shopZ), PlazaBuilder.RobuxShop)
+	Build.part(folder, "ShopApproach", Vector3.new(shopX * 2 + 4, 0.2, 6), CFrame.new(0, 0.12, shopZ - 4.5), Palette.Pavement, Enum.Material.Cobblestone, { CanCollide = false })
+	local wheelZ = LuckyWheelBuilder.CENTER.Z
+	local wheelPathStart = shopZ + 3
+	Build.part(folder, "WheelPath", Vector3.new(8, 0.2, wheelZ - 6.5 - wheelPathStart), CFrame.new(0, 0.12, (wheelPathStart + wheelZ - 6.5) / 2), Palette.Pavement, Enum.Material.Cobblestone, { CanCollide = false })
+	for _, side in { -1, 1 } do
+		Decor.flowers(folder, Vector3.new(side * 7, 0, wheelZ - 14), 2.4, 8, rng)
+		Decor.lamp(folder, Vector3.new(side * 5.4, 0, wheelZ - 9), 7)
+	end
 	-- The walking route to the Leaderboard Hall runs straight down x = 0 (see PlazaBuilder.ROUTE_HALF_WIDTH). The fountain
 	-- sits BESIDE it, in a small garden; a reading nook with trees balances the other side. Nothing solid stands in the route.
 	buildFountain(folder, CFrame.new(-20, 0, -64), rng)
@@ -208,8 +282,9 @@ function PlazaBuilder.build(parent: Instance, rng: Random): PlazaInfo
 		for _, x in { -8, 8 } do
 			Decor.lamp(folder, Vector3.new(x, 0, sign * 46), 8)
 		end
-		Decor.tree(folder, Vector3.new(-16, 0, sign * 46), "cherry", 1.2, rng)
-		Decor.tree(folder, Vector3.new(16, 0, sign * 46), "cherry", 1.2, rng)
+		local treeX = if sign > 0 then 30 else 16 -- north: beside the shops, not in front of their doors
+		Decor.tree(folder, Vector3.new(-treeX, 0, sign * 46), "cherry", 1.2, rng)
+		Decor.tree(folder, Vector3.new(treeX, 0, sign * 46), "cherry", 1.2, rng)
 	end
 	-- the plaza edge: four lamps on the diagonals and flower rings by the arch
 	for _, sx in { -1, 1 } do
@@ -219,20 +294,11 @@ function PlazaBuilder.build(parent: Instance, rng: Random): PlazaInfo
 		end
 	end
 
-	-- the physical Lucky Wheel in the north-east corner of the paving (a bench + flower bed balance the north-west corner)
+	-- the physical Lucky Wheel on its own platform in the green area behind the two shops
 	LuckyWheelBuilder.build(folder, rng)
 
-	-- guest spawn on the plaza (players without a house)
-	local spawn = Instance.new("SpawnLocation")
-	spawn.Name = "PlazaSpawn"
-	spawn.Size = Vector3.new(8, 1, 8)
-	spawn.Position = Vector3.new(-24, 0.7, -21)
-	spawn.Anchored = true
-	spawn.Neutral = true
-	spawn.Duration = 0
-	spawn.Transparency = 1
-	spawn.CanCollide = false
-	spawn.Parent = folder
+	-- guest spawn on the plaza (players without a house); WorldBuilder moves it to Workspace/SpawnLocations
+	PlazaBuilder.makeSpawn(folder)
 
 	return {
 		Folder = folder,

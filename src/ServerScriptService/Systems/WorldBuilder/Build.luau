@@ -253,6 +253,7 @@ end
 -- Client animates anything carrying these tags (see DecorAnimator).
 function Build.animate(instance: Instance, tag: string, attributes: { [string]: any }?)
 	-- attributes first: the client reads them the moment the tag appears
+	instance:SetAttribute("AnimTag", tag) -- (Restore re-adds the tag when a saved copy of the world lost it)
 	if attributes then
 		for key, value in attributes do
 			instance:SetAttribute(key, value)

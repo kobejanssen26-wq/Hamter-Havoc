@@ -20,6 +20,7 @@ local HouseBuilder = require(script.HouseBuilder)
 local LeaderboardBuilder = require(script.LeaderboardBuilder)
 local PathBuilder = require(script.PathBuilder)
 local PlazaBuilder = require(script.PlazaBuilder)
+local Restore = require(script.Restore)
 
 local HamsterBuilder = require(ReplicatedStorage.Modules.HamsterBuilder)
 local HamsterDatabase = require(ReplicatedStorage.Modules.HamsterDatabase)
@@ -66,15 +67,37 @@ local function setupLighting()
 	make("SunRaysEffect", config.SunRays)
 end
 
+-- Which parts of the world belong to Studio and which are generated at every start:
+--   Studio-owned (kept exactly as saved in the place when the folder carries StudioOwned = true, otherwise built from code):
+--       Environment, HamsterPlaza (shops, wheel, arch, fountain), LeaderboardHall, HamsterPath, SpawnLocations
+--   Always generated (they are per player / alive): PlayerHouses, the golden statue on the arch, HamsterShowcase (removed).
+-- Delete a Studio-owned folder (or set its attribute StudioOwned to false) and the next Play rebuilds it from the code.
+local STUDIO_OWNED = { "Environment", "HamsterPlaza", "LeaderboardHall", "HamsterPath", "SpawnLocations" }
+
+local function keeps(name: string): Instance?
+	local folder = Workspace:FindFirstChild(name)
+	if folder and folder:GetAttribute("StudioOwned") == true then
+		return folder
+	end
+	return nil
+end
+
+local function markOwned(folder: Instance)
+	folder:SetAttribute("StudioOwned", true)
+end
+
 function WorldBuilder.build(): World
-	-- (the editor copies in world/*.model.json and HamsterShowcase are only a preview: the real world is built below)
-	-- The scenery folder is Studio-owned (see EnvironmentConfig): when it carries StudioOwned = true it is kept exactly
-	-- as you left it in Studio. Everything else is rebuilt from code because gameplay is wired to it.
-	local environment = Workspace:FindFirstChild("Environment")
-	local keepEnvironment = environment ~= nil and environment:GetAttribute("StudioOwned") == true
+	-- (the editor copies in world/*.model.json are the place's starting point: the real systems are wired below)
+	local kept: { [string]: Instance } = {}
+	for _, name in STUDIO_OWNED do
+		local folder = keeps(name)
+		if folder then
+			kept[name] = folder
+		end
+	end
 	for _, name in { "HamsterPlaza", "LeaderboardHall", "HamsterPath", "PlayerHouses", "Environment", "SpawnLocations", "HamsterShowcase", "Baseplate" } do
 		local old = Workspace:FindFirstChild(name)
-		if old and not (name == "Environment" and keepEnvironment) then
+		if old and kept[name] ~= old then
 			old:Destroy()
 		end
 	end
@@ -82,16 +105,46 @@ function WorldBuilder.build(): World
 	setupLighting()
 	local rng = Random.new(EnvironmentConfig.Seed)
 
-	if keepEnvironment and environment then
+	-- the generators always run with the same random numbers, so a rebuilt folder looks the same as before
+	local environment = kept.Environment
+	if environment then
 		EnvironmentBuilder.adopt(environment)
 	else
-		EnvironmentBuilder.build(Workspace, rng)
+		environment = EnvironmentBuilder.build(Workspace, rng)
 	end
-	PathBuilder.build(Workspace, rng)
-	local plaza = PlazaBuilder.build(Workspace, rng)
-	local hall = LeaderboardBuilder.build(Workspace, rng)
+	local path = kept.HamsterPath
+	local pathRng = Random.new(EnvironmentConfig.Seed + 1)
+	if not path then
+		path = PathBuilder.build(Workspace, pathRng)
+		markOwned(path)
+	end
+	local plazaFolder = kept.HamsterPlaza
+	local plazaRng = Random.new(EnvironmentConfig.Seed + 2)
+	local plaza: PlazaBuilder.PlazaInfo
+	if plazaFolder then
+		plaza = { Folder = plazaFolder :: Folder, StatueCFrame = PlazaBuilder.STATUE_CFRAME }
+	else
+		plaza = PlazaBuilder.build(Workspace, plazaRng)
+		markOwned(plaza.Folder)
+	end
+	local hallFolder = kept.LeaderboardHall
+	local hallRng = Random.new(EnvironmentConfig.Seed + 3)
+	local boards = if hallFolder then LeaderboardBuilder.adopt(hallFolder) else nil
+	if not boards then
+		if hallFolder then
+			warn("[World] LeaderboardHall is missing board labels (Title / Period / Row1-10 / Footer): it was rebuilt from the code")
+			hallFolder:Destroy()
+		end
+		local hall = LeaderboardBuilder.build(Workspace, hallRng)
+		markOwned(hall.Folder)
+		boards = hall.Boards
+	end
 
-	-- the golden king watches over the road from the top of the arch
+	-- the golden king watches over the road from the top of the arch (alive: built every start, never saved)
+	local oldStatue = plaza.Folder:FindFirstChild("PlazaStatue")
+	if oldStatue then
+		oldStatue:Destroy()
+	end
 	local statue = HamsterBuilder.build(HamsterDatabase.ById.golden_king, { Scale = 2.6, Particles = false })
 	statue.Name = "PlazaStatue"
 	statue:PivotTo(plaza.StatueCFrame)
@@ -99,21 +152,36 @@ function WorldBuilder.build(): World
 	statue.Parent = plaza.Folder
 
 	-- guest spawn lives in its own folder
-	local spawns = Build.folder(Workspace, "SpawnLocations")
-	local guestSpawn = plaza.Folder:FindFirstChild("PlazaSpawn")
-	if guestSpawn then
-		guestSpawn.Parent = spawns
+	local spawns = kept.SpawnLocations
+	if not spawns then
+		spawns = Build.folder(Workspace, "SpawnLocations")
+		markOwned(spawns)
+		local guestSpawn = plaza.Folder:FindFirstChild("PlazaSpawn")
+		if guestSpawn then
+			guestSpawn.Parent = spawns
+		else
+			PlazaBuilder.makeSpawn(spawns)
+		end
+	end
+
+	-- a saved copy of the world may have lost tags / emitters: add what is missing (never removes or moves anything)
+	for _, name in STUDIO_OWNED do
+		local folder = Workspace:FindFirstChild(name)
+		if folder then
+			Restore.apply(folder)
+		end
 	end
 
 	local housesFolder = Build.folder(Workspace, "PlayerHouses")
+	local houseRng = Random.new(EnvironmentConfig.Seed + 4)
 	local houses = {}
 	for index = 1, WorldLayout.HouseCount do
-		table.insert(houses, HouseBuilder.build(housesFolder, index, WorldLayout.houseCFrame(index), rng))
+		table.insert(houses, HouseBuilder.build(housesFolder, index, WorldLayout.houseCFrame(index), houseRng))
 	end
 
 	return {
 		Houses = houses,
-		Boards = hall.Boards,
+		Boards = boards,
 		StatueCFrame = plaza.StatueCFrame,
 		PlazaFolder = plaza.Folder,
 	}

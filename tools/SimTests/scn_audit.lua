@@ -217,8 +217,109 @@ task.spawn(function()
 	end
 	check("all " .. treeCount .. " trees have their trunk reaching into the crown (no floating crowns, any scale)", treeCount > 100 and #treeBad == 0, #treeBad .. " bad, e.g. " .. tostring(treeBad[1]))
 
+	-- 5. EVERY visible decoration (also the non-colliding ones: moss, bushes, rocks, flowers, hills, lamps...) rests on something.
+	-- Only these are meant to hang in the air: the wheel's bulbs and sign, the shop lamps.
+	do
+		local HANGING = { Bulb = true, ShopLamp = true, Sign = true }
+		local all = {}
+		for _, d in M.descendants(workspace) do
+			local data = RawData[d]
+			if data.Props and data.Props.Size and data.Props.CFrame and M.InstanceMethods.IsA(d, "BasePart") and data.Props.Anchored and data.Props.Transparency ~= 1 then
+				local chain, node = {}, d
+				while node and node ~= workspace do table.insert(chain, 1, RawData[node].Name) node = RawData[node].Parent end
+				local p = { Name = data.Name, Path = table.concat(chain, "/"), CF = data.Props.CFrame, Size = data.Props.Size }
+				p.HX, p.HY, p.HZ = halfExtents(p)
+				table.insert(all, p)
+			end
+		end
+		local air = {}
+		for _, p in all do
+			local bottom = p.CF.Y - p.HY
+			if bottom > 0.45 and not HANGING[p.Name] and not string.find(p.Path, "Clouds", 1, true) and not string.find(p.Path, "PlayerHouses/House%d/Tower") then
+				local supported = false
+				for _, q in all do
+					if q ~= p then
+						local qTop, qBottom = q.CF.Y + q.HY, q.CF.Y - q.HY
+						if (math.abs(qTop - bottom) < 0.7 or (qBottom < bottom - 0.05 and qTop > bottom + 0.05)) and math.abs(q.CF.X - p.CF.X) < q.HX + p.HX and math.abs(q.CF.Z - p.CF.Z) < q.HZ + p.HZ then
+							supported = true
+							break
+						end
+					end
+				end
+				if not supported then table.insert(air, string.format("%s at (%.0f,%.1f,%.0f)", p.Path, p.CF.X, p.CF.Y, p.CF.Z)) end
+			end
+		end
+		for index = 1, math.min(#air, 10) do print("   AIR", air[index]) end
+		check("no decoration of any kind hovers in the air (" .. #all .. " visible parts checked, hanging signs / bulbs / lamps excepted)", #air == 0, #air)
+		-- a probe the audit must catch: a moss clump floating a metre above the lawn
+		local moss = { Name = "ProbeMoss", Path = "Environment/ProbeMoss", CF = CFrame.new(40, 3, 40), Size = Vector3.new(2, 1, 2) }
+		moss.HX, moss.HY, moss.HZ = halfExtents(moss)
+		local held = false
+		for _, q in all do
+			if math.abs(q.CF.X - 40) < q.HX + moss.HX and math.abs(q.CF.Z - 40) < q.HZ + moss.HZ and (math.abs(q.CF.Y + q.HY - (moss.CF.Y - moss.HY)) < 0.7) then held = true end
+		end
+		check("self-test: a clump floating above the lawn would not count as supported", not held)
+
+		-- trees: crown and trunk must not sit inside a wall, a building or a mountain
+		local treeIntruders = {}
+		local wedges = {}
+		for _, q in all do
+			if string.find(q.Path, "Backdrop", 1, true) or string.find(q.Path, "Cliff", 1, true) then table.insert(wedges, q) end
+		end
+		for _, d in M.descendants(workspace) do
+			local data = RawData[d]
+			if data.ClassName == "Model" and string.sub(data.Name, 1, 5) == "Tree_" then
+				for _, part in M.descendants(d) do
+					local pd = RawData[part]
+					if pd.Props and pd.Props.Size and pd.Props.CFrame and M.InstanceMethods.IsA(part, "BasePart") and pd.ClassName ~= "WedgePart" then
+						local tp = { Name = pd.Name, CF = pd.Props.CFrame, Size = pd.Props.Size * 0.8, Group = "Tree" }
+						tp.HX, tp.HY, tp.HZ = halfExtents(tp)
+						for _, q in solids do
+							local own, node = false, q.Part
+							while node and node ~= workspace do
+								if node == d then own = true break end
+								node = RawData[node].Parent
+							end
+							if not own and q.Group ~= "Tree" and not string.find(q.Name, "Hill", 1, true) and math.abs(q.CF.X - tp.CF.X) < q.HX + tp.HX and math.abs(q.CF.Z - tp.CF.Z) < q.HZ + tp.HZ and math.abs(q.CF.Y - tp.CF.Y) < q.HY + tp.HY then
+								if penetration(tp, q) > 0.8 and not (string.sub(q.Name, 1, 5) == "Tree_") then
+									table.insert(treeIntruders, string.format("%s in %s[%s] at (%.0f,%.0f)", pd.Name, q.Name, q.Group, tp.CF.X, tp.CF.Z))
+									break
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+		table.sort(treeIntruders)
+		for index = 1, math.min(#treeIntruders, 10) do print("   TREEHIT", treeIntruders[index]) end
+		check("no tree part stands inside a wall, building, fence or other solid", #treeIntruders == 0, #treeIntruders)
+	end
+
+	-- two physical shops, each opening its own shop, and the wheel behind them
+	local plazaFolder = workspace.HamsterPlaza
+	local function shopPrompt(modelName)
+		local model = plazaFolder:FindFirstChild(modelName)
+		local counter = model and M.InstanceMethods.FindFirstChild(model, "Counter")
+		return model, counter and counter:FindFirstChildOfClass("ProximityPrompt")
+	end
+	local coinsModel, coinsPrompt = shopPrompt("CoinsShop")
+	local robuxModel, robuxPrompt = shopPrompt("RobuxShop")
+	check("a Coins Shop and a Robux Shop building exist (the old single ShopHouse is gone)", coinsModel ~= nil and robuxModel ~= nil and plazaFolder:FindFirstChild("ShopHouse") == nil)
+	check("each has an [F] prompt that opens the Shop window", coinsPrompt ~= nil and robuxPrompt ~= nil and coinsPrompt:GetAttribute("OpenUI") == "Shop" and robuxPrompt:GetAttribute("OpenUI") == "Shop")
+	local ShopConfigModule = require(find("ReplicatedStorage.Modules.ShopConfig"))
+	local function categoryKind(id)
+		for _, c in ShopConfigModule.categories() do if c.Id == id then return c end end
+	end
+	local coinsCat, robuxCat = categoryKind(coinsPrompt:GetAttribute("Focus")), categoryKind(robuxPrompt:GetAttribute("Focus"))
+	check("the Coins Shop opens on a cash category and the Robux Shop on the game pass category", coinsCat ~= nil and robuxCat ~= nil and coinsCat.Id ~= "Gamepasses" and robuxCat.Id == "Gamepasses", tostring(coinsPrompt:GetAttribute("Focus")) .. "/" .. tostring(robuxPrompt:GetAttribute("Focus")))
+	local cx, rx = RawData[coinsModel:FindFirstChild("Counter", true)].Props.CFrame.X, RawData[robuxModel:FindFirstChild("Counter", true)].Props.CFrame.X
+	check("the shops are mirrored left/right with a walkway of at least 10 studs between them", cx < 0 and rx > 0 and (rx - cx) - 16 >= 10, string.format("%.0f/%.0f", cx, rx))
+	local sign1 = coinsModel:FindFirstChild("Sign")
+	check("they carry their own sign text", sign1 ~= nil)
+
 	-- the audit must be able to see a real problem: drop a block into the middle of the shop and look for it
-	local shop = workspace.HamsterPlaza:FindFirstChild("ShopHouse")
+	local shop = workspace.HamsterPlaza:FindFirstChild("CoinsShop")
 	local counter = shop and M.InstanceMethods.FindFirstChild(shop, "Counter")
 	local probe = M.newInstance("Part", true)
 	RawData[probe].Name = "AuditProbe"
@@ -230,7 +331,7 @@ task.spawn(function()
 	for _, q in solids do
 		if q.Group ~= "Probe" and penetration(pp, q) > 0.6 then detected += 1 end
 	end
-	check("self-test: the audit detects a block dropped into the shop", detected >= 1, detected)
+	check("self-test: the audit detects a block dropped into the Coins Shop", detected >= 1, detected)
 
 	print(string.format("PASS %d  FAIL %d", results.pass, results.fail))
 	print("== done ==")

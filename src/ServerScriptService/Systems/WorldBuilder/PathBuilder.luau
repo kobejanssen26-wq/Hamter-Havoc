@@ -12,6 +12,25 @@ local PathConfig = require(ReplicatedStorage.Modules.PathConfig)
 
 local PathBuilder = {}
 
+-- The sparkle coming out of the burrow hole (also re-added by Build.restoreRuntime when a baked copy lost it).
+function PathBuilder.addSparkle(glow: BasePart)
+	if glow:FindFirstChildOfClass("ParticleEmitter") then
+		return
+	end
+	local sparkle = Instance.new("ParticleEmitter")
+	sparkle.Texture = "rbxasset://textures/particles/sparkles_main.dds"
+	sparkle.Color = ColorSequence.new(Color3.fromRGB(255, 226, 150))
+	sparkle.LightEmission = 1
+	sparkle.Rate = 5
+	sparkle.Lifetime = NumberRange.new(1.2, 2)
+	sparkle.Speed = NumberRange.new(2, 4)
+	sparkle.SpreadAngle = Vector2.new(35, 35)
+	sparkle.EmissionDirection = Enum.NormalId.Front
+	sparkle.Size = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.5), NumberSequenceKeypoint.new(1, 0) })
+	sparkle.Parent = glow
+	glow:AddTag("AmbientParticles")
+end
+
 local function buildBurrow(parent: Instance, rng: Random)
 	local start = PathConfig.SpawnPoint
 	local _, tangent = PathConfig.pointAt(0)
@@ -38,18 +57,7 @@ local function buildBurrow(parent: Instance, rng: Random)
 	-- warm glow + sparkles from the hole: this is where hamsters appear
 	local glow = Build.deco(parent, "BurrowGlow", Vector3.new(6, 4, 2), base * CFrame.new(0, 2.2, -0.2), Color3.new(1, 1, 1), Enum.Material.SmoothPlastic, { Transparency = 1, CanQuery = false })
 	Build.light(glow, Color3.fromRGB(255, 200, 120), 1.2, 18)
-	local sparkle = Instance.new("ParticleEmitter")
-	sparkle.Texture = "rbxasset://textures/particles/sparkles_main.dds"
-	sparkle.Color = ColorSequence.new(Color3.fromRGB(255, 226, 150))
-	sparkle.LightEmission = 1
-	sparkle.Rate = 5
-	sparkle.Lifetime = NumberRange.new(1.2, 2)
-	sparkle.Speed = NumberRange.new(2, 4)
-	sparkle.SpreadAngle = Vector2.new(35, 35)
-	sparkle.EmissionDirection = Enum.NormalId.Front
-	sparkle.Size = NumberSequence.new({ NumberSequenceKeypoint.new(0, 0.5), NumberSequenceKeypoint.new(1, 0) })
-	sparkle.Parent = glow
-	glow:AddTag("AmbientParticles")
+	PathBuilder.addSparkle(glow)
 
 	Decor.flowers(parent, (base * CFrame.new(-19, 0, -4)).Position, 3, 12, rng)
 	Decor.flowers(parent, (base * CFrame.new(19, 0, -4)).Position, 3, 12, rng)

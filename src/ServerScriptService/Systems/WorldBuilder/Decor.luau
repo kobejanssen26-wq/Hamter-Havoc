@@ -313,9 +313,11 @@ function Decor.pond(parent: Instance, pos: Vector3, radius: number, rng: Random)
 	return model
 end
 
-function Decor.fireflies(parent: Instance, pos: Vector3, radius: number): Part
-	-- Ambient particles; the client enables/disables them based on the Particles setting.
-	local emitterPart = Build.deco(parent, "Fireflies", Vector3.new(radius * 2, 3, radius * 2), CFrame.new(pos + Vector3.new(0, 3, 0)), Color3.new(1, 1, 1), PLASTIC, { Transparency = 1, CanQuery = false })
+-- The firefly emitter of a "Fireflies" part (also re-added by Build.restoreRuntime when a baked copy lost it).
+function Decor.addFireflyEmitter(emitterPart: BasePart)
+	if emitterPart:FindFirstChildOfClass("ParticleEmitter") then
+		return
+	end
 	local emitter = Instance.new("ParticleEmitter")
 	emitter.Texture = "rbxasset://textures/particles/sparkles_main.dds"
 	emitter.Color = ColorSequence.new(Color3.fromRGB(255, 240, 150))
@@ -328,6 +330,12 @@ function Decor.fireflies(parent: Instance, pos: Vector3, radius: number): Part
 	emitter.Transparency = NumberSequence.new({ NumberSequenceKeypoint.new(0, 1), NumberSequenceKeypoint.new(0.2, 0.2), NumberSequenceKeypoint.new(1, 1) })
 	emitter.Parent = emitterPart
 	emitterPart:AddTag("AmbientParticles")
+end
+
+function Decor.fireflies(parent: Instance, pos: Vector3, radius: number): Part
+	-- Ambient particles; the client enables/disables them based on the Particles setting.
+	local emitterPart = Build.deco(parent, "Fireflies", Vector3.new(radius * 2, 3, radius * 2), CFrame.new(pos + Vector3.new(0, 3, 0)), Color3.new(1, 1, 1), PLASTIC, { Transparency = 1, CanQuery = false })
+	Decor.addFireflyEmitter(emitterPart)
 	return emitterPart
 end
 

@@ -1,5 +1,5 @@
 --[[
-	LuckyWheelBuilder: the physical Lucky Wheel in the plaza (north-east corner of the paving, between the shop path and the plaza edge, facing the hamster road).
+	LuckyWheelBuilder: the physical Lucky Wheel in the plaza (on its own platform in the green area behind the Coins Shop and Robux Shop, facing the hamster road).
 
 	  LuckyWheel (Model, tag "LuckyWheel")
 	    Base, trim, back pillar + two struts, axle, pointer, sign, bulbs    fixed
@@ -14,7 +14,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Build = require(script.Parent.Build)
-local Decor = require(script.Parent.Decor)
 local Palette = require(script.Parent.Palette)
 local SpinWheelConfig = require(ReplicatedStorage.Modules.SpinWheelConfig)
 
@@ -25,7 +24,7 @@ local WOOD = Enum.Material.WoodPlanks
 local METAL = Enum.Material.Metal
 local NEON = Enum.Material.Neon
 
-LuckyWheelBuilder.CENTER = Vector3.new(12.5, 0, 20.5) -- ground point under the wheel
+LuckyWheelBuilder.CENTER = Vector3.new(0, 0, 80) -- ground point under the wheel
 local RADIUS = 5.6
 local HUB_HEIGHT = 8.4
 
@@ -127,9 +126,6 @@ function LuckyWheelBuilder.build(parent: Instance, rng: Random): Model
 	prompt.Parent = pad
 	Build.target(pad, "Wheel") -- the tutorial points here
 
-	-- the matching corner on the other side keeps the plaza balanced: a bench facing the road and a flower bed
-	Decor.bench(parent, CFrame.new(-center.X, 0, center.Z) * CFrame.Angles(0, math.rad(180), 0))
-	Decor.flowers(parent, Vector3.new(-center.X, 0, center.Z + 4.5), 3.2, 12, rng)
 	return model
 end
 

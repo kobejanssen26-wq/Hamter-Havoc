@@ -195,7 +195,7 @@ task.spawn(function()
 	local prompt = pad and pad:FindFirstChildOfClass("ProximityPrompt")
 	check("an [F] prompt on the pad opens the Wheel window and the tutorial can target it", prompt ~= nil and prompt:GetAttribute("OpenUI") == "Wheel" and pad:GetAttribute("TutorialTarget") == "Wheel")
 	local center = require(find("ServerScriptService.Systems.WorldBuilder.LuckyWheelBuilder")).CENTER
-	check("it stands on the plaza paving (radius 31), clear of the road (z > 13) and of the shop path (x > 5)", center.Z - 6.5 >= 13 and center.X - 6.5 >= 5 and math.sqrt(center.X ^ 2 + center.Z ^ 2) + 6.5 <= 31.01, string.format("%.0f,%.0f", center.X, center.Z))
+	check("it stands in the green area BEHIND the two shops (shops at z 52..63, wheel platform clear of them and of the lots)", center.Z - 7 >= 64 and math.abs(center.X) <= 6 and center.Z + 7 <= 120, string.format("%.0f,%.0f", center.X, center.Z))
 
 	-- a new player spins: the physical wheel must stop on the prize the server drew
 	local bob = join("Bob", 7002)

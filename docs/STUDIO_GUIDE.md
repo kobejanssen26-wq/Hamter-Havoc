@@ -8,16 +8,17 @@ Instance: Folder, Model, Part, ModuleScript, Script, LocalScript, Lighting objec
 
 | Kind | What it is | How you change it |
 |---|---|---|
-| **Scenery (edit by hand)** | `Workspace/Environment` (ground, paths, forest, **mountains**, lakes, clouds, invisible walls) and the **Lighting** service (Atmosphere, Bloom, ColorCorrection, SunRays) | Select, move, recolour, delete, duplicate. Saved with the place. Play never regenerates it (attribute `StudioOwned = true`). |
+| **The world (edit by hand)** | `Workspace/Environment` (ground, paths, forest, **mountains**, lakes, clouds, invisible walls), `HamsterPlaza` (**Coins Shop, Robux Shop, Lucky Wheel**, arch, fountain), `LeaderboardHall`, `HamsterPath`, `SpawnLocations` and the **Lighting** service | Select, move, recolour, delete, duplicate. Saved with the place. Play never regenerates them (attribute `StudioOwned = true` on each folder): edit, press Play, see it. |
 | **Settings (edit the numbers)** | ModuleScripts in `ReplicatedStorage/Modules` and `Modules/Content/*` | Double-click the ModuleScript, change the table, press Play. |
-| **Generated gameplay objects** | Houses, working benches (wheels), plaza, road, leaderboard hall: built by ModuleScripts under `ServerScriptService/Systems/WorldBuilder` every time the server starts, because gameplay is wired to them (prompts, gates, slots) | Edit the builder ModuleScript (they are normal scripts in Studio) or the numbers in `WorldLayout` / `FloorConfig`. Editing the preview copy in the Explorer will not stick for these. |
+| **Generated at every start** | `PlayerHouses` (one apartment per player, with working benches, gates, lifts) and the golden statue on the arch. They are alive (owners, floors, slots), so ModuleScripts under `ServerScriptService/Systems/WorldBuilder` build them every time the server starts | Edit the builder ModuleScript (they are normal scripts in Studio) or the numbers in `WorldLayout` / `FloorConfig`. Editing the preview copy of a house in the Explorer will not stick. |
 
-The `Workspace` preview copies of houses/plaza/road exist so you can *see and measure* them without pressing Play.
+**How the Studio-owned folders work.** A folder with `StudioOwned = true` is kept exactly as saved. If you delete it (or set the attribute to false) the next Play builds it again from the code, and the new copy is Studio-owned from then on. Missing tags and particle emitters are added back automatically (they are never removed or moved). One rule for `LeaderboardHall`: keep the labels named `Title`, `Period`, `Row1`…`Row10`, `Footer` inside each board's `Screen/BoardGui`; if one is deleted the hall is rebuilt and the Output says so. Because your saved folder wins, changes I make to the builders do not appear in a place that already holds the old folder: use the new `HamsterPlaza.rbxl`, or delete the folder you want regenerated.
 
 ## Where is everything?
 
 | I want to change… | Open this in the Explorer |
 |---|---|
+| The two shops (Coins Shop left, Robux Shop right), the Lucky Wheel behind them | `Workspace/HamsterPlaza/CoinsShop`, `RobuxShop`, `LuckyWheel`. Names, colours and which shop the door opens: the two `ShopStyle` tables at the top of `WorldBuilder/PlazaBuilder`; the door prompt's attribute `Focus` (`Weapons` = Coins Shop, `Gamepasses` = Robux Shop) can be changed in Studio |
 | Mountains, trees, lakes, ground, clouds | `Workspace/Environment` (mountains: `Backdrop/Mountains/NearRidge · MidRidge · FarRidge`). To regenerate from numbers: set `Environment`'s attribute `StudioOwned` to false, press Play, and tweak `ReplicatedStorage/Modules/EnvironmentConfig` |
 | Sky, sun, haze, colours of the light | `Lighting` and its children (Atmosphere, Bloom, ColorCorrection, SunRays). Numbers for a fresh place: `EnvironmentConfig.Lighting` |
 | Map layout (where houses, road, plaza are) | `Modules/WorldLayout`, `Modules/PathConfig`, `Modules/Route` |
@@ -71,7 +72,7 @@ Rules of thumb:
 2. Rebirth: *Test → Clients and Servers → 1 player*. In the command bar (server): 
    `local d=require(game.ServerScriptService.Systems.DataSystem).get(game.Players:GetPlayers()[1]); d.Coins=1e7` then claim hamsters / use the rebirth screen. Place hamsters (Hamsters panel → *Work +*), rebirth, check the bench is identical, stop, play again, check again.
 3. New hamster: copy `Content/Hamsters/_Template`, remove `Enabled = false`, rename Id/DisplayName, Play, open the Hamster Index. Run the content check (see CONTENT_GUIDE §8).
-4. Environment edit: delete a mountain, press Play: it stays deleted. Set `Environment.StudioOwned = false`, Play: the scenery is regenerated.
+4. World edit: delete a mountain, recolour the Coins Shop roof, move the wheel, press Play: all of it stays. Set `Environment.StudioOwned = false` (or delete `HamsterPlaza`), Play: that folder is regenerated from the code.
 
 ## Tutorial and world markers
 `Modules/TutorialConfig` holds the 7 steps (text, order, target). Targets are found by tag: builders call `Build.target(part, "Base" | "Bench" | "Gate" | "Upgrade" | "Altar" | "Leaderboard")`.

@@ -69,6 +69,14 @@ local function export(inst, out)
 			if enc then table.insert(props, esc(k) .. ":" .. enc) end
 		end
 	end
+	local tagNames = {}
+	for tag in data.Tags do table.insert(tagNames, tag) end
+	table.sort(tagNames)
+	if #tagNames > 0 then
+		local quoted = {}
+		for _, tag in tagNames do table.insert(quoted, esc(tag)) end
+		table.insert(props, '"Tags":[' .. table.concat(quoted, ",") .. "]")
+	end
 	local attrs = {}
 	local anames = {}
 	for k in data.Attributes do table.insert(anames, k) end

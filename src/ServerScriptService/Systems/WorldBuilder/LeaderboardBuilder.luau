@@ -51,11 +51,12 @@ local function buildBoard(parent: Instance, metric: string, title: string, cfram
 	gui.MaxDistance = 90
 	gui.Parent = board
 
-	local titleLabel = label(gui, { Size = UDim2.new(1, 0, 0, 58), Font = Enum.Font.GothamBlack, TextSize = 36, TextColor3 = Palette.Gold, Text = string.upper(title) })
-	local periodLabel = label(gui, { Position = UDim2.fromOffset(0, 56), Size = UDim2.new(1, 0, 0, 28), TextSize = 18, TextColor3 = Color3.fromRGB(165, 171, 205), Text = "" })
+	local titleLabel = label(gui, { Name = "Title", Size = UDim2.new(1, 0, 0, 58), Font = Enum.Font.GothamBlack, TextSize = 36, TextColor3 = Palette.Gold, Text = string.upper(title) })
+	local periodLabel = label(gui, { Name = "Period", Position = UDim2.fromOffset(0, 56), Size = UDim2.new(1, 0, 0, 28), TextSize = 18, TextColor3 = Color3.fromRGB(165, 171, 205), Text = "" })
 	local rows = {}
 	for index = 1, ROWS do
 		local row = label(gui, {
+			Name = "Row" .. index,
 			Position = UDim2.new(0.05, 0, 0, 92 + (index - 1) * 29),
 			Size = UDim2.new(0.9, 0, 0, 27),
 			TextSize = 20,
@@ -64,8 +65,35 @@ local function buildBoard(parent: Instance, metric: string, title: string, cfram
 		})
 		table.insert(rows, row)
 	end
-	local footer = label(gui, { Position = UDim2.new(0, 0, 1, -26), Size = UDim2.new(1, 0, 0, 22), TextSize = 14, TextColor3 = Color3.fromRGB(120, 126, 160), Text = "Loading..." })
+	local footer = label(gui, { Name = "Footer", Position = UDim2.new(0, 0, 1, -26), Size = UDim2.new(1, 0, 0, 22), TextSize = 14, TextColor3 = Color3.fromRGB(120, 126, 160), Text = "Loading..." })
 	return { Metric = metric, Title = titleLabel, Period = periodLabel, Rows = rows, Footer = footer }
+end
+
+-- The boards of a Leaderboard Hall that already exists (saved in the place): found again by their names, so the labels
+-- can be restyled or moved in Studio. Returns nil for a board that lost a label (the hall is then rebuilt from code).
+function LeaderboardBuilder.adopt(folder: Instance): { Board }?
+	local boards: { Board } = {}
+	for _, metric in { "Hamsters", "Steals", "Money" } do
+		local model = folder:FindFirstChild("Board_" .. metric)
+		local screen = model and model:FindFirstChild("Screen")
+		local gui = screen and screen:FindFirstChild("BoardGui")
+		local title = gui and gui:FindFirstChild("Title")
+		local period = gui and gui:FindFirstChild("Period")
+		local footer = gui and gui:FindFirstChild("Footer")
+		if not (gui and title and period and footer and title:IsA("TextLabel") and period:IsA("TextLabel") and footer:IsA("TextLabel")) then
+			return nil
+		end
+		local rows = {}
+		for index = 1, ROWS do
+			local row = gui:FindFirstChild("Row" .. index)
+			if not (row and row:IsA("TextLabel")) then
+				return nil
+			end
+			table.insert(rows, row)
+		end
+		table.insert(boards, { Metric = metric, Title = title, Period = period, Rows = rows, Footer = footer })
+	end
+	return boards
 end
 
 function LeaderboardBuilder.build(parent: Instance, rng: Random): { Folder: Folder, Boards: { Board } }

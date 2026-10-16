@@ -33,3 +33,8 @@
 | Sky Glider / Rocket Booster | `SkyGlider`, `RocketBooster`, `MobilitySystem`, `MobilityController`, `GamepassConfig` (`Gear` benefit) | did not exist | `scn_gadgets` (33) | real feel and pass purchase; client-owned movement can be abused by modified clients |
 | Tool models | `ToolBuilder` (slingshot, cloak, mirror, banana, glider, rocket redone) | blocky placeholders | `tools/WorldPreview/tool_sheet.py` contact sheet | in-hand look in a real client |
 | Phone UI | `UIKit` scale | fits all tested window sizes (`scn_ui` matrix) | `scn_ui` | text is small at scale 0.35 on phones |
+| Shops (world) | `PlazaBuilder` (`CoinsShop`, `RobuxShop` + `ShopStyle` tables), `ShopUI` focus | one building for both shops | `scn_audit` (two shops, prompts, mirrored, 10+ studs apart), `scn_gear` | look in Studio; real Robux purchase (PassId / ProductId still 0) |
+| Lucky Wheel placement | `LuckyWheelBuilder.CENTER` = (0, 0, 80), `WheelPath` | in the plaza corner | `scn_luckywheel` section 7 | the exact spot of your screenshot (I could not see it) |
+| Studio workflow | `WorldBuilder/init` (StudioOwned folders), `Restore`, `LeaderboardBuilder.adopt` | plaza, hall and road were rebuilt at every Play, so edits vanished | `scn_studio` (20): edits survive, lost tags/emitters restored, deleted folder rebuilt, StudioOwned=false regenerates | the same check in real Studio |
+| Decoration in the air | `scn_audit` section 5 (18 000 parts, incl. non-colliding moss/bush/hills) | - | `scn_audit` | - |
+| Trees touching things | `EnvironmentBuilder` footprints, yard trees in `Yard` | 602 forest trees had a crown inside a neighbour's trunk / a rock; two yard trees touched the tower roof / fence | `scn_audit` (every tree part vs every solid) | - |
