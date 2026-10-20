@@ -33,7 +33,7 @@ function Restore.apply(root: Instance)
 		if instance:IsA("Model") then
 			if instance.Name == "LuckyWheel" then
 				instance:AddTag("LuckyWheel")
-			elseif instance.Name == "FavoritesBoard" then
+			elseif string.sub(instance.Name, 1, 14) == "FavoritesBoard" then
 				instance:AddTag("FavoritesBoard")
 			elseif instance.Name == "Cloud" then
 				instance:AddTag("Cloud")

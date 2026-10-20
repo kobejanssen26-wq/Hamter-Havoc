@@ -19,7 +19,7 @@
 	Lucky Wheel (prizes, odds, scaling,    SpinWheelConfig + GameConfig (Wheel: FreeSpinSeconds, Clockwise, SpinSeconds, CashCapPercent)
 	  cooldown)
 	Playtime rewards (8 hours)             PlaytimeConfig
-	Like & Favorite board texts            FavoritesConfig
+	Like & Favorite boards + Community window    SocialConfig (GroupId, GroupName, texts) + FavoritesConfig (board titles)
 	Hamster auras (glow, sparkles, ring)   AuraConfig (rarity defaults) + `Look.Aura` in a hamster file
 	Game passes (Robux)                    GamepassConfig
 	Rebirth cost, requirements, rewards    RebirthConfig        (what resets / is kept: RebirthConfig.ResetList / KeepList)

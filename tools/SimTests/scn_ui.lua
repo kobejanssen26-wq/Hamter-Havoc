@@ -60,7 +60,7 @@ task.spawn(function()
 	check("every shop item has a drawn icon", missingIcon == 0, missingIcon .. " missing")
 
 	-- every panel opens and closes
-	for _, name in { "Backpack", "Index", "Rebirth", "Upgrades", "Daily", "Quests", "Shop", "RobuxShop", "Settings", "Codes", "Wheel", "Playtime" } do
+	for _, name in { "Backpack", "Index", "Rebirth", "Upgrades", "Daily", "Quests", "Shop", "RobuxShop", "Settings", "Codes", "Wheel", "Playtime", "Social" } do
 		local panel = UIKit.getPanel(name)
 		check("panel exists: " .. name, panel ~= nil)
 		if panel then
@@ -71,10 +71,56 @@ task.spawn(function()
 		end
 	end
 
+	-- Community window: four separate honest actions, only Invite has a real button
+	do
+		local SocialConfig = require(find("ReplicatedStorage.Modules.SocialConfig"))
+		local panel = UIKit.getPanel("Social")
+		panel:Open(); adv(0.4)
+		local function named(name)
+			local found = {}
+			for _, d in M.descendants(panel.Gui) do if RawData[d].Name == name then table.insert(found, d) end end
+			return found
+		end
+		check("the Community window has Invite, Like and Favorite rows", #named("Row_invite") == 1 and #named("Row_like") == 1 and #named("Row_favorite") == 1)
+		check("the Group row is hidden until SocialConfig.GroupId is filled in", (SocialConfig.GroupId == 0) == (#named("Row_group") == 0))
+		check("only the Invite row has a button; Like and Favorite are plain explanations", #named("InviteButton") == 1 and (function()
+			for _, name in { "Row_like", "Row_favorite" } do
+				for _, d in M.descendants(named(name)[1]) do if RawData[d].ClassName == "TextButton" then return false end end
+			end
+			return true
+		end)())
+		local savedId = SocialConfig.GroupId
+		SocialConfig.GroupId = 4242
+		local shown = #SocialConfig.actions()
+		SocialConfig.GroupId = 0
+		local hidden = #SocialConfig.actions()
+		SocialConfig.GroupId = savedId
+		check("SocialConfig adds the Group action once a GroupId exists", shown == hidden + 1)
+		check("nothing in the window claims success", (function()
+			for _, d in M.descendants(panel.Gui) do
+				local text = RawData[d].Props.Text
+				if type(text) == "string" and (string.find(string.lower(text), "thank", 1, true) or string.find(string.lower(text), "liked!", 1, true) or string.find(string.lower(text), "reward", 1, true)) then return false end
+			end
+			return true
+		end)())
+		panel:Close(); adv(0.3)
+		local settings = UIKit.getPanel("Settings")
+		settings:Open(); adv(0.4)
+		local open
+		for _, d in M.descendants(settings.Gui) do if RawData[d].Name == "OpenCommunity" then open = d end end
+		check("Settings has a Community button that opens the window", open ~= nil)
+		if open then
+			RawData[open].Signals.Activated:Fire(); adv(0.6)
+			check("...and it does", panel.IsOpen)
+			panel:Close(); adv(0.3)
+		end
+		settings:Close(); adv(0.3)
+	end
+
 	-- text sizes: nothing a player has to read is tiny on a normal 1280x720 screen (effective size = TextSize x every UIScale above it)
 	do
 		local tiny, examples = 0, {}
-		for _, name in { "Backpack", "Index", "Rebirth", "Upgrades", "Daily", "Quests", "Shop", "RobuxShop", "Settings", "Wheel", "Playtime", "Leaderboards" } do
+		for _, name in { "Backpack", "Index", "Rebirth", "Upgrades", "Daily", "Quests", "Shop", "RobuxShop", "Settings", "Wheel", "Playtime", "Social", "Leaderboards" } do
 			local panel = UIKit.getPanel(name)
 			if panel then
 				panel:Open(); adv(0.5)
@@ -107,7 +153,7 @@ task.spawn(function()
 		local cam2 = workspace.CurrentCamera
 		local sizes = { Vector2.new(1920, 1080), Vector2.new(1366, 768), Vector2.new(1024, 768), Vector2.new(844, 390), Vector2.new(667, 375), Vector2.new(390, 844), Vector2.new(360, 640) }
 		local tooBig, detail, measured, shopPhone, minScale = 0, "", 0, nil, 9
-		for _, name in { "Backpack", "Index", "Rebirth", "Upgrades", "Daily", "Quests", "Shop", "RobuxShop", "Settings", "Codes", "Wheel", "Playtime", "Leaderboards" } do
+		for _, name in { "Backpack", "Index", "Rebirth", "Upgrades", "Daily", "Quests", "Shop", "RobuxShop", "Settings", "Codes", "Wheel", "Playtime", "Social", "Leaderboards" } do
 			local panel = UIKit.getPanel(name)
 			if panel then
 				for _, vp in sizes do

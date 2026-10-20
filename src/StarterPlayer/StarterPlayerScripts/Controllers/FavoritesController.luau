@@ -2,8 +2,8 @@
 	FavoritesController: the Like & Favorite board in the plaza.
 
 	  * Draws the pictures on the board: every GuiObject tagged "WorldIcon" with an attribute IconName gets that drawn icon (UI/Icons).
-	  * Answers the board's prompt (attribute InviteFriends): opens Roblox's OWN invite window with SocialService:PromptGameInvite,
-	    but only when Roblox says this player may send invites (CanSendGameInviteAsync). Nothing is faked: Roblox gives a game no way
+	  * Answers the board's prompt (attribute InviteFriends): opens the Community window (UI/SocialUI). Its Invite button opens
+	    Roblox's OWN invite window with SocialService:PromptGameInvite, but only when Roblox says this player may send invites (CanSendGameInviteAsync). Nothing is faked: Roblox gives a game no way
 	    to press "Like" or "Favorite" for a player, so the board only explains where those buttons are (see Modules/FavoritesConfig).
 ]]
 
@@ -60,9 +60,11 @@ function FavoritesController.start()
 		if who ~= Players.LocalPlayer or prompt:GetAttribute("InviteFriends") ~= true then
 			return
 		end
-		local problem = FavoritesController.invite()
-		if problem then
-			require(script.Parent.Parent.UI.MainUI).toast(problem, "error")
+		-- the board opens the Community window (Invite / Like / Favorite / Group); the window has the real Invite button
+		local UIKit = require(script.Parent.Parent.UI.UIKit)
+		local window = UIKit.getPanel("Social")
+		if window then
+			window:Open()
 		end
 	end)
 end

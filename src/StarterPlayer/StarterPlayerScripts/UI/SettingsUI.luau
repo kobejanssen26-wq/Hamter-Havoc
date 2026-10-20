@@ -130,6 +130,29 @@ function SettingsUI.start()
 		})
 	end
 
+	-- community: invite / like / favorite / group
+	do
+		local row = UIKit.frame(scroll, { Size = UDim2.new(1, -10, 0, 48), LayoutOrder = 998, BackgroundTransparency = 1 })
+		UIKit.icon(row, "people", { Size = UDim2.fromOffset(24, 24), Position = UDim2.new(0, 4, 0.5, 0), AnchorPoint = Vector2.new(0, 0.5) })
+		UIKit.label(row, { Position = UDim2.fromOffset(40, 0), Size = UDim2.new(0.55, -42, 1, 0), Text = "Community", TextSize = UIKit.Type.Heading, Font = UIKit.Fonts.Title })
+		UIKit.button(row, {
+			Name = "OpenCommunity",
+			Text = "Open",
+			Size = UDim2.fromOffset(170, 38),
+			Position = UDim2.new(1, -12, 0.5, 0),
+			AnchorPoint = Vector2.new(1, 0.5),
+			Color = C.Green,
+			TextSize = 15,
+			OnClick = function()
+				local social = UIKit.getPanel("Social")
+				if social then
+					panel:Close()
+					social:Open()
+				end
+			end,
+		})
+	end
+
 	-- replay the tutorial
 	do
 		local row = UIKit.frame(scroll, { Size = UDim2.new(1, -10, 0, 48), LayoutOrder = 1000, BackgroundTransparency = 1 })

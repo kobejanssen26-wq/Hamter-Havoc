@@ -318,10 +318,10 @@ task.spawn(function()
 	local sign1 = coinsModel:FindFirstChild("Sign")
 	check("they carry their own sign text", sign1 ~= nil)
 
-	-- the Like & Favorite board: informational, makes no claims, uses only Roblox's own invite window
-	do
-		local board = plazaFolder:FindFirstChild("FavoritesBoard")
-		check("a Like & Favorite board stands in the plaza, near the guest spawn (not in a path)", board ~= nil and (function()
+	-- the Like & Favorite boards: informational, make no claims, open the Community window; readable from BOTH sides
+	for _, boardName in { "FavoritesBoard", "FavoritesBoard2" } do
+		local board = plazaFolder:FindFirstChild(boardName)
+		check(boardName .. " stands in the plaza, near the guest spawn (not in a path)", board ~= nil and (function()
 			local spawnPart = workspace.SpawnLocations:FindFirstChild("PlazaSpawn")
 			local boardPart = board and board:FindFirstChild("Board")
 			if not spawnPart or not boardPart then return false end
@@ -329,20 +329,34 @@ task.spawn(function()
 			local flat = math.sqrt((a.X - b.X) ^ 2 + (a.Z - b.Z) ^ 2)
 			return flat < 16 and math.abs(b.Z) > 14 and math.abs(b.X) > 20
 		end)())
-		local texts = {}
+		local faces = {}
 		for _, d in M.descendants(board) do
-			if RawData[d].ClassName == "TextLabel" then table.insert(texts, string.lower(tostring(RawData[d].Props.Text))) end
+			if RawData[d].ClassName == "SurfaceGui" then faces[RawData[d].Name] = d end
 		end
-		local all = table.concat(texts, "|")
-		check("the board explains Like and Favorite in short words", string.find(all, "like the game", 1, true) ~= nil and string.find(all, "favorites", 1, true) ~= nil and string.find(all, "invite friends", 1, true) ~= nil)
-		check("it never claims that anything was liked, favorited or rewarded", string.find(all, "thank", 1, true) == nil and string.find(all, "reward", 1, true) == nil and string.find(all, "you liked", 1, true) == nil and string.find(all, "free ", 1, true) == nil)
-		local prompt
-		for _, d in M.descendants(board) do if RawData[d].ClassName == "ProximityPrompt" then prompt = d end end
-		check("its only action is the invite prompt (answered by the client with Roblox's invite window), nothing is granted by the server", prompt ~= nil and prompt:GetAttribute("InviteFriends") == true and prompt:GetAttribute("OpenUI") == nil and prompt:GetAttribute("SpinWheel") == nil)
-		check("its pictures are marked for the client (WorldIcon + IconName) and drawn from the icon library", (function()
+		local function textOf(gui)
+			local texts = {}
+			for _, d in M.descendants(gui) do
+				if RawData[d].ClassName == "TextLabel" then table.insert(texts, string.lower(tostring(RawData[d].Props.Text))) end
+			end
+			return table.concat(texts, "|")
+		end
+		local front, back = faces.BoardGui_Front, faces.BoardGui_Back
+		check(boardName .. " has a finished face on the front AND on the back, with the same rows", front ~= nil and back ~= nil and textOf(front) == textOf(back) and #textOf(front) > 30)
+		local all = textOf(front)
+		check(boardName .. " explains Like and Favorite in short words", string.find(all, "like the game", 1, true) ~= nil and string.find(all, "favorites", 1, true) ~= nil and string.find(all, "invite friends", 1, true) ~= nil)
+		check(boardName .. " never claims that anything was liked, favorited or rewarded", string.find(all, "thank", 1, true) == nil and string.find(all, "reward", 1, true) == nil and string.find(all, "you liked", 1, true) == nil and string.find(all, "free ", 1, true) == nil)
+		local prompts = 0
+		for _, d in M.descendants(board) do
+			if RawData[d].ClassName == "ProximityPrompt" then
+				prompts += 1
+				check(boardName .. ": its prompt only opens the Community window, nothing is granted by the server", d:GetAttribute("InviteFriends") == true and d:GetAttribute("OpenUI") == nil and d:GetAttribute("SpinWheel") == nil)
+			end
+		end
+		check(boardName .. " has one prompt on each side", prompts == 2, prompts)
+		check(boardName .. ": its pictures are marked for the client (WorldIcon + IconName), on both faces", (function()
 			local n = 0
 			for _, d in M.descendants(board) do if RawData[d].Name == "IconHost" and RawData[d].Attributes.IconName ~= nil and M.InstanceMethods.HasTag(d, "WorldIcon") then n += 1 end end
-			return n == 3
+			return n == 6 -- 3 rows (the Group row appears once SocialConfig.GroupId is filled in) x 2 faces
 		end)())
 	end
 

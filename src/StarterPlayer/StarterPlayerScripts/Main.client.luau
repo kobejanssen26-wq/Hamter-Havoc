@@ -50,6 +50,7 @@ local screens = {
 	"DailyRewardUI",
 	"WheelUI",
 	"PlaytimeUI",
+	"SocialUI",
 	"HamsterHUD",
 	"AnnouncementUI",
 	"HotbarUI",

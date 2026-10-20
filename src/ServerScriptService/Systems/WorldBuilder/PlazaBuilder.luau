@@ -15,6 +15,7 @@ local Palette = require(script.Parent.Palette)
 local PlazaBuilder = {}
 
 PlazaBuilder.FAVORITES_BOARD = CFrame.new(-34, 0, -21) * CFrame.Angles(0, math.rad(-90), 0) -- west of the guest spawn, facing it
+PlazaBuilder.FAVORITES_BOARD_2 = CFrame.new(-24, 0, -32) * CFrame.Angles(0, math.rad(180), 0) -- behind the guest spawn, facing it (every board reads from both sides)
 
 -- where the golden statue stands (on top of the arch): the statue itself is created at every start
 PlazaBuilder.STATUE_CFRAME = CFrame.new(0, 19.2, 0) * CFrame.Angles(0, math.rad(90), 0)
@@ -215,26 +216,16 @@ local function buildFountain(parent: Instance, cframe: CFrame, rng: Random)
 	return model
 end
 
--- The Like & Favorite board (see Modules/FavoritesConfig for what it can and can not do): two posts, a wooden board, three picture rows.
+-- A Like & Favorite board (see Modules/FavoritesConfig and SocialConfig for what it can and can not do): two posts, a wooden board that is
+-- readable from BOTH sides (the same picture rows on the front and on the back), and one prompt on each side that opens the Community window.
 -- The pictures are drawn by the client (frames named IconHost with the attribute IconName); the texts come from FavoritesConfig.
 -- `cframe`: the ground point under the middle of the board; the front of the board looks along -Z of this frame.
-local function buildFavoritesBoard(parent: Instance, cframe: CFrame)
-	local model = Build.model(parent, "FavoritesBoard")
-	model:AddTag("FavoritesBoard")
-	local width, height = 8.6, 6.4
-	for _, side in { -1, 1 } do
-		Build.part(model, "Post", Vector3.new(0.7, 6.8, 0.7), cframe * CFrame.new(side * 3.7, 3.4, 0.6), Palette.WoodDark, WOOD)
-		Build.deco(model, "PostCap", Vector3.new(1.0, 0.35, 1.0), cframe * CFrame.new(side * 3.7, 6.95, 0.6), Palette.Gold, Enum.Material.Metal)
-	end
-	Build.deco(model, "Frame", Vector3.new(width + 0.6, height + 0.6, 0.5), cframe * CFrame.new(0, 4.4, 0.4), Palette.Wood, WOOD)
-	local board = Build.part(model, "Board", Vector3.new(width, height, 0.4), cframe * CFrame.new(0, 4.4, 0.1), Color3.fromRGB(34, 36, 60), PLASTIC, { CanCollide = false })
-	Build.light(board, Color3.fromRGB(200, 210, 255), 0.5, 18)
-	Build.deco(model, "Glow", Vector3.new(width + 0.2, 0.25, 0.5), cframe * CFrame.new(0, 7.75, 0.1), Palette.Gold, NEON)
-	Build.deco(model, "Base", Vector3.new(8.8, 0.3, 2.2), cframe * CFrame.new(0, 0.15, 0.3), Palette.Stone, Enum.Material.Slate)
+local BOARD_WIDTH, BOARD_HEIGHT = 8.6, 7.6
 
+local function boardFace(board: BasePart, face: Enum.NormalId)
 	local gui = Instance.new("SurfaceGui")
-	gui.Name = "BoardGui"
-	gui.Face = Enum.NormalId.Front
+	gui.Name = "BoardGui_" .. face.Name
+	gui.Face = face
 	gui.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
 	gui.PixelsPerStud = 50
 	gui.LightInfluence = 0.1
@@ -256,13 +247,13 @@ local function buildFavoritesBoard(parent: Instance, cframe: CFrame)
 		return textLabel
 	end
 	text(gui, "Title", FavoritesConfig.Title, UDim2.new(1, 0, 0, 56), UDim2.fromOffset(0, 8), 38, Palette.Gold, Enum.Font.FredokaOne, Enum.TextXAlignment.Center)
-	for index, row in FavoritesConfig.Rows do
+	for index, row in FavoritesConfig.rows() do
 		local holder = Instance.new("Frame")
 		holder.Name = "Row_" .. row.Id
 		holder.BackgroundColor3 = Color3.fromRGB(52, 56, 92)
 		holder.BorderSizePixel = 0
-		holder.Size = UDim2.new(1, -28, 0, 66)
-		holder.Position = UDim2.fromOffset(14, 74 + (index - 1) * 74)
+		holder.Size = UDim2.new(1, -28, 0, 58)
+		holder.Position = UDim2.fromOffset(14, 68 + (index - 1) * 64)
 		holder.Parent = gui
 		local corner = Instance.new("UICorner")
 		corner.CornerRadius = UDim.new(0, 12)
@@ -270,27 +261,48 @@ local function buildFavoritesBoard(parent: Instance, cframe: CFrame)
 		local host = Instance.new("Frame")
 		host.Name = "IconHost"
 		host.BackgroundTransparency = 1
-		host.Size = UDim2.fromOffset(52, 52)
-		host.Position = UDim2.fromOffset(10, 7)
+		host.Size = UDim2.fromOffset(46, 46)
+		host.Position = UDim2.fromOffset(10, 6)
 		host:SetAttribute("IconName", row.Icon)
 		host.Parent = holder
-		text(holder, "RowTitle", row.Title, UDim2.new(1, -86, 0, 30), UDim2.fromOffset(72, 6), 26, Color3.new(1, 1, 1), Enum.Font.FredokaOne, Enum.TextXAlignment.Left)
-		text(holder, "RowText", row.Text, UDim2.new(1, -86, 0, 24), UDim2.fromOffset(72, 36), 17, Color3.fromRGB(190, 198, 235), Enum.Font.GothamMedium, Enum.TextXAlignment.Left)
+		text(holder, "RowTitle", row.Title, UDim2.new(1, -80, 0, 28), UDim2.fromOffset(66, 3), 25, Color3.new(1, 1, 1), Enum.Font.FredokaOne, Enum.TextXAlignment.Left)
+		text(holder, "RowText", row.Text, UDim2.new(1, -80, 0, 22), UDim2.fromOffset(66, 31), 17, Color3.fromRGB(190, 198, 235), Enum.Font.GothamMedium, Enum.TextXAlignment.Left)
 	end
 	text(gui, "Footer", FavoritesConfig.Footer, UDim2.new(1, 0, 0, 24), UDim2.new(0, 0, 1, -30), 16, Color3.fromRGB(150, 158, 200), Enum.Font.GothamMedium, Enum.TextXAlignment.Center)
+end
 
-	-- the interaction: invite friends (Roblox's own invite window; the client asks Roblox first whether it is allowed)
-	Build.deco(model, "PromptPad", Vector3.new(6, 1, 3), cframe * CFrame.new(0, 1.2, -2.6), Color3.new(1, 1, 1), PLASTIC, { Transparency = 1, CanQuery = false })
-	local prompt = Instance.new("ProximityPrompt")
-	prompt.ObjectText = FavoritesConfig.PromptObject
-	prompt.ActionText = FavoritesConfig.PromptAction
-	prompt.KeyboardKeyCode = Enum.KeyCode.F
-	prompt.HoldDuration = 0
-	prompt.MaxActivationDistance = 12
-	prompt.RequiresLineOfSight = false
-	prompt.Exclusivity = Enum.ProximityPromptExclusivity.OnePerButton
-	prompt:SetAttribute("InviteFriends", true) -- answered by the client (Controllers/FavoritesController)
-	prompt.Parent = model:FindFirstChild("PromptPad")
+local function buildFavoritesBoard(parent: Instance, cframe: CFrame, name: string)
+	local model = Build.model(parent, name)
+	model:AddTag("FavoritesBoard")
+	local width, height = BOARD_WIDTH, BOARD_HEIGHT
+	local center = height / 2 + 0.8
+	for _, side in { -1, 1 } do
+		Build.part(model, "Post", Vector3.new(0.7, height + 0.4, 0.7), cframe * CFrame.new(side * 3.7, (height + 0.4) / 2, 0.25), Palette.WoodDark, WOOD)
+		Build.deco(model, "PostCap", Vector3.new(1.0, 0.35, 1.0), cframe * CFrame.new(side * 3.7, height + 0.55, 0.25), Palette.Gold, Enum.Material.Metal)
+	end
+	-- the frame is a thin wooden border behind and around the board (it never covers either face)
+	Build.deco(model, "Frame", Vector3.new(width + 0.6, height + 0.6, 0.3), cframe * CFrame.new(0, center, 0.25), Palette.Wood, WOOD)
+	local board = Build.part(model, "Board", Vector3.new(width, height, 0.4), cframe * CFrame.new(0, center, 0.25), Color3.fromRGB(34, 36, 60), PLASTIC, { CanCollide = false })
+	Build.light(board, Color3.fromRGB(200, 210, 255), 0.5, 18)
+	Build.deco(model, "Glow", Vector3.new(width + 0.2, 0.25, 0.5), cframe * CFrame.new(0, center + height / 2 + 0.2, 0.25), Palette.Gold, NEON)
+	Build.deco(model, "Base", Vector3.new(8.8, 0.3, 2.2), cframe * CFrame.new(0, 0.15, 0.25), Palette.Stone, Enum.Material.Slate)
+	boardFace(board, Enum.NormalId.Front)
+	boardFace(board, Enum.NormalId.Back)
+
+	-- the interaction: one prompt per side opens the Community window (Invite / Like / Favorite / Group, see Controllers/FavoritesController)
+	for side, offset in { Front = -2.6, Back = 3.1 } do
+		local pad = Build.deco(model, "PromptPad_" .. side, Vector3.new(6, 1, 3), cframe * CFrame.new(0, 1.2, offset), Color3.new(1, 1, 1), PLASTIC, { Transparency = 1, CanQuery = false })
+		local prompt = Instance.new("ProximityPrompt")
+		prompt.ObjectText = FavoritesConfig.PromptObject
+		prompt.ActionText = FavoritesConfig.PromptAction
+		prompt.KeyboardKeyCode = Enum.KeyCode.F
+		prompt.HoldDuration = 0
+		prompt.MaxActivationDistance = 12
+		prompt.RequiresLineOfSight = false
+		prompt.Exclusivity = Enum.ProximityPromptExclusivity.OnePerButton
+		prompt:SetAttribute("InviteFriends", true) -- answered by the client: opens the Community window (Controllers/FavoritesController)
+		prompt.Parent = pad
+	end
 	return model
 end
 
@@ -386,7 +398,8 @@ function PlazaBuilder.build(parent: Instance, rng: Random): PlazaInfo
 	LuckyWheelBuilder.build(folder, rng)
 
 	-- the Like & Favorite board next to the guest spawn
-	buildFavoritesBoard(folder, PlazaBuilder.FAVORITES_BOARD)
+	buildFavoritesBoard(folder, PlazaBuilder.FAVORITES_BOARD, "FavoritesBoard")
+	buildFavoritesBoard(folder, PlazaBuilder.FAVORITES_BOARD_2, "FavoritesBoard2")
 
 	-- guest spawn on the plaza (players without a house); WorldBuilder moves it to Workspace/SpawnLocations
 	PlazaBuilder.makeSpawn(folder)
