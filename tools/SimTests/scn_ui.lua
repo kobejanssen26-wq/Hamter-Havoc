@@ -60,7 +60,7 @@ task.spawn(function()
 	check("every shop item has a drawn icon", missingIcon == 0, missingIcon .. " missing")
 
 	-- every panel opens and closes
-	for _, name in { "Backpack", "Index", "Rebirth", "Upgrades", "Daily", "Quests", "Shop", "RobuxShop", "Settings", "Codes", "Wheel" } do
+	for _, name in { "Backpack", "Index", "Rebirth", "Upgrades", "Daily", "Quests", "Shop", "RobuxShop", "Settings", "Codes", "Wheel", "Playtime" } do
 		local panel = UIKit.getPanel(name)
 		check("panel exists: " .. name, panel ~= nil)
 		if panel then
@@ -71,12 +71,43 @@ task.spawn(function()
 		end
 	end
 
+	-- text sizes: nothing a player has to read is tiny on a normal 1280x720 screen (effective size = TextSize x every UIScale above it)
+	do
+		local tiny, examples = 0, {}
+		for _, name in { "Backpack", "Index", "Rebirth", "Upgrades", "Daily", "Quests", "Shop", "RobuxShop", "Settings", "Wheel", "Playtime", "Leaderboards" } do
+			local panel = UIKit.getPanel(name)
+			if panel then
+				panel:Open(); adv(0.5)
+				for _, d in M.descendants(panel.Gui) do
+					local data = RawData[d]
+					if (data.ClassName == "TextLabel" or data.ClassName == "TextButton") and tostring(data.Props.Text or "") ~= "" and data.Props.Visible ~= false and (data.Props.TextTransparency or 0) < 0.9 then
+						local effective = data.Props.TextSize or 14
+						local node = RawData[d].Parent
+						while node do
+							for _, child in RawData[node].Children do
+								if RawData[child].ClassName == "UIScale" then effective *= RawData[child].Props.Scale or 1 end
+							end
+							node = RawData[node].Parent
+						end
+						if effective < 10.5 then
+							tiny += 1
+							if #examples < 8 then table.insert(examples, string.format("%s/%s %.1fpx '%s'", name, data.Name, effective, string.sub(tostring(data.Props.Text), 1, 18))) end
+						end
+					end
+				end
+				panel:Close(); adv(0.3)
+			end
+		end
+		for _, e in examples do print("   SMALL", e) end
+		check("no text in any window is smaller than about 10.5 px on a 1280x720 screen", tiny == 0, tiny)
+	end
+
 	-- every window fits on every screen size we support (phone landscape + portrait, tablet, laptop, desktop)
 	do
 		local cam2 = workspace.CurrentCamera
 		local sizes = { Vector2.new(1920, 1080), Vector2.new(1366, 768), Vector2.new(1024, 768), Vector2.new(844, 390), Vector2.new(667, 375), Vector2.new(390, 844), Vector2.new(360, 640) }
 		local tooBig, detail, measured, shopPhone, minScale = 0, "", 0, nil, 9
-		for _, name in { "Backpack", "Index", "Rebirth", "Upgrades", "Daily", "Quests", "Shop", "RobuxShop", "Settings", "Codes", "Wheel", "Leaderboards" } do
+		for _, name in { "Backpack", "Index", "Rebirth", "Upgrades", "Daily", "Quests", "Shop", "RobuxShop", "Settings", "Codes", "Wheel", "Playtime", "Leaderboards" } do
 			local panel = UIKit.getPanel(name)
 			if panel then
 				for _, vp in sizes do

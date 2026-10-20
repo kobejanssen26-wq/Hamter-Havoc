@@ -182,6 +182,9 @@ local function buildShop(parent: Instance, cframe: CFrame, style: ShopStyle)
 
 	local prompt = publicPrompt(counter, style.ObjectText, "Browse", style.Menu, 14)
 	prompt:SetAttribute("Focus", style.Focus)
+	if style.Menu == "Shop" then
+		Build.target(counter, "Shop") -- the tutorial points at the Coins Shop
+	end
 	return model
 end
 

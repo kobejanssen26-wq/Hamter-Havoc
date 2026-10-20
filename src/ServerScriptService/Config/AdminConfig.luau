@@ -61,6 +61,9 @@ AdminConfig.PermissionCatalog = {
 	{ Id = "Rebirth", Label = "Change rebirth count", Group = "Economy" },
 	{ Id = "Items", Label = "Grant weapons / gear / boosts", Group = "Economy" },
 	{ Id = "Hamsters", Label = "Grant hamsters", Group = "Economy" },
+	{ Id = "BaseView", Label = "Inspect a player's base (gate, bench, hamsters)", Group = "Bases" },
+	{ Id = "BaseControl", Label = "Switch a base's lasers on / off / reset, take hamsters off the bench", Group = "Bases" },
+	{ Id = "HamsterRemove", Label = "Delete owned hamsters from a player (permanent)", Group = "Bases" },
 	{ Id = "ManageRoles", Label = "Manage ordinary roles + assign them", Group = "Staff" },
 	{ Id = "ManageAdmins", Label = "Manage administrators + elevated roles", Group = "Staff" },
 }
@@ -85,18 +88,18 @@ AdminConfig.Roles = {
 	},
 	Admin = {
 		Level = 3,
-		Permissions = { "Panel", "Inspect", "Warn", "Kick", "History", "BanTemp", "BanPerm", "Unban", "Cash", "Diamonds", "Rebirth", "Items", "Hamsters", "Announce", "ServerInfo", "SafeTools", "Settings", "AuditLog" },
+		Permissions = { "Panel", "Inspect", "Warn", "Kick", "History", "BanTemp", "BanPerm", "Unban", "Cash", "Diamonds", "Rebirth", "Items", "Hamsters", "BaseView", "BaseControl", "HamsterRemove", "Announce", "ServerInfo", "SafeTools", "Settings", "AuditLog" },
 		Limits = { MaxCash = 1e9, MaxDiamonds = 1e6, MaxRebirths = 25, MaxBanMinutes = math.huge },
 	},
 	Moderator = {
 		Level = 2,
-		Permissions = { "Panel", "Inspect", "Warn", "Kick", "History", "BanTemp", "ServerInfo", "SafeTools" },
+		Permissions = { "Panel", "Inspect", "Warn", "Kick", "History", "BanTemp", "ServerInfo", "SafeTools", "BaseView" },
 		Limits = { MaxCash = 0, MaxDiamonds = 0, MaxRebirths = 0, MaxBanMinutes = 7 * 24 * 60 },
 	},
 	Developer = {
 		Level = 1,
 		-- testing tools only: no kicking, banning or announcing
-		Permissions = { "Panel", "Inspect", "ServerInfo", "SafeTools", "Settings", "Cash", "Diamonds", "Rebirth", "Items", "Hamsters", "AuditLog" },
+		Permissions = { "Panel", "Inspect", "ServerInfo", "SafeTools", "Settings", "Cash", "Diamonds", "Rebirth", "Items", "Hamsters", "BaseView", "BaseControl", "AuditLog" },
 		Limits = { MaxCash = 1e8, MaxDiamonds = 1e5, MaxRebirths = 25, MaxBanMinutes = 0 },
 	},
 }

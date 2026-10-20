@@ -147,6 +147,20 @@ task.spawn(function()
 	adv(0.5)
 	check("granting an item through the picker works", DataSystem.get(other).Gear.slap_glove == true)
 
+	section("5b. bases tab")
+	M.localPlayerRef = owner
+	click(byName(panel.Gui, "Tab_Bases")[1])
+	click(byName(panel.Gui, "Player_Zed")[1])
+	adv(0.5)
+	check("the Bases tab shows the selected player's gate line and lists", #byName(panel.Gui, "GateLine") == 1 and #byName(panel.Gui, "BenchList") == 1 and #byName(panel.Gui, "OwnedList") == 1)
+	check("it has the three laser buttons", #byName(panel.Gui, "Lasers_on") == 1 and #byName(panel.Gui, "Lasers_off") == 1 and #byName(panel.Gui, "Lasers_reset") == 1)
+	local zedHouse = require(find("ServerScriptService.Systems.HouseSystem")).getHouse(other)
+	type_(byName(panel.Gui, "BaseReason")[1], "ui test")
+	click(byName(panel.Gui, "Lasers_on")[1])
+	click(byName(panel.Gui, "Lasers_on")[1]) -- confirm
+	adv(0.5)
+	check("pressing Lasers ON (with a reason, after confirming) switches the real gate", zedHouse and require(find("ServerScriptService.Systems.SecuritySystem")).status(zedHouse) == "Active")
+
 	section("6. a role with fewer rights sees fewer sections")
 	M.localPlayerRef = other
 	local opened = AdminSystem.handle(other, "open")

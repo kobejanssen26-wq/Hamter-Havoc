@@ -10,10 +10,45 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local GameConfig = require(ReplicatedStorage.Modules.GameConfig)
 local TutorialConfig = require(ReplicatedStorage.Modules.TutorialConfig)
 
+local HamsterDatabase = require(ReplicatedStorage.Modules.HamsterDatabase)
+local HamsterStates = require(ReplicatedStorage.Modules.HamsterStates)
+
 local DataSystem = require(script.Parent.DataSystem)
+local HamsterSystem = require(script.Parent.HamsterSystem)
 local ReplicationSystem = require(script.Parent.ReplicationSystem)
 
 local TutorialSystem = {}
+
+local STARTER_WAIT = 20 -- seconds a new player may look at the road without any hamster ball they can afford
+local waiting: { [Player]: number } = {}
+
+-- The "Get your first hamster" step must always be completable: when no ball the player can afford has rolled by for a while,
+-- one cheap one (the cheapest hamster that is allowed to roll for this player) is sent down the road for them.
+local function ensureAffordableBall(player: Player, data: any)
+	for _, entity in HamsterSystem.all() do
+		if entity.State == HamsterStates.Travelling and entity.Price <= data.Coins then
+			waiting[player] = nil
+			return
+		end
+	end
+	waiting[player] = (waiting[player] or 0) + 1
+	if waiting[player] < STARTER_WAIT then
+		return
+	end
+	waiting[player] = 0
+	local best = nil
+	for _, species in HamsterDatabase.Spawnable.Basic or {} do
+		if HamsterDatabase.rollable(species, data.Rebirths, os.time()) then
+			local price = HamsterDatabase.price(species)
+			if price <= data.Coins and (not best or price < HamsterDatabase.price(best)) then
+				best = species
+			end
+		end
+	end
+	if best then
+		HamsterSystem.spawn(best, player)
+	end
+end
 
 local function finish(player: Player, data: any, skipped: boolean)
 	data.Tutorial.Step = TutorialConfig.DoneStep
@@ -82,11 +117,18 @@ function TutorialSystem.check(player: Player)
 	if not step then
 		return
 	end
+	if step.Id == "hamster" then
+		ensureAffordableBall(player, data)
+	end
 	if step.Kind == "Stat" and (data.Stats[step.Stat] or 0) >= step.Need then
 		advance(player, data)
 	elseif step.Kind == "Equipped" and #data.Equipped >= 1 then
 		advance(player, data)
 	end
+end
+
+function TutorialSystem.forget(player: Player)
+	waiting[player] = nil
 end
 
 function TutorialSystem.start()

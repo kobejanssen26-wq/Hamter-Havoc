@@ -122,6 +122,25 @@ function SecuritySystem.activate(house: HouseBuilder.House): boolean
 	return true
 end
 
+-- Staff control (AdminSystem): "on" starts the lasers as if the owner pressed the panel, "off" stops them at once and makes
+-- the gate ready, "reset" clears both timers (the owner may switch it on again straight away).
+function SecuritySystem.adminSet(house: HouseBuilder.House, mode: string): boolean
+	if not house.Owner then
+		return false
+	end
+	if mode == "on" then
+		return SecuritySystem.activate(house)
+	end
+	if mode ~= "off" and mode ~= "reset" then
+		return false
+	end
+	local entry = timersOf(house)
+	entry.Until = 0
+	entry.ReadyAt = 0
+	publish(house)
+	return true
+end
+
 local function zap(player: Player, house: HouseBuilder.House)
 	local clock = os.clock()
 	if (lastZap[player] or 0) + SecurityConfig.ZapCooldown > clock then

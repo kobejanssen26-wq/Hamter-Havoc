@@ -47,7 +47,7 @@ task.spawn(function()
 	end
 	local order = {}
 	for _, step in TutorialConfig.Steps do table.insert(order, step.Id) end
-	check("the tutorial has the 9 steps in order: base, hamster, bench, income, gate, upgrade, altar, wheel, leaderboard", table.concat(order, ",") == "base,hamster,bench,income,gate,upgrade,altar,wheel,leaderboard", table.concat(order, ","))
+	check("the tutorial has the 11 steps in order: base, hamster, bench, income, gate, upgrade, collection, altar, shop, wheel, leaderboard", table.concat(order, ",") == "base,hamster,bench,income,gate,upgrade,collection,altar,shop,wheel,leaderboard", table.concat(order, ","))
 	check("no step uses a time-based advance (only Ack button, Stat, Equipped)", (function() for _, step in TutorialConfig.Steps do if step.Kind ~= "Ack" and step.Kind ~= "Stat" and step.Kind ~= "Equipped" then return false end end return true end)())
 	check("steps that read a stat declare the number needed (Need), so Target stays free for 'what to point at'", (function() for _, step in TutorialConfig.Steps do if step.Kind == "Stat" and type(step.Need) ~= "number" then return false end if type(step.Target) ~= "nil" and type(step.Target) ~= "string" then return false end end return true end)())
 
@@ -101,7 +101,7 @@ task.spawn(function()
 	check("when the object is moved the marker follows it", math.abs(mp.Z - tp.Z) < 1.5, string.format("%.1f vs %.1f", mp.Z, tp.Z))
 	RawData[target].Props.CFrame = before
 
-	section("3. walking through all 9 steps")
+	section("3. walking through all 11 steps")
 	M.isServer = false
 	check("a wrong step id can't skip ahead", not as(alice, "TutorialAck", { Step = "gate" }).ok and a.Tutorial.Step == 1)
 	local function nextButtonPress()
@@ -112,6 +112,15 @@ task.spawn(function()
 	check("Next on step 1 goes to 'Get your first hamster'", a.Tutorial.Step == 2 and textOf("Title") == "Get your first hamster", textOf("Title"))
 	check("step 2 has no Next button: you must really buy one", RawData[byName(card, "Next")[1]].Props.Visible == false)
 	check("step 2 guides to the hamster balls on the road (target name is \"Hamsters\", not a number)", TutorialUI.TargetName == "Hamsters", tostring(TutorialUI.TargetName))
+	adv(25) -- nobody spawned a ball (AutoSpawn is off): the guide must make sure there IS one the new player can pay
+	local HamsterSystem2 = require(find("ServerScriptService.Systems.HamsterSystem"))
+	local affordableBall = false
+	for _, entity in HamsterSystem2.all() do
+		if entity.State == "Travelling" and entity.Price <= a.Coins then affordableBall = true end
+	end
+	check("a new player always gets a hamster ball they can afford (the tutorial sends a cheap one when none rolled by)", affordableBall)
+	check("step 2 names the real hamster and its price", string.find(textOf("Text"), "Buy the", 1, true) ~= nil and string.find(textOf("Text"), "$", 1, true) ~= nil and string.find(textOf("Text"), "press E", 1, true) ~= nil, textOf("Text"))
+	check("step 2 shows an arrow on that ball", RawData[M.InstanceMethods.FindFirstChild(marker, "Arrow")].Props.Enabled == true)
 	a.Stats.Claimed = 1
 	adv(2.5)
 	check("buying a hamster advances to the working bench", a.Tutorial.Step == 3, a.Tutorial.Step)
@@ -130,15 +139,34 @@ task.spawn(function()
 	check("earning cash advances to 'Lock your base'", a.Tutorial.Step == 5 and textOf("Title") == "Lock your base", a.Tutorial.Step)
 	adv(0.3)
 	check("it points at MY security panel", TutorialUI.CurrentTarget ~= nil and RawData[TutorialUI.CurrentTarget].Attributes.TutorialTarget == "Gate" and ownerOf(TutorialUI.CurrentTarget) == aliceId)
-	for _, entry in { { 6, "Upgrade" }, { 7, "Rebirth altar" }, { 8, "Lucky Wheel" }, { 9, "Leaderboard" } } do
-		local expected, label = entry[1], entry[2]
+	check("the gate step tells the real laser time and recharge time (not a vague promise)", string.find(textOf("Text"), "seconds", 1, true) ~= nil and string.find(textOf("Text"), "E at your security panel", 1, true) ~= nil, textOf("Text"))
+	for _, entry in { { 6, "Upgrade", "Upgrade" }, { 7, "Your hamster collection", false }, { 8, "Rebirth altar", "Altar" }, { 9, "Coins Shop", "Shop" }, { 10, "Lucky Wheel", "Wheel" }, { 11, "Leaderboard", "Leaderboard" } } do
+		local expected, label, want = entry[1], entry[2], entry[3]
 		nextButtonPress()
-		adv(0.3)
+		adv(0.5)
 		check("step " .. expected .. " is '" .. label .. "'", a.Tutorial.Step == expected and textOf("Title") == label, textOf("Title"))
 		local t = TutorialUI.CurrentTarget
-		local want = ({ [6] = "Upgrade", [7] = "Altar", [8] = "Wheel", [9] = "Leaderboard" })[expected]
-		check("...and points at the real " .. want .. " object", t ~= nil and RawData[t].Attributes.TutorialTarget == want, t and RawData[t].Attributes.TutorialTarget)
+		if want then
+			check("...and points at the real " .. want .. " object", t ~= nil and RawData[t].Attributes.TutorialTarget == want, t and RawData[t].Attributes.TutorialTarget)
+		end
+		if expected == 6 then
+			check("the upgrade step names the cheapest real upgrade with its price", string.find(textOf("Text"), "cheapest upgrade is", 1, true) ~= nil and string.find(textOf("Text"), "$", 1, true) ~= nil, textOf("Text"))
+		elseif expected == 7 then
+			local ui = TutorialUI.UiTargetObject
+			check("the collection step outlines the REAL Backpack button on the screen with an arrow", ui ~= nil and RawData[ui].Name == "BackpackButton" and M.InstanceMethods.FindFirstChild(ui, "TutorialOutline") ~= nil and M.InstanceMethods.FindFirstChild(ui, "TutorialArrow") ~= nil, ui and RawData[ui].Name)
+		elseif expected == 8 then
+			local body = textOf("Text")
+			check("the altar step lists the requirements with what you have, what resets and what you gain", string.find(body, "Rebirth 1 needs", 1, true) ~= nil and string.find(body, "Cash", 1, true) ~= nil and string.find(body, "resets only your coins", 1, true) ~= nil and string.find(body, "You gain", 1, true) ~= nil, body)
+			check("it does not say you can rebirth while the requirements are missing", string.find(body, "You can rebirth now", 1, true) == nil and string.find(body, "Not ready yet", 1, true) ~= nil)
+		elseif expected == 9 then
+			local ui = TutorialUI.UiTargetObject
+			check("the shop step outlines the real Shop button and points at the Coins Shop building", ui ~= nil and RawData[ui].Name == "ShopButton" and t ~= nil)
+		end
 	end
+	check("when a step has no button target the outline is removed again", (function()
+		-- (the leaderboard step has none)
+		return TutorialUI.UiTargetObject == nil
+	end)())
 	nextButtonPress()
 	check("finishing marks the tutorial done and hides the card", a.Tutorial.Done == true and RawData[card].Props.Visible == false)
 	check("no marker remains after the tutorial", TutorialUI.CurrentTarget == nil and RawData[M.InstanceMethods.FindFirstChild(marker, "Arrow")].Props.Enabled == false)

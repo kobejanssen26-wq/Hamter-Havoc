@@ -8,6 +8,7 @@
 	      Order = 70,                      -- sort position inside the slot; must be unique per slot
 	      Icon = "trophy",                 -- an id from UI/Icons.luau
 	      Tooltip = "Trophies",
+	      Label = "Trophies",           -- short word printed under the icon: players should never have to guess what an icon does
 	      Panel = "Trophies",              -- name of a UIKit.panel to toggle ...
 	      -- OnActivate = function() end,  -- ... or any function (one of the two is required for buttons)
 	      Visible = function() return true end,   -- optional: show only when true (re-evaluated about twice a second)
@@ -33,6 +34,7 @@ export type Definition = {
 	Order: number,
 	Icon: string?,
 	Tooltip: string?,
+	Label: string?, -- the short word printed under the icon of a rail button (max ~9 letters)
 	Panel: string?,
 	Focus: string?,
 	OnActivate: (() -> ())?,
@@ -42,7 +44,7 @@ export type Definition = {
 }
 
 UIRegistry.Slots = {
-	RightRail = { Capacity = 10, Kinds = { IconButton = true } },
+	RightRail = { Capacity = 9, Kinds = { IconButton = true } },
 	TopBar = { Capacity = 4, Kinds = { Indicator = true } },
 }
 
@@ -92,6 +94,9 @@ local function validate(def: any)
 		if type(def.Panel) ~= "string" and type(def.OnActivate) ~= "function" then
 			fail(string.format("'%s': needs Panel or OnActivate", def.Id))
 		end
+	end
+	if def.Label ~= nil and (type(def.Label) ~= "string" or #def.Label > 12) then
+		fail(string.format("'%s': Label must be short text (12 letters at most)", def.Id))
 	end
 	if def.Visible ~= nil and type(def.Visible) ~= "function" then
 		fail(string.format("'%s': Visible must be a function", def.Id))

@@ -50,10 +50,10 @@ function Yard.build(house: any, rng: Random)
 	local depth = WorldLayout.LotDepth
 
 	-- lawn, driveway, gate apron
-	Build.part(yard, "Lawn", Vector3.new(half * 2, 0.1, depth), L(0, 0.02, depth / 2), Palette.GrassLight, Enum.Material.Grass, { CanCollide = false })
-	Build.part(yard, "Driveway", Vector3.new(10.4, 0.14, WorldLayout.TowerFront + 0.5), L(0, 0.07, WorldLayout.TowerFront / 2), Palette.Pavement, Enum.Material.Cobblestone, { CanCollide = false })
+	Build.part(yard, "Lawn", Vector3.new(half * 2, 0.1, depth), L(0, 0.02, depth / 2), Palette.Grass, Enum.Material.Grass, { CanCollide = false })
+	Build.part(yard, "Driveway", Vector3.new(10.4, 0.14, WorldLayout.TowerFront - 4.0), L(0, 0.07, (WorldLayout.TowerFront - 4.0) / 2), Palette.Pavement, Enum.Material.Cobblestone, { CanCollide = false })
 	for _, side in { -1, 1 } do
-		Build.deco(yard, "DrivewayEdge", Vector3.new(0.5, 0.18, WorldLayout.TowerFront), L(side * 5.45, 0.09, WorldLayout.TowerFront / 2), Palette.PavementDark, Enum.Material.Cobblestone)
+		Build.deco(yard, "DrivewayEdge", Vector3.new(0.5, 0.18, WorldLayout.TowerFront - 4.0), L(side * 5.45, 0.09, (WorldLayout.TowerFront - 4.0) / 2), Palette.PavementDark, Enum.Material.Cobblestone)
 	end
 	Build.part(yard, "GateApron", Vector3.new(18, 0.14, 5), L(0, 0.07, 0), Palette.PavementDark, Enum.Material.Cobblestone, { CanCollide = false })
 
@@ -170,10 +170,10 @@ function Yard.build(house: any, rng: Random)
 	-----------------------------------------------------------------------
 	-- a calm garden
 	-----------------------------------------------------------------------
-	Decor.tree(yard, P(-26, 14), if house.Index % 2 == 0 then "cherry" else "round", 1.1, rng)
-	Decor.tree(yard, P(27, 24), "round", 1.1, rng)
+	Decor.tree(yard, P(-28.5, 14), if house.Index % 2 == 0 then "cherry" else "round", 0.85, rng) -- (the garden trees keep clear of the tower walls and the fence)
+	Decor.tree(yard, P(28.5, 24), "round", 0.85, rng)
 	Decor.tree(yard, P(-28.4, 62), "pine", 0.95, rng) -- (clear of the tower roof on one side and the fence on the other)
-	Decor.tree(yard, P(28.2, 62), "round", 0.9, rng)
+	Decor.tree(yard, P(29.2, 62), "round", 0.8, rng)
 	Decor.flowers(yard, P(-16, 14), 3.5, 12, rng)
 	Decor.bench(yard, cframe * CFrame.new(16, 0, 19) * CFrame.Angles(0, math.pi, 0))
 	Decor.lamp(yard, P(-7, 10), 7)

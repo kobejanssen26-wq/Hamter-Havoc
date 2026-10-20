@@ -319,6 +319,9 @@ end
 local function choose(userId: number?, name: string?, displayName: string?, role: string?)
 	selected.UserId, selected.Name, selected.DisplayName, selected.Role = userId, name, displayName, role
 	renderSelected()
+	if category == "Bases" and content then
+		AdminUI.rebuild()
+	end
 	for _, element in userIdBoxes do
 		if element:IsA("TextBox") then
 			if userId then
@@ -647,6 +650,106 @@ local function itemView(parent: Instance)
 	button.Name = "GrantItem"
 end
 
+-- Bases tab: the selected player's gate (lasers), the hamsters placed on the bench and everything they own.
+local baseState = { UserId = nil :: number?, Snapshot = nil :: any, Reason = "" }
+
+local function basesView(parent: Instance)
+	if not selected.UserId then
+		UIKit.label(parent, { Size = UDim2.new(1, -8, 0, 40), LayoutOrder = 1, Text = "Pick a player on the left to inspect their base.", TextColor3 = C.Muted, TextSize = UIKit.Type.Caption, TextWrapped = true })
+		return
+	end
+	if baseState.UserId ~= selected.UserId then
+		baseState.UserId, baseState.Snapshot = selected.UserId, nil
+		local result = call("run", "baseInfo", { target = selected.UserId }, false)
+		if result and result.ok then
+			baseState.Snapshot = result.data
+		else
+			say(if result then result.msg or "Could not load that base" else "No answer from the server", false)
+		end
+	end
+	local snapshot = baseState.Snapshot
+	if not snapshot then
+		UIKit.label(parent, { Size = UDim2.new(1, -8, 0, 40), LayoutOrder = 1, Text = "That base could not be loaded (is the player still in this server?).", TextColor3 = C.Muted, TextSize = UIKit.Type.Caption, TextWrapped = true })
+		return
+	end
+	-- the server only sends the commands this role may run, so a missing command means a hidden button
+	local function have(commandName: string): boolean
+		for _, command in data.Commands do
+			if command.Name == commandName then
+				return true
+			end
+		end
+		return false
+	end
+	local function after(result: any)
+		if result and result.ok and result.data then
+			baseState.Snapshot = result.data
+			AdminUI.rebuild()
+		end
+	end
+
+	local gate = snapshot.Gate
+	local head = UIKit.frame(parent, { Size = UDim2.new(1, -8, 0, 92), LayoutOrder = 1, BackgroundColor3 = C.Card, Name = "BaseHeader" })
+	UIKit.corner(head, 6)
+	UIKit.label(head, { Position = UDim2.fromOffset(10, 4), Size = UDim2.new(1, -20, 0, 20), Font = UIKit.Fonts.Title, TextSize = UIKit.Type.Body,
+		Text = string.format("%s  -  rebirth %d  -  %d slots  -  $%d  -  %d diamonds", snapshot.DisplayName or snapshot.Name, snapshot.Rebirths, snapshot.Slots, snapshot.Coins, snapshot.Gems) })
+	UIKit.label(head, { Position = UDim2.fromOffset(10, 26), Size = UDim2.new(1, -20, 0, 18), TextSize = UIKit.Type.Caption, Name = "GateLine", TextColor3 = C.Muted,
+		Text = if gate.State == "None" then "Gate: no base right now" else string.format("Gate / lasers: %s%s%s", gate.State,
+			if gate.ActiveFor > 0 then string.format("  (on for %ds)", gate.ActiveFor) else "", if gate.ReadyIn > 0 then string.format("  (ready in %ds)", gate.ReadyIn) else "") })
+	local reason = textBox(head, "Reason (required for actions)", UDim2.new(1, -20, 0, 26), baseState.Reason)
+	reason.Name = "BaseReason"
+	reason.Position = UDim2.fromOffset(10, 62)
+	reason.FocusLost:Connect(function()
+		baseState.Reason = reason.Text
+	end)
+
+	local controls = UIKit.frame(parent, { Size = UDim2.new(1, -8, 0, 36), LayoutOrder = 2, BackgroundTransparency = 1, Name = "LaserButtons" })
+	UIKit.list(controls, Enum.FillDirection.Horizontal, 6)
+	if have("baseSecurity") then
+		for _, mode in { { "on", "Lasers ON", C.Green }, { "off", "Lasers OFF", C.Red }, { "reset", "Reset timers", C.Purple } } do
+			local button = runButton(controls, { Text = mode[2], Size = UDim2.fromOffset(130, 32), Color = mode[3] }, function()
+				return "baseSecurity", { target = selected.UserId, mode = mode[1], reason = reason.Text }
+			end, after)
+			button.Name = "Lasers_" .. mode[1]
+		end
+	end
+
+	sectionTitle(parent, string.format("PLACED ON THE BENCH (%d of %d slots)", #snapshot.Bench, snapshot.Slots), 3)
+	local bench = UIKit.frame(parent, { Size = UDim2.new(1, -8, 0, 0), AutomaticSize = Enum.AutomaticSize.Y, LayoutOrder = 4, BackgroundTransparency = 1, Name = "BenchList" })
+	UIKit.list(bench, Enum.FillDirection.Vertical, 4)
+	if #snapshot.Bench == 0 then
+		UIKit.label(bench, { Size = UDim2.new(1, 0, 0, 24), Text = "Nothing is placed.", TextColor3 = C.Muted, TextSize = UIKit.Type.Caption })
+	end
+	for index, row in snapshot.Bench do
+		local line = UIKit.frame(bench, { Size = UDim2.new(1, 0, 0, 36), LayoutOrder = index, BackgroundColor3 = C.Card, Name = "Bench_" .. row.Id })
+		UIKit.corner(line, 6)
+		UIKit.label(line, { Position = UDim2.fromOffset(10, 0), Size = UDim2.new(1, -160, 1, 0), TextSize = UIKit.Type.Caption, TextXAlignment = Enum.TextXAlignment.Left,
+			Text = string.format("%s  (%s)  +%s/s  -  %d placed, %d owned%s", row.Name, row.Rarity, tostring(math.floor(row.Income * 10) / 10), row.Placed, row.Owned, if row.Locked > 0 then "  - being stolen" else "") })
+		if have("benchRemove") then
+			local button = runButton(line, { Text = "Take off bench", Size = UDim2.fromOffset(130, 28), Position = UDim2.new(1, -6, 0.5, 0), AnchorPoint = Vector2.new(1, 0.5), Color = C.Blue }, function()
+				return "benchRemove", { target = selected.UserId, hamster = row.Id, reason = reason.Text }
+			end, after)
+			button.Name = "TakeOff_" .. row.Id
+		end
+	end
+
+	sectionTitle(parent, string.format("OWNED (%d kinds)", #snapshot.Owned), 5)
+	local owned = UIKit.frame(parent, { Size = UDim2.new(1, -8, 0, 0), AutomaticSize = Enum.AutomaticSize.Y, LayoutOrder = 6, BackgroundTransparency = 1, Name = "OwnedList" })
+	UIKit.list(owned, Enum.FillDirection.Vertical, 4)
+	for index, row in snapshot.Owned do
+		local line = UIKit.frame(owned, { Size = UDim2.new(1, 0, 0, 36), LayoutOrder = index, BackgroundColor3 = C.Card, Name = "Owned_" .. row.Id })
+		UIKit.corner(line, 6)
+		UIKit.label(line, { Position = UDim2.fromOffset(10, 0), Size = UDim2.new(1, -160, 1, 0), TextSize = UIKit.Type.Caption, TextXAlignment = Enum.TextXAlignment.Left,
+			Text = string.format("%s  (%s)  x%d  -  %d placed", row.Name, row.Rarity, row.Owned, row.Placed) })
+		if have("hamsterRemove") then
+			local button = runButton(line, { Text = "Delete 1", Size = UDim2.fromOffset(130, 28), Position = UDim2.new(1, -6, 0.5, 0), AnchorPoint = Vector2.new(1, 0.5), Color = C.Red }, function()
+				return "hamsterRemove", { target = selected.UserId, hamster = row.Id, amount = 1, reason = reason.Text }
+			end, after)
+			button.Name = "Delete_" .. row.Id
+		end
+	end
+end
+
 -- tabs this person may use (computed from what the server sent)
 function AdminUI.tabList(): { any }
 	local tabs = { { Id = "Dashboard", Text = "Dashboard" } }
@@ -663,6 +766,7 @@ function AdminUI.tabList(): { any }
 	add("Roles", "Roles", data.Roles ~= nil)
 	add("Moderation", "Moderation", have.Moderation)
 	add("Economy", "Economy", have.Economy)
+	add("Bases", "Bases", have.Bases)
 	add("Hamsters", "Hamsters", have.Hamsters)
 	add("Items", "Weapons & gear", have.Items)
 	add("Game", "Game", have.Game)
@@ -671,7 +775,7 @@ function AdminUI.tabList(): { any }
 	return tabs
 end
 
-local SKIP_CARDS = { Hamsters = { giveHamster = true }, Items = { grantItem = true }, Roles = { setStaff = true, saveRole = true, deleteRole = true } }
+local SKIP_CARDS = { Bases = { baseInfo = true, baseSecurity = true, benchRemove = true, hamsterRemove = true }, Hamsters = { giveHamster = true }, Items = { grantItem = true }, Roles = { setStaff = true, saveRole = true, deleteRole = true } }
 
 local function showCategory(name: string)
 	category = name
@@ -692,6 +796,9 @@ local function showCategory(name: string)
 		return
 	elseif name == "Roles" then
 		rolesView(content)
+		return
+	elseif name == "Bases" then
+		basesView(content)
 		return
 	elseif name == "Hamsters" then
 		hamsterView(content)

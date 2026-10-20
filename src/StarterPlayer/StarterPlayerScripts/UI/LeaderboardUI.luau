@@ -210,7 +210,7 @@ function LeaderboardUI.start()
 		end
 	end)
 
-	UIRegistry.tryRegister({ Id = "Leaderboards", Kind = "IconButton", Slot = "RightRail", Order = 40, Icon = "trophy", Tooltip = "Leaderboards", Panel = "Leaderboards", Core = true })
+	UIRegistry.tryRegister({ Id = "Leaderboards", Kind = "IconButton", Slot = "RightRail", Order = 40, Icon = "trophy", Tooltip = "Leaderboards: most hamsters, steals and money", Label = "Ranking", Panel = "Leaderboards", Core = true })
 end
 
 return LeaderboardUI

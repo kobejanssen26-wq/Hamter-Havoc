@@ -18,8 +18,10 @@ local DataStoreService = game:GetService("DataStoreService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local Workspace = game:GetService("Workspace")
 
 local Modules = ReplicatedStorage.Modules
+local EconomyMath = require(Modules.EconomyMath)
 local GameConfig = require(Modules.GameConfig)
 local HamsterDatabase = require(Modules.HamsterDatabase)
 local ItemRegistry = require(Modules.ItemRegistry)
@@ -35,6 +37,9 @@ local DiscordLog = require(script.Parent.DiscordLog)
 local EconomySystem = require(script.Parent.EconomySystem)
 local Events = require(script.Parent.Events)
 local GearSystem = require(script.Parent.GearSystem)
+local HouseSystem = require(script.Parent.HouseSystem)
+local SecuritySystem = require(script.Parent.SecuritySystem)
+local TheftState = require(script.Parent.TheftState)
 local Notifier = require(script.Parent.Notifier)
 local PlayerState = require(script.Parent.PlayerState)
 local StaffStore = require(script.Parent.StaffStore)
@@ -817,6 +822,148 @@ define("inspect", {
 		return ok(string.format("%s (%d)\nCash %d  Diamonds %d  Rebirths %d\nHamsters %d (%d kinds), on the bench %d\nGear: %s\nSlaps %d  Account age %d days",
 			target.Name, target.UserId, math.floor(data.Coins), math.floor(data.Gems), data.Rebirths, hamsters, kinds, #data.Equipped,
 			if #gear == 0 then "none" else table.concat(gear, ", "), data.Stats.Slaps or 0, target.AccountAge))
+	end,
+})
+
+-- ---- bases ------------------------------------------------------------------
+-- Everything about one player's base for the "Bases" tab: gate state, bench (placed) and collection (owned).
+local function baseSnapshot(target: Player): any
+	local data = profile(target)
+	if not data then return nil end
+	local house = HouseSystem.getHouse(target)
+	local placed: { [string]: number } = {}
+	for _, id in data.Equipped do
+		placed[id] = (placed[id] or 0) + 1
+	end
+	local function row(id: string, owned: number)
+		local species = HamsterDatabase.ById[id]
+		return {
+			Id = id, Name = if species then species.Name else id, Rarity = if species then species.Rarity else "?",
+			Income = if species then HamsterDatabase.income(species) else 0,
+			Owned = owned, Placed = placed[id] or 0, Locked = TheftState.lockedCount(target.UserId, id),
+		}
+	end
+	local benchRows, ownedRows, seen = {}, {}, {}
+	for _, id in data.Equipped do
+		if not seen[id] then
+			seen[id] = true
+			table.insert(benchRows, row(id, data.Inventory[id] or 0))
+		end
+	end
+	for id, count in data.Inventory do
+		if count > 0 then
+			table.insert(ownedRows, row(id, count))
+		end
+	end
+	table.sort(ownedRows, function(a, b)
+		if a.Income ~= b.Income then return a.Income > b.Income end
+		return a.Id < b.Id
+	end)
+	local now = Workspace:GetServerTimeNow()
+	local gate = { State = "None", ActiveFor = 0, ReadyIn = 0, House = 0 }
+	if house then
+		gate.State = SecuritySystem.status(house)
+		gate.House = house.Index
+		gate.ActiveFor = math.max(0, math.floor((house.Model:GetAttribute("SecUntil") or 0) - now))
+		gate.ReadyIn = math.max(0, math.floor((house.Model:GetAttribute("SecReady") or 0) - now))
+	end
+	return {
+		UserId = target.UserId, Name = target.Name, DisplayName = target.DisplayName, Rebirths = data.Rebirths,
+		Coins = math.floor(data.Coins), Gems = math.floor(data.Gems), Slots = EconomyMath.slots(data), Gate = gate,
+		Bench = benchRows, Owned = ownedRows, Role = AdminSystem.roleOf(target),
+	}
+end
+
+define("baseInfo", {
+	Category = "Bases", Label = "Inspect base", Permission = "BaseView",
+	Params = { { Name = "target", Type = "player", Label = "Player" } },
+	Run = function(c: Context): Result
+		local snapshot = baseSnapshot(c.Params.target :: Player)
+		if not snapshot then return fail("Player data is not loaded") end
+		return ok(string.format("%s: %d on the bench, %d kinds owned, gate %s", snapshot.Name, #snapshot.Bench, #snapshot.Owned, snapshot.Gate.State), snapshot)
+	end,
+})
+
+define("baseSecurity", {
+	Category = "Bases", Label = "Base lasers (on / off / reset)", Permission = "BaseControl", Confirm = true,
+	Params = {
+		{ Name = "target", Type = "player", Label = "Player" },
+		{ Name = "mode", Type = "text", Label = "on / off / reset", Max = 8 },
+		{ Name = "reason", Type = "text", Label = "Reason" },
+	},
+	Run = function(c: Context): Result
+		local target = c.Params.target :: Player
+		local mode = string.lower((string.gsub(c.Params.mode, "%s", "")))
+		if mode ~= "on" and mode ~= "off" and mode ~= "reset" then return fail("Mode must be on, off or reset") end
+		if target ~= c.Admin then
+			local allowed, why = mayActOn(c.Admin, target.UserId)
+			if not allowed then return fail(why :: string) end
+		end
+		local house = HouseSystem.getHouse(target)
+		if not house then return fail(target.Name .. " has no base right now") end
+		if not SecuritySystem.adminSet(house, mode) then return fail("The lasers could not be changed") end
+		audit(c.Admin, "baseSecurity", target.UserId, string.format("%s lasers %s (house %d)", target.Name, mode, house.Index), c.Params.reason)
+		return ok(string.format("%s's lasers: %s", target.Name, mode), baseSnapshot(target))
+	end,
+})
+
+define("benchRemove", {
+	Category = "Bases", Label = "Take a hamster off the bench (keeps it owned)", Permission = "BaseControl", Confirm = true,
+	Params = {
+		{ Name = "target", Type = "player", Label = "Player" },
+		{ Name = "hamster", Type = "hamster", Label = "Hamster" },
+		{ Name = "reason", Type = "text", Label = "Reason" },
+	},
+	Run = function(c: Context): Result
+		local target, speciesId = c.Params.target :: Player, c.Params.hamster :: string
+		local allowed, why = mayActOn(c.Admin, target.UserId)
+		if not allowed then return fail(why :: string) end
+		local success, message = CollectionSystem.unequip(target, speciesId)
+		if not success then return fail(message) end
+		DataSystem.markDirty(target)
+		audit(c.Admin, "benchRemove", target.UserId, target.Name .. " bench -" .. speciesId, c.Params.reason)
+		return ok(string.format("Took %s off %s's bench (still owned)", speciesId, target.Name), baseSnapshot(target))
+	end,
+})
+
+define("hamsterRemove", {
+	Category = "Bases", Label = "DELETE an owned hamster (permanent)", Permission = "HamsterRemove", Confirm = true,
+	Params = {
+		{ Name = "target", Type = "player", Label = "Player" },
+		{ Name = "hamster", Type = "hamster", Label = "Hamster" },
+		{ Name = "amount", Type = "int", Label = "How many", Min = 1, Max = 999, Optional = true },
+		{ Name = "reason", Type = "text", Label = "Reason" },
+	},
+	Run = function(c: Context): Result
+		local target, speciesId = c.Params.target :: Player, c.Params.hamster :: string
+		local amount = (c.Params.amount or 1) :: number
+		local allowed, why = mayActOn(c.Admin, target.UserId)
+		if not allowed then return fail(why :: string) end
+		local data = profile(target)
+		if not data then return fail("Player data is not loaded") end
+		local owned = data.Inventory[speciesId] or 0
+		if owned < amount then return fail(string.format("They own only %d of that", owned)) end
+		if TheftState.lockedCount(target.UserId, speciesId) > 0 then return fail("Somebody is stealing that hamster right now - try again in a moment") end
+		-- the copies that would no longer exist leave the bench first (last placed first)
+		local remaining = owned - amount
+		local placedNow = 0
+		for _, id in data.Equipped do
+			if id == speciesId then placedNow += 1 end
+		end
+		local toUnplace = math.max(0, placedNow - remaining)
+		for index = #data.Equipped, 1, -1 do
+			if toUnplace <= 0 then break end
+			if data.Equipped[index] == speciesId then
+				table.remove(data.Equipped, index)
+				toUnplace -= 1
+			end
+		end
+		data.Inventory[speciesId] = if remaining > 0 then remaining else nil
+		ReplicationSystem.mark(target, "Inventory", "Equipped")
+		Events.EquippedChanged:Fire(target)
+		DataSystem.markDirty(target)
+		audit(c.Admin, "hamsterRemove", target.UserId, string.format("%s -%d %s (had %d)", target.Name, amount, speciesId, owned), c.Params.reason)
+		return ok(string.format("Deleted %d x %s from %s", amount, speciesId, target.Name), baseSnapshot(target))
 	end,
 })
 

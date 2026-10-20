@@ -182,13 +182,13 @@ end
 
 local function registerCore()
 	local core = {
-		{ Id = "Wheel", Order = 15, Icon = "wheel", Tooltip = "Lucky Wheel: a free spin every few hours", Panel = "Wheel", Badge = wheelBadge },
-		{ Id = "Playtime", Order = 17, Icon = "hourglass", Tooltip = "Playtime Rewards: stay in the game for rewards", Panel = "Playtime", Badge = playtimeBadge },
-		{ Id = "Quests", Order = 10, Icon = "scroll", Tooltip = "Daily Quests", Panel = "Quests", Badge = questsBadge },
-		{ Id = "Backpack", Order = 20, Icon = "backpack", Tooltip = "Backpack (I): items, hamsters, index, emotes", Panel = "Backpack" },
-		{ Id = "Shop", Order = 30, Icon = "bag", Tooltip = "Coins Shop", Panel = "Shop" },
-		{ Id = "RobuxShop", Order = 32, Icon = "crown", Tooltip = "Robux Shop: diamond packs and game passes", Panel = "RobuxShop" },
-		{ Id = "Settings", Order = 90, Icon = "gear", Tooltip = "Settings", Panel = "Settings" },
+		{ Id = "Wheel", Order = 15, Icon = "wheel", Tooltip = "Lucky Wheel: a free spin every few hours", Label = "Wheel", Panel = "Wheel", Badge = wheelBadge },
+		{ Id = "Playtime", Order = 17, Icon = "hourglass", Tooltip = "Playtime Rewards: stay in the game for rewards", Label = "Rewards", Panel = "Playtime", Badge = playtimeBadge },
+		{ Id = "Quests", Order = 10, Icon = "scroll", Tooltip = "Daily Quests", Label = "Quests", Panel = "Quests", Badge = questsBadge },
+		{ Id = "Backpack", Order = 20, Icon = "backpack", Tooltip = "Backpack (I): items, your hamster collection, the Hamster Index, emotes", Label = "Hamsters", Panel = "Backpack" },
+		{ Id = "Shop", Order = 30, Icon = "bag", Tooltip = "Coins Shop: weapons, equipment and boosts", Label = "Shop", Panel = "Shop" },
+		{ Id = "RobuxShop", Order = 32, Icon = "crown", Tooltip = "Robux Shop: diamond packs and game passes", Label = "Robux", Panel = "RobuxShop" },
+		{ Id = "Settings", Order = 90, Icon = "gear", Tooltip = "Settings", Label = "Settings", Panel = "Settings" },
 	}
 	for _, entry in core do
 		if not UIRegistry.get(entry.Id) then
@@ -218,14 +218,16 @@ function MainUI.start()
 
 	local railButton = if touch then Theme.Hud.IconButtonTouch else Theme.Hud.IconButton
 	local railSlots = UIRegistry.Slots.RightRail.Capacity
+	local RAIL_LABEL = 13 -- room for the word under every icon
+	local railTile = railButton + 12
 	local rail = UIKit.responsive(gui, {
 		Name = "Rail",
-		Design = Vector2.new(railButton, railSlots * railButton + (railSlots - 1) * 8),
+		Design = Vector2.new(railTile, railSlots * (railButton + RAIL_LABEL) + (railSlots - 1) * 6),
 		Position = UDim2.new(1, -margin, 0, Theme.Hud.TopMargin),
 		AnchorPoint = Vector2.new(1, 0),
 	})
 	regions.Rail = rail
-	UIKit.list(rail.Content, Enum.FillDirection.Vertical, 8, Enum.HorizontalAlignment.Right)
+	UIKit.list(rail.Content, Enum.FillDirection.Vertical, 6, Enum.HorizontalAlignment.Right)
 
 	local left = UIKit.responsive(gui, { Name = "LeftColumn", Design = Vector2.new(300, 420), Position = UDim2.new(0, margin, 0, Theme.Hud.TopMargin) })
 	regions.LeftColumn = left
@@ -245,6 +247,7 @@ function MainUI.start()
 	local gemsPill = UIKit.pill(topBar, { Icon = "gem", Color = C.Purple, Size = UDim2.fromOffset(112, Theme.Size.Pill), LayoutOrder = 3, OnPlus = function() MainUI.open("RobuxShop", "Diamonds") end })
 	local rebirthPill = UIKit.pill(topBar, { Icon = "rebirth", Color = C.Bronze, Size = UDim2.fromOffset(104, Theme.Size.Pill), LayoutOrder = 4 })
 	UIKit.tooltip(coinsPill.Frame, "Cash", "Below")
+	incomePill.Frame.Name = "IncomePill" -- (the tutorial points at it)
 	UIKit.tooltip(incomePill.Frame, "Money per second (all hamsters working on your bench)", "Below")
 	UIKit.tooltip(gemsPill.Frame, "Diamonds", "Below")
 	UIKit.tooltip(rebirthPill.Frame, "Rebirths completed", "Below")
@@ -356,9 +359,9 @@ function MainUI.start()
 			end
 			local button = UIKit.button(rail.Content, {
 				Text = "",
-				Size = UDim2.fromOffset(railButton, railButton),
+				Size = UDim2.fromOffset(railTile, railButton + RAIL_LABEL),
 				Color = C.Cream,
-				Corner = 99,
+				Corner = 14,
 				LayoutOrder = def.Order,
 				Name = def.Id .. "Button",
 				OnClick = function()
@@ -370,7 +373,9 @@ function MainUI.start()
 				end,
 			})
 			button.BackgroundTransparency = 0.06
-			UIKit.icon(button, def.Icon :: string, { Size = UDim2.fromOffset(railButton * 0.58, railButton * 0.58), Position = UDim2.fromScale(0.5, 0.5), AnchorPoint = Vector2.new(0.5, 0.5), ZIndex = 3 })
+			UIKit.icon(button, def.Icon :: string, { Name = "RailIcon", Size = UDim2.fromOffset(railButton * 0.58, railButton * 0.58), Position = UDim2.new(0.5, 0, 0, railButton * 0.5), AnchorPoint = Vector2.new(0.5, 0.5), ZIndex = 3 })
+			local word = UIKit.label(button, { Name = "RailLabel", Size = UDim2.new(1, -2, 0, RAIL_LABEL), Position = UDim2.new(0, 1, 1, -RAIL_LABEL - 1), Text = def.Label or def.Id, Font = UIKit.Fonts.Title, TextSize = 10, TextColor3 = C.Ink, TextXAlignment = Enum.TextXAlignment.Center, TextTruncate = Enum.TextTruncate.AtEnd, ZIndex = 3 })
+			word.TextWrapped = false
 			local dot = UIKit.notifyDot(button)
 			UIKit.tooltip(button, def.Tooltip or def.Id, "Left")
 			railViews[def.Id] = { Button = button, Dot = dot, Def = def, Base = button.BackgroundColor3 } -- (Base = the colour you gave it in Studio, if any)
