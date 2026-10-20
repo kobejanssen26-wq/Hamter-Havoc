@@ -36,6 +36,7 @@ local WorldLayout = require(Modules.WorldLayout)
 
 local Remotes = require(ReplicatedStorage.Remotes)
 
+local ActionFx = require(script.Parent.ActionFx)
 local AnnounceSystem = require(script.Parent.AnnounceSystem)
 local CollectionSystem = require(script.Parent.CollectionSystem)
 local DataSystem = require(script.Parent.DataSystem)
@@ -888,6 +889,7 @@ local function claim(player: Player, e: Entity, data: any, root: BasePart)
 	end
 	setState(e, S.InTransit)
 	fx("Claim", e)
+	ActionFx.play(player, "PickUpHamster")
 	Notifier.send(player, string.format("Claimed %s! It's rolling to your house - guard it!", e.Species.Name), "success")
 	data.Stats.Claimed = (data.Stats.Claimed or 0) + 1
 	ReplicationSystem.mark(player, "Stats")

@@ -14,6 +14,8 @@
 	  cash, ability caps ...
 	Weapons, equipment, boosts, prices     Content/Items/<YourItem>   (copy _Template)   +   ShopConfig (categories, other shop items)
 	Combat / weapon animations             docs/COMBAT_GUIDE.md, Content/Animations/Weapon_*, CombatTiming
+	Character actions (place / buy /       ActionCatalog (+ docs/ANIMATIONS.md, generated)
+	  claim / equip animations)
 	Admin owner UserId, default roles,     ServerScriptService/Config/AdminConfig   (server only; panel: F10 or /admin; roles are also
 	  permission list                        created / edited / assigned in the panel, tab Roles)
 	Lucky Wheel (prizes, odds, scaling,    SpinWheelConfig + GameConfig (Wheel: FreeSpinSeconds, Clockwise, SpinSeconds, CashCapPercent)

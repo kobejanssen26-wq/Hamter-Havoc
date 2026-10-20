@@ -156,6 +156,22 @@ if re.search(r"OwnerUserIds = \{\s*(0,?\s*)?\}", admin):
 if "DiscordConfig.Enabled = false" in discord_cfg:
     warnings.append("Discord logging is switched off (DiscordConfig.Enabled = false). Fine until you set up the webhook (docs/MAINTENANCE.md, chapter Discord)")
 
+# 9. animation catalog + community settings
+import subprocess
+doc_check = subprocess.run([sys.executable, os.path.join(ROOT, "tools", "ReleaseCheck", "gen_animation_docs.py"), "--check"], capture_output=True, text=True)
+if doc_check.returncode != 0:
+    errors.append("docs/ANIMATIONS.md is out of date: run python3 tools/ReleaseCheck/gen_animation_docs.py")
+catalog = read(os.path.join(SRC, "ReplicatedStorage", "Modules", "ActionCatalog.luau"))
+animation_names = {m for p in glob.glob(os.path.join(SRC, "ReplicatedStorage", "Modules", "Content", "Animations", "*.luau")) if not os.path.basename(p).startswith("_") for m in re.findall(r"\bName = \"([^\"]+)\"", read(p))}
+for name in re.findall(r"\bAnimation = \"([A-Za-z0-9_]+)\"", catalog):
+    if name not in animation_names:
+        errors.append(f"ActionCatalog refers to the animation '{name}' that does not exist in Content/Animations")
+if re.search(r"rbxassetid://\d+", catalog):
+    errors.append("ActionCatalog contains an asset id: ids belong in Content/Animations files only")
+social = read(os.path.join(SRC, "ReplicatedStorage", "Modules", "SocialConfig.luau"))
+if re.search(r"SocialConfig\.GroupId = 0\b", social):
+    warnings.append("SocialConfig.GroupId = 0: the Community window hides the group row until you fill in your group (docs/MAINTENANCE.md)")
+
 # ---------------------------------------------------------------------------
 print(f"release check: {len(errors)} error(s), {len(warnings)} warning(s)")
 for line in errors:

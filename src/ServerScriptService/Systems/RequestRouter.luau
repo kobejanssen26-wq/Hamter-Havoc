@@ -8,6 +8,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Remotes = require(ReplicatedStorage.Remotes)
 
+local ActionFx = require(script.Parent.ActionFx)
 local CollectionSystem = require(script.Parent.CollectionSystem)
 local HamsterSystem = require(script.Parent.HamsterSystem)
 local DataSystem = require(script.Parent.DataSystem)
@@ -75,6 +76,7 @@ end
 
 actions.EquipBest = function(player)
 	CollectionSystem.equipBest(player)
+	ActionFx.play(player, "PlaceHamster")
 	return result(true, "Best hamsters equipped")
 end
 
@@ -84,6 +86,9 @@ actions.Equip = function(player, payload)
 		return result(false, "Invalid hamster")
 	end
 	local ok, message = CollectionSystem.equip(player, id)
+	if ok then
+		ActionFx.play(player, "PlaceHamster")
+	end
 	return result(ok, message)
 end
 
@@ -93,6 +98,9 @@ actions.Unequip = function(player, payload)
 		return result(false, "Invalid hamster")
 	end
 	local ok, message = CollectionSystem.unequip(player, id)
+	if ok then
+		ActionFx.play(player, "TakeHamster")
+	end
 	return result(ok, message)
 end
 
@@ -113,21 +121,33 @@ end
 
 actions.BuyUpgrade = function(player, payload)
 	local ok, message, level = UpgradeSystem.buy(player, payload.Id)
+	if ok then
+		ActionFx.play(player, "Buy")
+	end
 	return result(ok, message, level)
 end
 
 actions.Rebirth = function(player)
 	local ok, message = RebirthSystem.perform(player)
+	if ok then
+		ActionFx.play(player, "Celebrate")
+	end
 	return result(ok, message)
 end
 
 actions.ClaimQuest = function(player, payload)
 	local ok, message = QuestSystem.claimQuest(player, payload.Id)
+	if ok then
+		ActionFx.play(player, "ClaimReward")
+	end
 	return result(ok, message)
 end
 
 actions.ClaimAchievement = function(player, payload)
 	local ok, message = QuestSystem.claimAchievement(player, payload.Id)
+	if ok then
+		ActionFx.play(player, "ClaimReward")
+	end
 	return result(ok, message)
 end
 
@@ -139,17 +159,24 @@ actions.ClaimIndexReward = function(player, payload)
 	local ok, message, reward = CollectionSystem.claimIndexReward(player, rarity)
 	if ok and reward then
 		message = message .. " " .. Rewards.describe(Rewards.grant(player, reward))
+		ActionFx.play(player, "ClaimReward")
 	end
 	return result(ok, message)
 end
 
 actions.ClaimDaily = function(player)
 	local ok, message = RewardSystem.claimDaily(player)
+	if ok then
+		ActionFx.play(player, "ClaimReward")
+	end
 	return result(ok, message)
 end
 
 actions.RedeemCode = function(player, payload)
 	local ok, message = RewardSystem.redeemCode(player, payload.Code)
+	if ok then
+		ActionFx.play(player, "ClaimReward")
+	end
 	return result(ok, message)
 end
 
@@ -160,16 +187,26 @@ end
 
 actions.ShopBuy = function(player, payload)
 	local ok, message, extra = ShopSystem.buy(player, payload.Id)
+	-- (a game pass / Robux purchase only OPENS Roblox's window: the action is shown when it is really bought, not now)
+	if ok and message ~= "Opening purchase..." then
+		ActionFx.play(player, "Buy")
+	end
 	return result(ok, message, extra)
 end
 
 actions.SpinWheel = function(player, payload)
 	local ok, message, extra = SpinSystem.spin(player)
+	if ok then
+		ActionFx.play(player, "OpenReward")
+	end
 	return result(ok, message, extra)
 end
 
 actions.ClaimPlaytime = function(player, payload)
 	local ok, message, extra = PlaytimeSystem.claim(player, payload.Id)
+	if ok then
+		ActionFx.play(player, "ClaimReward")
+	end
 	return result(ok, message, extra)
 end
 
@@ -194,6 +231,9 @@ actions.EquipItem = function(player, payload)
 		return result(false, "Invalid item")
 	end
 	local ok, message = GearSystem.equip(player, id)
+	if ok then
+		ActionFx.play(player, "EquipItem")
+	end
 	return result(ok, message)
 end
 

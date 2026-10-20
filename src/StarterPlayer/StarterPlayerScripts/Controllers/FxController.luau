@@ -17,6 +17,7 @@ local Remotes = require(ReplicatedStorage:WaitForChild("Remotes"))
 
 local AudioController = require(script.Parent.AudioController)
 local DataController = require(script.Parent.DataController)
+local ActionAnimator = require(script.Parent.ActionAnimator)
 local WeaponAnimator = require(script.Parent.WeaponAnimator)
 
 local FxController = {}
@@ -483,6 +484,11 @@ function FxController.worldEvent(kind: string, rarityId: string, position: Vecto
 			FxController.weaponUse(rarityId, position, extra, direction)
 		else
 			WeaponAnimator.playForUserId(extra, "", position)
+		end
+	elseif kind == "Action" then
+		-- a character action the server announced (pick up / place a hamster, buy, claim ...): rarityId carries the action id, extra the player
+		if near < 90 then
+			ActionAnimator.playForUserId(extra, rarityId, position)
 		end
 	elseif kind == "TrapSet" then
 		FxController.burst(lifted, WORLD_COLORS.Claim, 2)
