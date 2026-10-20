@@ -3,3 +3,4 @@
 *.rbxlx.lock
 sourcemap.json
 tools/SimTests/.build/
+tools/SimTests/scn_tmp_*.lua
