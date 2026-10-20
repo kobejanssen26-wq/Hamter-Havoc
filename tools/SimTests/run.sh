@@ -7,7 +7,7 @@
 set -e
 HERE="$(cd "$(dirname "$0")" && pwd)"
 LUAU="${LUAU:-luau}"
-BUILD="$HERE/.build"
+BUILD="${SIM_BUILD:-$HERE/.build}"   # (several agents may run scenarios at once: give each its own SIM_BUILD directory)
 mkdir -p "$BUILD"
 cp "$HERE/mock.lua" "$HERE/classes.lua" "$BUILD/"
 
