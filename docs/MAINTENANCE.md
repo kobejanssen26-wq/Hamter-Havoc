@@ -120,6 +120,18 @@ Er staan twee borden bij de gast-spawn (`HamsterPlaza/FavoritesBoard` en `Favori
 * **Jouw eigen UserId / de Owner / CoOwner:** `ServerScriptService/Config/AdminConfig` (`OwnerUserIds`, `Users`). Alleen het nummer telt, nooit de naam.
 * Gaat er iets mis met opgeslagen rollen: `AdminConfig.IgnoreSavedRoles = true`, dan telt alleen het bestand.
 
+## 12b. Admin: bases bekijken en repareren **[in het spel]**
+
+Open het adminpaneel (F10 of `/admin`), kies links een speler en ga naar het tabblad **Bases**. Je ziet: poortstatus (lasers), hoeveel hamsters op de werkbank staan (geplaatst) en alles wat de speler bezit. Knoppen: **Lasers ON / OFF / Reset timers**, **Take off bench** (hamster blijft eigendom) en **Delete 1** (hamster verdwijnt echt, ook van de werkbank). Alles vraagt eerst "Confirm?", een **reden is verplicht** en elke actie komt in het staff-log (en in Discord als dat aan staat). Rechten (`ServerScriptService/Config/AdminConfig`): `BaseView` (kijken: ook Moderator), `BaseControl` (lasers + bench: Admin, Developer), `HamsterRemove` (verwijderen: alleen Admin en hoger). Je kunt nooit iemand met een gelijke of hogere rol aanpakken.
+
+## 12c. Animaties en acties **[Config]**
+
+Alle acties van het personage (hamster oppakken/plaatsen/terugnemen, kopen, prijs openen, beloning claimen, item equippen, rebirth vieren, slaan) staan in `Modules/ActionCatalog`; het overzicht met stabiele ID's staat in `docs/ANIMATIONS.md` (wordt gegenereerd: `python3 tools/ReleaseCheck/gen_animation_docs.py`). De **server** meldt een actie pas nadat het echt gelukt is; elke speler ziet hem. Zonder eigen animatie gebruikt het spel een ingebouwde beweging (R15). Eigen animatie: publiceer in Studio, maak een bestand in `Modules/Content/Animations/` met het `AssetId` en zet de naam in het veld `Animation` van de actie.
+
+## 12d. Eigen plaatjes voor iconen **[Config]**
+
+`Modules/IconOverrides`: zet `coin = "rbxassetid://<nummer>"` en overal waar het muntje staat verschijnt jouw plaatje. Het bestand is standaard leeg; een verkeerd geschreven regel wordt genegeerd en door `release_check.py` gemeld.
+
 ## 13. Discord-logging instellen **[Geheim]**
 
 Volledige uitleg staat bovenaan `ServerScriptService/Config/DiscordConfig`. Kort:

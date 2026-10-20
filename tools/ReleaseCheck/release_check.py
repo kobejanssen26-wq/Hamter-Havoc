@@ -168,6 +168,12 @@ for name in re.findall(r"\bAnimation = \"([A-Za-z0-9_]+)\"", catalog):
         errors.append(f"ActionCatalog refers to the animation '{name}' that does not exist in Content/Animations")
 if re.search(r"rbxassetid://\d+", catalog):
     errors.append("ActionCatalog contains an asset id: ids belong in Content/Animations files only")
+overrides = read(os.path.join(SRC, "ReplicatedStorage", "Modules", "IconOverrides.luau"))
+for key, value in re.findall(r"^\s+([a-z_0-9]+) = \"([^\"]*)\",", overrides.split("IconOverrides.Images = {", 1)[1].split("}", 1)[0] if "IconOverrides.Images = {" in overrides else "", re.M):
+    if not re.fullmatch(r"rbxassetid://\d+", value):
+        errors.append(f"IconOverrides: '{key}' = '{value}' is not written like rbxassetid://<digits> (it would be ignored)")
+    if key not in known:
+        errors.append(f"IconOverrides: there is no icon called '{key}' (see Icons.luau)")
 social = read(os.path.join(SRC, "ReplicatedStorage", "Modules", "SocialConfig.luau"))
 if re.search(r"SocialConfig\.GroupId = 0\b", social):
     warnings.append("SocialConfig.GroupId = 0: the Community window hides the group row until you fill in your group (docs/MAINTENANCE.md)")

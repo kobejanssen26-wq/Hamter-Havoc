@@ -22,6 +22,7 @@ Instance: Folder, Model, Part, ModuleScript, Script, LocalScript, Lighting objec
 | Mountains, trees, lakes, ground, clouds | `Workspace/Environment` (mountains: `Backdrop/Mountains/NearRidge · MidRidge · FarRidge`). To regenerate from numbers: set `Environment`'s attribute `StudioOwned` to false, press Play, and tweak `ReplicatedStorage/Modules/EnvironmentConfig` |
 | Sky, sun, haze, colours of the light | `Lighting` and its children (Atmosphere, Bloom, ColorCorrection, SunRays). Numbers for a fresh place: `EnvironmentConfig.Lighting` |
 | Map layout (where houses, road, plaza are) | `Modules/WorldLayout`, `Modules/PathConfig`, `Modules/Route` |
+| Garden of every house (trees, flower bed, bench, lamps, pond) | **`Modules/YardConfig`**: one list of numbers (X left/right, Z distance from the gate), the same for all 8 houses. Press Play to see it; `tools/SimTests` scene `scn_houses` reports when something now touches the tower or fence |
 | Bases / apartments / working bench (wheels) | `ServerScriptService/Systems/WorldBuilder/HouseBuilder` (`Tower` = floors, lift, interior; `Wheels` = the working bench; `Yard` = front yard + security gate). Floors and elevator unlocks: `Modules/FloorConfig` |
 | Hamsters: name, rarity, income, price, model, description, unlock, limited edition | `Modules/Content/Hamsters/<Hamster>` (copy `_Template`). The 172 original hamsters: `Modules/HamsterDatabase` + `Modules/HamsterNames` |
 | Hamster 3D models | `ReplicatedStorage/Assets/HamsterModels/<Model>` (then set `ModelName`) |
@@ -77,3 +78,26 @@ Rules of thumb:
 ## Tutorial and world markers
 `Modules/TutorialConfig` holds the 7 steps (text, order, target). Targets are found by tag: builders call `Build.target(part, "Base" | "Bench" | "Gate" | "Upgrade" | "Altar" | "Leaderboard")`.
 To point the guide at something else, tag another part the same way (set attribute `TutorialTarget` and add the tag `TutorialTarget` in Studio). Objects inside a house are offered only to its owner.
+
+## Houses: what you can edit, and what stays code (honest overview)
+
+A house is not one static model: its floors grow with every rebirth, the name sign, gate, lasers, lift and working bench follow its owner, and eight copies are
+assigned to players while the game runs. That is why `PlayerHouses` is **rebuilt from code at every start** (editing the preview copy does not stick).
+Everything you want to change *without programming* is therefore a number in a config file:
+
+| Wish | Edit |
+|---|---|
+| move / resize / replace a tree, bench, lamp, flower bed, pond | `Modules/YardConfig` |
+| colours | `ServerScriptService/Systems/WorldBuilder/Palette` |
+| where the houses stand, lot size | `Modules/WorldLayout` |
+| floors, names, when each one unlocks | `Modules/FloorConfig` |
+| gate / laser times and look | `Modules/SecurityConfig` |
+
+If you later want a *fully hand-built* house (every wall editable as a normal Model), the safe way is a **template**: one finished floor model in `ServerStorage` that the builder clones instead of generating it. That keeps the growing floors, bench and gate working. It is a separate, larger step (the builder would clone your model and only add the dynamic parts) - ask for it explicitly and test one house before converting all eight.
+
+## UI in Studio
+
+- The HUD (top pills, right rail, hotbar) is real `ScreenGui` content: `StarterGui/MainUI`, `StarterGui/HotbarUI`. Move or recolour its frames visually.
+- Windows (Shop, Backpack, Settings, Community, ...) are built by `UI/UIKit.panel` so they all share one look and fit every screen size. Their texts and numbers live in the config files listed above (`ShopConfig`, `SocialConfig`, `PlaytimeConfig`, ...), their colours and fonts in `UI/Theme`, their pictures in `UI/Icons` (each icon is a drawn vector; to use your own picture, set the item's `Icon` to a `rbxassetid://` image).
+- Buttons for the right rail are added with `UI/UIRegistry` (see the header of that file), no other script has to change.
+

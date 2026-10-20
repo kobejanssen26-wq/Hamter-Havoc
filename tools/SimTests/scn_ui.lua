@@ -59,6 +59,24 @@ task.spawn(function()
 	for _, item in ShopConfig.Items do if not Icons.has(item.Icon) then missingIcon += 1 end end
 	check("every shop item has a drawn icon", missingIcon == 0, missingIcon .. " missing")
 
+	-- replaceable icons: an image override (or an rbxassetid text) replaces the drawn icon; a typo is ignored
+	do
+		local IconOverrides = require(find("ReplicatedStorage.Modules.IconOverrides"))
+		check("no icon is overridden by default (no invented ids)", next(IconOverrides.Images) == nil)
+		local function picture(id)
+			local frame = Icons.create(nil, id, { Size = UDim2.fromOffset(32, 32) })
+			for _, d in M.descendants(frame) do if RawData[d].ClassName == "ImageLabel" then return RawData[d].Props.Image end end
+			return nil
+		end
+		check("an icon without an override is drawn from shapes", picture("coin") == nil)
+		IconOverrides.Images.coin = "rbxassetid://12345"
+		check("an override shows the image instead", picture("coin") == "rbxassetid://12345")
+		IconOverrides.Images.coin = "12345 oops"
+		check("a malformed override is ignored (the drawn icon stays)", picture("coin") == nil)
+		IconOverrides.Images.coin = nil
+		check("an Icon field can hold an rbxassetid directly", picture("rbxassetid://777") == "rbxassetid://777" and Icons.has("rbxassetid://777"))
+	end
+
 	-- every panel opens and closes
 	for _, name in { "Backpack", "Index", "Rebirth", "Upgrades", "Daily", "Quests", "Shop", "RobuxShop", "Settings", "Codes", "Wheel", "Playtime", "Social" } do
 		local panel = UIKit.getPanel(name)

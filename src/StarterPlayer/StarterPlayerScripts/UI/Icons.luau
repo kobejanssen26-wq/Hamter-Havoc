@@ -10,6 +10,10 @@
 	Add an icon by adding one entry to `draw` (see the existing ones as examples).
 ]]
 
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local IconOverrides = require(ReplicatedStorage:WaitForChild("Modules"):WaitForChild("IconOverrides"))
+
 local Icons = {}
 
 type Props = {
@@ -706,7 +710,7 @@ local alias: { [string]: string } = {
 }
 
 function Icons.has(id: string): boolean
-	return draw[id] ~= nil or alias[id] ~= nil
+	return draw[id] ~= nil or alias[id] ~= nil or IconOverrides.imageFor(id) ~= nil
 end
 
 function Icons.names(): { string }
@@ -720,6 +724,19 @@ end
 
 -- Draws the artwork of icon `id` into an (empty) root frame.
 function Icons.fill(root: Frame, id: string, tintColor: Color3?, px: number?)
+	-- your own picture (Modules/IconOverrides, or an "rbxassetid://" text as the icon id) replaces the drawn icon
+	local image = IconOverrides.imageFor(id)
+	if image then
+		local picture = Instance.new("ImageLabel")
+		picture.Name = "Picture"
+		picture.BackgroundTransparency = 1
+		picture.BorderSizePixel = 0
+		picture.Size = UDim2.fromScale(1, 1)
+		picture.Image = image
+		picture.ScaleType = Enum.ScaleType.Fit
+		picture.Parent = root
+		return
+	end
 	local drawer = draw[id] or draw[alias[id] or ""] or draw.dot
 	drawer({ Root = root, Px = px or 28, Tint = tintColor })
 end

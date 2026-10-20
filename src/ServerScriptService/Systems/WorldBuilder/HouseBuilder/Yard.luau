@@ -12,6 +12,7 @@ local Palette = require(script.Parent.Parent.Palette)
 
 local SecurityConfig = require(ReplicatedStorage.Modules.SecurityConfig)
 local WorldLayout = require(ReplicatedStorage.Modules.WorldLayout)
+local YardConfig = require(ReplicatedStorage.Modules.YardConfig)
 
 local Yard = {}
 
@@ -170,16 +171,22 @@ function Yard.build(house: any, rng: Random)
 	-----------------------------------------------------------------------
 	-- a calm garden
 	-----------------------------------------------------------------------
-	Decor.tree(yard, P(-28.5, 14), if house.Index % 2 == 0 then "cherry" else "round", 0.85, rng) -- (the garden trees keep clear of the tower walls and the fence)
-	Decor.tree(yard, P(28.5, 24), "round", 0.85, rng)
-	Decor.tree(yard, P(-28.4, 62), "pine", 0.95, rng) -- (clear of the tower roof on one side and the fence on the other)
-	Decor.tree(yard, P(28.2, 62), "round", 0.8, rng)
-	Decor.flowers(yard, P(-16, 14), 3.5, 12, rng)
-	Decor.bench(yard, cframe * CFrame.new(16, 0, 19) * CFrame.Angles(0, math.pi, 0))
-	Decor.lamp(yard, P(-7, 10), 7)
-	Decor.lamp(yard, P(7, 10), 7)
+	-- (the positions live in Modules/YardConfig: change numbers there, no code needed)
+	for _, tree in YardConfig.Trees do
+		local kind = if house.Index % 2 == 0 and tree.EvenKind then tree.EvenKind else tree.Kind
+		Decor.tree(yard, P(tree.X, tree.Z), kind, tree.Scale, rng)
+	end
+	for _, bed in YardConfig.Flowers do
+		Decor.flowers(yard, P(bed.X, bed.Z), bed.Radius, bed.Count, rng)
+	end
+	for _, bench in YardConfig.Benches do
+		Decor.bench(yard, cframe * CFrame.new(bench.X, 0, bench.Z) * CFrame.Angles(0, math.rad(bench.Turn), 0))
+	end
+	for _, lamp in YardConfig.Lamps do
+		Decor.lamp(yard, P(lamp.X, lamp.Z), lamp.Height)
+	end
 	-- backyard pond behind the tower
-	Decor.pond(yard, P(0, 79), 4.5, rng)
+	Decor.pond(yard, P(YardConfig.Pond.X, YardConfig.Pond.Z), YardConfig.Pond.Radius, rng)
 end
 
 return Yard

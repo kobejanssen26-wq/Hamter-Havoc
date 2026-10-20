@@ -36,8 +36,11 @@
 	Hotbar                                 HotbarConfig
 	Mountains, scenery, lighting numbers   EnvironmentConfig   (the scenery itself is Workspace/Environment, editable by hand)
 	Where houses / road / plaza stand      WorldLayout, PathConfig, Route
+	Garden of every house (trees, bench,   YardConfig
+	  lamps, flower bed, pond)
 
 	HUD (pills, rail, hotbar)              StarterGui/MainUI, StarterGui/HotbarUI   (real ScreenGuis - edit them visually in Studio)
+	Replace an icon by your own picture    IconOverrides  (paste an rbxassetid:// per icon name; empty by default)
 	UI look (colours, fonts, sizes)        StarterPlayer/StarterPlayerScripts/UI/Theme   (+ UIKit, Icons, UIRegistry for buttons)
 	World / house / plaza builders         ServerScriptService/Systems/WorldBuilder/...
 	Game systems (server)                  ServerScriptService/Systems/...

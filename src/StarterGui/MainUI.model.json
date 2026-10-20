@@ -302,7 +302,7 @@
         },
         {
          "ClassName": "Frame",
-         "Name": "Frame",
+         "Name": "IncomePill",
          "Properties": {
           "BackgroundColor3": [
            0.141176,
@@ -1392,11 +1392,11 @@
      "UDim2": [
       [
        0,
-       50
+       63
       ],
       [
        0,
-       578
+       629
       ]
      ]
     },
@@ -1404,7 +1404,7 @@
     "ZIndex": 1
    },
    "Attributes": {
-    "CodeProps": "AnchorPoint=v2:1.000,0.000\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nPosition=u2:1.000,-12,0.000,8\nSize=u2:0.000,50,0.000,578\nVisible=true\nZIndex=1.000",
+    "CodeProps": "AnchorPoint=v2:1.000,0.000\nBackgroundTransparency=1.000\nBorderSizePixel=0.000\nPosition=u2:1.000,-12,0.000,8\nSize=u2:0.000,63,0.000,629\nVisible=true\nZIndex=1.000",
     "Responsive": true
    },
    "Children": [
@@ -1418,17 +1418,17 @@
        "UDim2": [
         [
          0,
-         46
+         58
         ],
         [
          0,
-         532
+         579
         ]
        ]
       }
      },
      "Attributes": {
-      "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nSize=u2:0.000,46,0.000,532"
+      "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nSize=u2:0.000,58,0.000,579"
      },
      "Children": [
       {
@@ -1450,14 +1450,14 @@
         "Padding": {
          "UDim": [
           0,
-          8
+          6
          ]
         },
         "SortOrder": "LayoutOrder",
         "VerticalAlignment": "Top"
        },
        "Attributes": {
-        "CodeProps": "FillDirection=e:Vertical\nHorizontalAlignment=e:Right\nPadding=u:0.000,8\nSortOrder=e:LayoutOrder\nVerticalAlignment=e:Top"
+        "CodeProps": "FillDirection=e:Vertical\nHorizontalAlignment=e:Right\nPadding=u:0.000,6\nSortOrder=e:LayoutOrder\nVerticalAlignment=e:Top"
        }
       },
       {
@@ -1495,11 +1495,11 @@
          "UDim2": [
           [
            0,
-           46
+           58
           ],
           [
            0,
-           46
+           59
           ]
          ]
         },
@@ -1519,7 +1519,7 @@
         "Visible": true
        },
        "Attributes": {
-        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.149,0.463\nBorderSizePixel=0.000\nFont=e:GothamBlack\nLayoutOrder=10.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,46,0.000,46\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
+        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.149,0.463\nBorderSizePixel=0.000\nFont=e:GothamBlack\nLayoutOrder=10.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,58,0.000,59\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
        },
        "Children": [
         {
@@ -1529,12 +1529,12 @@
           "CornerRadius": {
            "UDim": [
             0,
-            99
+            14
            ]
           }
          },
          "Attributes": {
-          "CodeProps": "CornerRadius=u:0.000,99"
+          "CodeProps": "CornerRadius=u:0.000,14"
          }
         },
         {
@@ -1594,6 +1594,54 @@
          },
          "Attributes": {
           "CodeProps": "Scale=1.000"
+         }
+        },
+        {
+         "ClassName": "TextLabel",
+         "Name": "RailLabel",
+         "Properties": {
+          "BackgroundTransparency": 1,
+          "BorderSizePixel": 0,
+          "Font": "GothamBlack",
+          "Position": {
+           "UDim2": [
+            [
+             0,
+             1
+            ],
+            [
+             1,
+             -14
+            ]
+           ]
+          },
+          "RichText": true,
+          "Size": {
+           "UDim2": [
+            [
+             1,
+             -2
+            ],
+            [
+             0,
+             13
+            ]
+           ]
+          },
+          "Text": "Quests",
+          "TextColor3": [
+           1,
+           1,
+           1
+          ],
+          "TextSize": 10,
+          "TextTruncate": "AtEnd",
+          "TextWrapped": false,
+          "TextXAlignment": "Center",
+          "ZIndex": 3
+         },
+         "Attributes": {
+          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBlack\nPosition=u2:0.000,1,1.000,-14\nRichText=true\nSize=u2:1.000,-2,0.000,13\nText=Quests\nTextColor3=c3:1.000,1.000,1.000\nTextSize=10.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Center\nZIndex=3.000"
          }
         },
         {
@@ -1712,11 +1760,11 @@
          "UDim2": [
           [
            0,
-           46
+           58
           ],
           [
            0,
-           46
+           59
           ]
          ]
         },
@@ -1736,7 +1784,7 @@
         "Visible": true
        },
        "Attributes": {
-        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.149,0.463\nBorderSizePixel=0.000\nFont=e:GothamBlack\nLayoutOrder=15.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,46,0.000,46\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
+        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.149,0.463\nBorderSizePixel=0.000\nFont=e:GothamBlack\nLayoutOrder=15.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,58,0.000,59\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
        },
        "Children": [
         {
@@ -1746,12 +1794,12 @@
           "CornerRadius": {
            "UDim": [
             0,
-            99
+            14
            ]
           }
          },
          "Attributes": {
-          "CodeProps": "CornerRadius=u:0.000,99"
+          "CodeProps": "CornerRadius=u:0.000,14"
          }
         },
         {
@@ -1811,6 +1859,54 @@
          },
          "Attributes": {
           "CodeProps": "Scale=1.000"
+         }
+        },
+        {
+         "ClassName": "TextLabel",
+         "Name": "RailLabel",
+         "Properties": {
+          "BackgroundTransparency": 1,
+          "BorderSizePixel": 0,
+          "Font": "GothamBlack",
+          "Position": {
+           "UDim2": [
+            [
+             0,
+             1
+            ],
+            [
+             1,
+             -14
+            ]
+           ]
+          },
+          "RichText": true,
+          "Size": {
+           "UDim2": [
+            [
+             1,
+             -2
+            ],
+            [
+             0,
+             13
+            ]
+           ]
+          },
+          "Text": "Wheel",
+          "TextColor3": [
+           1,
+           1,
+           1
+          ],
+          "TextSize": 10,
+          "TextTruncate": "AtEnd",
+          "TextWrapped": false,
+          "TextXAlignment": "Center",
+          "ZIndex": 3
+         },
+         "Attributes": {
+          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBlack\nPosition=u2:0.000,1,1.000,-14\nRichText=true\nSize=u2:1.000,-2,0.000,13\nText=Wheel\nTextColor3=c3:1.000,1.000,1.000\nTextSize=10.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Center\nZIndex=3.000"
          }
         },
         {
@@ -1929,11 +2025,11 @@
          "UDim2": [
           [
            0,
-           46
+           58
           ],
           [
            0,
-           46
+           59
           ]
          ]
         },
@@ -1953,7 +2049,7 @@
         "Visible": true
        },
        "Attributes": {
-        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.149,0.463\nBorderSizePixel=0.000\nFont=e:GothamBlack\nLayoutOrder=17.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,46,0.000,46\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
+        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.149,0.463\nBorderSizePixel=0.000\nFont=e:GothamBlack\nLayoutOrder=17.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,58,0.000,59\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
        },
        "Children": [
         {
@@ -1963,12 +2059,12 @@
           "CornerRadius": {
            "UDim": [
             0,
-            99
+            14
            ]
           }
          },
          "Attributes": {
-          "CodeProps": "CornerRadius=u:0.000,99"
+          "CodeProps": "CornerRadius=u:0.000,14"
          }
         },
         {
@@ -2028,6 +2124,54 @@
          },
          "Attributes": {
           "CodeProps": "Scale=1.000"
+         }
+        },
+        {
+         "ClassName": "TextLabel",
+         "Name": "RailLabel",
+         "Properties": {
+          "BackgroundTransparency": 1,
+          "BorderSizePixel": 0,
+          "Font": "GothamBlack",
+          "Position": {
+           "UDim2": [
+            [
+             0,
+             1
+            ],
+            [
+             1,
+             -14
+            ]
+           ]
+          },
+          "RichText": true,
+          "Size": {
+           "UDim2": [
+            [
+             1,
+             -2
+            ],
+            [
+             0,
+             13
+            ]
+           ]
+          },
+          "Text": "Rewards",
+          "TextColor3": [
+           1,
+           1,
+           1
+          ],
+          "TextSize": 10,
+          "TextTruncate": "AtEnd",
+          "TextWrapped": false,
+          "TextXAlignment": "Center",
+          "ZIndex": 3
+         },
+         "Attributes": {
+          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBlack\nPosition=u2:0.000,1,1.000,-14\nRichText=true\nSize=u2:1.000,-2,0.000,13\nText=Rewards\nTextColor3=c3:1.000,1.000,1.000\nTextSize=10.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Center\nZIndex=3.000"
          }
         },
         {
@@ -2146,11 +2290,11 @@
          "UDim2": [
           [
            0,
-           46
+           58
           ],
           [
            0,
-           46
+           59
           ]
          ]
         },
@@ -2170,7 +2314,7 @@
         "Visible": true
        },
        "Attributes": {
-        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.149,0.463\nBorderSizePixel=0.000\nFont=e:GothamBlack\nLayoutOrder=20.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,46,0.000,46\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
+        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.149,0.463\nBorderSizePixel=0.000\nFont=e:GothamBlack\nLayoutOrder=20.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,58,0.000,59\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
        },
        "Children": [
         {
@@ -2180,12 +2324,12 @@
           "CornerRadius": {
            "UDim": [
             0,
-            99
+            14
            ]
           }
          },
          "Attributes": {
-          "CodeProps": "CornerRadius=u:0.000,99"
+          "CodeProps": "CornerRadius=u:0.000,14"
          }
         },
         {
@@ -2245,6 +2389,54 @@
          },
          "Attributes": {
           "CodeProps": "Scale=1.000"
+         }
+        },
+        {
+         "ClassName": "TextLabel",
+         "Name": "RailLabel",
+         "Properties": {
+          "BackgroundTransparency": 1,
+          "BorderSizePixel": 0,
+          "Font": "GothamBlack",
+          "Position": {
+           "UDim2": [
+            [
+             0,
+             1
+            ],
+            [
+             1,
+             -14
+            ]
+           ]
+          },
+          "RichText": true,
+          "Size": {
+           "UDim2": [
+            [
+             1,
+             -2
+            ],
+            [
+             0,
+             13
+            ]
+           ]
+          },
+          "Text": "Hamsters",
+          "TextColor3": [
+           1,
+           1,
+           1
+          ],
+          "TextSize": 10,
+          "TextTruncate": "AtEnd",
+          "TextWrapped": false,
+          "TextXAlignment": "Center",
+          "ZIndex": 3
+         },
+         "Attributes": {
+          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBlack\nPosition=u2:0.000,1,1.000,-14\nRichText=true\nSize=u2:1.000,-2,0.000,13\nText=Hamsters\nTextColor3=c3:1.000,1.000,1.000\nTextSize=10.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Center\nZIndex=3.000"
          }
         },
         {
@@ -2363,11 +2555,11 @@
          "UDim2": [
           [
            0,
-           46
+           58
           ],
           [
            0,
-           46
+           59
           ]
          ]
         },
@@ -2387,7 +2579,7 @@
         "Visible": true
        },
        "Attributes": {
-        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.149,0.463\nBorderSizePixel=0.000\nFont=e:GothamBlack\nLayoutOrder=30.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,46,0.000,46\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
+        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.149,0.463\nBorderSizePixel=0.000\nFont=e:GothamBlack\nLayoutOrder=30.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,58,0.000,59\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
        },
        "Children": [
         {
@@ -2397,12 +2589,12 @@
           "CornerRadius": {
            "UDim": [
             0,
-            99
+            14
            ]
           }
          },
          "Attributes": {
-          "CodeProps": "CornerRadius=u:0.000,99"
+          "CodeProps": "CornerRadius=u:0.000,14"
          }
         },
         {
@@ -2462,6 +2654,54 @@
          },
          "Attributes": {
           "CodeProps": "Scale=1.000"
+         }
+        },
+        {
+         "ClassName": "TextLabel",
+         "Name": "RailLabel",
+         "Properties": {
+          "BackgroundTransparency": 1,
+          "BorderSizePixel": 0,
+          "Font": "GothamBlack",
+          "Position": {
+           "UDim2": [
+            [
+             0,
+             1
+            ],
+            [
+             1,
+             -14
+            ]
+           ]
+          },
+          "RichText": true,
+          "Size": {
+           "UDim2": [
+            [
+             1,
+             -2
+            ],
+            [
+             0,
+             13
+            ]
+           ]
+          },
+          "Text": "Shop",
+          "TextColor3": [
+           1,
+           1,
+           1
+          ],
+          "TextSize": 10,
+          "TextTruncate": "AtEnd",
+          "TextWrapped": false,
+          "TextXAlignment": "Center",
+          "ZIndex": 3
+         },
+         "Attributes": {
+          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBlack\nPosition=u2:0.000,1,1.000,-14\nRichText=true\nSize=u2:1.000,-2,0.000,13\nText=Shop\nTextColor3=c3:1.000,1.000,1.000\nTextSize=10.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Center\nZIndex=3.000"
          }
         },
         {
@@ -2580,11 +2820,11 @@
          "UDim2": [
           [
            0,
-           46
+           58
           ],
           [
            0,
-           46
+           59
           ]
          ]
         },
@@ -2604,7 +2844,7 @@
         "Visible": true
        },
        "Attributes": {
-        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.149,0.463\nBorderSizePixel=0.000\nFont=e:GothamBlack\nLayoutOrder=32.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,46,0.000,46\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
+        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.149,0.463\nBorderSizePixel=0.000\nFont=e:GothamBlack\nLayoutOrder=32.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,58,0.000,59\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
        },
        "Children": [
         {
@@ -2614,12 +2854,12 @@
           "CornerRadius": {
            "UDim": [
             0,
-            99
+            14
            ]
           }
          },
          "Attributes": {
-          "CodeProps": "CornerRadius=u:0.000,99"
+          "CodeProps": "CornerRadius=u:0.000,14"
          }
         },
         {
@@ -2679,6 +2919,54 @@
          },
          "Attributes": {
           "CodeProps": "Scale=1.000"
+         }
+        },
+        {
+         "ClassName": "TextLabel",
+         "Name": "RailLabel",
+         "Properties": {
+          "BackgroundTransparency": 1,
+          "BorderSizePixel": 0,
+          "Font": "GothamBlack",
+          "Position": {
+           "UDim2": [
+            [
+             0,
+             1
+            ],
+            [
+             1,
+             -14
+            ]
+           ]
+          },
+          "RichText": true,
+          "Size": {
+           "UDim2": [
+            [
+             1,
+             -2
+            ],
+            [
+             0,
+             13
+            ]
+           ]
+          },
+          "Text": "Robux",
+          "TextColor3": [
+           1,
+           1,
+           1
+          ],
+          "TextSize": 10,
+          "TextTruncate": "AtEnd",
+          "TextWrapped": false,
+          "TextXAlignment": "Center",
+          "ZIndex": 3
+         },
+         "Attributes": {
+          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBlack\nPosition=u2:0.000,1,1.000,-14\nRichText=true\nSize=u2:1.000,-2,0.000,13\nText=Robux\nTextColor3=c3:1.000,1.000,1.000\nTextSize=10.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Center\nZIndex=3.000"
          }
         },
         {
@@ -2797,11 +3085,11 @@
          "UDim2": [
           [
            0,
-           46
+           58
           ],
           [
            0,
-           46
+           59
           ]
          ]
         },
@@ -2821,7 +3109,7 @@
         "Visible": true
        },
        "Attributes": {
-        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.149,0.463\nBorderSizePixel=0.000\nFont=e:GothamBlack\nLayoutOrder=90.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,46,0.000,46\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
+        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.149,0.463\nBorderSizePixel=0.000\nFont=e:GothamBlack\nLayoutOrder=90.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,58,0.000,59\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
        },
        "Children": [
         {
@@ -2831,12 +3119,12 @@
           "CornerRadius": {
            "UDim": [
             0,
-            99
+            14
            ]
           }
          },
          "Attributes": {
-          "CodeProps": "CornerRadius=u:0.000,99"
+          "CodeProps": "CornerRadius=u:0.000,14"
          }
         },
         {
@@ -2896,6 +3184,54 @@
          },
          "Attributes": {
           "CodeProps": "Scale=1.000"
+         }
+        },
+        {
+         "ClassName": "TextLabel",
+         "Name": "RailLabel",
+         "Properties": {
+          "BackgroundTransparency": 1,
+          "BorderSizePixel": 0,
+          "Font": "GothamBlack",
+          "Position": {
+           "UDim2": [
+            [
+             0,
+             1
+            ],
+            [
+             1,
+             -14
+            ]
+           ]
+          },
+          "RichText": true,
+          "Size": {
+           "UDim2": [
+            [
+             1,
+             -2
+            ],
+            [
+             0,
+             13
+            ]
+           ]
+          },
+          "Text": "Settings",
+          "TextColor3": [
+           1,
+           1,
+           1
+          ],
+          "TextSize": 10,
+          "TextTruncate": "AtEnd",
+          "TextWrapped": false,
+          "TextXAlignment": "Center",
+          "ZIndex": 3
+         },
+         "Attributes": {
+          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBlack\nPosition=u2:0.000,1,1.000,-14\nRichText=true\nSize=u2:1.000,-2,0.000,13\nText=Settings\nTextColor3=c3:1.000,1.000,1.000\nTextSize=10.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Center\nZIndex=3.000"
          }
         },
         {
@@ -3014,11 +3350,11 @@
          "UDim2": [
           [
            0,
-           46
+           58
           ],
           [
            0,
-           46
+           59
           ]
          ]
         },
@@ -3038,7 +3374,7 @@
         "Visible": true
        },
        "Attributes": {
-        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.149,0.463\nBorderSizePixel=0.000\nFont=e:GothamBlack\nLayoutOrder=40.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,46,0.000,46\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
+        "CodeProps": "AnchorPoint=v2:0.000,0.000\nAutoButtonColor=false\nBackgroundColor3=c3:0.227,0.149,0.463\nBorderSizePixel=0.000\nFont=e:GothamBlack\nLayoutOrder=40.000\nPosition=u2:0.000,0,0.000,0\nRichText=true\nSize=u2:0.000,58,0.000,59\nText=\nTextColor3=c3:1.000,1.000,1.000\nTextSize=16.000"
        },
        "Children": [
         {
@@ -3048,12 +3384,12 @@
           "CornerRadius": {
            "UDim": [
             0,
-            99
+            14
            ]
           }
          },
          "Attributes": {
-          "CodeProps": "CornerRadius=u:0.000,99"
+          "CodeProps": "CornerRadius=u:0.000,14"
          }
         },
         {
@@ -3113,6 +3449,54 @@
          },
          "Attributes": {
           "CodeProps": "Scale=1.000"
+         }
+        },
+        {
+         "ClassName": "TextLabel",
+         "Name": "RailLabel",
+         "Properties": {
+          "BackgroundTransparency": 1,
+          "BorderSizePixel": 0,
+          "Font": "GothamBlack",
+          "Position": {
+           "UDim2": [
+            [
+             0,
+             1
+            ],
+            [
+             1,
+             -14
+            ]
+           ]
+          },
+          "RichText": true,
+          "Size": {
+           "UDim2": [
+            [
+             1,
+             -2
+            ],
+            [
+             0,
+             13
+            ]
+           ]
+          },
+          "Text": "Ranking",
+          "TextColor3": [
+           1,
+           1,
+           1
+          ],
+          "TextSize": 10,
+          "TextTruncate": "AtEnd",
+          "TextWrapped": false,
+          "TextXAlignment": "Center",
+          "ZIndex": 3
+         },
+         "Attributes": {
+          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBlack\nPosition=u2:0.000,1,1.000,-14\nRichText=true\nSize=u2:1.000,-2,0.000,13\nText=Ranking\nTextColor3=c3:1.000,1.000,1.000\nTextSize=10.000\nTextTruncate=e:AtEnd\nTextXAlignment=e:Center\nZIndex=3.000"
          }
         },
         {
@@ -3821,18 +4205,18 @@
          "UDim2": [
           [
            0,
-           290
+           298
           ],
           [
            0,
-           142
+           168
           ]
          ]
         },
         "Visible": true
        },
        "Attributes": {
-        "CodeProps": "BackgroundColor3=c3:0.227,0.149,0.463\nBorderSizePixel=0.000\nLayoutOrder=5.000\nSize=u2:0.000,290,0.000,142\nVisible=true"
+        "CodeProps": "BackgroundColor3=c3:0.227,0.149,0.463\nBorderSizePixel=0.000\nLayoutOrder=5.000\nSize=u2:0.000,298,0.000,168\nVisible=true"
        },
        "Children": [
         {
@@ -3899,7 +4283,7 @@
             ]
            ]
           },
-          "Text": "TUTORIAL  1 / 9",
+          "Text": "TUTORIAL  1 / 11",
           "TextColor3": [
            1,
            0.839216,
@@ -3909,7 +4293,7 @@
           "TextXAlignment": "Left"
          },
          "Attributes": {
-          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBlack\nPosition=u2:0.000,14,0.000,10\nRichText=true\nSize=u2:1.000,-20,0.000,14\nText=TUTORIAL  1 / 9\nTextColor3=c3:1.000,0.839,0.157\nTextSize=12.000\nTextXAlignment=e:Left"
+          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamBlack\nPosition=u2:0.000,14,0.000,10\nRichText=true\nSize=u2:1.000,-20,0.000,14\nText=TUTORIAL  1 / 11\nTextColor3=c3:1.000,0.839,0.157\nTextSize=12.000\nTextXAlignment=e:Left"
          }
         },
         {
@@ -3985,12 +4369,12 @@
              -28
             ],
             [
-             0,
-             54
+             1,
+             -96
             ]
            ]
           },
-          "Text": "This is your base. Hamsters you win are brought here and work for you. Nobody else owns it.",
+          "Text": "This is your base. Hamsters you buy roll here and work for you. Nobody else can use it.",
           "TextColor3": [
            0.839216,
            0.792157,
@@ -4002,7 +4386,7 @@
           "TextYAlignment": "Top"
          },
          "Attributes": {
-          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamMedium\nPosition=u2:0.000,14,0.000,50\nRichText=true\nSize=u2:1.000,-28,0.000,54\nText=This is your base. Hamsters you win are brought here and work for you. Nobody else owns it.\nTextColor3=c3:0.839,0.792,0.961\nTextSize=13.000\nTextWrapped=true\nTextXAlignment=e:Left\nTextYAlignment=e:Top"
+          "CodeProps": "BackgroundTransparency=1.000\nBorderSizePixel=0.000\nFont=e:GothamMedium\nPosition=u2:0.000,14,0.000,50\nRichText=true\nSize=u2:1.000,-28,1.000,-96\nText=This is your base. Hamsters you buy roll here and work for you. Nobody else can use it.\nTextColor3=c3:0.839,0.792,0.961\nTextSize=13.000\nTextWrapped=true\nTextXAlignment=e:Left\nTextYAlignment=e:Top"
          }
         },
         {
@@ -4394,7 +4778,7 @@
           "Size": {
            "UDim2": [
             [
-             0.111111,
+             0.0909091,
              0
             ],
             [
@@ -4405,7 +4789,7 @@
           }
          },
          "Attributes": {
-          "CodeProps": "BackgroundColor3=c3:1.000,0.839,0.157\nBorderSizePixel=0.000\nSize=u2:0.111,0,0.000,2"
+          "CodeProps": "BackgroundColor3=c3:1.000,0.839,0.157\nBorderSizePixel=0.000\nSize=u2:0.091,0,0.000,2"
          }
         }
        ]
