@@ -3,7 +3,7 @@
 
 	  LuckyWheel (Model, tag "LuckyWheel")
 	    Base, trim, back pillar + two struts, axle, FIXED pointer, sign, bulbs   fixed
-	    Rotor (Model, PrimaryPart Hub)                                           turns: backplate, rim, gold dividers and one Slice_<prize> model per prize
+	    Rotor (Model, PrimaryPart Hub)                                           turns: rim (also the back of the wheel), gold dividers and one Slice_<prize> model per prize
 	      Slice_<prize> (Model)  two wedge facets in the prize colour + IconPlate (an invisible plate with a SurfaceGui "PrizeIcon")
 	    PromptPad                                                                invisible pad with the [F] prompt (attribute SpinWheel = true)
 
@@ -82,8 +82,7 @@ function LuckyWheelBuilder.build(parent: Instance, rng: Random, options: { TextF
 	-- in the wheel plane). Without this, the first PivotTo would tip the whole wheel over onto its edge instead of turning it.
 	hubPart.PivotOffset = hubPart.CFrame:Inverse() * hub
 	ofCylinder(rotor, "Rim", RADIUS * 2 + 1.5, 0.9, hub * CFrame.new(0, 0, 0.1), Palette.Gold, METAL, { CanCollide = false })
-	ofCylinder(rotor, "RimInner", RADIUS * 2 + 0.6, 1.0, hub * CFrame.new(0, 0, 0.0), Palette.WoodDark, WOOD, { CanCollide = false })
-	ofCylinder(rotor, "Backplate", RADIUS * 2 + 0.2, 0.7, hub * CFrame.new(0, 0, -0.05), Palette.WoodDark, WOOD, { CanCollide = false })
+	ofCylinder(rotor, "RimInner", RADIUS * 2 + 0.6, 1.0, hub * CFrame.new(0, 0, 0.0), Palette.WoodDark, WOOD, { CanCollide = false }) -- also the back of the wheel
 	local outerRadius = RADIUS - 0.1
 	local half = math.pi / count
 	-- a point of the wheel plane: `angle` clockwise from the top, seen from the front (the wheel faces -Z)
@@ -152,7 +151,7 @@ function LuckyWheelBuilder.build(parent: Instance, rng: Random, options: { TextF
 	Build.light(glow, Color3.fromRGB(255, 230, 170), 1.2, 26)
 
 	-- sign above the wheel with a status line that every client fills in for itself (free spin ready / countdown)
-	local sign = Build.part(model, "Sign", Vector3.new(10, 2.2, 0.5), CFrame.new(center.X, signY, backZ - 1.1), Palette.WoodDark, WOOD, { CanCollide = false })
+	local sign = Build.part(model, "Sign", Vector3.new(10, 2.2, 0.5), CFrame.new(center.X, signY, backZ - 0.85), Palette.WoodDark, WOOD, { CanCollide = false }) -- (its back face lies in the pillar)
 	Build.surfaceText(sign, Enum.NormalId.Front, "LUCKY WHEEL", { TextColor = Palette.Gold, PixelsPerStud = 50 })
 	local status = Build.billboard(sign, "FREE SPIN!", Vector2.new(190, 38), Vector3.new(0, 2.1, -0.6), { MaxDistance = 70, Name = "WheelStatus", TextColor = Color3.fromRGB(110, 255, 140) })
 	status.Name = "Status"

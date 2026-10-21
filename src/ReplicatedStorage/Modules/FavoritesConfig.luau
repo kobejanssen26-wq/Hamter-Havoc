@@ -1,5 +1,5 @@
 --[[
-	FavoritesConfig: the texts and icons of the Like & Favorite board in the plaza (next to the guest spawn).
+	FavoritesConfig: the texts and icons of the Like & Favorite boards in the plaza (one beside the guest spawn, one across the south promenade; both stand on grass, clear of every path).
 
 	What this board really does - read this before you change it:
 	  * Roblox gives a game NO way to press "Like" or "Favorite" for a player: only the player can do it, on the game's page

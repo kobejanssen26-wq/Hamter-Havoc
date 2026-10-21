@@ -53,6 +53,27 @@ local function newFootprints()
 	return self
 end
 
+-- Lawn patches are flat discs (top 0.06) that lie only on bare lawn. The things that stand on the lawn are at heights a patch would fight with
+-- (a lot's lawn tops at 0.07, the promenades and paths at 0.10 .. 0.16), so a patch keeps PATCH_GAP away from the lots, the promenades and the plaza strip
+-- between the two inner lots (plaza, annexes, shops, wheel, hall), and from every patch of the other shade (two shades in one plane fight as well).
+local PATCH_GAP = 0.5
+local MIN_PATCH_RADIUS = 4
+
+-- the rectangles { x0, x1, z0, z1 } a patch has to stay away from
+local function lawnReserved(): { { number } }
+	local columns = WorldLayout.HouseColumns
+	local reserved = { { columns[2] + WorldLayout.LotHalfWidth, columns[3] - WorldLayout.LotHalfWidth, -GROUND_HALF_Z, GROUND_HALF_Z } } -- the plaza strip
+	for _, sign in { 1, -1 } do
+		local nearZ = WorldLayout.PromenadeZ - WorldLayout.PromenadeHalfWidth
+		local farZ = WorldLayout.PromenadeZ + WorldLayout.PromenadeHalfWidth
+		table.insert(reserved, { -LOT_OUTER_X - 10, LOT_OUTER_X + 10, math.min(sign * nearZ, sign * farZ), math.max(sign * nearZ, sign * farZ) }) -- promenade
+		for _, column in columns do
+			table.insert(reserved, { column - WorldLayout.LotHalfWidth, column + WorldLayout.LotHalfWidth, math.min(sign * WorldLayout.GateDistance, sign * LOT_BACK), math.max(sign * WorldLayout.GateDistance, sign * LOT_BACK) }) -- lot
+		end
+	end
+	return reserved
+end
+
 -- True for points that belong to the playable core (road, promenades, lots, plaza annexes, burrow and exit).
 local function isCore(x: number, z: number): boolean
 	if math.abs(z) < 40 and math.abs(x) > LOT_OUTER_X - 20 then
@@ -222,26 +243,45 @@ function EnvironmentBuilder.build(parent: Instance, rng: Random): Folder
 	-- ground + soft grass patches so the lawn isn't one flat colour
 	Build.part(folder, "Ground", Vector3.new(GROUND_HALF_X * 2, 4, GROUND_HALF_Z * 2), CFrame.new(0, -2, 0), Palette.Grass, GRASS)
 	local patches = Build.folder(folder, "GrassPatches")
+	local reserved = lawnReserved()
+	local placed: { { X: number, Z: number, Radius: number, Light: boolean } } = {}
 	for _ = 1, 60 do
+		-- (the random numbers are drawn for every candidate, placed or not, so the forest and the rest of the world do not move)
 		local x = (rng:NextNumber() * 2 - 1) * (GROUND_HALF_X - 8)
 		local z = (rng:NextNumber() * 2 - 1) * (GROUND_HALF_Z - 8)
 		local radius = 8 + rng:NextNumber() * 16
-		local color = if rng:NextNumber() > 0.5 then Palette.GrassLight else Palette.GrassDark
-		Build.pillar(patches, "Patch", radius * 2, 0.04, CFrame.new(x, 0.01, z), color, GRASS, { CanCollide = false, CastShadow = false })
+		local light = rng:NextNumber() > 0.5
+		for _, rect in reserved do
+			local dx, dz = math.max(rect[1] - x, 0, x - rect[2]), math.max(rect[3] - z, 0, z - rect[4])
+			radius = math.min(radius, math.sqrt(dx * dx + dz * dz) - PATCH_GAP)
+		end
+		for _, other in placed do
+			if other.Light ~= light then
+				radius = math.min(radius, math.sqrt((other.X - x) ^ 2 + (other.Z - z) ^ 2) - other.Radius - PATCH_GAP)
+			end
+		end
+		if radius >= MIN_PATCH_RADIUS then
+			table.insert(placed, { X = x, Z = z, Radius = radius, Light = light })
+			Build.pillar(patches, "Patch", radius * 2, 0.06, CFrame.new(x, 0.03, z), if light then Palette.GrassLight else Palette.GrassDark, GRASS, { CanCollide = false, CastShadow = false })
+		end
 	end
 
-	-- promenades (the wide walkways in front of the houses; hamsters roll home along them too)
+	-- promenades (the wide walkways in front of the houses; hamsters roll home along them too). They lie at the height of the plaza paving (0.1); the kerb
+	-- strips are 0.06 higher and 0.05 inside the sides and ends of the promenade, so no two faces of a different colour share a plane.
 	local walks = Build.folder(folder, "Promenades")
 	local promenadeLength = LOT_OUTER_X * 2 + 20
+	local halfWidth = WorldLayout.PromenadeHalfWidth
 	for _, sign in { 1, -1 } do
 		local z = sign * WorldLayout.PromenadeZ
-		Build.part(walks, "Promenade", Vector3.new(promenadeLength, 0.2, WorldLayout.PromenadeHalfWidth * 2), CFrame.new(0, 0.1, z), Palette.Pavement, COSMETIC, { CanCollide = false })
+		Build.part(walks, "Promenade", Vector3.new(promenadeLength, 0.1, halfWidth * 2), CFrame.new(0, 0.05, z), Palette.Pavement, COSMETIC, { CanCollide = false })
 		for _, edge in { -1, 1 } do
-			Build.deco(walks, "PromenadeEdge", Vector3.new(promenadeLength, 0.24, 0.6), CFrame.new(0, 0.11, z + edge * (WorldLayout.PromenadeHalfWidth - 0.3)), Palette.PavementDark, COSMETIC)
+			Build.deco(walks, "PromenadeEdge", Vector3.new(promenadeLength - 0.2, 0.16, 0.6), CFrame.new(0, 0.08, z + edge * (halfWidth - 0.35)), Palette.PavementDark, COSMETIC)
 		end
-		-- a paved path from every gate straight to the road
+		-- a paved path from every gate straight to the road: in two pieces, the road side and the gate side of the promenade (it would only lie hidden under it)
 		for _, x in WorldLayout.HouseColumns do
-			Build.part(walks, "GatePath", Vector3.new(11, 0.16, WorldLayout.GateDistance - WorldLayout.RoadHalfWidth), CFrame.new(x, 0.09, sign * (WorldLayout.GateDistance + WorldLayout.RoadHalfWidth) / 2), Palette.PavementDark, COSMETIC, { CanCollide = false })
+			for _, span in { { WorldLayout.RoadHalfWidth, WorldLayout.PromenadeZ - halfWidth }, { WorldLayout.PromenadeZ + halfWidth, WorldLayout.GateDistance } } do
+				Build.part(walks, "GatePath", Vector3.new(11, 0.12, span[2] - span[1]), CFrame.new(x, 0.06, sign * (span[1] + span[2]) / 2), Palette.PavementDark, COSMETIC, { CanCollide = false })
+			end
 		end
 	end
 

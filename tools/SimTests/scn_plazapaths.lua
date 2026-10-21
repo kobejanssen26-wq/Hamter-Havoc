@@ -371,6 +371,41 @@ task.spawn(function()
 	check("no part of a house stands on the promenade, a gate path or the road", #houseOffenders == 0 and houseParts > 500, string.format("%d offenders, %d ground-level house parts looked at", #houseOffenders, houseParts))
 
 	---------------------------------------------------------------------------
+	-- 2c. the lawn patches (flat discs of a lighter / darker green, top 0.06) lie on bare lawn: where one overlaps a lot's lawn (top 0.07) or a paved
+	-- part its top would be within 0.05 studs of the other top (they flicker), and two patches of a different shade must not overlap at all.
+	---------------------------------------------------------------------------
+	local PATCH_FOLDER = "Environment/GrassPatches"
+	local function patchClashes(parts, pavedParts)
+		local patches, others = {}, {}
+		for _, part in parts do
+			if string.sub(part.Path, 1, #PATCH_FOLDER) == PATCH_FOLDER then
+				table.insert(patches, part)
+			elseif part.Name == "Lawn" and string.sub(part.Path, 1, 12) == "PlayerHouses" then
+				table.insert(others, part)
+			end
+		end
+		for _, paved in pavedParts do table.insert(others, paved) end
+		local clashes = {}
+		for index, patch in patches do
+			for _, other in others do
+				if boxGap(patch.Box, other.Box) < 0.01 and math.abs(patch.Top - other.Top) <= 0.05 and clearance(patch.Poly, other.Poly) < -0.01 then
+					table.insert(clashes, string.format("patch (%.0f, %.0f) on %s (top %.2f vs %.2f)", patch.X, patch.Z, other.Path, patch.Top, other.Top))
+				end
+			end
+			for second = index + 1, #patches do
+				local other = patches[second]
+				if colorKey(patch.Color) ~= colorKey(other.Color) and boxGap(patch.Box, other.Box) < 0.01 and clearance(patch.Poly, other.Poly) < -0.01 then
+					table.insert(clashes, string.format("patches (%.0f, %.0f) and (%.0f, %.0f) of a different shade overlap", patch.X, patch.Z, other.X, other.Z))
+				end
+			end
+		end
+		return clashes, #patches
+	end
+	local patchHits, patchCount = patchClashes(allParts, pavement)
+	for index = 1, math.min(#patchHits, 8) do print("   PATCH", patchHits[index]) end
+	check("no lawn patch lies on a lot's lawn or a paved part, or overlaps a patch of the other shade", #patchHits == 0 and patchCount >= 20, string.format("%d clashes, %d patches", #patchHits, patchCount))
+
+	---------------------------------------------------------------------------
 	-- 3. the walking lanes stay free of solid parts (thin floors under 0.5 studs and everything above head height do not count)
 	---------------------------------------------------------------------------
 	local wheelStart = LuckyWheelBuilder.CENTER.Z - 6.5 -- the wheel path ends at the platform
@@ -452,14 +487,15 @@ task.spawn(function()
 	end
 	check("the plaza has a Like & Favorite board", boards >= 1, boards)
 
-	-- advisory: a solid prop inside the guest spawn pad (cosmetic: a guest can land on it)
-	local seen = {}
+	-- a guest lands on a random spot of the spawn pad: no solid prop may stand inside it (a lamp base would hold the guest or push it away)
+	local seen, inSpawn = {}, {}
 	for _, part in propParts do
 		if part.Solid and part.Bottom <= TOUCHES_GROUND and part.Height > 0.05 and not seen[part.Key] and clearance(part.Poly, spawnPoly) < -0.2 then
 			seen[part.Key] = true
-			print(string.format("   NOTE inside the guest spawn pad: %s at (%.1f, %.1f)", part.Prop, part.X, part.Z))
+			table.insert(inSpawn, string.format("%s at (%.1f, %.1f)", part.Prop, part.X, part.Z))
 		end
 	end
+	check("no solid prop stands inside the guest spawn pad", #inSpawn == 0, table.concat(inSpawn, ", "))
 
 	---------------------------------------------------------------------------
 	-- 5. self-tests: the audit must see the defects it is meant to see
@@ -536,6 +572,31 @@ task.spawn(function()
 	check("self-test: a bench 0.2 studs from a board is found", collisionProbe({ X = -60, Z = -19.4 }, { Name = "Seat", Size = seat, CFrame = CFrame.new(-60 + halfBase + 0.2 + seat.X / 2, 0.7, -19.4) }) >= 1)
 	check("self-test: a tree trunk inside a board is found", collisionProbe({ X = -60, Z = -19.4 }, { Name = "Trunk", Size = Vector3.new(1.6, 6, 1.6), CFrame = CFrame.new(-60, 3, -19.4) }) >= 1)
 	check("self-test: a bench 2 studs from a board is fine", collisionProbe({ X = -60, Z = -19.4 }, { Name = "Seat", Size = seat, CFrame = CFrame.new(-60 + halfBase + 2 + seat.X / 2, 0.7, -19.4) }) == 0)
+
+	-- lawn patches: probes are 10 x 10 flat blocks (top 0.06) in the patch folder of the Environment
+	local function patchProbes(specs)
+		local folder = workspace.Environment.GrassPatches
+		local made = {}
+		for _, spec in specs do
+			local probe = M.newInstance("Part", true)
+			RawData[probe].Name = "Patch"
+			RawData[probe].Props.Anchored = true
+			RawData[probe].Props.CanCollide = false
+			RawData[probe].Props.Size = Vector3.new(10, 0.06, 10)
+			RawData[probe].Props.CFrame = CFrame.new(spec.X, 0.03, spec.Z)
+			RawData[probe].Props.Color = spec.Color
+			M.setParent(probe, folder)
+			table.insert(made, probe)
+		end
+		local _, _, probeAll = scan()
+		local clashes = patchClashes(probeAll, pavement)
+		for _, probe in made do M.InstanceMethods.Destroy(probe) end
+		return #clashes - #patchHits
+	end
+	check("self-test: a lawn patch lying on the promenade is found", patchProbes({ { X = 20, Z = 34, Color = Palette.GrassLight } }) >= 1)
+	check("self-test: a lawn patch lying on a lot's lawn is found", patchProbes({ { X = -64, Z = 90, Color = Palette.GrassLight } }) >= 1)
+	check("self-test: two patches of a different shade overlapping are found", patchProbes({ { X = 114, Z = 100, Color = Palette.GrassLight }, { X = 118, Z = 100, Color = Palette.GrassDark } }) >= 1)
+	check("self-test: a patch 3 studs from the promenade and two patches of the same shade overlapping are fine", patchProbes({ { X = 110, Z = 25 - 3 - 5, Color = Palette.GrassLight }, { X = 114, Z = 100, Color = Palette.GrassLight }, { X = 118, Z = 100, Color = Palette.GrassLight } }) == 0)
 
 	print(string.format("PASS %d  FAIL %d", results.pass, results.fail))
 	print("== done ==")

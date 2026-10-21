@@ -41,7 +41,7 @@ local function buildBoard(parent: Instance, metric: string, title: string, cfram
 	local board = Build.part(model, "Screen", Vector3.new(15, 10, 0.8), cframe * CFrame.new(0, 7.4, 0.9), Color3.fromRGB(24, 26, 44), PLASTIC)
 	Build.light(board, Color3.fromRGB(190, 200, 255), 0.6, 24) -- each board has its own soft light, so it reads at dusk and at night
 	Build.deco(model, "Frame", Vector3.new(16, 11, 0.5), cframe * CFrame.new(0, 7.4, 1.3), Palette.WoodDark, WOOD)
-	Build.deco(model, "Glow", Vector3.new(15.6, 0.3, 0.5), cframe * CFrame.new(0, 12.8, 0.7), Palette.Gold, NEON)
+	Build.deco(model, "Glow", Vector3.new(15.6, 0.3, 0.5), cframe * CFrame.new(0, 12.55, 0.9), Palette.Gold, NEON) -- (lies on the top of the screen and reaches into the frame)
 
 	local gui = Instance.new("SurfaceGui")
 	gui.Name = "BoardGui"
@@ -99,10 +99,10 @@ end
 function LeaderboardBuilder.build(parent: Instance, rng: Random): { Folder: Folder, Boards: { Board } }
 	local folder = Build.folder(parent, "LeaderboardHall")
 
-	-- paved square (dead end: nothing rolls or walks through here)
-	Build.pillar(folder, "HallPaving", 56, 0.22, CFrame.new(CENTER.X, 0.11, CENTER.Z), Palette.Pavement, Enum.Material.Cobblestone)
-	Build.pillar(folder, "HallRing", 48, 0.24, CFrame.new(CENTER.X, 0.12, CENTER.Z), Palette.PavementDark, Enum.Material.Cobblestone, { CanCollide = false })
-	Build.part(folder, "HallPath", Vector3.new(10, 0.2, 38), CFrame.new(CENTER.X, 0.12, CENTER.Z + 33), Palette.Pavement, Enum.Material.Cobblestone, { CanCollide = false })
+	-- paved square (dead end: nothing rolls or walks through here). The ring lies 0.06 above the square and the path (same height as the square).
+	Build.pillar(folder, "HallPaving", 56, 0.1, CFrame.new(CENTER.X, 0.05, CENTER.Z), Palette.Pavement, Enum.Material.Cobblestone)
+	Build.pillar(folder, "HallRing", 48, 0.16, CFrame.new(CENTER.X, 0.08, CENTER.Z), Palette.PavementDark, Enum.Material.Cobblestone)
+	Build.part(folder, "HallPath", Vector3.new(10, 0.1, 38), CFrame.new(CENTER.X, 0.05, CENTER.Z + 33), Palette.Pavement, Enum.Material.Cobblestone, { CanCollide = false })
 
 	-- SAFE ZONE: nobody can attack, or be attacked, inside the hall (CombatSystem looks for parts tagged "SafeZone").
 	-- Resize / move / duplicate this part in Studio, or tag any other invisible part "SafeZone" to protect more places.

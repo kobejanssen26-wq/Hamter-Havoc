@@ -38,7 +38,7 @@ local function buildBurrow(parent: Instance, rng: Random)
 
 	-- grassy hill behind the road start
 	local hill = Build.model(parent, "BurrowHill")
-	Build.blob(hill, "Hill", Vector3.new(52, 20, 36), base * CFrame.new(0, 3.5, 15), Palette.Grass, Enum.Material.Grass, { CanCollide = true })
+	Build.blob(hill, "Hill", Vector3.new(52, 20, 30), base * CFrame.new(0, 3.5, 15), Palette.Grass, Enum.Material.Grass, { CanCollide = true }) -- (the same hill as at the exit, so the dark opening pokes out of it)
 	Build.blob(hill, "HillTop", Vector3.new(34, 11, 22), base * CFrame.new(0, 11, 15), Palette.GrassLight, Enum.Material.Grass, { CanCollide = false })
 	Build.blob(hill, "HillSide", Vector3.new(20, 9, 20), base * CFrame.new(-24, 3, 8), Palette.GrassDark, Enum.Material.Grass, { CanCollide = false })
 
@@ -107,7 +107,7 @@ function PathBuilder.build(parent: Instance, rng: Random): Folder
 	end
 	-- lane divider (dashes) and direction arrows
 	for x = -200, 200, 20 do
-		Build.deco(folder, "LaneDash", Vector3.new(6, 0.04, 0.3), CFrame.new(x, height + 0.02, 0), Palette.Cream, Enum.Material.SmoothPlastic, { Transparency = 0.3 })
+		Build.deco(folder, "LaneDash", Vector3.new(6, 0.06, 0.3), CFrame.new(x, height + 0.03, 0), Palette.Cream, Enum.Material.SmoothPlastic, { Transparency = 0.3 }) -- (lies on the road, its top is 0.06 above it)
 	end
 	for _, x in { -170, -130, -90, 90, 130, 170 } do
 		for _, lane in PathConfig.LaneOffsets do
