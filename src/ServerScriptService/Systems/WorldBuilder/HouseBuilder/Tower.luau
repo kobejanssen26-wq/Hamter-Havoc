@@ -34,12 +34,14 @@ local METAL = Enum.Material.Metal
 local FRAME = Color3.fromRGB(58, 52, 66)
 local CONCRETE = Color3.fromRGB(240, 235, 226)
 local WALL_THICKNESS = 0.6
+local COLUMN_RADIUS = 0.85 -- the rounded corner columns (diameter 1.7)
 
 local Z0, Z1 = WorldLayout.TowerFront, WorldLayout.TowerBack
 local CZ = (Z0 + Z1) / 2
 local DEPTH = Z1 - Z0
 local FH = WorldLayout.FloorHeight
 local WALL_H = FH - 0.8
+local FOUNDATION_FRONT = Z0 - COLUMN_RADIUS -- front edge of the ground-floor foundation (the entrance step ends exactly here)
 
 -- wheel stations of one floor: two rows of four, centre-out so the first slots sit at the front
 local STATION_X = { -4.5, 4.5, -13.5, 13.5 }
@@ -62,6 +64,14 @@ local FLOOR_STYLE = {
 
 local function L(house: any, x: number, y: number, z: number): CFrame
 	return house.CFrame * CFrame.new(x, y, z)
+end
+
+-- Half width of the slab under floor f: the wider of this floor and the one below, plus the corner columns' radius (a column
+-- stands completely on it). A narrower floor on a wider one then stands on a terrace that roofs the floor below, so there is no
+-- open slit between the old walls and the new slab.
+local function slabHalfWidth(f: number): number
+	local hw = WorldLayout.FloorHalfWidth[f]
+	return math.max(hw, WorldLayout.FloorHalfWidth[f - 1] or hw) + COLUMN_RADIUS
 end
 
 local function glassPart(parent: Instance, size: Vector3, cframe: CFrame)
@@ -102,20 +112,29 @@ local function windowedWall(house: any, parent: Instance, y0: number, fixed: num
 	place(cursor, to, windowY, windowH, "WallPier", CONCRETE)
 end
 
+-- x of a bookshelf (1.4 deep) standing against the side wall of floor f: its back touches the inner face of the wall
+local function shelfX(f: number): number
+	return WorldLayout.FloorHalfWidth[f] - WALL_THICKNESS / 2 - 0.7
+end
+
 local function buildShell(house: any, floorModel: Model, f: number)
 	local hw = WorldLayout.FloorHalfWidth[f]
 	local y0 = WorldLayout.floorY(f)
 	local shell = Build.model(floorModel, "Shell")
 	local style = FLOOR_STYLE[f]
 
-	-- floor slab
+	-- Floor: ONE walkable surface per spot, lying on the structure and never in the same plane as it (a floor skin buried in its
+	-- slab flickers). The surface is as wide as the walls, so every wall stands on it completely.
+	local floorWidth, floorDepth = hw * 2 + WALL_THICKNESS, DEPTH + WALL_THICKNESS
 	if f == 1 then
-		Build.part(shell, "Foundation", Vector3.new(hw * 2 + 1.6, 0.5, DEPTH + 1.6), L(house, 0, 0.25, CZ), Palette.StoneDark, Enum.Material.Slate)
-		Build.part(shell, "Floor", Vector3.new(hw * 2, 0.2, DEPTH), L(house, 0, y0 - 0.1, CZ), style.Color, style.Material)
+		Build.part(shell, "Foundation", Vector3.new(hw * 2 + COLUMN_RADIUS * 2, 0.5, DEPTH + COLUMN_RADIUS * 2), L(house, 0, 0.25, CZ), Palette.StoneDark, Enum.Material.Slate)
+		Build.part(shell, "Floor", Vector3.new(floorWidth, 0.2, floorDepth), L(house, 0, y0 - 0.1, CZ), style.Color, style.Material)
 	else
-		Build.part(shell, "Slab", Vector3.new(hw * 2 + 1.2, 0.8, DEPTH + 1.2), L(house, 0, y0 - 0.4, CZ), CONCRETE, PLASTIC)
-		Build.part(shell, "FloorSurface", Vector3.new(hw * 2, 0.1, DEPTH), L(house, 0, y0 - 0.05, CZ), style.Color, style.Material, { CanCollide = false })
-		local fascia = Build.deco(shell, "Fascia", Vector3.new(hw * 2 + 1.4, 0.8, 0.5), L(house, 0, y0 - 0.4, Z0 - 0.5), house.Accent, PLASTIC)
+		-- slab: ceiling of the floor below (its underside meets the wall tops), floor surface 0.1 on top, fascia in FRONT of it
+		local slabWidth = slabHalfWidth(f) * 2
+		Build.part(shell, "Slab", Vector3.new(slabWidth, 0.7, DEPTH + COLUMN_RADIUS * 2), L(house, 0, y0 - 0.45, CZ), CONCRETE, PLASTIC)
+		Build.part(shell, "FloorSurface", Vector3.new(floorWidth, 0.1, floorDepth), L(house, 0, y0 - 0.05, CZ), style.Color, style.Material)
+		local fascia = Build.deco(shell, "Fascia", Vector3.new(slabWidth, 0.8, 0.5), L(house, 0, y0 - 0.4, Z0 - COLUMN_RADIUS - 0.25), house.Accent, PLASTIC)
 		table.insert(house.AccentParts, fascia)
 	end
 
@@ -153,7 +172,8 @@ local function buildShell(house: any, floorModel: Model, f: number)
 	-- rounded corner columns
 	for _, x in { -hw, hw } do
 		for _, z in { Z0, Z1 } do
-			Build.pillar(shell, "Corner", 1.7, WALL_H, L(house, x, y0 + WALL_H / 2, z), CONCRETE, PLASTIC)
+			-- (0.1 longer than the wall: the foot stands on the slab beside the floor surface, no slit under the column)
+			Build.pillar(shell, "Corner", COLUMN_RADIUS * 2, WALL_H + 0.1, L(house, x, y0 + WALL_H / 2 - 0.05, z), CONCRETE, PLASTIC)
 		end
 	end
 end
@@ -179,7 +199,7 @@ local function buildEntrance(house: any, floorModel: Model)
 		table.insert(house.Stars, star)
 	end
 	-- steps and a welcome mat
-	Build.part(entrance, "Step", Vector3.new(16, 0.5, 4), L(house, 0, 0.25, Z0 - 2), Palette.Stone, Enum.Material.Cobblestone)
+	Build.part(entrance, "Step", Vector3.new(16, 0.5, 3.2), L(house, 0, 0.25, FOUNDATION_FRONT - 1.6), Palette.Stone, Enum.Material.Cobblestone) -- (ends where the foundation starts: two tops in one plane would flicker)
 	Build.deco(entrance, "WelcomeMat", Vector3.new(7, 0.08, 2.2), L(house, 0, 0.54, Z0 - 1.6), Palette.Pink, PLASTIC)
 	-- two lanterns on the facade
 	for _, side in { -1, 1 } do
@@ -352,9 +372,10 @@ local function furnishHall(house: any, interior: Model, rng: Random)
 	local y0 = WorldLayout.floorY(1)
 	-- arrival pad
 	local pad = WorldLayout.PadLocal
-	Build.pillar(interior, "PadOuter", 8.4, 0.08, L(house, pad.X, y0 + 0.05, pad.Z), Palette.Pink, PLASTIC, { CanCollide = false })
-	Build.pillar(interior, "PadInner", 6.4, 0.1, L(house, pad.X, y0 + 0.06, pad.Z), Palette.Cream, PLASTIC, { CanCollide = false })
-	local glow = Build.pillar(interior, "PadGlow", 4, 0.12, L(house, pad.X, y0 + 0.07, pad.Z), Color3.fromRGB(255, 214, 120), NEON, { CanCollide = false, Transparency = 0.35 })
+	-- (three discs on the floor, their tops 0.06 apart: closer layers flicker at a distance)
+	Build.pillar(interior, "PadOuter", 8.4, 0.06, L(house, pad.X, y0 + 0.03, pad.Z), Palette.Pink, PLASTIC, { CanCollide = false })
+	Build.pillar(interior, "PadInner", 6.4, 0.12, L(house, pad.X, y0 + 0.06, pad.Z), Palette.Cream, PLASTIC, { CanCollide = false })
+	local glow = Build.pillar(interior, "PadGlow", 4, 0.18, L(house, pad.X, y0 + 0.09, pad.Z), Color3.fromRGB(255, 214, 120), NEON, { CanCollide = false, Transparency = 0.35 })
 	glow:SetAttribute("Ripple", true)
 	Build.target(glow, "Base") -- the arrival pad: where hamsters you win are secured
 
@@ -423,8 +444,9 @@ local function furnishGallery(house: any, interior: Model, rng: Random)
 	Props.rug(interior, L(house, -11, y0, 33), 11, Palette.Mint, Palette.Cream)
 	Props.sofa(interior, L(house, -11, y0, 30.6) * CFrame.Angles(0, math.pi, 0), Palette.RoofColors[3], 7.5)
 	Build.part(interior, "CoffeeTable", Vector3.new(3.6, 1.2, 2.2), L(house, -11, y0 + 0.6, 34.6), Palette.WoodDark, WOOD)
-	Props.shelf(interior, L(house, -21, y0, 40) * CFrame.Angles(0, math.rad(90), 0), 9, rng)
-	Props.shelf(interior, L(house, 21, y0, 40) * CFrame.Angles(0, math.rad(-90), 0), 9, rng)
+	-- (a shelf faces -Z: the left wall's is turned -90 degrees, the right wall's +90, so the books look into the room)
+	Props.shelf(interior, L(house, -shelfX(2), y0, 40) * CFrame.Angles(0, math.rad(-90), 0), 9, rng)
+	Props.shelf(interior, L(house, shelfX(2), y0, 40) * CFrame.Angles(0, math.rad(90), 0), 9, rng)
 	Props.plant(interior, L(house, 19.5, y0, 29.5), 1.2)
 	-- storage lounge: crates + a second chest
 	Props.crates(interior, L(house, 14, y0, 30.5))
@@ -437,8 +459,8 @@ local function furnishLab(house: any, interior: Model, rng: Random)
 	local y0 = WorldLayout.floorY(3)
 	-- lab desks with glowing screens along the left wall
 	for _, z in { 32, 38 } do
-		Props.desk(interior, L(house, -19.2, y0, z) * CFrame.Angles(0, math.rad(90), 0), 4.6, Color3.fromRGB(220, 224, 232))
-		Props.screen(interior, L(house, -20.6, y0 + 4.4, z) * CFrame.Angles(0, math.rad(90), 0), Vector2.new(3.4, 2.2), Color3.fromRGB(120, 230, 255))
+		Props.desk(interior, L(house, -19.2, y0, z) * CFrame.Angles(0, math.rad(-90), 0), 4.6, Color3.fromRGB(220, 224, 232))
+		Props.screen(interior, L(house, -20.6, y0 + 4.4, z) * CFrame.Angles(0, math.rad(-90), 0), Vector2.new(3.4, 2.2), Color3.fromRGB(120, 230, 255))
 	end
 	-- upgrade console: a big glowing desk that opens the Upgrades menu
 	local console = Build.part(interior, "UpgradeConsole", Vector3.new(7, 2.8, 2.6), L(house, 13, y0 + 1.4, 31.5), Color3.fromRGB(70, 76, 96), PLASTIC)
@@ -475,7 +497,7 @@ local function furnishSuite(house: any, interior: Model, rng: Random)
 		Build.pillar(interior, "BarStool", 1.4, 2.2, L(house, 15.6, y0 + 1.1, z), Palette.Gold, METAL)
 	end
 	Props.plant(interior, L(house, -17.5, y0, 29.5), 1.4)
-	Props.shelf(interior, L(house, -19.4, y0, 40) * CFrame.Angles(0, math.rad(90), 0), 9, rng)
+	Props.shelf(interior, L(house, -shelfX(4), y0, 40) * CFrame.Angles(0, math.rad(-90), 0), 9, rng)
 	for _, z in { 36, 56 } do
 		Build.deco(interior, "CeilingStrip", Vector3.new(30, 0.2, 0.5), L(house, 0, y0 + WALL_H - 0.3, z + 3), Palette.Gold, NEON)
 	end
@@ -493,8 +515,8 @@ local function furnishPenthouse(house: any, interior: Model, rng: Random)
 	end
 	Props.plant(interior, L(house, -16.5, y0, 30), 1.5)
 	Props.plant(interior, L(house, 16.5, y0, 30), 1.5)
-	Props.shelf(interior, L(house, -17.4, y0, 40) * CFrame.Angles(0, math.rad(90), 0), 9, rng)
-	Props.shelf(interior, L(house, 17.4, y0, 40) * CFrame.Angles(0, math.rad(-90), 0), 9, rng)
+	Props.shelf(interior, L(house, -shelfX(5), y0, 40) * CFrame.Angles(0, math.rad(-90), 0), 9, rng)
+	Props.shelf(interior, L(house, shelfX(5), y0, 40) * CFrame.Angles(0, math.rad(90), 0), 9, rng)
 end
 
 local FURNISH = { furnishHall, furnishGallery, furnishLab, furnishSuite, furnishPenthouse }
@@ -520,7 +542,8 @@ local function buildFloor(house: any, f: number, rng: Random)
 		local y0 = WorldLayout.floorY(f)
 		local hw = WorldLayout.FloorHalfWidth[f]
 		local balcony = Build.model(floorModel, "Balcony")
-		Build.part(balcony, "BalconySlab", Vector3.new(hw * 2 - 6, 0.6, 5), L(house, 0, y0 - 0.3, Z0 - 2.5), CONCRETE, PLASTIC)
+		-- (the balcony slab ends at the fascia, the front face of the floor slab: nothing of it lies inside the slab)
+		Build.part(balcony, "BalconySlab", Vector3.new(hw * 2 - 6, 0.6, 4), L(house, 0, y0 - 0.3, Z0 - COLUMN_RADIUS - 0.5 - 2), CONCRETE, PLASTIC)
 		glassPart(balcony, Vector3.new(hw * 2 - 6, 2.4, 0.2), L(house, 0, y0 + 1.2, Z0 - 5))
 		local rail = Build.deco(balcony, "Rail", Vector3.new(hw * 2 - 5.8, 0.3, 0.5), L(house, 0, y0 + 2.5, Z0 - 5), house.Accent, PLASTIC)
 		table.insert(house.AccentParts, rail)
@@ -550,25 +573,46 @@ local function buildGableRoof(house: any, roof: Model)
 	local y0 = WorldLayout.floorY(1)
 	local top = y0 + WALL_H
 	local pitch = math.rad(24)
-	local halfSpan = hw + 1.6
-	local slabLength = halfSpan / math.cos(pitch) + 1
-	local rise = halfSpan * math.tan(pitch)
-	for _, side in { -1, 1 } do
-		local slab = Build.part(roof, "Roof", Vector3.new(slabLength, 0.8, DEPTH + 3), L(house, side * halfSpan / 2, top + rise / 2 + 0.45, CZ) * CFrame.Angles(0, 0, -side * pitch), house.Accent, Enum.Material.Slate)
-		table.insert(house.AccentParts, slab)
+	local slope = math.tan(pitch)
+	local thickness = 0.8
+	local lift = thickness / math.cos(pitch) -- vertical thickness of a pitched slab
+	-- The underside of the roof comes down to the wall top exactly where the corner columns end (hw + their radius), so
+	-- nothing of the roof sinks into a wall or a column and there is no slit under the eaves.
+	local seat = hw + COLUMN_RADIUS
+	local rise = seat * slope -- height of the underside at the ridge above the wall top
+	local eave = seat + 1.25 -- the slabs overhang the walls
+	local slabLength = (eave + 0.3) / math.cos(pitch) -- (0.3 past the ridge line: the ridge beam covers the crossing)
+	local slabX = (eave - 0.3) / 2
+	local function underside(x: number): number -- underside of the right-hand slab at x
+		return top + (seat - x) * slope
 	end
-	table.insert(house.AccentParts, Build.part(roof, "Ridge", Vector3.new(1.4, 0.8, DEPTH + 3), L(house, 0, top + rise + 0.5, CZ), house.Accent, Enum.Material.Slate))
-	local slices = 7
-	for _, z in { Z0 + 0.2, Z1 - 0.2 } do
-		for slice = 1, slices do
-			local sliceHeight = rise / slices
-			local width = hw * 2 * (1 - (slice - 0.5) / slices)
-			Build.part(roof, "Gable", Vector3.new(width, sliceHeight + 0.02, 0.8), L(house, 0, top + (slice - 0.5) * sliceHeight, z), CONCRETE, PLASTIC)
+	for _, side in { -1, 1 } do
+		local slab = Build.part(roof, "Roof", Vector3.new(slabLength, thickness, DEPTH + 3), L(house, side * slabX, underside(slabX) + lift / 2, CZ) * CFrame.Angles(0, 0, -side * pitch), house.Accent, Enum.Material.Slate)
+		table.insert(house.AccentParts, slab)
+		-- wall plate: fills the wedge between the flat wall top and the pitched underside along the whole side wall
+		Build.part(roof, "WallPlate", Vector3.new(seat - hw + 0.35, 0.6, DEPTH + WALL_THICKNESS), L(house, side * (seat + hw - 0.35) / 2, top + 0.3, CZ), CONCRETE, PLASTIC)
+	end
+	local ridgeTop = top + rise + 1.07
+	table.insert(house.AccentParts, Build.part(roof, "Ridge", Vector3.new(1.4, 1.1, DEPTH + 3.2), L(house, 0, ridgeTop - 0.55, CZ), house.Accent, Enum.Material.Slate))
+	-- Gable ends: one wedge per half, flush with the wall faces, its slope 0.3 inside the slab so it ends under the roof without
+	-- a gap (the half wedges meet on the centre line, hidden under the ridge). A WedgePart has its right angle at the back
+	-- bottom and its slope rising towards +Z: turned so that +Z points to the centre line and X runs along the house.
+	local into = 0.3 / math.cos(pitch)
+	local gableHeight, gableHalf = rise + into, seat + into / slope
+	for _, z in { Z0, Z1 } do
+		for _, side in { -1, 1 } do
+			local place = house.CFrame * CFrame.fromMatrix(Vector3.new(side * gableHalf / 2, top + gableHeight / 2, z), Vector3.new(0, 0, side), Vector3.yAxis)
+			Build.wedge(roof, "Gable", Vector3.new(WALL_THICKNESS, gableHeight, gableHalf), place, CONCRETE, PLASTIC)
 		end
 	end
-	-- chimney with smoke and a little wheel weathervane on the ridge
-	Build.part(roof, "Chimney", Vector3.new(2.6, 10, 2.6), L(house, 13, top + 5.5, 60), Palette.Stone, Enum.Material.Brick)
-	local chimneyTop = Build.part(roof, "ChimneyTop", Vector3.new(3.2, 0.5, 3.2), L(house, 13, top + 10.7, 60), Palette.StoneDark, Enum.Material.Slate)
+	-- chimney with smoke: a brick shaft through the roof on a tilted brick curb that lies in the slab (a square shaft would
+	-- either hang out under the high side of the slope or float over the low side)
+	local chimneyX, chimneyZ, chimneyHalf = 13, 60, 1.3
+	local curbX = chimneyX - 0.8 * math.sin(pitch) -- (the curb is centred 0.8 above the underside, measured at right angles)
+	Build.part(roof, "ChimneyCurb", Vector3.new(3.6, 1.4, 3), L(house, chimneyX, underside(curbX) + 0.8 * math.cos(pitch), chimneyZ) * CFrame.Angles(0, 0, -pitch), Palette.Stone, Enum.Material.Brick)
+	local shaftBottom, shaftTop = underside(chimneyX - chimneyHalf) + 0.3, top + 10.2
+	Build.part(roof, "Chimney", Vector3.new(chimneyHalf * 2, shaftTop - shaftBottom, chimneyHalf * 2), L(house, chimneyX, (shaftBottom + shaftTop) / 2, chimneyZ), Palette.Stone, Enum.Material.Brick)
+	local chimneyTop = Build.part(roof, "ChimneyTop", Vector3.new(3.2, 0.5, 3.2), L(house, chimneyX, shaftTop + 0.2, chimneyZ), Palette.StoneDark, Enum.Material.Slate)
 	local smoke = Instance.new("ParticleEmitter")
 	smoke.Texture = "rbxasset://textures/particles/smoke_main.dds"
 	smoke.Color = ColorSequence.new(Color3.fromRGB(235, 235, 240))
@@ -580,15 +624,16 @@ local function buildGableRoof(house: any, roof: Model)
 	smoke.SpreadAngle = Vector2.new(12, 12)
 	smoke.Parent = chimneyTop
 	chimneyTop:AddTag("AmbientParticles")
-	emblem(roof, L(house, 0, top + rise + 3.4, Z0 + 0.5), 4, TRIM_COLORS[house.Trim] or TRIM_COLORS.Wood)
-	house.RoofAnchorY = top + rise + 8
+	-- the little wheel emblem stands on the ridge
+	emblem(roof, L(house, 0, ridgeTop + 1.95, Z0 + 0.5), 4, TRIM_COLORS[house.Trim] or TRIM_COLORS.Wood)
+	house.RoofAnchorY = ridgeTop + 7.1
 end
 
 local function buildFlatRoof(house: any, roof: Model, count: number, rng: Random)
 	local hw = WorldLayout.FloorHalfWidth[count]
 	local y = WorldLayout.floorY(count) + WALL_H -- underside level of the roof slab
 	Build.part(roof, "RoofSlab", Vector3.new(hw * 2 + 1.6, 0.8, DEPTH + 1.6), L(house, 0, y + 0.4, CZ), CONCRETE, PLASTIC)
-	local fascia = Build.deco(roof, "RoofFascia", Vector3.new(hw * 2 + 1.8, 0.9, 0.5), L(house, 0, y + 0.4, Z0 - 0.5), house.Accent, PLASTIC)
+	local fascia = Build.deco(roof, "RoofFascia", Vector3.new(hw * 2 + 1.6, 0.8, 0.5), L(house, 0, y + 0.4, Z0 - 0.8 - 0.25), house.Accent, PLASTIC) -- (in front of the slab, not inside it)
 	table.insert(house.AccentParts, fascia)
 	-- parapet
 	local parapetY = y + 1.5
@@ -597,7 +642,7 @@ local function buildFlatRoof(house: any, roof: Model, count: number, rng: Random
 	for _, side in { -1, 1 } do
 		Build.part(roof, "ParapetSide", Vector3.new(0.5, 1.4, DEPTH + 1.6), L(house, side * (hw + 0.4), parapetY, CZ), CONCRETE, PLASTIC)
 	end
-	local trim = Build.part(roof, "ParapetTrim", Vector3.new(hw * 2 + 2, 0.3, 0.8), L(house, 0, parapetY + 0.8, Z0 - 0.4), TRIM_COLORS[house.Trim] or TRIM_COLORS.Wood, METAL)
+	local trim = Build.part(roof, "ParapetTrim", Vector3.new(hw * 2 + 2, 0.3, 1), L(house, 0, parapetY + 0.8, Z0 - 0.4), TRIM_COLORS[house.Trim] or TRIM_COLORS.Wood, METAL)
 	table.insert(house.TrimParts, trim)
 
 	-- rooftop equipment: solar panels, water tank, air units

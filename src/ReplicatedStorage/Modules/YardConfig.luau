@@ -23,8 +23,9 @@ YardConfig.Flowers = {
 }
 
 -- Turn: degrees around the vertical axis (180 = the seat faces the tower)
+-- (the rebirth altar stands at X 19, Z 14: its platform and rune stones reach Z 18.6, so the bench sits beside and behind it)
 YardConfig.Benches = {
-	{ X = 16, Z = 19, Turn = 180 },
+	{ X = 12, Z = 21, Turn = 180 },
 }
 
 YardConfig.Lamps = {

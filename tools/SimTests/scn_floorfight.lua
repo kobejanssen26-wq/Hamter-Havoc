@@ -13,6 +13,8 @@
 --   pixel-identical whichever surface wins (listed, not gated); of a textured one (wood, marble, stone, slate) the patterns differ.
 -- A second probe looks at the ground itself: it walks over floor 1 (the whole interior) and floors 2-5, and along the way in through
 -- the door, and checks that exactly one surface is on top at every spot.
+-- The report is split by zone (Tower = the shell, floors, balconies, roof and furniture; Yard = lawn, driveway, gate portal; Wheels;
+-- World = everything around the lot, listed only). Tower, Yard and Wheels are gated.
 -- The first block of checks is a self-test of the detector (synthetic plates): it proves the pair search sees flush tops, discs and
 -- turned parts and stays quiet about steps, buried faces, touching faces and slits.
 local results = { pass = 0, fail = 0 }
@@ -542,7 +544,8 @@ task.spawn(function()
 				local inv = hcf:Inverse()
 				local seenThisScan = {}
 				for _, hit in hits do
-					local nameA, nameB = hit.A.Part.Chain, hit.B.Part.Chain
+					-- (one signature per defect, not per wheel: Wheel1 .. Wheel40 are the same model)
+					local nameA, nameB = string.gsub(hit.A.Part.Chain, "Wheel%d+", "Wheel#"), string.gsub(hit.B.Part.Chain, "Wheel%d+", "Wheel#")
 					if nameA > nameB then nameA, nameB = nameB, nameA end
 					local localN = inv:VectorToWorldSpace(Vector3.new(hit.A.Nx, hit.A.Ny, hit.A.Nz))
 					local lp = inv * Vector3.new(hit.X, hit.Y, hit.Z)
@@ -744,6 +747,14 @@ task.spawn(function()
 	check("floor 1 lobby (inside the walls): no two surfaces fight over the floor, the pad or the rugs", #floor1 == 0, #floor1 .. " signatures: " .. names(floor1))
 	check("the way in (gate line to the lobby, x +-9): no two ground surfaces of different look are flush", #entrance == 0, #entrance .. " signatures: " .. names(entrance))
 	check("the lot outside the tower (lawn, driveway, apron, altar...): no two ground surfaces of different look are flush", #lotGround == 0, #lotGround .. " signatures: " .. names(lotGround))
+	-- the rest of the lot model: the gate portal and the yard (another builder, same complaint) and the wheels standing on the floors
+	local yardFights, wheelFights = {}, {}
+	for _, e in list do
+		if zone(e) == "Yard" and e.Fight and not (e.SameLook and UNTEXTURED[e.A.Material]) then table.insert(yardFights, e) end
+		if zone(e) == "Wheels" and not (e.Fight and e.SameLook and UNTEXTURED[e.A.Material]) then table.insert(wheelFights, e) end
+	end
+	check("yard and gate portal: no flush surfaces of different look (pylon / beam / stripe ends) or of the same textured look (lily pads)", #yardFights == 0, #yardFights .. " signatures: " .. names(yardFights))
+	check("wheels: no flush or near-flush surfaces (rung ends vs the glass sides)", #wheelFights == 0, #wheelFights .. " signatures: " .. names(wheelFights))
 	local floorFights = 0
 	for _, e in probeList do floorFights += e.E.Count end
 	check("walking probe: exactly one surface is on top at every sampled spot of every floor interior (floors 1-5)", floorFights == 0, floorFights .. " spots")

@@ -40,7 +40,7 @@ propBuilders.CoinMultiplier = function(folder, top, fraction, ghost)
 	for index = 1, coins do
 		Build.pillar(folder, "Coin", 1.5, 0.28, top * CFrame.new((index % 2) * 0.12, 0.15 + (index - 1) * 0.3, 0) * CFrame.Angles(0, index * 0.5, 0), Palette.Gold, Enum.Material.Metal, { CanCollide = false, Transparency = ghost })
 	end
-	Build.pillar(folder, "Coin", 1.5, 0.28, top * CFrame.new(1.4, 0.14, 0.3), Palette.Gold, Enum.Material.Metal, { CanCollide = false, Transparency = ghost })
+	Build.pillar(folder, "Coin", 1.5, 0.2, top * CFrame.new(1.4, 0.1, 0.3), Palette.Gold, Enum.Material.Metal, { CanCollide = false, Transparency = ghost }) -- (a thinner coin: its top must not share a plane with the stack)
 end
 
 propBuilders.SpawnLuck = function(folder, top, fraction, ghost)
@@ -60,7 +60,7 @@ propBuilders.WalkSpeed = function(folder, top, fraction, ghost)
 	for _, side in { -0.7, 0.7 } do
 		Build.part(folder, "Shoe", Vector3.new(0.9, 0.8, 1.7), top * CFrame.new(side, 0.6, 0), Palette.Pink, PLASTIC, { CanCollide = false, Transparency = ghost })
 		Build.part(folder, "Sole", Vector3.new(1, 0.25, 1.8), top * CFrame.new(side, 0.15, 0), Color3.new(1, 1, 1), PLASTIC, { CanCollide = false, Transparency = ghost })
-		Build.deco(folder, "Wing", Vector3.new(0.12, 0.9 + fraction, 1.2 + fraction), top * CFrame.new(side * 1.5, 1.1, 0.2) * CFrame.Angles(0, 0, side * 0.4), Color3.new(1, 1, 1), PLASTIC, { Transparency = ghost })
+		Build.deco(folder, "Wing", Vector3.new(0.12, 0.9 + fraction, 1.2 + fraction), top * CFrame.new(side * 1.5, 1.1, 0.35) * CFrame.Angles(0, 0, side * 0.4), Color3.new(1, 1, 1), PLASTIC, { Transparency = ghost })
 	end
 	for index = 1, 1 + math.floor(fraction * 4) do
 		Build.deco(folder, "Streak", Vector3.new(0.12, 0.12, 1 + index * 0.4), top * CFrame.new(0, 0.5 + index * 0.15, 1.6 + index * 0.4), Color3.fromRGB(120, 230, 255), NEON, { Transparency = 0.3 + ghost })
@@ -119,19 +119,20 @@ end
 
 -- A rug (two nested discs).
 function Props.rug(parent: Instance, position: CFrame, diameter: number, outer: Color3, inner: Color3)
-	Build.pillar(parent, "RugOuter", diameter, 0.06, position * CFrame.new(0, 0.04, 0), outer, PLASTIC, { CanCollide = false })
-	Build.pillar(parent, "RugInner", diameter * 0.66, 0.08, position * CFrame.new(0, 0.05, 0), inner, PLASTIC, { CanCollide = false })
+	Build.pillar(parent, "RugOuter", diameter, 0.06, position * CFrame.new(0, 0.03, 0), outer, PLASTIC, { CanCollide = false })
+	Build.pillar(parent, "RugInner", diameter * 0.66, 0.12, position * CFrame.new(0, 0.06, 0), inner, PLASTIC, { CanCollide = false }) -- (tops 0.06 apart: closer layers flicker)
 end
 
--- A low bookshelf against a wall facing local -Z.
+-- A low bookshelf against a wall, books facing local -Z (the back, local +Z, goes against the wall).
 function Props.shelf(parent: Instance, cframe: CFrame, width: number, rng: Random)
 	Build.part(parent, "ShelfBody", Vector3.new(width, 5, 1.4), cframe * CFrame.new(0, 2.5, 0), Palette.WoodDark, WOOD)
 	for row = 1, 3 do
-		Build.part(parent, "ShelfBoard", Vector3.new(width - 0.4, 0.25, 1.5), cframe * CFrame.new(0, row * 1.2, -0.05), Palette.WoodLight, WOOD, { CanCollide = false })
+		-- (the boards stand 0.05 proud of the body on BOTH sides: a board back in the plane of the body back would flicker)
+		Build.part(parent, "ShelfBoard", Vector3.new(width - 0.4, 0.25, 1.5), cframe * CFrame.new(0, row * 1.2, 0), Palette.WoodLight, WOOD, { CanCollide = false })
 		local books = math.max(3, math.floor(width / 1.1))
 		for book = 1, books do
 			local color = Palette.FlowerColors[rng:NextInteger(1, #Palette.FlowerColors)]
-			Build.deco(parent, "Book", Vector3.new(0.6, 0.9, 0.9), cframe * CFrame.new(-width / 2 + 0.8 + (book - 1) * ((width - 1.6) / books), row * 1.2 + 0.6, -0.4), color, PLASTIC)
+			Build.deco(parent, "Book", Vector3.new(0.6, 0.9, 0.9), cframe * CFrame.new(-width / 2 + 0.8 + (book - 1) * ((width - 1.6) / books), row * 1.2 + 0.575, -0.4), color, PLASTIC)
 		end
 	end
 end

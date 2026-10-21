@@ -248,7 +248,7 @@ function EnvironmentBuilder.build(parent: Instance, rng: Random): Folder
 	-- street furniture: a few lamps and benches between the road and the promenade
 	local props = Build.folder(folder, "Props")
 	for _, sign in { 1, -1 } do
-		for _, x in { -190, -128, -64, 64, 128, 190 } do
+		for _, x in { -190, -128, -72, 72, 128, 190 } do -- (not +-64: that is the middle of the gate path)
 			Decor.lamp(props, Vector3.new(x, 0, sign * 17), 7)
 		end
 		for _, x in { -44, 44 } do

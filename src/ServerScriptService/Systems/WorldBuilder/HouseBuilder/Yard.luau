@@ -50,20 +50,23 @@ function Yard.build(house: any, rng: Random)
 	local half = WorldLayout.LotHalfWidth
 	local depth = WorldLayout.LotDepth
 
-	-- lawn, driveway, gate apron
+	-- lawn, driveway, gate apron (the driveway starts where the apron ends: two slabs of different colour must not share a plane)
+	local apronEnd = 2.5
+	local driveEnd = WorldLayout.TowerFront - 4.0
 	Build.part(yard, "Lawn", Vector3.new(half * 2, 0.1, depth), L(0, 0.02, depth / 2), Palette.Grass, Enum.Material.Grass, { CanCollide = false })
-	Build.part(yard, "Driveway", Vector3.new(10.4, 0.14, WorldLayout.TowerFront - 4.0), L(0, 0.07, (WorldLayout.TowerFront - 4.0) / 2), Palette.Pavement, Enum.Material.Cobblestone, { CanCollide = false })
+	Build.part(yard, "Driveway", Vector3.new(10.4, 0.14, driveEnd - apronEnd), L(0, 0.07, (apronEnd + driveEnd) / 2), Palette.Pavement, Enum.Material.Cobblestone, { CanCollide = false })
 	for _, side in { -1, 1 } do
-		Build.deco(yard, "DrivewayEdge", Vector3.new(0.5, 0.18, WorldLayout.TowerFront - 4.0), L(side * 5.45, 0.09, (WorldLayout.TowerFront - 4.0) / 2), Palette.PavementDark, Enum.Material.Cobblestone)
+		Build.deco(yard, "DrivewayEdge", Vector3.new(0.5, 0.18, driveEnd - apronEnd), L(side * 5.45, 0.09, (apronEnd + driveEnd) / 2), Palette.PavementDark, Enum.Material.Cobblestone)
 	end
-	Build.part(yard, "GateApron", Vector3.new(18, 0.14, 5), L(0, 0.07, 0), Palette.PavementDark, Enum.Material.Cobblestone, { CanCollide = false })
+	Build.part(yard, "GateApron", Vector3.new(18, 0.14, apronEnd * 2), L(0, 0.07, 0), Palette.PavementDark, Enum.Material.Cobblestone, { CanCollide = false })
 
-	-- boundary: low hedge all around; the gate side has a low wall with a wide opening
-	Decor.hedgeRun(yard, P(-half + 0.5, 4), P(-half + 0.5, depth - 0.5), rng)
-	Decor.hedgeRun(yard, P(half - 0.5, 4), P(half - 0.5, depth - 0.5), rng)
+	-- boundary: low hedge all around, the side hedges start ON the gate line; the gate side is a picket fence with a wide opening that
+	-- ends at the hedge (1.6 = the hedge's 0.5 inset + 1.1, so the last picket touches the corner bush instead of standing in it)
+	Decor.hedgeRun(yard, P(-half + 0.5, 0), P(-half + 0.5, depth - 0.5), rng)
+	Decor.hedgeRun(yard, P(half - 0.5, 0), P(half - 0.5, depth - 0.5), rng)
 	Decor.hedgeRun(yard, P(-half + 0.5, depth - 0.5), P(half - 0.5, depth - 0.5), rng)
-	Decor.fenceRun(yard, P(-half + 0.5, 0), P(-9, 0), { Color = Palette.Cream })
-	Decor.fenceRun(yard, P(9, 0), P(half - 0.5, 0), { Color = Palette.Cream })
+	Decor.fenceRun(yard, P(-half + 1.6, 0), P(-9, 0), { Color = Palette.Cream })
+	Decor.fenceRun(yard, P(9, 0), P(half - 1.6, 0), { Color = Palette.Cream })
 
 	-----------------------------------------------------------------------
 	-- security portal: two lit pylons, a crossbeam, laser beams, a field
@@ -74,8 +77,9 @@ function Yard.build(house: any, rng: Random)
 		Build.deco(yard, "GatePylonStripe", Vector3.new(0.3, 7, 1.9), L(side * 7.4, 4, 0), Color3.fromRGB(120, 130, 150), METAL)
 		table.insert(lamps, Build.blob(yard, "GateLamp", Vector3.new(1.3, 1.3, 1.3), L(side * 7.4, 8.6, 0), Color3.fromRGB(110, 230, 140), NEON, { CanCollide = false }))
 	end
-	Build.deco(yard, "GateBeam", Vector3.new(16.6, 0.9, 1.2), L(0, 7.6, 0), FRAME, PLASTIC)
-	Build.deco(yard, "GateBeamStripe", Vector3.new(16.6, 0.2, 1.3), L(0, 7.2, 0), Color3.fromRGB(150, 160, 185), METAL)
+	-- (the beam ends 0.1 inside the pylons, not exactly on their outer face: coplanar faces of two colours would flicker)
+	Build.deco(yard, "GateBeam", Vector3.new(16.4, 0.9, 1.2), L(0, 7.6, 0), FRAME, PLASTIC)
+	Build.deco(yard, "GateBeamStripe", Vector3.new(16.4, 0.2, 1.3), L(0, 7.2, 0), Color3.fromRGB(150, 160, 185), METAL)
 	local beams: { BasePart } = {}
 	for beam = 1, SecurityConfig.MaxBeams do
 		table.insert(beams, Build.deco(yard, "LaserBeam", Vector3.new(13, 0.2, 0.2), L(0, 0.7 + beam * 1.15, 0), Color3.fromRGB(255, 96, 96), NEON, { Shape = Enum.PartType.Cylinder, Transparency = 1 }))

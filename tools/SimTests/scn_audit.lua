@@ -319,15 +319,19 @@ task.spawn(function()
 	check("they carry their own sign text", sign1 ~= nil)
 
 	-- the Like & Favorite boards: informational, make no claims, open the Community window; readable from BOTH sides
+	local WorldLayoutModule = require(find("ReplicatedStorage.Modules.WorldLayout"))
 	for _, boardName in { "FavoritesBoard", "FavoritesBoard2" } do
 		local board = plazaFolder:FindFirstChild(boardName)
+		-- near the guest spawn and not in the middle of the road or a promenade (the real footprints against every paved part: scn_plazapaths)
 		check(boardName .. " stands in the plaza, near the guest spawn (not in a path)", board ~= nil and (function()
 			local spawnPart = workspace.SpawnLocations:FindFirstChild("PlazaSpawn")
 			local boardPart = board and board:FindFirstChild("Board")
 			if not spawnPart or not boardPart then return false end
 			local a, b = RawData[spawnPart].Props.CFrame.Position, RawData[boardPart].Props.CFrame.Position
 			local flat = math.sqrt((a.X - b.X) ^ 2 + (a.Z - b.Z) ^ 2)
-			return flat < 16 and math.abs(b.Z) > 14 and math.abs(b.X) > 20
+			local clearOfRoad = math.abs(b.Z) > WorldLayoutModule.RoadHalfWidth + 1
+			local clearOfPromenade = math.abs(math.abs(b.Z) - WorldLayoutModule.PromenadeZ) > WorldLayoutModule.PromenadeHalfWidth + 1
+			return flat < 32 and clearOfRoad and clearOfPromenade
 		end)())
 		local faces = {}
 		for _, d in M.descendants(board) do

@@ -14,8 +14,11 @@ local Palette = require(script.Parent.Palette)
 
 local PlazaBuilder = {}
 
-PlazaBuilder.FAVORITES_BOARD = CFrame.new(-34, 0, -21) * CFrame.Angles(0, math.rad(-90), 0) -- west of the guest spawn, facing it
-PlazaBuilder.FAVORITES_BOARD_2 = CFrame.new(-24, 0, -32) * CFrame.Angles(0, math.rad(180), 0) -- behind the guest spawn, facing it (every board reads from both sides)
+-- Both boards stand on grass, clear of every path (scn_plazapaths measures this). Board 1 lies along the road in the lawn strip between the road curb
+-- (z = -13.8) and the south promenade (z = -25), its front towards the promenade; board 2 stands on the lawn across the promenade, straight ahead of
+-- the guest spawn, its front towards the promenade and the spawn. Every board reads from both sides.
+PlazaBuilder.FAVORITES_BOARD = CFrame.new(-34, 0, -19.6)
+PlazaBuilder.FAVORITES_BOARD_2 = CFrame.new(-28, 0, -48) * CFrame.Angles(0, math.rad(180), 0)
 
 -- where the golden statue stands (on top of the arch): the statue itself is created at every start
 PlazaBuilder.STATUE_CFRAME = CFrame.new(0, 19.2, 0) * CFrame.Angles(0, math.rad(90), 0)
@@ -374,13 +377,13 @@ function PlazaBuilder.build(parent: Instance, rng: Random): PlazaInfo
 	Decor.tree(nook, Vector3.new(21, 0, -72), "cherry", 1.1, rng)
 	Decor.bench(nook, CFrame.new(7.5, 0, -65) * CFrame.Angles(0, math.rad(-90), 0))
 	Decor.flowers(nook, Vector3.new(14, 0, -65), 3, 12, rng)
-	-- signpost beside the route (not in it), facing the people who walk south out of the plaza
-	Decor.signpost(folder, CFrame.new(10.5, 0, -36) * CFrame.Angles(0, math.pi, 0), "LEADERBOARDS  v", nil)
+	-- signpost beside the route (not in it, and not on the promenade it crosses), facing the people who walk south out of the plaza
+	Decor.signpost(folder, CFrame.new(12.5, 0, -53) * CFrame.Angles(0, math.pi, 0), "LEADERBOARDS  v", nil)
 
-	-- a few quiet details: lamps along the annex, two trees per annex
+	-- a few quiet details: lamps along the annex (north: at both ends of the shop approach, which is paved all the way across), two trees per annex
 	for _, sign in { 1, -1 } do
-		for _, x in { -8, 8 } do
-			Decor.lamp(folder, Vector3.new(x, 0, sign * 46), 8)
+		for _, x in { -1, 1 } do
+			Decor.lamp(folder, Vector3.new(x * (if sign > 0 then PlazaBuilder.ShopX + 4.5 else 8), 0, sign * 46), 8)
 		end
 		local treeX = if sign > 0 then 30 else 16 -- north: beside the shops, not in front of their doors
 		Decor.tree(folder, Vector3.new(-treeX, 0, sign * 46), "cherry", 1.2, rng)
@@ -397,7 +400,7 @@ function PlazaBuilder.build(parent: Instance, rng: Random): PlazaInfo
 	-- the physical Lucky Wheel on its own platform in the green area behind the two shops
 	LuckyWheelBuilder.build(folder, rng)
 
-	-- the Like & Favorite board next to the guest spawn
+	-- the two Like & Favorite boards near the guest spawn
 	buildFavoritesBoard(folder, PlazaBuilder.FAVORITES_BOARD, "FavoritesBoard")
 	buildFavoritesBoard(folder, PlazaBuilder.FAVORITES_BOARD_2, "FavoritesBoard2")
 

@@ -45,7 +45,7 @@ function Wheels.build(house: any, slot: any)
 	end
 	for rung = 0, 5 do
 		local angle = rung * math.pi / 3
-		Build.deco(wheel, "Rung", Vector3.new(2.3, 0.2, 0.2), C(math.cos(angle) * (Wheels.Radius - 0.1), math.sin(angle) * (Wheels.Radius - 0.1), 0) * alongZ, Palette.Gold, Enum.Material.Metal, { Shape = Enum.PartType.Cylinder })
+		Build.deco(wheel, "Rung", Vector3.new(2.4, 0.2, 0.2), C(math.cos(angle) * (Wheels.Radius - 0.1), math.sin(angle) * (Wheels.Radius - 0.1), 0) * alongZ, Palette.Gold, Enum.Material.Metal, { Shape = Enum.PartType.Cylinder })
 	end
 	wheel.PrimaryPart = hub
 	-- The hamster runs along the floor's local +X (see RunCFrame). A real wheel's inner floor moves BACKWARDS

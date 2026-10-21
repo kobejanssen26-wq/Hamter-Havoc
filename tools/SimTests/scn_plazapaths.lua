@@ -3,7 +3,8 @@
 -- walking lanes (plaza -> shops -> Lucky Wheel, plaza -> Leaderboard Hall, the promenades, the road) stay free of solid parts.
 -- Footprints are the real rotated rectangles / discs of the parts (CFrame + Size), not centre points. A board keeps >= 2 studs from every paved
 -- edge, every other prop >= 1 stud; only lamps and flower beds (which are meant to line the edge of a path) may touch it, their middle must be
--- off the pavement. Runs on the REAL builders (the baked world/*.model.json is not looked at).
+-- off the pavement. A board also keeps clear of every other prop (bench, lamp, flower bed, tree, the other board) and of the guest spawn pad, and
+-- no part of a house stands on the promenade, a gate path or the road. Runs on the REAL builders (the baked world/*.model.json is not looked at).
 local results = { pass = 0, fail = 0 }
 local function check(name, cond, detail)
 	if cond then results.pass += 1 else results.fail += 1 end
@@ -16,6 +17,7 @@ local PROP_CLEARANCE = 1 -- studs between any other plaza prop and the nearest p
 local LANE_HALF_WIDTH = 4.5 -- the free walking lanes are 9 wide (the annex paths are 10, the wheel path 8)
 local TOUCHES_GROUND = 1.0 -- a part whose underside is lower than this stands on the ground
 local SPAWN_CLEARANCE = 1 -- studs between a board and the guest spawn pad
+local BOARD_PROP_CLEARANCE = 0.5 -- studs between a board and any other prop (a bench or a tree trunk touching a board looks like a mistake)
 local EDGE_DRESSING = { Lamp = true, Flowers = true } -- may overlap the edge of a path (the lamp base, the flower mound), but not stand in it
 
 -- Things that stand on pavement ON PURPOSE, by the group they belong to (everything else must keep its clearance).
@@ -211,6 +213,7 @@ local function scan()
 			local loose = #chain == 2 and plazaFolder
 			local walkway = top == "Environment" and second == "Promenades"
 			if (loose or walkway) and part.Top <= 0.55 and part.Height <= 0.6 and part.Transparency < 0.9 and (PAVED_NAMES[part.Name] or PAVED_COLORS[colorKey(part.Color)]) then
+				part.Paved = true
 				table.insert(pavement, part)
 			elseif (#chain >= 3 and plazaFolder) or (#chain >= 4 and top == "Environment" and second == "Props") then
 				part.Group = if top == "HamsterPlaza" then second elseif top == "Environment" then "Environment/Props" elseif top == "LeaderboardHall" then top else top .. "/" .. second
@@ -319,6 +322,55 @@ task.spawn(function()
 	end
 
 	---------------------------------------------------------------------------
+	-- 2b. a board does not stand in or against another prop; no house part stands on the promenade, a gate path or the road
+	---------------------------------------------------------------------------
+	-- Every visible / solid part that rises above the ground (so not the paving, the grass patches or the ground itself) and overlaps the height of a
+	-- board part counts, wherever it sits in the world (trees and lamps of the Environment too).
+	local function boardCollisions(parts)
+		local hits = {}
+		for _, board in parts do
+			local boardName = string.match(board.Path, "^HamsterPlaza/(Favorites%w*)/")
+			if boardName and not isPad(board) and (board.Solid or board.Transparency < 0.95) then
+				for _, other in parts do
+					if not other.Paved and other.Top > 0.05 and other.Height > 0.1 and (other.Solid or other.Transparency < 0.95) and not isPad(other)
+						and not string.find(other.Path, "HamsterPlaza/" .. boardName .. "/", 1, true)
+						and other.Top > board.Bottom + 0.05 and other.Bottom < board.Top - 0.05 and boxGap(board.Box, other.Box) < BOARD_PROP_CLEARANCE then
+						local gap = clearance(board.Poly, other.Poly)
+						if gap < BOARD_PROP_CLEARANCE then
+							hits[boardName .. " [" .. board.Name .. "] x " .. other.Path] = string.format("%.2f studs at (%.1f, %.1f)", gap, other.X, other.Z)
+						end
+					end
+				end
+			end
+		end
+		return hits
+	end
+	local collisionList = {}
+	for key, detail in boardCollisions(allParts) do
+		print("   BOARD HITS", key, detail)
+		table.insert(collisionList, key)
+	end
+	table.sort(collisionList)
+	check("no Like & Favorite board stands in or within " .. BOARD_PROP_CLEARANCE .. " studs of another prop (bench, lamp, flower bed, tree, the other board)", #collisionList == 0, table.concat(collisionList, "; "))
+
+	local houseOffenders = {}
+	local houseParts = 0
+	for _, part in allParts do
+		if string.sub(part.Path, 1, 12) == "PlayerHouses" and part.Bottom < 1.5 and part.Height > 0.3 and (part.Solid or part.Transparency < 0.9) then
+			houseParts += 1
+			for _, paved in pavement do
+				if (paved.Name == "Promenade" or paved.Name == "GatePath" or paved.Name == "Road" or paved.Name == "Curb") and boxGap(part.Box, paved.Box) < 0.01 and clearance(part.Poly, paved.Poly) < -0.05 then
+					table.insert(houseOffenders, string.format("%s at (%.1f, %.1f) on the %s", part.Path, part.X, part.Z, paved.Name))
+					break
+				end
+			end
+		end
+	end
+	table.sort(houseOffenders)
+	for index = 1, math.min(#houseOffenders, 8) do print("   HOUSE ON PATH", houseOffenders[index]) end
+	check("no part of a house stands on the promenade, a gate path or the road", #houseOffenders == 0 and houseParts > 500, string.format("%d offenders, %d ground-level house parts looked at", #houseOffenders, houseParts))
+
+	---------------------------------------------------------------------------
 	-- 3. the walking lanes stay free of solid parts (thin floors under 0.5 studs and everything above head height do not count)
 	---------------------------------------------------------------------------
 	local wheelStart = LuckyWheelBuilder.CENTER.Z - 6.5 -- the wheel path ends at the platform
@@ -376,6 +428,16 @@ task.spawn(function()
 				nearest = math.min(nearest, clearance(part.Poly, spawnPoly))
 			end
 			check(boardName .. " does not stand on or against the guest spawn pad (>= " .. SPAWN_CLEARANCE .. " stud)", nearest >= SPAWN_CLEARANCE, string.format("%.2f", nearest))
+			local nearestPaved, nearestName = math.huge, "?"
+			for _, part in solid do
+				for _, paved in pavement do
+					if boxGap(part.Box, paved.Box) <= math.max(nearestPaved, 0) then
+						local gap = clearance(part.Poly, paved.Poly)
+						if gap < nearestPaved then nearestPaved, nearestName = gap, paved.Name end
+					end
+				end
+			end
+			print(string.format("   NOTE %s: nearest paved edge is the %s, %.2f studs away", boardName, nearestName, nearestPaved))
 			-- readable: a prompt pad is the spot a player stands on in front of / behind the board; no solid prop of another model stands in it
 			local blocked = {}
 			for _, pad in pads do
@@ -446,6 +508,34 @@ task.spawn(function()
 	check("self-test: a signpost standing on the promenade is found", seesOffender("SignProbe", { { Name = "Post", Size = Vector3.new(0.5, 5, 0.5), CFrame = CFrame.new(40, 2.5, 34) } }))
 	check("self-test: a block dropped into the walkway between the shops is found by the lane check", newLaneBlockers("BlockProbe", { { Name = "Block", Size = Vector3.new(6, 4, 6), CFrame = CFrame.new(0, 2, 60) } }) >= 1)
 	check("self-test: a block dropped on the road is found by the lane check", newLaneBlockers("BlockProbe", { { Name = "Block", Size = Vector3.new(3, 4, 3), CFrame = CFrame.new(100, 2, 0) } }) >= 1)
+
+	-- a board probe (just its base) with one other prop beside it
+	local function collisionProbe(boardAt, obstacle)
+		return withProbe("FavoritesBoardProbe", { { Name = "Base", Size = baseSize, CFrame = CFrame.new(boardAt.X, 0.15, boardAt.Z) } }, function()
+			local obstacleModel = M.newInstance("Model", true)
+			RawData[obstacleModel].Name = "ObstacleProbe"
+			M.setParent(obstacleModel, plazaFolder)
+			local probe = M.newInstance("Part", true)
+			RawData[probe].Name = obstacle.Name
+			RawData[probe].Props.Anchored = true
+			RawData[probe].Props.CanCollide = true
+			RawData[probe].Props.Size = obstacle.Size
+			RawData[probe].Props.CFrame = obstacle.CFrame
+			M.setParent(probe, obstacleModel)
+			local _, _, probeAll = scan()
+			local count = 0
+			for key in boardCollisions(probeAll) do
+				if string.find(key, "ObstacleProbe", 1, true) then count += 1 end
+			end
+			M.InstanceMethods.Destroy(obstacleModel)
+			return count
+		end)
+	end
+	local seat = Vector3.new(5, 1.4, 1.8)
+	local halfBase = baseSize.X / 2
+	check("self-test: a bench 0.2 studs from a board is found", collisionProbe({ X = -60, Z = -19.4 }, { Name = "Seat", Size = seat, CFrame = CFrame.new(-60 + halfBase + 0.2 + seat.X / 2, 0.7, -19.4) }) >= 1)
+	check("self-test: a tree trunk inside a board is found", collisionProbe({ X = -60, Z = -19.4 }, { Name = "Trunk", Size = Vector3.new(1.6, 6, 1.6), CFrame = CFrame.new(-60, 3, -19.4) }) >= 1)
+	check("self-test: a bench 2 studs from a board is fine", collisionProbe({ X = -60, Z = -19.4 }, { Name = "Seat", Size = seat, CFrame = CFrame.new(-60 + halfBase + 2 + seat.X / 2, 0.7, -19.4) }) == 0)
 
 	print(string.format("PASS %d  FAIL %d", results.pass, results.fail))
 	print("== done ==")

@@ -1,6 +1,8 @@
 -- Yard boundary audit: the hedge + picket-fence ring around every lot must be closed (except the gate opening), in every house
--- (1-8, north AND south row, all in the house-local frame), joined without gaps or clipping, with nothing sticking through it, a lawn
--- under the whole lot and no two ground slabs in the same plane. Runs on the REAL builders.
+-- (1-8, north AND south row, all in the house-local frame), at every floor count, joined without gaps or clipping, with nothing
+-- sticking through it, a lawn under the whole lot and no two ground slabs in the same plane. Runs on the REAL builders.
+-- (The existing audits scn_houses / scn_audit compare pieces with each other; none of them looks at the PERIMETER, so a hole
+-- between two runs of the boundary - the front corners of every lot - passed them all.)
 local results = { pass = 0, fail = 0 }
 local function check(name, cond, detail)
 	if cond then results.pass += 1 else results.fail += 1 end
@@ -417,6 +419,27 @@ task.spawn(function()
 	show(cornerLines, 16)
 	check("4. every house: a 2-stud character cannot walk from the street into the lot except through the gate", #leakLines == 0, #leakLines .. " houses leak")
 	show(leakLines)
+	-- the yard is built once, but the tower grows around it with every rebirth: the ring must stay closed (and nothing of the tower may
+	-- open or block it) at every floor count, in the north row and in the south row
+	do
+		local lines = {}
+		for _, index in { 1, 5 } do
+			local house = houses[index]
+			for count = 2, 5 do
+				HouseBuilder.setFloors(house, count, Random.new(count))
+				adv(0.2)
+				local parts = collect(house)
+				for _, problem in ringProblems(house, parts) do table.insert(lines, string.format("floors %d: %s", count, describeProblem(house, problem))) end
+				local entry = leaks(parts)
+				if entry then table.insert(lines, string.format("house %d floors %d: a character walks into the lot at local (%.1f, %.1f)", index, count, entry[1], entry[2])) end
+			end
+			HouseBuilder.setFloors(house, 1, Random.new(1))
+		end
+		adv(0.2)
+		check("4b. houses 1 and 5 with 2, 3, 4 and 5 floors: the ring is as closed as with 1 floor (no hole, no walk-through)", #lines == 0, #lines .. " problems")
+		show(lines, 12)
+	end
+
 	check("5. every house: hedge and fence do not clip through each other at the joints (no fence part past the hedge line, no bush in front of the fence)", #clipLines == 0, #clipLines .. " clips")
 	show(clipLines)
 	check(string.format("5b. every house: no picket / rail is buried more than %.2f stud in a hedge bush (the fence ends AT the hedge, it does not stick through it)", MAX_BURY), #buryLines == 0, #buryLines .. " buried")
@@ -580,13 +603,46 @@ task.spawn(function()
 			if #kinds > limit then print("   ... and " .. (#kinds - limit) .. " more kinds") end
 		end
 		local yardFights, otherFights = {}, {}
-		for _, kind in fights do table.insert(if string.find(kind.Text, "^Yard/") or string.find(kind.Text, " and Yard/") then yardFights else otherFights, kind) end
+		for _, kind in fights do
+			if string.find(kind.Text, "^Environment/Patch and Environment/Patch") then
+				-- (the grass patches are checked over the whole map in 9c)
+			else
+				table.insert(if string.find(kind.Text, "^Yard/") or string.find(kind.Text, " and Yard/") then yardFights else otherFights, kind)
+			end
+		end
 		check("9a. no two ground slabs of the YARD (lawn, driveway, apron, steps, altar, pond ...) lie in the same plane and overlap (z-fighting)", #yardFights == 0, #yardFights .. " kinds of pairs")
 		listKinds(yardFights, 12)
 		check("9b. no two ground slabs of the TOWER ENTRANCE / interior / environment (foundation, step, grass patches ...) lie in the same plane and overlap", #otherFights == 0, #otherFights .. " kinds of pairs")
 		listKinds(otherFights, 12)
 		print("   (info: slabs of a different colour less than 0.05 stud apart, may flicker at a distance: " .. #near .. " kinds)")
 		listKinds(near, 14)
+
+		-- the soft grass patches of the whole Environment are cylinders with all the same top: where a light and a dark one overlap they
+		-- lie in one plane and flicker (z-fighting), anywhere on the lawn
+		local patches = {}
+		local patchFolder = environment and environment:FindFirstChild("GrassPatches")
+		if patchFolder then
+			for _, d in patchFolder:GetChildren() do
+				local data = RawData[d]
+				if data.Props and data.Props.Size and M.InstanceMethods.IsA(d, "BasePart") then
+					local c = data.Props.CFrame
+					local color = data.Props.Color
+					table.insert(patches, { X = c.X, Z = c.Z, Top = c.Y + data.Props.Size.X / 2, R = data.Props.Size.Y / 2, Color = string.format("%.3f,%.3f,%.3f", color.R, color.G, color.B) })
+				end
+			end
+		end
+		local patchFights = {}
+		for i = 1, #patches do
+			for j = i + 1, #patches do
+				local a, b = patches[i], patches[j]
+				local distance = math.sqrt((a.X - b.X) ^ 2 + (a.Z - b.Z) ^ 2)
+				if distance < a.R + b.R - 0.2 and a.Color ~= b.Color and math.abs(a.Top - b.Top) < 0.015 then
+					table.insert(patchFights, string.format("grass patch at world (%.0f, %.0f) r %.1f and patch at (%.0f, %.0f) r %.1f overlap by %.1f studs in the same plane (tops %.3f / %.3f)", a.X, a.Z, a.R, b.X, b.Z, b.R, a.R + b.R - distance, a.Top, b.Top))
+				end
+			end
+		end
+		check("9c. no two grass patches of a different colour overlap in the same plane (whole map, " .. #patches .. " patches)", #patches > 0 and #patchFights == 0, #patchFights .. " pairs")
+		show(patchFights, 12)
 	end
 
 	do
@@ -735,6 +791,17 @@ task.spawn(function()
 		local stillLeaks = leaks(closed) ~= nil
 		check("0. detector self-test: sees the holes when both side hedges of house 1 are gone, and a closed ring when they are rebuilt from the gate line", holes > 0 and walksThrough and #problems == 0 and not stillLeaks, string.format("without the hedge: %d holes, walk-through %s; rebuilt: %d holes, walk-through %s", holes, tostring(walksThrough), #problems, tostring(stillLeaks)))
 		for _, problem in problems do print("   ", describeProblem(house, problem)) end
+	end
+
+	do
+		-- the penetration measure itself, on shapes with a known overlap: a 2x2x2 box whose side sinks 0.5 into another box / into a ball of radius 1
+		local function shape(x: number, ellipsoid: boolean)
+			return { C = { x, 0, 0 }, A = { { 1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 } }, H = { 1, 1, 1 }, Min = { x - 1, -1, -1 }, Max = { x + 1, 1, 1 }, Shape = "Block", Ellipsoid = ellipsoid }
+		end
+		local intoBox = sinkDepth(shape(0, false), shape(1.5, false), false)
+		local intoBall = sinkDepth(shape(0, false), shape(1.5, true), true)
+		local apart = sinkDepth(shape(0, false), shape(2.5, false), false)
+		check("0b. detector self-test: the sink depth of a known overlap is measured (0.5 into a box, 0.5 into a ball, 0 when apart)", math.abs(intoBox - 0.5) < 0.01 and math.abs(intoBall - 0.5) < 0.01 and apart == 0, string.format("box %.2f, ball %.2f, apart %.2f", intoBox, intoBall, apart))
 	end
 
 	print(string.format("\nPASS %d  FAIL %d", results.pass, results.fail))
