@@ -11,6 +11,7 @@ local adv = M.Sim.advance
 local GAP = 0.6 -- an uncovered stretch of the boundary longer than this is a hole
 local GATE_HALF = 9 -- the intended opening of the front fence: |x| <= 9 (the gate pylons stand at x = +-7.4)
 local CHAR_RADIUS = 1.0 -- a Roblox character is 2 studs wide: a gap narrower than 2 studs cannot be walked through
+local MAX_BURY = 0.25 -- a picket / rail may touch a hedge bush, but not stick more than this far into it
 local CELL = 0.25
 local RAIL_HEIGHTS = { 1.2, 2.7 } -- the heights of the two fence rails: a visible boundary has to be there at both
 
@@ -310,11 +311,54 @@ task.spawn(function()
 		return string.format("house %d  %s edge, %s layer: open %.2f studs from local (%.2f, %.2f) to (%.2f, %.2f)  [%s -> %s] %s", house.Index, EDGES[problem.Edge].Name, problem.Layer, problem.Length, problem.A[1], problem.A[2], problem.B[1], problem.B[2], world(house, problem.A[1], problem.A[2]), world(house, problem.B[1], problem.B[2]), table.concat(notes, ", "))
 	end
 
+	-- How deep (studs) does `part` (a box, cylinder or ball) sink into `other`? Samples the part and measures the deepest sample that lies
+	-- inside `other`: a hedge bush (ellipsoid: depth to its surface along the smallest radius) or a fence part (box: depth to its nearest face).
+	-- Touching is 0; a picket that stands IN a bush, or a pond bank that reaches into one, is a clip.
+	local function sinkDepth(part, other, otherIsEllipsoid)
+		for k = 1, 3 do
+			if part.Max[k] < other.Min[k] or part.Min[k] > other.Max[k] then return 0 end
+		end
+		local steps = {}
+		for i = 1, 3 do steps[i] = math.max(2, math.min(60, math.ceil(part.H[i] * 2 / 0.25))) end
+		local radius = math.min(other.H[1], other.H[2], other.H[3])
+		local deepest = 0
+		for a = 0, steps[1] do
+			local ua = (a / steps[1] * 2 - 1) * part.H[1]
+			for b = 0, steps[2] do
+				local ub = (b / steps[2] * 2 - 1) * part.H[2]
+				for c = 0, steps[3] do
+					local uc = (c / steps[3] * 2 - 1) * part.H[3]
+					-- (a cylinder's axis is its local X: samples outside its round section are not part of it; a ball is round all over)
+					local round = (ub / part.H[2]) ^ 2 + (uc / part.H[3]) ^ 2
+					local inside = if part.Ellipsoid then round + (ua / part.H[1]) ^ 2 <= 1 elseif part.Shape == "Cylinder" then round <= 1 else true
+					if inside then
+						local norm, face = 0, math.huge
+						for i = 1, 3 do
+							local q = 0
+							for k = 1, 3 do
+								local p = part.C[k] + part.A[1][k] * ua + part.A[2][k] * ub + part.A[3][k] * uc
+								q += (p - other.C[k]) * other.A[i][k]
+							end
+							norm += (q / other.H[i]) ^ 2
+							face = math.min(face, other.H[i] - math.abs(q))
+						end
+						if otherIsEllipsoid then
+							if norm < 1 then deepest = math.max(deepest, (1 - math.sqrt(norm)) * radius) end
+						elseif face > 0 then
+							deepest = math.max(deepest, face)
+						end
+					end
+				end
+			end
+		end
+		return deepest
+	end
+
 	---------------------------------------------------------------------------
 	-- run over all houses
 	---------------------------------------------------------------------------
 	local houses = HouseSystem.all()
-	local visibleGapLines, solidGapLines, cornerLines, backCornerLines, leakLines, clipLines = {}, {}, {}, {}, {}, {}
+	local visibleGapLines, solidGapLines, cornerLines, backCornerLines, leakLines, clipLines, buryLines = {}, {}, {}, {}, {}, {}, {}
 	local houseParts = {}
 	for _, house in houses do
 		HouseBuilder.setFloors(house, 1, Random.new(1))
@@ -342,6 +386,19 @@ task.spawn(function()
 			end
 		end
 
+		for _, part in parts do
+			if part.Group == "Fence" and (part.Name == "Picket" or part.Name == "RailTop" or part.Name == "RailLow") then
+				for _, bush in parts do
+					if bush.Group == "Hedge" and bush.Name == "Hedge" then
+						local depth = sinkDepth(part, bush, true)
+						if depth > MAX_BURY then
+							table.insert(buryLines, string.format("house %d fence %s at local (%.1f, %.1f) sticks %.2f studs into the hedge bush at local (%.1f, %.1f)", house.Index, part.Name, part.C[1], part.C[3], depth, bush.C[1], bush.C[3]))
+						end
+					end
+				end
+			end
+		end
+
 		local entry, reachable = leaks(parts)
 		if entry then
 			table.insert(leakLines, string.format("house %d: a 2-stud character walks from the street into the lot without using the gate, first cell inside the lot rectangle: local (%.1f, %.1f) = %s  (%d cells reachable)", house.Index, entry[1], entry[2], world(house, entry[1], entry[2]), reachable))
@@ -360,8 +417,10 @@ task.spawn(function()
 	show(cornerLines, 16)
 	check("4. every house: a 2-stud character cannot walk from the street into the lot except through the gate", #leakLines == 0, #leakLines .. " houses leak")
 	show(leakLines)
-	check("5. every house: hedge and fence do not clip through each other at the joints", #clipLines == 0, #clipLines .. " clips")
+	check("5. every house: hedge and fence do not clip through each other at the joints (no fence part past the hedge line, no bush in front of the fence)", #clipLines == 0, #clipLines .. " clips")
 	show(clipLines)
+	check(string.format("5b. every house: no picket / rail is buried more than %.2f stud in a hedge bush (the fence ends AT the hedge, it does not stick through it)", MAX_BURY), #buryLines == 0, #buryLines .. " buried")
+	show(buryLines)
 
 	check("6. the back hedge meets both side hedges (no run of the back corners ends short of the corner, visible and solid)", #backCornerLines == 0, #backCornerLines)
 	show(backCornerLines)
@@ -384,18 +443,32 @@ task.spawn(function()
 			for count = 1, 5 do
 				HouseBuilder.setFloors(house, count, Random.new(count))
 				adv(0.2)
-				for _, part in collect(house) do
+				local all = collect(house)
+				local boundary = {}
+				for _, part in all do
+					if (part.Group == "Hedge" and part.Name == "Hedge") or (part.Group == "Fence" and (part.Name == "Picket" or part.Name == "RailTop" or part.Name == "RailLow")) then
+						table.insert(boundary, part)
+					end
+				end
+				for _, part in all do
 					local isBoundary = part.Group == "Hedge" or part.Group == "Fence"
 					local flat = part.Max[2] < 0.3
 					if not isBoundary and not flat and part.Min[2] < 4.7 and part.Transparency < 0.9 then
+						-- (first the cheap bounding-box test against the hedge / fence bands, then the real shapes: a bush is an ellipsoid,
+						-- so a flat ring at ground level that reaches into the band does not touch the bush)
 						for _, band in bands do
 							local ox = math.min(part.Max[1], band.Max[1]) - math.max(part.Min[1], band.Min[1])
 							local oz = math.min(part.Max[3], band.Max[2]) - math.max(part.Min[3], band.Min[2])
 							if ox > 0.1 and oz > 0.1 then
+								local sunk, into = 0, nil
+								for _, other in boundary do
+									local depth = sinkDepth(part, other, other.Group == "Hedge")
+									if depth > sunk then sunk, into = depth, other end
+								end
 								local key = string.format("%d|%s|%s|%.1f|%.1f", index, part.Group .. "/" .. part.Name, band.Name, part.C[1], part.C[3])
-								if not seenHits[key] then
+								if sunk > MAX_BURY and not seenHits[key] then
 									seenHits[key] = true
-									local line = string.format("house %d %s/%s (bounding box) overlaps the %s by %.2f x %.2f studs at local (%.1f, %.1f), y %.1f..%.1f", index, part.Group, part.Name, band.Name, ox, oz, part.C[1], part.C[3], part.Min[2], part.Max[2])
+									local line = string.format("house %d (floors %d) %s/%s at local (%.1f, %.1f), y %.1f..%.1f sinks %.2f studs into the %s (%s at local (%.1f, %.1f))", index, count, part.Group, part.Name, part.C[1], part.C[3], part.Min[2], part.Max[2], sunk, band.Name, into.Name, into.C[1], into.C[3])
 									table.insert(if part.Material == "Grass" then foliageNotes else solidHits, line)
 								end
 							end
@@ -404,9 +477,9 @@ task.spawn(function()
 				end
 			end
 		end
-		check("7. nothing solid (altar, mailbox, sign, bench, lamp, pond, tower part) stands in the hedge/fence line (houses 1,2,5,8 x floors 1-5)", #solidHits == 0, #solidHits)
+		check("7. nothing solid (altar, mailbox, sign, bench, lamp, pond, tower part) stands in or sinks into the hedge/fence line (houses 1,2,5,8 x floors 1-5)", #solidHits == 0, #solidHits)
 		show(solidHits)
-		print("   (info: foliage that leans into the hedge, harmless: " .. #foliageNotes .. ")")
+		print("   (info: foliage (tree crowns) that leans into the hedge, harmless: " .. #foliageNotes .. ")")
 		show(foliageNotes, 4)
 		for _, house in { houses[1], houses[2], houses[5], houses[8] } do HouseBuilder.setFloors(house, 1, Random.new(1)) end
 		adv(0.2)
