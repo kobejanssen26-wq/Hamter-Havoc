@@ -24,7 +24,7 @@ Run `python3 tools/ExportModels/export_models.py --update` to rebuild the files;
 | Asset | Category | File | Instances | Dependencies | Reusable |
 |---|---|---|---|---|---|
 | Complete Hamster Wheel Assembly | Assemblies | [`Hamster_Wheel_Complete.rbxm`](Assemblies/Hamster_Wheel_Complete.rbxm) | 117 | None - WheelSpin + HamsterAutoAnimate + HamsterAnimator are bundled (client scripts) | Yes |
-| Hamster Apartment Tower (5 floors, full lot) | Buildings | [`Hamster_Apartment_5F.rbxm`](Buildings/Hamster_Apartment_5F.rbxm) | 1947 | Visual only. Prompts / labels / wheels need the game's HouseSystem (see README); delete floors you don't need | Yes |
+| Hamster Apartment Tower (5 floors, full lot) | Buildings | [`Hamster_Apartment_5F.rbxm`](Buildings/Hamster_Apartment_5F.rbxm) | 1949 | Visual only. Prompts / labels / wheels need the game's HouseSystem (see README); delete floors you don't need | Yes |
 | Street Furniture Pack (bench, lamp, sign, barrel, crate, flag, balloon, fence, pond, windmill) | Decorations | [`Street_Furniture_Pack.rbxm`](Decorations/Street_Furniture_Pack.rbxm) | 80 | Optional: flag/windmill/balloon carry Sway/SpinModel/Bob tags and a bundled client script animates them | Yes |
 | Nature Pack (trees, bushes, rocks, flowers) | Environment | [`Nature_Pack.rbxm`](Environment/Nature_Pack.rbxm) | 97 | None (static models; trees carry the CollectionService tag TreeSway, optional) | Yes |
 | Hamster Builder Package (builds all 172 hamster species in code) | Hamsters | [`HamsterBuilder_Package.rbxm`](Hamsters/HamsterBuilder_Package.rbxm) | 14 | None - 12 ModuleScripts that reference each other (keep the folder together) | Yes |
@@ -33,6 +33,6 @@ Run `python3 tools/ExportModels/export_models.py --update` to rebuild the files;
 | Hamster Icons (48 drawn UI icons, no emoji) | UI_Assets | [`Hamster_Icons.rbxm`](UI_Assets/Hamster_Icons.rbxm) | 1 | None - self-contained ModuleScript | Yes |
 | Weapon Pack (every weapon as a Tool: Mega Slap Glove, Squeak Bat, Spring Boxing Glove, Shock Baton, Party Hammer, Bubble Shield, Frost Wand, Slingshot, Shadow Cloak, Mirror Clone) | Weapons | [`Weapon_Pack.rbxm`](Weapons/Weapon_Pack.rbxm) | 324 | None. Tools carry only the attributes ItemId / WeaponType; the server decides what they do (Content/Items). | Yes |
 | Hamster Wheel | Wheels | [`Hamster_Wheel.rbxm`](Wheels/Hamster_Wheel.rbxm) | 18 | WheelSpin script (bundled) turns it; without a controller it is a static model | Yes |
-| Lucky Wheel (one free spin per hour, self-contained) | Wheels | [`Lucky_Wheel.rbxm`](Wheels/Lucky_Wheel.rbxm) | 184 | None: the bundled server script LuckyWheel runs the spin by itself (prompt, hourly cooldown, animation, Won event) | Yes |
+| Lucky Wheel (one free spin per hour, self-contained) | Wheels | [`Lucky_Wheel.rbxm`](Wheels/Lucky_Wheel.rbxm) | 183 | None: the bundled server script LuckyWheel runs the spin by itself (prompt, hourly cooldown, animation, Won event) | Yes |
 
 See each asset's own README (folder next to the file) for hierarchy, pivot, attributes and required scripts.

@@ -23,6 +23,7 @@ local GROUND_HALF_X = WorldLayout.GroundHalfX
 local GROUND_HALF_Z = WorldLayout.GroundHalfZ
 local LOT_BACK = WorldLayout.GateDistance + WorldLayout.LotDepth -- |z| of the back hedges
 local LOT_OUTER_X = WorldLayout.HouseColumns[#WorldLayout.HouseColumns] + WorldLayout.LotHalfWidth
+local OUTER_GROUND_TOP = -0.15 -- top of the dark ground beyond the invisible walls: 0.15 under the playable ground, so the two never share a plane
 
 -- Keeps scenery from overlapping: every tree / bush / rock claims a circle on the ground and a candidate that would overlap
 -- an earlier one (crown into a neighbour's trunk, rock under a crown) is skipped.
@@ -196,8 +197,12 @@ local function buildTransitions(folder: Folder, rng: Random, footprints: any)
 	local transitions = Build.folder(folder, "Transitions")
 	local DIRT = Color3.fromRGB(158, 126, 92)
 	local SCREE = Color3.fromRGB(132, 126, 134)
-	local function patch(x: number, z: number, radius: number, color: Color3, material: Enum.Material)
-		Build.pillar(transitions, "Patch", radius * 2, 0.06, CFrame.new(x, 0.03 + rng:NextNumber() * 0.04, z), color, material, { CanCollide = false, CanQuery = false, CastShadow = false })
+	-- Every patch rests on the dark ground beyond the walls (the part of it that lies over the playable ground sinks into that), at a random height so
+	-- patches of one kind do not share a plane. The two kinds are told apart by their base height (dirt 0.06 .. 0.09, scree 0.14 .. 0.17 above y = 0): where
+	-- a dirt patch and a scree patch overlap their tops are at least 0.05 apart.
+	local function patch(x: number, z: number, radius: number, color: Color3, material: Enum.Material, baseTop: number)
+		local top = baseTop + rng:NextNumber() * 0.03
+		Build.pillar(transitions, "Patch", radius * 2, top - OUTER_GROUND_TOP, CFrame.new(x, (top + OUTER_GROUND_TOP) / 2, z), color, material, { CanCollide = false, CanQuery = false, CastShadow = false })
 	end
 	for _ = 1, 150 do
 		-- a point in a band 4-70 studs outside the ground, anywhere around it
@@ -214,7 +219,7 @@ local function buildTransitions(folder: Folder, rng: Random, footprints: any)
 		end
 		local t = depth / 70 -- 0 = next to the lawn, 1 = foot of the mountains
 		local material = if t < 0.45 then Enum.Material.Ground else Enum.Material.Slate
-		patch(x, z, 5 + rng:NextNumber() * 12, if t < 0.45 then DIRT else SCREE, material)
+		patch(x, z, 5 + rng:NextNumber() * 12, if t < 0.45 then DIRT else SCREE, material, if t < 0.45 then 0.06 else 0.14)
 		if rng:NextNumber() < 0.28 + t * 0.4 then
 			local rx, rz = x + (rng:NextNumber() - 0.5) * 10, z + (rng:NextNumber() - 0.5) * 10
 			local scale = 1.2 + rng:NextNumber() * 2.2 * (0.5 + t)
@@ -333,7 +338,7 @@ function EnvironmentBuilder.build(parent: Instance, rng: Random): Folder
 
 	-- scenery beyond the invisible walls: a darker lawn so the world has no visible edge
 	local outer = Build.folder(folder, "Beyond")
-	Build.part(outer, "OuterGround", Vector3.new(GROUND_HALF_X * 2 + 1400, 4, GROUND_HALF_Z * 2 + 1100), CFrame.new(0, -2.15, 0), Palette.GrassDark, GRASS, { CanCollide = false })
+	Build.part(outer, "OuterGround", Vector3.new(GROUND_HALF_X * 2 + 1400, 4, GROUND_HALF_Z * 2 + 1100), CFrame.new(0, OUTER_GROUND_TOP - 2, 0), Palette.GrassDark, GRASS, { CanCollide = false })
 	for x = -GROUND_HALF_X - 140, GROUND_HALF_X + 140, 30 do
 		for z = -GROUND_HALF_Z - 140, GROUND_HALF_Z + 140, 30 do
 			if math.abs(x) > GROUND_HALF_X + 8 or math.abs(z) > GROUND_HALF_Z + 8 then

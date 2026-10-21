@@ -153,7 +153,7 @@ end
 function Decor.bench(parent: Instance, cframe: CFrame): Model
 	local model = Build.model(parent, "Bench")
 	Build.part(model, "Seat", Vector3.new(5, 0.4, 1.8), cframe * CFrame.new(0, 1.5, 0), Palette.WoodLight, WOOD)
-	Build.part(model, "Back", Vector3.new(5, 1.4, 0.3), cframe * CFrame.new(0, 2.5, 0.8) * CFrame.Angles(math.rad(-10), 0, 0), Palette.WoodLight, WOOD)
+	Build.part(model, "Back", Vector3.new(5, 1.4, 0.3), cframe * CFrame.new(0, 2.3, 0.75) * CFrame.Angles(math.rad(-10), 0, 0), Palette.WoodLight, WOOD) -- (its lower edge reaches 0.06 into the seat)
 	for _, x in { -2.1, 2.1 } do
 		Build.part(model, "Leg", Vector3.new(0.4, 1.4, 1.6), cframe * CFrame.new(x, 0.7, 0), Palette.WoodDark, WOOD)
 	end
@@ -175,7 +175,8 @@ function Decor.signpost(parent: Instance, cframe: CFrame, text: string, color: C
 	local model = Build.model(parent, "Signpost")
 	Build.part(model, "PostL", Vector3.new(0.5, 5, 0.5), cframe * CFrame.new(-2.3, 2.5, 0), Palette.WoodDark, WOOD)
 	Build.part(model, "PostR", Vector3.new(0.5, 5, 0.5), cframe * CFrame.new(2.3, 2.5, 0), Palette.WoodDark, WOOD)
-	local board = Build.part(model, "Board", Vector3.new(6.4, 2.6, 0.5), cframe * CFrame.new(0, 4.4, 0), color or Palette.WoodLight, WOOD)
+	-- (the board is deeper than the posts, so their faces do not lie in the planes of the board faces)
+	local board = Build.part(model, "Board", Vector3.new(6.4, 2.6, 0.6), cframe * CFrame.new(0, 4.4, 0), color or Palette.WoodLight, WOOD)
 	Build.part(model, "Roof", Vector3.new(7, 0.4, 1.2), cframe * CFrame.new(0, 5.9, 0), Palette.WoodDark, WOOD, { CanCollide = false })
 	Build.surfaceText(board, Enum.NormalId.Front, text, { TextColor = Palette.Ink, PixelsPerStud = 50 })
 	return model
@@ -304,10 +305,11 @@ function Decor.pond(parent: Instance, pos: Vector3, radius: number, rng: Random)
 	local model = Build.model(parent, "Pond")
 	Build.pillar(model, "Bank", radius * 2 + 2.4, 0.5, at(pos + Vector3.new(0, 0.1, 0)), Palette.Stone, Enum.Material.Slate, { CanCollide = false })
 	local water = Build.pillar(model, "Water", radius * 2, 0.5, at(pos + Vector3.new(0, 0.25, 0)), Palette.Water, Enum.Material.Glass, { CanCollide = false, Transparency = 0.25, Reflectance = 0.2 })
-	for _ = 1, 5 do
+	for index = 1, 5 do
 		local angle = rng:NextNumber() * math.pi * 2
 		local distance = rng:NextNumber() * (radius - 1.4)
-		Build.pillar(model, "LilyPad", 1.5, 0.1, at(pos + Vector3.new(math.cos(angle) * distance, 0.55, math.sin(angle) * distance)), Palette.Leaf, GRASS, { CanCollide = false })
+		-- (every pad floats at its own height, so two pads that overlap never share a plane)
+		Build.pillar(model, "LilyPad", 1.5, 0.1, at(pos + Vector3.new(math.cos(angle) * distance, 0.55 + (index - 1) * 0.02, math.sin(angle) * distance)), Palette.Leaf, GRASS, { CanCollide = false })
 	end
 	water:SetAttribute("Ripple", true)
 	return model

@@ -406,6 +406,40 @@ task.spawn(function()
 	check("no lawn patch lies on a lot's lawn or a paved part, or overlaps a patch of the other shade", #patchHits == 0 and patchCount >= 20, string.format("%d clashes, %d patches", #patchHits, patchCount))
 
 	---------------------------------------------------------------------------
+	-- 2d. the dirt / scree patches outside the playable ground (Environment/Transitions) lie at random heights: where two of a different colour overlap
+	-- their tops must be >= 0.05 studs apart (otherwise they flicker for anyone who looks out over the edge of the map), and every patch rests on the dark
+	-- ground beyond the walls (a patch that hovers over it shows as a dark band along its edge)
+	---------------------------------------------------------------------------
+	local TRANSITION_PREFIX = "Environment/Transitions/"
+	local TRANSITION_TOP_GAP = 0.05
+	local function transitionClashes(parts)
+		local patches, outerGround = {}, nil
+		for _, part in parts do
+			if part.Name == "Patch" and string.sub(part.Path, 1, #TRANSITION_PREFIX) == TRANSITION_PREFIX then
+				table.insert(patches, part)
+			elseif part.Path == "Environment/Beyond/OuterGround" then
+				outerGround = part
+			end
+		end
+		local clashes = {}
+		for index, patch in patches do
+			if outerGround and patch.Bottom > outerGround.Top + 0.001 then
+				table.insert(clashes, string.format("(%.0f, %.0f) hovers %.3f above the ground beyond the walls", patch.X, patch.Z, patch.Bottom - outerGround.Top))
+			end
+			for second = index + 1, #patches do
+				local other = patches[second]
+				if colorKey(patch.Color) ~= colorKey(other.Color) and boxGap(patch.Box, other.Box) < 0.01 and clearance(patch.Poly, other.Poly) < -0.01 and math.abs(patch.Top - other.Top) < TRANSITION_TOP_GAP then
+					table.insert(clashes, string.format("(%.0f, %.0f) top %.3f and (%.0f, %.0f) top %.3f", patch.X, patch.Z, patch.Top, other.X, other.Z, other.Top))
+				end
+			end
+		end
+		return clashes, #patches, outerGround
+	end
+	local transitionHits, transitionCount, outerGround = transitionClashes(allParts)
+	for index = 1, math.min(#transitionHits, 6) do print("   TRANSITION", transitionHits[index]) end
+	check("no two dirt / scree patches of a different colour overlap with tops less than " .. TRANSITION_TOP_GAP .. " studs apart, and none hovers over the ground", #transitionHits == 0 and transitionCount >= 100 and outerGround ~= nil, string.format("%d clashes, %d patches", #transitionHits, transitionCount))
+
+	---------------------------------------------------------------------------
 	-- 3. the walking lanes stay free of solid parts (thin floors under 0.5 studs and everything above head height do not count)
 	---------------------------------------------------------------------------
 	local wheelStart = LuckyWheelBuilder.CENTER.Z - 6.5 -- the wheel path ends at the platform
@@ -573,30 +607,46 @@ task.spawn(function()
 	check("self-test: a tree trunk inside a board is found", collisionProbe({ X = -60, Z = -19.4 }, { Name = "Trunk", Size = Vector3.new(1.6, 6, 1.6), CFrame = CFrame.new(-60, 3, -19.4) }) >= 1)
 	check("self-test: a bench 2 studs from a board is fine", collisionProbe({ X = -60, Z = -19.4 }, { Name = "Seat", Size = seat, CFrame = CFrame.new(-60 + halfBase + 2 + seat.X / 2, 0.7, -19.4) }) == 0)
 
-	-- lawn patches: probes are 10 x 10 flat blocks (top 0.06) in the patch folder of the Environment
-	local function patchProbes(specs)
-		local folder = workspace.Environment.GrassPatches
+	-- lawn / transition patches: probes are 10 x 10 flat blocks (default top 0.06, bottom 0) in a patch folder of the Environment
+	local function patchProbes(specs, folderName, judge)
+		local folder = workspace.Environment[folderName or "GrassPatches"]
+		local judgeWith = judge or patchClashes
+		local before = #judgeWith(allParts, pavement) -- (what the real world has already: only what the probes add counts)
 		local made = {}
 		for _, spec in specs do
+			local top, bottom = spec.Top or 0.06, spec.Bottom or 0
 			local probe = M.newInstance("Part", true)
 			RawData[probe].Name = "Patch"
 			RawData[probe].Props.Anchored = true
 			RawData[probe].Props.CanCollide = false
-			RawData[probe].Props.Size = Vector3.new(10, 0.06, 10)
-			RawData[probe].Props.CFrame = CFrame.new(spec.X, 0.03, spec.Z)
+			RawData[probe].Props.Size = Vector3.new(10, top - bottom, 10)
+			RawData[probe].Props.CFrame = CFrame.new(spec.X, (top + bottom) / 2, spec.Z)
 			RawData[probe].Props.Color = spec.Color
 			M.setParent(probe, folder)
 			table.insert(made, probe)
 		end
 		local _, _, probeAll = scan()
-		local clashes = patchClashes(probeAll, pavement)
+		local clashes = judgeWith(probeAll, pavement)
 		for _, probe in made do M.InstanceMethods.Destroy(probe) end
-		return #clashes - #patchHits
+		return #clashes - before
 	end
 	check("self-test: a lawn patch lying on the promenade is found", patchProbes({ { X = 20, Z = 34, Color = Palette.GrassLight } }) >= 1)
 	check("self-test: a lawn patch lying on a lot's lawn is found", patchProbes({ { X = -64, Z = 90, Color = Palette.GrassLight } }) >= 1)
 	check("self-test: two patches of a different shade overlapping are found", patchProbes({ { X = 114, Z = 100, Color = Palette.GrassLight }, { X = 118, Z = 100, Color = Palette.GrassDark } }) >= 1)
 	check("self-test: a patch 3 studs from the promenade and two patches of the same shade overlapping are fine", patchProbes({ { X = 110, Z = 25 - 3 - 5, Color = Palette.GrassLight }, { X = 114, Z = 100, Color = Palette.GrassLight }, { X = 118, Z = 100, Color = Palette.GrassLight } }) == 0)
+
+	-- dirt / scree: probes lie far beyond the last real patch (the transition band ends 70 studs outside the ground, a patch reaches 17 further) and, like the real
+	-- ones, reach down to the ground beyond the walls
+	local farZ = WorldLayout.GroundHalfZ + 150
+	local DIRT, SCREE = Color3.fromRGB(158, 126, 92), Color3.fromRGB(132, 126, 134)
+	local function transitionProbes(specs)
+		for _, spec in specs do spec.Bottom = spec.Bottom or outerGround.Top end
+		return patchProbes(specs, "Transitions", transitionClashes)
+	end
+	check("self-test: a dirt and a scree patch overlapping in one plane are found", transitionProbes({ { X = 0, Z = farZ, Color = DIRT, Top = 0.07 }, { X = 4, Z = farZ, Color = SCREE, Top = 0.07 } }) >= 1)
+	check("self-test: a dirt and a scree patch with tops 0.03 apart are found", transitionProbes({ { X = 0, Z = farZ, Color = DIRT, Top = 0.07 }, { X = 4, Z = farZ, Color = SCREE, Top = 0.10 } }) >= 1)
+	check("self-test: a patch hovering 0.15 over the ground beyond the walls is found", transitionProbes({ { X = 0, Z = farZ, Color = DIRT, Top = 0.07, Bottom = 0 } }) >= 1)
+	check("self-test: tops 0.07 apart (the real ones are 0.05 or more), and two dirt patches in one plane, are fine", transitionProbes({ { X = 0, Z = farZ, Color = DIRT, Top = 0.07 }, { X = 4, Z = farZ, Color = SCREE, Top = 0.14 }, { X = 30, Z = farZ, Color = DIRT, Top = 0.07 }, { X = 34, Z = farZ, Color = DIRT, Top = 0.07 } }) == 0)
 
 	print(string.format("PASS %d  FAIL %d", results.pass, results.fail))
 	print("== done ==")
