@@ -59,12 +59,17 @@ local function textWidth(text: string, size: number, black: boolean): number
 	return total * size * (if black then 1.07 else 1)
 end
 
+-- The width model is an ESTIMATE (+-10 %): text is only reported as too wide / cut off when it is more than OVER times the label size.
+local OVER = 1.12
+local ICON_MIN = 14 -- px: below this a drawn icon is a smudge
+local TAP_MIN = 36 -- px: smallest comfortable touch target (Roblox's own touch buttons are ~50, platform guidelines say 44)
+
 -- Text metrics of one label at `availW` pixels of width. Returns { w, h, lines, truncated, spill (px beyond the label, horizontal), spillV }
 local function measureText(data, availW: number, availH: number, cum: number)
 	local props = data.Props
 	local text = props.Text
 	if type(text) ~= "string" or text == "" then return nil end
-	if props.RichText ~= false then text = stripRich(text) end
+	if props.RichText == true then text = stripRich(text) end -- (Roblox default is RichText = false; UIKit.label turns it on)
 	local size = (props.TextSize or 14) * cum
 	local font = enumName(props.Font, "SourceSans")
 	local black = font == "GothamBlack" or font == "GothamBold" or font == "FredokaOne"
@@ -95,27 +100,29 @@ local function measureText(data, availW: number, availH: number, cum: number)
 	end
 	local h = lines * size
 	local truncated = false
-	local spill, spillV = 0, 0
+	local spill, spillV, ratio = 0, 0, 0
 	if wrapped then
+		ratio = h / math.max(availH, 1)
 		if h > availH + 2 then
 			if truncate == "AtEnd" then
-				truncated = true
+				truncated = ratio > OVER
 				h = math.max(size, math.floor(availH / size) * size)
 			else
 				spillV = h - availH
 			end
 		end
 	else
+		ratio = widest / math.max(availW, 1)
 		if widest > availW + 1 then
 			if truncate == "AtEnd" then
-				truncated = true
+				truncated = ratio > OVER
 				widest = availW
 			else
 				spill = widest - availW
 			end
 		end
 	end
-	return { w = widest, h = h, lines = lines, truncated = truncated, spill = spill, spillV = spillV, size = size }
+	return { w = widest, h = h, lines = lines, truncated = truncated, spill = spill, spillV = spillV, size = size, ratio = ratio }
 end
 
 local function udimOf(v) return v end
@@ -276,6 +283,7 @@ local function layoutKids(node)
 	end
 	local function make(entry, x, y, w, h, own)
 		local kid = newNode(entry.inst, node, x, y, w, h, own)
+		kid.sib = entry.index -- (draw order among siblings = creation order)
 		kid.clip = kidClip
 		table.insert(node.kids, kid)
 		-- icon roots and 3D viewports are leaves
@@ -316,6 +324,36 @@ local function layoutKids(node)
 			local w, h, own = sizePx(entry.inst, cw, ch, node.cum)
 			sized[index] = { w = w, h = h, own = own }
 			total += (if horizontal then w else h) + (if index > 1 then gap else 0)
+		end
+		if horizontal and l.Wraps == true then
+			-- wrapping row layout (UIListLayout.Wraps): a child that no longer fits on the row starts the next row
+			local rows, current, used = {}, {}, 0
+			for index in kids do
+				local s = sized[index]
+				if #current > 0 and used + gap + s.w > cw + 0.01 then
+					table.insert(rows, { items = current, w = used })
+					current, used = {}, 0
+				end
+				used += (if #current > 0 then gap else 0) + s.w
+				table.insert(current, index)
+			end
+			if #current > 0 then table.insert(rows, { items = current, w = used }) end
+			local y = cy
+			for _, row in rows do
+				local rowH = 0
+				for _, index in row.items do rowH = math.max(rowH, sized[index].h) end
+				local x = cx
+				if halign == "Center" then x = cx + (cw - row.w) / 2 elseif halign == "Right" then x = cx + cw - row.w end
+				for _, index in row.items do
+					local s = sized[index]
+					make(kids[index], x, y, s.w, s.h, s.own)
+					x += s.w + gap
+				end
+				y += rowH + gap
+			end
+			node.listTotal = y - cy - gap
+			node.wrapRows = #rows
+			return
 		end
 		if horizontal then
 			local x = cx
@@ -394,7 +432,7 @@ local function contentOf(node)
 			local m = measureText(fake, node.w, node.h, node.cum)
 			if m then
 				local tw, th = m.w, m.h
-				local xa = enumName(data.Props.TextXAlignment, "Left")
+				local xa = enumName(data.Props.TextXAlignment, "Center") -- (Roblox default for TextLabel / TextButton / TextBox is Center; UIKit.label sets Left explicitly)
 				local ya = enumName(data.Props.TextYAlignment, "Center")
 				local x = node.x
 				if xa == "Center" then x = node.x + (node.w - tw) / 2 elseif xa == "Right" then x = node.x + node.w - tw end
@@ -470,26 +508,28 @@ local function analyse(root, viewport, opts)
 		end
 	end)
 
-	-- (a) text that does not fit / is too small
+	-- (a) text that does not fit / is too small; icons too small to recognise
 	for _, c in items do
 		local node = c.node
+		if c.kind == "icon" and math.min(node.w, node.h) < ICON_MIN then
+			add("tiny-icon", node, string.format("icon %s is %.0fx%.0f px effective (< %d px)", node.name, node.w, node.h, ICON_MIN))
+		end
 		if c.kind == "text" then
 			local m = c.metrics
 			local label = string.sub(c.text, 1, 28)
-			if m.spill > 2 then add("text-spill", node, string.format("'%s' needs ~%.0f px, label is %.0f px wide (spills %.0f)", label, m.w, node.w, m.spill)) end
-			if m.spillV > 3 then add("text-spill-v", node, string.format("'%s' needs ~%.0f px height (%d lines), label is %.0f px high", label, m.h, m.lines, node.h)) end
+			if m.spill > 2 and m.ratio > OVER then add("text-spill", node, string.format("'%s' needs ~%.0f px, label is %.0f px wide (spills %.0f)", label, m.w, node.w, m.spill)) end
+			if m.spill > 2 and m.ratio <= OVER then add("text-borderline", node, string.format("'%s' needs ~%.0f px, label is %.0f px wide (estimate within %.0f%%: check in Studio)", label, m.w, node.w, (m.ratio - 1) * 100)) end
+			if m.spillV > 3 and m.ratio > OVER then add("text-spill-v", node, string.format("'%s' needs ~%.0f px height (%d lines), label is %.0f px high", label, m.h, m.lines, node.h)) end
 			if m.truncated and not (opts.allowTruncate and opts.allowTruncate[node.name]) then add("text-truncated", node, string.format("'%s' (%d lines, size %.1f) is cut off at %.0fx%.0f", label, m.lines, m.size, node.w, node.h)) end
 			if m.size < 10.5 then add("tiny-text", node, string.format("'%s' is %.1f px effective", label, m.size)) end
 		end
 		-- (b) beyond the screen
 		local r = c.rect
-		if r.x < screen.x - 1 or r.y < screen.y - 1 or r.x + r.w > screen.x + screen.w + 1 or r.y + r.h > screen.y + screen.h + 1 then
-			-- only if actually visible (not clipped away by a scroll frame)
-			local clip = c.node.clip
-			local visibleRect = if clip then inter(r, clip) else r
-			if visibleRect.w > 1 and visibleRect.h > 1 then
-				add("off-screen", node, string.format("rect x%.0f y%.0f w%.0f h%.0f on a %dx%d screen", r.x, r.y, r.w, r.h, viewport.X, viewport.Y))
-			end
+		-- only the part that is actually DRAWN counts (scroll frames / canvas groups clip the rest away)
+		local clip = c.node.clip
+		local visibleRect = if clip then inter(r, clip) else r
+		if visibleRect.w > 1 and visibleRect.h > 1 and (visibleRect.x < screen.x - 1 or visibleRect.y < screen.y - 1 or visibleRect.x + visibleRect.w > screen.x + screen.w + 1 or visibleRect.y + visibleRect.h > screen.y + screen.h + 1) then
+			add("off-screen", node, string.format("rect x%.0f y%.0f w%.0f h%.0f on a %dx%d screen", r.x, r.y, r.w, r.h, viewport.X, viewport.Y))
 		end
 	end
 
@@ -499,6 +539,7 @@ local function analyse(root, viewport, opts)
 		local r = c.rect
 		local cur = node.parent
 		local depth = 0
+		if c.kind == "hit" then cur = nil end -- (an invisible tap area may be bigger than its control on purpose, e.g. the slider handle)
 		while cur and not cur.isRoot and depth < 12 do
 			local isScroll = cur.class == "ScrollingFrame"
 			local hasFill = cur.data.Props.BackgroundTransparency ~= 1 and cur.class ~= "ScrollingFrame" and cur.data.Props.BackgroundColor3 ~= nil
@@ -541,11 +582,101 @@ local function analyse(root, viewport, opts)
 						if vis.w >= 2 and vis.h >= 2 and not (opts.allow and (opts.allow[a.node.name] or opts.allow[b.node.name])) then
 							local da = if a.kind == "text" then "'" .. string.sub(a.text, 1, 16) .. "'" else a.kind .. ":" .. a.node.name
 							local db = if b.kind == "text" then "'" .. string.sub(b.text, 1, 16) .. "'" else b.kind .. ":" .. b.node.name
-							add("overlap", a.node, string.format("%s x %s overlap %.0fx%.0f px (%s | %s)", da, db, vis.w, vis.h, pathOf(a.node), pathOf(b.node)))
+							-- a text CHIP (solid background) lying on a picture is a badge on a picture; text on text / icon on text is a collision
+							local function isChip(c) return c.kind == "text" and (c.node.data.Props.BackgroundTransparency or 0) < 0.5 end
+							local function isPicture(c) return c.kind == "icon" or c.kind == "image" end
+							local kind = if (isChip(a) and isPicture(b)) or (isChip(b) and isPicture(a)) then "overlap-badge" else "overlap"
+							add(kind, a.node, string.format("%s x %s overlap %.0fx%.0f px (%s | %s)", da, db, vis.w, vis.h, pathOf(a.node), pathOf(b.node)))
 						end
 					end
 				end
 			end
+		end
+	end
+	-- (e) solid boxes (cards, chips, windows with a fill) that cover each other without being parent / child, and tappable controls whose
+	--     boxes overlap (the one on top steals the taps of the one below, e.g. a tab hidden behind a list)
+	local boxes, controls = {}, {}
+	walk(root, function(node)
+		if node.isRoot or isBackdrop(node) or node.data.Attributes.IconId then return end
+		if node.w < 1 or node.h < 1 then return end
+		local p = node.data.Props
+		local visibleRect = { x = node.x, y = node.y, w = node.w, h = node.h }
+		if node.clip then visibleRect = inter(visibleRect, node.clip) end
+		if visibleRect.w < 1 or visibleRect.h < 1 then return end
+		local item = { node = node, rect = visibleRect }
+		if node.class == "TextButton" or node.class == "ImageButton" then table.insert(controls, item) end
+		local solidClass = node.class == "Frame" or node.class == "TextLabel" or node.class == "TextButton" or node.class == "CanvasGroup" or node.class == "ImageLabel" or node.class == "ImageButton"
+		if solidClass and (p.BackgroundTransparency or 0) <= 0.5 and node.w >= 16 and node.h >= 16 then table.insert(boxes, item) end
+	end)
+	local function pairsOverlap(list, kind, label, fraction)
+		table.sort(list, function(a, b) return a.rect.x < b.rect.x end)
+		for i = 1, #list do
+			local a = list[i]
+			for j = i + 1, #list do
+				local b = list[j]
+				if b.rect.x >= a.rect.x + a.rect.w then break end
+				-- (siblings of one parent are layered on purpose for BOXES - slider knob on its fill, accent edge, stripes -; buttons are still compared)
+				local layered = kind == "overlap-box" and a.node.parent == b.node.parent
+				if not layered and not isAncestor(a.node, b.node) and not isAncestor(b.node, a.node) and not (opts.allow and (opts.allow[a.node.name] or opts.allow[b.node.name])) then
+					local x = inter(a.rect, b.rect)
+					if x.w >= 4 and x.h >= 4 then
+						local smaller = math.min(area(a.rect), area(b.rect))
+						if smaller > 0 and area(x) >= fraction * smaller then
+							add(kind, a.node, string.format("%s %s x %s overlap %.0fx%.0f px = %.0f%% of the smaller (%s | %s)", label, a.node.name, b.node.name, x.w, x.h, 100 * area(x) / smaller, pathOf(a.node), pathOf(b.node)))
+						end
+					end
+				end
+			end
+		end
+	end
+	-- (g) text lying UNDER a solid box that is drawn later (a later sibling / higher ZIndex): the player cannot read it
+	local function chain(node)
+		local list = {}
+		local cur = node
+		while cur and not cur.isRoot do
+			table.insert(list, 1, cur)
+			cur = cur.parent
+		end
+		return list
+	end
+	local function drawnAbove(a, b)
+		local ca, cb = chain(a), chain(b)
+		for i = 1, math.min(#ca, #cb) do
+			local x, y = ca[i], cb[i]
+			if x ~= y then
+				local zx, zy = x.data.Props.ZIndex or 1, y.data.Props.ZIndex or 1
+				if zx ~= zy then return zx > zy end
+				return (x.sib or 0) > (y.sib or 0)
+			end
+		end
+		return #ca > #cb
+	end
+	for _, c in items do
+		if c.kind == "text" and (c.node.data.Props.TextTransparency or 0) < 0.5 then
+			local t = c.rect
+			local tClip = c.node.clip
+			local tVisible = if tClip then inter(t, tClip) else t
+			if tVisible.w > 2 and tVisible.h > 2 then
+				for _, b in boxes do
+					local bn = b.node
+					if bn ~= c.node and not isAncestor(bn, c.node) and not isAncestor(c.node, bn) and not (opts.allow and (opts.allow[bn.name] or opts.allow[c.node.name])) then
+						local x = inter(tVisible, b.rect)
+						if x.w > 2 and x.h > 2 and area(x) >= 0.25 * area(tVisible) and drawnAbove(bn, c.node) then
+							add("text-covered", c.node, string.format("'%s' is %.0f%% covered by %s drawn on top of it (%s)", string.sub(c.text, 1, 20), 100 * area(x) / area(tVisible), bn.name, pathOf(bn)))
+							break
+						end
+					end
+				end
+			end
+		end
+	end
+	pairsOverlap(boxes, "overlap-box", "boxes", 0.25)
+	pairsOverlap(controls, "overlap-controls", "buttons", 0.25)
+	-- (f) tap targets: a button smaller than TAP_MIN px (effective, after every UIScale) is hard to hit with a finger
+	for _, c in controls do
+		local n = c.node
+		if math.min(n.w, n.h) < TAP_MIN and not (opts.allow and opts.allow[n.name]) then
+			add("tap-small", n, string.format("button %s is %.0fx%.0f px effective (< %d px)", n.name, n.w, n.h, TAP_MIN))
 		end
 	end
 	return findings, items
@@ -581,7 +712,9 @@ local function unique(findingsByVp)
 				seen[key] = { f = f, vps = {} }
 				table.insert(order, key)
 			end
-			table.insert(seen[key].vps, vp)
+			local present = false
+			for _, existing in seen[key].vps do if existing == vp then present = true end end
+			if not present then table.insert(seen[key].vps, vp) end
 		end
 	end
 	table.sort(order)
@@ -665,7 +798,9 @@ local selfTest = function()
 	end)
 	local H = root8.kids[1]
 	local I = H.kids[1]
-	check("self-test: UIScale doubles size and offsets (outer 100x100 -> 200x200, inner = 0.5*200 + 10*2 = 120 wide, offset 10)", H.w == 200 and H.h == 200 and I.w == 120 and I.h == 40 and I.x == 10 + 10 and I.y == 20 + 10, string.format("%s %s %s %s %s", H.w, I.w, I.h, I.x, I.y))
+	-- model (the one UIKit.responsive documents): a UIScale multiplies the Size AND Position offsets of its parent object and of everything inside it.
+		-- H: position (10,20) -> (20,40); size 100 -> 200. I: 0.5*200 + 10*2 = 120 wide, 20*2 = 40 high, offset (5,5)*2 = (10,10) from H.
+		check("self-test: UIScale doubles size and position offsets (outer 100x100 -> 200x200 at 20,40; inner 120x40 at 30,50)", H.w == 200 and H.h == 200 and H.x == 20 and H.y == 40 and I.w == 120 and I.h == 40 and I.x == 30 and I.y == 50, string.format("%s %s %s %s %s", H.w, I.w, I.h, I.x, I.y))
 	local _, root9 = gui(function(g)
 		local grid = mk("Frame", { Size = UDim2.fromOffset(330, 300), BackgroundTransparency = 1, Name = "G" }, g)
 		mk("UIGridLayout", { CellSize = UDim2.fromOffset(100, 50), CellPadding = UDim2.fromOffset(10, 10) }, grid)
@@ -679,8 +814,69 @@ local selfTest = function()
 		mk("Frame", { Size = UDim2.fromOffset(50, 20) }, row)
 		mk("Frame", { Size = UDim2.fromOffset(50, 20) }, row)
 	end)
+	local _, root11 = gui(function(g)
+		local row = mk("Frame", { Size = UDim2.fromOffset(214, 62), Position = UDim2.fromOffset(100, 100), BackgroundTransparency = 1, Name = "W" }, g)
+		mk("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, Padding = UDim.new(0, 4), Wraps = true }, row)
+		for _ = 1, 3 do mk("Frame", { Size = UDim2.fromOffset(69, 28) }, row) end
+		mk("Frame", { Size = UDim2.fromOffset(214, 28) }, row)
+	end)
+	local W = root11.kids[1]
+	check("self-test: a wrapping list breaks 3x69 px + 2 gaps (215 px) out of a 214 px row, and the 214 px child gets its own row (3 rows, 92 px tall)", W.wrapRows == 3 and W.kids[3].y == 100 + 32 and W.kids[4].y == 100 + 64 and W.listTotal == 92, tostring(W.wrapRows) .. " rows, total " .. tostring(W.listTotal))
 	local R = root10.kids[1]
 	check("self-test: a centred horizontal list puts two 50 px children + a 10 px gap in the middle of 300 px", R.kids[1].x == 100 + 95 and R.kids[2].x == 100 + 155 and R.kids[1].y == 110, string.format("%s %s %s", R.kids[1].x, R.kids[2].x, R.kids[1].y))
+	-- solid boxes / buttons that cover each other, chips on pictures, small tap targets
+	local f12 = gui(function(g)
+		local left = mk("Frame", { Size = UDim2.fromOffset(300, 200), Position = UDim2.fromOffset(100, 100), BackgroundTransparency = 1 }, g)
+		local right = mk("Frame", { Size = UDim2.fromOffset(300, 200), Position = UDim2.fromOffset(140, 120), BackgroundTransparency = 1 }, g)
+		mk("Frame", { Size = UDim2.fromOffset(100, 60), BackgroundColor3 = Color3.new(0.2, 0.2, 0.2) }, left)
+		mk("Frame", { Size = UDim2.fromOffset(100, 60), BackgroundColor3 = Color3.new(0.3, 0.3, 0.3) }, right)
+	end)
+	check("self-test: two solid boxes of different containers covering each other are reported", countOf(f12, { ["overlap-box"] = true }) == 1)
+	local f12b = gui(function(g)
+		local bar = mk("Frame", { Size = UDim2.fromOffset(200, 20), Position = UDim2.fromOffset(100, 100), BackgroundColor3 = Color3.new(0.2, 0.2, 0.2) }, g)
+		mk("Frame", { Size = UDim2.fromOffset(120, 20), BackgroundColor3 = Color3.new(1, 1, 0) }, bar) -- fill
+		mk("Frame", { Size = UDim2.fromOffset(24, 24), Position = UDim2.fromOffset(110, -2), BackgroundColor3 = Color3.new(1, 1, 1) }, bar) -- knob: layered on purpose
+	end)
+	check("self-test: a slider knob on its fill (siblings layered on purpose) is NOT an overlap", countOf(f12b, { ["overlap-box"] = true }) == 0)
+	local f13 = gui(function(g)
+		local card = mk("Frame", { Size = UDim2.fromOffset(100, 60), Position = UDim2.fromOffset(100, 100), BackgroundColor3 = Color3.new(0.2, 0.2, 0.2) }, g)
+		mk("Frame", { Size = UDim2.fromOffset(20, 60), BackgroundColor3 = Color3.new(1, 0, 0) }, card) -- an accent edge inside its card
+		mk("Frame", { Size = UDim2.fromOffset(100, 60), Position = UDim2.fromOffset(200, 100), BackgroundColor3 = Color3.new(0.3, 0.3, 0.3) }, g) -- a neighbour that only touches
+	end)
+	check("self-test: a child inside its card and a touching neighbour are NOT overlaps", countOf(f13, { ["overlap-box"] = true }) == 0)
+	local f14 = gui(function(g)
+		mk("TextButton", { Size = UDim2.fromOffset(120, 40), Position = UDim2.fromOffset(100, 100), Text = "Rewards", TextSize = 14, Font = text }, g)
+		mk("TextButton", { Size = UDim2.fromOffset(120, 44), Position = UDim2.fromOffset(100, 104), Text = "", BackgroundTransparency = 0.2 }, g)
+	end)
+	check("self-test: a button lying under another button is reported (overlap-controls)", countOf(f14, { ["overlap-controls"] = true }) == 1)
+	local f15 = gui(function(g)
+		mk("ImageLabel", { Size = UDim2.fromOffset(80, 60), Position = UDim2.fromOffset(100, 100), Image = "rbxassetid://1" }, g)
+		mk("TextLabel", { Size = UDim2.fromOffset(60, 18), Position = UDim2.fromOffset(100, 100), Text = "OWNED", TextSize = 12, Font = text, BackgroundColor3 = Color3.new(0, 0.8, 0.2), TextXAlignment = Enum.TextXAlignment.Center }, g)
+	end)
+	check("self-test: a status chip lying on a picture is an overlap-badge (not a text collision)", countOf(f15, { ["overlap-badge"] = true }) == 1 and countOf(f15, { overlap = true }) == 0)
+	local f16 = gui(function(g)
+		mk("TextButton", { Size = UDim2.fromOffset(20, 20), Position = UDim2.fromOffset(100, 100), Text = "x", TextSize = 14, Font = text }, g)
+		mk("TextButton", { Size = UDim2.fromOffset(44, 44), Position = UDim2.fromOffset(200, 100), Text = "OK", TextSize = 14, Font = text }, g)
+	end)
+	check("self-test: a 20 px button is a small tap target, a 44 px button is not", countOf(f16, { ["tap-small"] = true }) == 1)
+	local f18 = gui(function(g)
+		local row = mk("Frame", { Size = UDim2.fromOffset(300, 120), Position = UDim2.fromOffset(100, 100), BackgroundTransparency = 1 }, g)
+		mk("TextButton", { Size = UDim2.fromOffset(214, 28), Position = UDim2.fromOffset(0, 0), Text = "Rewards", TextSize = 14, Font = text }, row)
+		local list = mk("Frame", { Size = UDim2.fromOffset(214, 90), Position = UDim2.fromOffset(0, 10), BackgroundTransparency = 1 }, row) -- created later = drawn on top
+		mk("Frame", { Size = UDim2.fromOffset(210, 40), BackgroundColor3 = Color3.new(0.2, 0.2, 0.2) }, list)
+	end)
+	check("self-test: text hidden under a later-drawn solid box is reported (text-covered)", countOf(f18, { ["text-covered"] = true }) == 1)
+	local f19 = gui(function(g)
+		local row = mk("Frame", { Size = UDim2.fromOffset(300, 120), Position = UDim2.fromOffset(100, 100), BackgroundTransparency = 1 }, g)
+		mk("Frame", { Size = UDim2.fromOffset(210, 40), BackgroundColor3 = Color3.new(0.2, 0.2, 0.2), Position = UDim2.fromOffset(0, 5) }, row)
+		mk("TextLabel", { Size = UDim2.fromOffset(200, 28), Position = UDim2.fromOffset(0, 10), Text = "On top", TextSize = 14, Font = text, BackgroundTransparency = 1 }, row)
+	end)
+	check("self-test: text drawn ABOVE a box (the normal card + label) is not reported", countOf(f19, { ["text-covered"] = true }) == 0)
+	-- a text that is only slightly wider than the estimate must NOT fail (the width model is an estimate), a clearly wider one must
+	local f17 = gui(function(g)
+		mk("TextLabel", { Size = UDim2.fromOffset(100, 24), Position = UDim2.fromOffset(100, 100), Text = "Hello world abc", TextSize = 14, Font = Enum.Font.GothamMedium }, g)
+	end)
+	check("self-test: a label only a few percent too narrow is 'borderline', not a failure", countOf(f17, { ["text-spill"] = true }) == 0)
 end
 
 ---------------------------------------------------------------------------------------------------------------------------------
@@ -767,13 +963,18 @@ task.spawn(function()
 
 	local function dumpRects(tag, vp, root)
 		if not DUMP then return end
+		local order = 0
 		walk(root, function(node)
 			if node.isRoot then return end
+			order += 1
 			local d = node.data.Props
 			local bg = d.BackgroundColor3
+			local tc = d.TextColor3
 			local text = d.Text
-			local line = string.format('{"tag":%q,"vp":[%d,%d],"n":%q,"c":%q,"x":%.1f,"y":%.1f,"w":%.1f,"h":%.1f,"bg":[%.2f,%.2f,%.2f],"bt":%.2f,"t":%q,"ts":%.1f,"icon":%q}', tag, vp.X, vp.Y, node.name, node.class, node.x, node.y, node.w, node.h,
-				bg and bg.R or 0, bg and bg.G or 0, bg and bg.B or 0, d.BackgroundTransparency or 0, if type(text) == "string" then stripRich(text) else "", (d.TextSize or 0) * node.cum, node.data.Attributes.IconId or "")
+			local clip = node.clip
+			local line = string.format('{"tag":%q,"vp":[%d,%d],"n":%q,"c":%q,"x":%.1f,"y":%.1f,"w":%.1f,"h":%.1f,"bg":[%.2f,%.2f,%.2f],"bt":%.2f,"t":%q,"ts":%.1f,"tc":[%.2f,%.2f,%.2f],"z":%d,"o":%d,"clip":[%.1f,%.1f,%.1f,%.1f],"icon":%q}', tag, vp.X, vp.Y, node.name, node.class, node.x, node.y, node.w, node.h,
+				bg and bg.R or 0, bg and bg.G or 0, bg and bg.B or 0, d.BackgroundTransparency or 0, if type(text) == "string" then stripRich(text) else "", (d.TextSize or 0) * node.cum, tc and tc.R or 1, tc and tc.G or 1, tc and tc.B or 1, d.ZIndex or 1, order,
+				clip and clip.x or -1, clip and clip.y or -1, clip and clip.w or -1, clip and clip.h or -1, node.data.Attributes.IconId or "")
 			print("RECT|" .. line)
 		end)
 	end
@@ -798,7 +999,20 @@ task.spawn(function()
 		for _, name in { "GateChip", "FirstPersonHint", "Strip", "GrabPrompt", "ChannelBar", "TutorialCard", "Tip" } do
 			for _, d in byName(mainGui, name) do RawData[d].Props.Visible = true end
 		end
-		for _, d in byName(screenGui("HotbarUI"), "Tip") do RawData[d].Props.Visible = true end
+		for _, d in byName(screenGui("HotbarUI"), "Tip") do
+			RawData[d].Props.Visible = true
+			-- the hotbar tip card of a selected consumable: longest realistic name + description
+			local longestName, longestDesc = "", ""
+			for _, def in ItemRegistry.List do
+				if #def.DisplayName > #longestName then longestName = def.DisplayName end
+				if #(def.Description or "") > #longestDesc then longestDesc = def.Description end
+			end
+			for _, label in M.InstanceMethods.GetChildren(d) do
+				if RawData[label].ClassName == "TextLabel" then
+					RawData[label].Props.Text = if RawData[label].Props.TextSize == 15 then longestName .. "  x99" else "Press again to use. " .. longestDesc
+				end
+			end
+		end
 		for _, d in byName(mainGui, "Tracker") do
 			for _, row in M.InstanceMethods.GetChildren(d) do
 				if RawData[row].ClassName == "Frame" then
@@ -824,30 +1038,70 @@ task.spawn(function()
 		end
 		for i = 1, 4 do MainUI.toast("Toast number " .. i .. ": bought something that cost a lot of money", "info") end
 	end
-	local worstDone = false
-
+	-- realistic COMBINATIONS (what a player really sees): a weapon is held (the hotbar tip card stays up) while a prompt, the steal bar or a hint shows
+	local function realisticTip()
+		for _, d in byName(screenGui("HotbarUI"), "Tip") do
+			RawData[d].Props.Visible = true
+			for _, label in M.InstanceMethods.GetChildren(d) do
+				if RawData[label].ClassName == "TextLabel" then
+					RawData[label].Props.Text = if RawData[label].Props.TextSize == 15 then "Mega Slap Glove" else "Your first weapon. Fast, wide slaps."
+				end
+			end
+		end
+	end
+	local function only(visibleNames)
+		for _, name in { "GateChip", "FirstPersonHint", "Strip", "GrabPrompt", "ChannelBar", "TutorialCard", "PriceChip" } do
+			for _, d in byName(mainGui, name) do RawData[d].Props.Visible = table.find(visibleNames, name) ~= nil end
+		end
+		realisticTip()
+	end
+	local passes = {
+		{ name = "normal" },
+		{ name = "combo-claim", setup = function() only({ "GrabPrompt", "PriceChip" }) end }, -- weapon in hand + "Claim <hamster>" prompt (the everyday case)
+		{ name = "combo-steal", setup = function() only({ "ChannelBar" }) end }, -- weapon in hand + the steal / pick-up progress bar
+		{ name = "combo-hint", setup = function() only({ "Strip" }) end }, -- weapon in hand + a hint strip
+		{ name = "worst", setup = forceWorstCase },
+	}
 	local hudAll = {}
-	for pass = 1, 2 do
-		if pass == 2 then
-			forceWorstCase()
-			worstDone = true
-			adv(0.5)
+	local hudCoverage = {}
+	for _, pass in passes do
+		if pass.setup then
+			pass.setup()
+			adv(0.2)
 		end
 		for _, vp in viewports do
 			setViewport(vp)
-			local list = {}
 			-- all HUD screens together: cross-screen overlaps (hotbar tip x prompt strip ...) are real overlaps
 			local combined = newNode(mainGui, nil, 0, 0, vp.X, vp.Y, 1)
 			combined.isRoot = true
 			combined.screen = { x = 0, y = 0, w = vp.X, h = vp.Y }
 			local mainRoot = layoutGui(mainGui, vp)
 			local hotRoot = layoutGui(screenGui("HotbarUI"), vp)
-			for _, r in { mainRoot, hotRoot } do
-				for _, k in r.kids do k.parent = combined; table.insert(combined.kids, k) end
+			for rootIndex, r in { mainRoot, hotRoot } do
+				for _, k in r.kids do
+					k.parent = combined
+					k.sib = (k.sib or 0) + rootIndex * 1000 -- (the hotbar ScreenGui has the higher DisplayOrder: it is drawn above the main HUD)
+					table.insert(combined.kids, k)
+				end
 			end
 			local findings = analyse(combined, vp, { allowTruncate = { Toasts = true } })
-			hudAll[(if pass == 1 then "normal " else "worst ") .. vp.X .. "x" .. vp.Y] = findings
-			if pass == 2 or true then dumpRects((if pass == 1 then "hud-normal" else "hud-worst"), vp, combined) end
+			hudAll[pass.name .. " " .. vp.X .. "x" .. vp.Y] = findings
+			if pass.name == "normal" or pass.name == "combo-claim" then
+				-- how much of the screen do the solid HUD boxes cover (6 px grid)?  normal = with the tutorial card, combo-claim = without it but with the prompt + tip
+				local cell, covered, total = 6, {}, 0
+				walk(combined, function(n)
+					if n.isRoot or n.data.Attributes.IconId then return end
+					local p = n.data.Props
+					if (n.class == "Frame" or n.class == "TextButton" or n.class == "TextLabel" or n.class == "CanvasGroup") and (p.BackgroundTransparency or 0) <= 0.6 and n.w >= 6 and n.h >= 6 then
+						for gx = math.max(0, n.x // cell), math.min(vp.X // cell, (n.x + n.w) // cell) do
+							for gy = math.max(0, n.y // cell), math.min(vp.Y // cell, (n.y + n.h) // cell) do covered[gx * 10000 + gy] = true end
+						end
+					end
+				end)
+				for _ in covered do total += 1 end
+				hudCoverage[pass.name .. " " .. vp.X .. "x" .. vp.Y] = total * cell * cell / (vp.X * vp.Y)
+			end
+			dumpRects("hud-" .. pass.name, vp, combined)
 		end
 	end
 
@@ -870,6 +1124,7 @@ task.spawn(function()
 		{ "Social", {} },
 		{ "Leaderboards", { "Tab_Money", "Tab_Hamsters", "Tab_Steals" } },
 	}
+	local censusLines = {}
 	local panelFindings = {} -- [panel/state] = { [vp] = findings }
 	local windowTops = {} -- [panel] = { [vp] = window rect }
 	for _, entry in panelPlan do
@@ -892,11 +1147,22 @@ task.spawn(function()
 					panelFindings[key] = panelFindings[key] or {}
 					panelFindings[key][vp.X .. "x" .. vp.Y] = findings
 					if state == "" then
-						local outer = root.kids[2] -- [1] = the dim button, [2] = the outer frame
+						local outer = root.kids[#root.kids] -- (kids = [dim button], outer frame; a docked panel hides its dim button)
 						windowTops[name] = windowTops[name] or {}
 						if outer then windowTops[name][vp.X .. "x" .. vp.Y] = { x = outer.x, y = outer.y, w = outer.w, h = outer.h, docked = panel.Gui and RawData[outer.inst].Props.AnchorPoint and RawData[outer.inst].Props.AnchorPoint.X == 1 } end
 					end
 					dumpRects("panel-" .. key, vp, root)
+					if state == "" and vp.X == 1366 then
+						-- design-system census (info): how many surfaces carry an outline / rounded corners / a gradient
+						local boxesN, strokesN, cornersN, gradientsN, instancesN = 0, 0, 0, 0, 0
+						for _, d in M.descendants(panel.Gui) do
+							local dd = RawData[d]
+							instancesN += 1
+							if dd.ClassName == "UIStroke" then strokesN += 1 elseif dd.ClassName == "UICorner" then cornersN += 1 elseif dd.ClassName == "UIGradient" then gradientsN += 1
+							elseif (dd.ClassName == "Frame" or dd.ClassName == "TextButton" or dd.ClassName == "CanvasGroup") and (dd.Props.BackgroundTransparency or 0) < 0.95 then boxesN += 1 end
+						end
+						censusLines[name] = string.format("%s: %d instances, %d filled boxes, %d outlines (%.0f%% of boxes), %d rounded corners, %d gradients", name, instancesN, boxesN, strokesN, 100 * strokesN / math.max(1, boxesN), cornersN, gradientsN)
+					end
 				end
 				panel:Close(); adv(0.3)
 			end
@@ -906,46 +1172,110 @@ task.spawn(function()
 	---------------------------------------------------------------------------------------------------------------------
 	-- report
 	---------------------------------------------------------------------------------------------------------------------
-	local PROBLEM = { overlap = true, ["text-spill"] = true, ["text-spill-v"] = true, ["outside-parent"] = true, ["off-screen"] = true, ["zero-size"] = true }
-	local function report(title, byKey, kinds)
+	-- LAYOUT = something is hidden, cut off, unreachable or unreadable. Reported per root cause (the same finding at several viewports is one line).
+	local LAYOUT = { overlap = true, ["text-covered"] = true, ["overlap-box"] = true, ["overlap-controls"] = true, ["outside-parent"] = true, ["off-screen"] = true, ["zero-size"] = true, ["text-spill"] = true, ["text-spill-v"] = true }
+	local function isPhoneKey(key: string): boolean
+		local x, y = string.match(key, "(%d+)x(%d+)$")
+		return math.min(tonumber(x) or 9999, tonumber(y) or 9999) <= 480
+	end
+	local function subset(byKey, phone: boolean)
+		local out = {}
+		for key, list in byKey do
+			if isPhoneKey(key) == phone then out[key] = list end
+		end
+		return out
+	end
+	local function report(byKey, kinds, limit)
 		local total, lines = 0, {}
 		local seen, order = unique(byKey)
 		for _, key in order do
 			local entry = seen[key]
 			if kinds[entry.f.kind] then
 				total += 1
-				if #lines < 40 then table.insert(lines, string.format("   %s | %s | %s | at %s", entry.f.kind, entry.f.where, entry.f.detail, table.concat(entry.vps, ",")) ) end
+				if #lines < (limit or 30) then
+					local vps = entry.vps
+					local shown = table.concat(vps, ",", 1, math.min(#vps, 2)) .. (if #vps > 2 then " (+" .. (#vps - 2) .. " more)" else "")
+					table.insert(lines, string.format("   %s | %s | %s | at %s", entry.f.kind, entry.f.where, entry.f.detail, shown))
+				end
 			end
 		end
 		return total, lines
 	end
 	local function checkGroup(label, byKey, kinds, extra)
-		local total, lines = report(label, byKey, kinds)
+		local total, lines = report(byKey, kinds)
 		check(label, total == 0, if total > 0 then total .. " distinct problem(s) - see list" else extra)
 		for _, line in lines do print(line) end
 	end
 
-	local hudNormal, hudWorst = {}, {}
+	local hudNormal, hudWorst, hudCombo = {}, {}, {}
 	for key, list in hudAll do
-		if string.sub(key, 1, 6) == "normal" then hudNormal[key] = list else hudWorst[key] = list end
+		if string.sub(key, 1, 6) == "normal" then hudNormal[key] = list elseif string.sub(key, 1, 5) == "combo" then hudCombo[key] = list else hudWorst[key] = list end
 	end
-	checkGroup("HUD (normal state): no overlap / no control outside its box or the screen / no text spilling, at 7 viewports", hudNormal, PROBLEM)
-	checkGroup("HUD (worst case: every optional element visible, longest names, 4 toasts): same rules at 7 viewports", hudWorst, PROBLEM)
-	checkGroup("HUD: no text effectively smaller than 10.5 px (normal state, 7 viewports)", hudNormal, { ["tiny-text"] = true })
-	for panelKey, byVp in panelFindings do
-		-- one line per panel/state would be too noisy: grouped below
-	end
-	local grouped = {}
-	for key, byVp in panelFindings do grouped[key] = byVp end
-	local panelProblems, panelTiny, panelTrunc = {}, {}, {}
-	for key, byVp in grouped do
+	local panelProblems = {}
+	for key, byVp in panelFindings do
 		for vp, list in byVp do
 			panelProblems[key .. "@" .. vp] = list
 		end
 	end
-	checkGroup("PANELS: no overlap / no control outside its box or the screen / no text spilling (14 panels, all tabs, 7 viewports)", panelProblems, PROBLEM)
-	checkGroup("PANELS: no text effectively smaller than 10.5 px (7 viewports)", panelProblems, { ["tiny-text"] = true })
-	checkGroup("PANELS: no static text is cut off with '...'", panelProblems, { ["text-truncated"] = true })
+
+	-- three viewport classes: desktop + tablet, phone LANDSCAPE (the default on Roblox phones) and phone PORTRAIT (only reachable when the
+	-- experience allows it: StarterGui.ScreenOrientation = Sensor / Portrait; the project does not set it, Roblox's default is landscape)
+	local function classOf(key: string): string
+		local x, y = string.match(key, "(%d+)x(%d+)$")
+		x, y = tonumber(x) or 9999, tonumber(y) or 9999
+		if math.min(x, y) > 480 then return "desk" end
+		return if x > y then "land" else "port"
+	end
+	local CLASSES = {
+		{ id = "desk", label = "desktop + tablet (1920x1080, 1366x768, 1024x768)" },
+		{ id = "land", label = "phone LANDSCAPE (844x390, 667x375)" },
+		{ id = "port", label = "phone PORTRAIT (390x844, 360x640)" },
+	}
+	local function bucket(byKey, class: string)
+		local out = {}
+		for key, list in byKey do
+			if classOf(key) == class then out[key] = list end
+		end
+		return out
+	end
+	local function perClass(title: string, byKey, kinds, skipDesk: boolean?)
+		for _, class in CLASSES do
+			if not (skipDesk and class.id == "desk") then
+				checkGroup(title .. " - " .. class.label, bucket(byKey, class.id), kinds)
+			end
+		end
+	end
+
+	print("  -- HUD")
+	perClass("HUD (normal state): no overlap, nothing outside its box or the screen", hudNormal, LAYOUT)
+	perClass("HUD (a weapon in hand + claim prompt / steal bar / hint strip - the everyday combinations): nothing covers anything", hudCombo, LAYOUT)
+	perClass("HUD (worst case: every optional element visible, longest names, 4 toasts)", hudWorst, LAYOUT)
+	perClass("HUD: no text smaller than 10.5 px effective", hudNormal, { ["tiny-text"] = true })
+	perClass("HUD: every button is at least " .. TAP_MIN .. " px wide and high (finger taps)", hudNormal, { ["tap-small"] = true }, true)
+	perClass("HUD: every icon is at least " .. ICON_MIN .. " px", hudNormal, { ["tiny-icon"] = true })
+	do
+		for _, which in { "normal", "combo-claim" } do
+			local parts = {}
+			for _, vp in viewports do table.insert(parts, string.format("%dx%d %.0f%%", vp.X, vp.Y, 100 * hudCoverage[which .. " " .. vp.X .. "x" .. vp.Y])) end
+			print("  [info] share of the screen covered by solid HUD boxes (" .. (if which == "normal" then "tutorial card + 4 toasts showing" else "weapon tip + claim prompt showing, no tutorial") .. "): " .. table.concat(parts, ", "))
+		end
+		print("  [info] (coverage is advisory - how much of the world a HUD may hide is a taste call; it is not counted as pass/fail)")
+	end
+
+	print("  -- PANELS (14 windows, every tab)")
+	for _, entry in panelPlan do if censusLines[entry[1]] then print("  [info] census " .. censusLines[entry[1]]) end end
+	perClass("PANELS: no overlap, nothing outside its box / the screen / unreadable", panelProblems, LAYOUT)
+	perClass("PANELS: no text smaller than 10.5 px effective", panelProblems, { ["tiny-text"] = true })
+	perClass("PANELS: every button is at least " .. TAP_MIN .. " px wide and high (finger taps)", panelProblems, { ["tap-small"] = true }, true)
+	perClass("PANELS: every icon is at least " .. ICON_MIN .. " px", panelProblems, { ["tiny-icon"] = true })
+	checkGroup("PANELS: no static text is cut off with '...' (estimate: only when more than 12 % too wide)", panelProblems, { ["text-truncated"] = true })
+	checkGroup("PANELS: status chips (OWNED, SHINY ...) do not cover the picture they belong to", panelProblems, { ["overlap-badge"] = true })
+	do
+		local n, lines = report({ hud = (function() local all = {} for _, l in hudNormal do for _, f in l do table.insert(all, f) end end return all end)() }, { ["text-borderline"] = true }, 1)
+		local m, more = report(panelProblems, { ["text-borderline"] = true }, 14)
+		print(string.format("  [info] %d HUD + %d panel labels are within 12%% of the estimated text width (they MAY clip in real Gotham text; check in Studio, not counted as a failure)", n, m))
+		for _, line in more do print(line) end
+	end
 
 	-- windows must keep clear of the native top bar band
 	do
@@ -959,79 +1289,69 @@ task.spawn(function()
 		check("PANELS: no window header runs under the native Roblox top bar band (y < 36) at any viewport", #bad == 0, if #bad > 0 then #bad .. " cases e.g. " .. table.concat(bad, ", ", 1, math.min(#bad, 8)) else nil)
 	end
 
-	-- the docked Lucky Wheel panel must not cover the right rail
+	-- docked panels (Dock = "Right") must not cover the right rail
 	do
 		local covered, cases = 0, {}
-		local wheel = UIKit.getPanel("Wheel")
-		for _, vp in viewports do
-			setViewport(vp)
-			wheel:Open(); adv(0.5)
-			local rootW = layoutGui(wheel.Gui, vp)
-			local rootM = layoutGui(mainGui, vp)
-			local win = rootW.kids[2]
-			local rail
-			walk(rootM, function(n) if n.name == "Rail" then rail = n end end)
-			local railButtons = {}
-			if rail then walk(rail, function(n) if string.sub(n.name, -6) == "Button" and n.class == "TextButton" then table.insert(railButtons, n) end end) end
-			for _, b in railButtons do
-				local x = inter({ x = win.x, y = win.y, w = win.w, h = win.h }, { x = b.x, y = b.y, w = b.w, h = b.h })
-				if x.w > 2 and x.h > 2 then covered += 1; table.insert(cases, vp.X .. "x" .. vp.Y .. ":" .. b.name) end
+		for _, name in { "Wheel" } do
+			local docked = UIKit.getPanel(name)
+			for _, vp in viewports do
+				setViewport(vp)
+				docked:Open(); adv(0.5)
+				local rootW = layoutGui(docked.Gui, vp)
+				local rootM = layoutGui(mainGui, vp)
+				local win = rootW.kids[#rootW.kids]
+				local rail
+				walk(rootM, function(n) if n.name == "Rail" then rail = n end end)
+				local railButtons = {}
+				if rail then walk(rail, function(n) if string.sub(n.name, -6) == "Button" and n.class == "TextButton" and n.data.Props.Visible ~= false then table.insert(railButtons, n) end end) end
+				for _, b in railButtons do
+					local x = inter({ x = win.x, y = win.y, w = win.w, h = win.h }, { x = b.x, y = b.y, w = b.w, h = b.h })
+					if x.w > 2 and x.h > 2 then covered += 1; table.insert(cases, name .. "@" .. vp.X .. "x" .. vp.Y .. ":" .. b.name) end
+				end
+				docked:Close(); adv(0.3)
 			end
-			wheel:Close(); adv(0.3)
 		end
 		check("the docked Lucky Wheel window does not hide any right-rail button (7 viewports)", covered == 0, if covered > 0 then covered .. " rail buttons covered, e.g. " .. table.concat(cases, ", ", 1, math.min(#cases, 6)) else nil)
 		setViewport(Vector2.new(1280, 720))
 	end
 
 	---------------------------------------------------------------------------------------------------------------------
-	-- C. transient screens: server banner, hamster reveal card, emote wheel, tooltip
+	-- C. transient screens: server banner, hamster reveal card, emote wheel
 	---------------------------------------------------------------------------------------------------------------------
 	do
 		local Remotes = require(find("ReplicatedStorage.Remotes"))
 		local announce = Remotes.event("Announce")
 		local AnnouncementUI = require(find(UI .. "AnnouncementUI"))
-		local bad = {}
+		local EmoteUI = require(find(UI .. "EmoteUI"))
+		local TRANSIENT = { overlap = true, ["text-covered"] = true, ["overlap-box"] = true, ["overlap-controls"] = true, ["outside-parent"] = true, ["off-screen"] = true, ["zero-size"] = true, ["text-spill"] = true, ["text-spill-v"] = true, ["tiny-text"] = true }
+		local screens = { banner = {}, reveal = {}, emotes = {} }
 		for _, vp in viewports do
 			setViewport(vp)
+			local function take(which, root)
+				local findings = analyse(root, vp, {})
+				screens[which][vp.X .. "x" .. vp.Y] = findings
+				dumpRects(which, vp, root)
+			end
 			-- banner
 			RawData[announce].Signals.OnClientEvent:Fire({ Kind = "Spawn", RarityId = RarityConfig.Order[#RarityConfig.Order - 1], Text = "A LEGENDARY " .. string.upper(longestSpecies) .. " HAS APPEARED!", PlayerName = "Averyverylongname", UserId = 1 })
 			adv(0.8)
 			local ann = screenGui("AnnouncementUI")
-			local root = layoutGui(ann, vp)
-			local findings = analyse(root, vp, {})
-			for _, f in findings do
-				if PROBLEM[f.kind] then table.insert(bad, string.format("banner@%dx%d %s %s", vp.X, vp.Y, f.kind, f.detail)) end
-			end
-			dumpRects("banner", vp, root)
+			take("banner", layoutGui(ann, vp))
 			adv(5)
 			-- reveal card
 			AnnouncementUI.reveal(HamsterDatabase.Species[#HamsterDatabase.Species].Id, true)
 			adv(0.8)
-			root = layoutGui(ann, vp)
-			findings = analyse(root, vp, {})
-			for _, f in findings do
-				if PROBLEM[f.kind] then table.insert(bad, string.format("reveal@%dx%d %s %s", vp.X, vp.Y, f.kind, f.detail)) end
-			end
-			dumpRects("reveal", vp, root)
+			take("reveal", layoutGui(ann, vp))
 			adv(3.6)
 			-- emote wheel
-			local EmoteUI = require(find(UI .. "EmoteUI"))
 			EmoteUI.toggle(); adv(0.5)
-			root = layoutGui(screenGui("EmoteWheel"), vp)
-			findings = analyse(root, vp, {})
-			for _, f in findings do
-				if PROBLEM[f.kind] or f.kind == "tiny-text" then table.insert(bad, string.format("emotes@%dx%d %s %s", vp.X, vp.Y, f.kind, f.detail)) end
-			end
-			dumpRects("emotes", vp, root)
+			take("emotes", layoutGui(screenGui("EmoteWheel"), vp))
 			EmoteUI.toggle(); adv(0.4)
 		end
-		local seen = {}
-		local compact = {}
-		for _, line in bad do
-			local key = string.gsub(line, "@%d+x%d+", "")
-			if not seen[key] then seen[key] = true; table.insert(compact, line) end
-		end
-		check("transient screens (server banner, hamster reveal card, emote wheel) fit every viewport and keep their text readable", #bad == 0, if #bad > 0 then #bad .. " findings; distinct: " .. table.concat(compact, " ;; ", 1, math.min(#compact, 6)) else nil)
+		checkGroup("server banner (\"A LEGENDARY ... HAS APPEARED\") fits every viewport", screens.banner, TRANSIENT)
+		checkGroup("hamster reveal card (NEW HAMSTER) fits every viewport", screens.reveal, TRANSIENT)
+		checkGroup("emote wheel fits every viewport", screens.emotes, TRANSIENT)
+		setViewport(Vector2.new(1280, 720))
 	end
 
 	---------------------------------------------------------------------------------------------------------------------
@@ -1093,6 +1413,104 @@ task.spawn(function()
 	end
 
 	---------------------------------------------------------------------------------------------------------------------
+	-- D2. navigation consistency: icons and words must tell the same story on the rail, in the window and on the HUD
+	---------------------------------------------------------------------------------------------------------------------
+	do
+		-- the window opened by a rail button wears the SAME icon as the button (a bag on the rail and a coin on the window is two meanings)
+		local mismatch, noHeader = {}, {}
+		for _, def in UIRegistry.list("RightRail") do
+			local panel = def.Panel and UIKit.getPanel(def.Panel)
+			if panel then
+				local header = byName(panel.Gui, "Header")[1]
+				local iconId
+				if header then
+					for _, kid in M.InstanceMethods.GetChildren(header) do
+						local id = RawData[kid].Attributes.IconId
+						if id then iconId = id end
+					end
+				end
+				if not iconId then table.insert(noHeader, def.Id) elseif iconId ~= def.Icon then table.insert(mismatch, string.format("%s: rail '%s' vs window '%s'", def.Id, def.Icon, iconId)) end
+			end
+		end
+		check("every rail button and the window it opens show the SAME icon", #mismatch == 0 and #noHeader == 0, table.concat(mismatch, "; ") .. table.concat(noHeader, ","))
+
+		-- the word under a rail icon names the window it opens (Roblox phones have no hover tooltips: the label is all a touch player sees)
+		local synonyms = { Ranking = "leaderboards" } -- (the rail tile only fits ~9 letters; 'Ranking' for 'Leaderboards' is an accepted short form)
+		local wrongWord = {}
+		for _, def in UIRegistry.list("RightRail") do
+			local panel = def.Panel and UIKit.getPanel(def.Panel)
+			local title = panel and string.lower(RawData[panel.Title].Props.Text or "") or ""
+			local label = string.lower(def.Label or def.Id)
+			if panel and not string.find(title, label, 1, true) and not (synonyms[def.Label or ""] and string.find(title, synonyms[def.Label], 1, true)) then
+				table.insert(wrongWord, string.format("'%s' opens '%s'", def.Label or def.Id, RawData[panel.Title].Props.Text))
+			end
+		end
+		check("the word under each rail icon appears in the title of the window it opens", #wrongWord == 0, table.concat(wrongWord, "; "))
+
+		-- base security: the order asks for a LOCK. The gate chip is the only security indicator on the HUD.
+		local gate = byName(mainGui, "GateChip")[1]
+		local gateIcon
+		if gate then
+			for _, kid in M.InstanceMethods.GetChildren(gate) do if RawData[kid].Attributes.IconId then gateIcon = RawData[kid].Attributes.IconId end end
+		end
+		check("the base-security gate chip uses the lock icon", gateIcon == "lock", tostring(gateIcon))
+
+		-- inventory of every ScreenGui (info) and the insets rule: HUD under the top bar, hotbar inside the device safe area, windows full screen
+		local rows = {}
+		local guis = M.InstanceMethods.GetChildren(playerGui)
+		table.sort(guis, function(a, b) return (RawData[a].Props.DisplayOrder or 0) < (RawData[b].Props.DisplayOrder or 0) end)
+		local duplicates = {}
+		local seenNames = {}
+		for _, g in guis do
+			if RawData[g].ClassName == "ScreenGui" then
+				local name = RawData[g].Name
+				if seenNames[name] then table.insert(duplicates, name) end
+				seenNames[name] = true
+				table.insert(rows, string.format("%s(order %s%s, insets %s)", name, tostring(RawData[g].Props.DisplayOrder), if RawData[g].Props.Enabled == false then ", hidden" else "", tostring(RawData[g].Attributes.Insets)))
+			end
+		end
+		print("  [info] ScreenGuis (" .. #rows .. "): " .. table.concat(rows, " | "))
+		check("no ScreenGui exists twice (no second HUD, no second hotbar)", #duplicates == 0, table.concat(duplicates, ","))
+		local main, hotbarGui = screenGui("MainUI"), screenGui("HotbarUI")
+		local insetsOk = RawData[main].Props.ScreenInsets == Enum.ScreenInsets.TopbarSafeInsets and RawData[hotbarGui].Props.ScreenInsets == Enum.ScreenInsets.DeviceSafeInsets
+		check("MainUI uses TopbarSafeInsets (starts below the native top bar), HotbarUI uses DeviceSafeInsets (above the home indicator)", insetsOk, tostring(RawData[main].Props.ScreenInsets and RawData[main].Props.ScreenInsets.Name) .. " / " .. tostring(RawData[hotbarGui].Props.ScreenInsets and RawData[hotbarGui].Props.ScreenInsets.Name))
+	end
+
+	---------------------------------------------------------------------------------------------------------------------
+	-- F. text that comes from DATA fits its label: every item's stat rows and description, every item name on its card
+	---------------------------------------------------------------------------------------------------------------------
+	do
+		local ItemView = require(find(UI .. "ItemView"))
+		local function ratioOf(text, size, font, w, h, wrapped)
+			local m = measureText({ Props = { Text = text, TextSize = size, Font = font, TextWrapped = wrapped, RichText = false } }, w, h, 1)
+			return m and (if wrapped then m.ratio else m.ratio) or 0, m
+		end
+		local VALUE_W, DESC_W, DESC_H, NAME_W = 144, 286, 54, 138 -- design px of the Shop / Backpack detail card (314 wide) and the Shop card (150 wide)
+		local badValues, badDescs, badNames = {}, {}, {}
+		for _, def in ItemRegistry.List do
+			for _, row in ItemView.stats(def) do
+				local ratio = ratioOf(row[2], 13, Enum.Font.GothamBlack, VALUE_W, 18, false)
+				if ratio > OVER then table.insert(badValues, string.format("%s / %s: '%s' (%.0f%% of the %d px column)", def.DisplayName, row[1], row[2], ratio * 100, VALUE_W)) end
+			end
+			local ratio = ratioOf(def.Description or "", 14, Enum.Font.GothamMedium, DESC_W, DESC_H, true)
+			if ratio > OVER then table.insert(badDescs, string.format("%s (%.0f%% of the %d px high description box)", def.DisplayName, ratio * 100, DESC_H)) end
+		end
+		for _, item in ShopConfig.Items do
+			local ratio = ratioOf(item.Desc or "", 14, Enum.Font.GothamMedium, DESC_W, DESC_H, true)
+			if ratio > OVER then table.insert(badDescs, string.format("shop item %s (%.0f%%)", item.Id, ratio * 100)) end
+			local nameRatio = ratioOf(item.Name or "", 14, Enum.Font.GothamBlack, NAME_W, 20, false)
+			if nameRatio > OVER then table.insert(badNames, string.format("%s (%.0f%%)", item.Name, nameRatio * 100)) end
+		end
+		for _, def in ItemRegistry.List do
+			local nameRatio = ratioOf(def.DisplayName, 14, Enum.Font.GothamBlack, NAME_W, 20, false)
+			if nameRatio > OVER then table.insert(badNames, string.format("%s (%.0f%%)", def.DisplayName, nameRatio * 100)) end
+		end
+		check("every item stat value fits the 144 px value column of the detail card (no text running over its row name)", #badValues == 0, if #badValues > 0 then #badValues .. " too wide, e.g. " .. table.concat(badValues, " ;; ", 1, math.min(#badValues, 6)) else nil)
+		check("every item description fits the 3-line description box of the detail card", #badDescs == 0, if #badDescs > 0 then #badDescs .. " too long, e.g. " .. table.concat(badDescs, " ;; ", 1, math.min(#badDescs, 6)) else nil)
+		check("every item name fits the 138 px name label of its shop card", #badNames == 0, if #badNames > 0 then #badNames .. " too wide, e.g. " .. table.concat(badNames, " ;; ", 1, math.min(#badNames, 6)) else nil)
+	end
+
+	---------------------------------------------------------------------------------------------------------------------
 	-- E. button states: hover / pressed / disabled exist on the shared button
 	---------------------------------------------------------------------------------------------------------------------
 	do
@@ -1109,7 +1527,86 @@ task.spawn(function()
 		local disabledColor = RawData[b].Props.BackgroundColor3
 		local before = RawData[b].Props.TextTransparency
 		check("button states: hover brightens, leaving restores, disabled is visibly different (colour + dimmed text)", hover.R + hover.G + hover.B > base.R + base.G + base.B and math.abs(after.R - base.R) < 0.01 and (math.abs(disabledColor.R - base.R) + math.abs(disabledColor.G - base.G)) > 0.1 and before > 0)
+		-- pressed: the button squashes while the finger / mouse is down and springs back
+		local scaleObj
+		for _, kid in M.InstanceMethods.GetChildren(b) do if RawData[kid].ClassName == "UIScale" then scaleObj = kid end end
+		UIKit.setEnabled(b, true)
+		RawData[b].Signals.MouseButton1Down:Fire(); adv(0.2)
+		local pressedScale = RawData[scaleObj].Props.Scale
+		RawData[b].Signals.MouseButton1Up:Fire(); adv(0.3)
+		local releasedScale = RawData[scaleObj].Props.Scale
+		check("button states: pressed squashes the button (scale < 1) and releasing restores it", pressedScale < 0.99 and releasedScale >= 0.99, string.format("%.2f -> %.2f", pressedScale, releasedScale))
+		-- a disabled button does not run its action (and says so with the error sound)
+		local ran = 0
+		local d = UIKit.button(holder, { Text = "Disabled", Size = UDim2.fromOffset(120, 40), OnClick = function() ran += 1 end })
+		UIKit.setEnabled(d, false)
+		RawData[d].Signals.Activated:Fire(); adv(0.1)
+		check("a disabled button does not run its action", ran == 0)
 		M.InstanceMethods.Destroy(holder)
+
+		-- the rail: the button of the OPEN window is highlighted, the badge dot lights up when something can be claimed
+		local shopButton = byName(mainGui, "ShopButton")[1]
+		local baseColor = RawData[shopButton].Props.BackgroundColor3
+		UIKit.getPanel("Shop"):Open(); adv(0.8)
+		local openColor = RawData[shopButton].Props.BackgroundColor3
+		UIKit.getPanel("Shop"):Close(); adv(0.8)
+		local closedColor = RawData[shopButton].Props.BackgroundColor3
+		check("rail: the button of the open window is highlighted and goes back when it closes", (math.abs(openColor.R - baseColor.R) + math.abs(openColor.G - baseColor.G)) > 0.1 and math.abs(closedColor.R - baseColor.R) < 0.02, string.format("closed %.2f open %.2f", baseColor.R, openColor.R))
+		local wheelDot = byName(byName(mainGui, "WheelButton")[1], "NotifyDot")[1]
+		check("rail: the Lucky Wheel icon shows the red dot while a free spin is ready", wheelDot ~= nil and RawData[wheelDot].Props.Visible == true)
+
+		-- hover tooltips (PC): every rail tooltip fits to the left of its button on desktop / tablet screens (phones show no tooltips)
+		local longest, longestId = 0, ""
+		for _, def in UIRegistry.list("RightRail") do
+			local width = textWidth(def.Tooltip or def.Id, 13, false) + 20
+			if width > longest then longest, longestId = width, def.Id end
+		end
+		local cut = {}
+		for _, vp in viewports do
+			if not isPhoneKey(vp.X .. "x" .. vp.Y) then
+				setViewport(vp)
+				local rail
+				walk(layoutGui(mainGui, vp), function(n) if n.name == "Rail" then rail = n end end)
+				local leftEdge = 1e9
+				if rail then walk(rail, function(n) if n.class == "TextButton" and string.sub(n.name, -6) == "Button" then leftEdge = math.min(leftEdge, n.x) end end) end
+				if leftEdge - 8 - longest < 0 then table.insert(cut, string.format("%dx%d (tooltip of %s needs %.0f px, only %.0f free)", vp.X, vp.Y, longestId, longest, leftEdge - 8)) end
+			end
+		end
+		setViewport(Vector2.new(1280, 720))
+		check("rail tooltips (hover, PC) fit on screen to the left of the rail at desktop + tablet sizes", #cut == 0, table.concat(cut, "; "))
+	end
+
+	---------------------------------------------------------------------------------------------------------------------
+	-- G. a brand-new player: no window is an empty box (every empty list explains itself)
+	---------------------------------------------------------------------------------------------------------------------
+	do
+		M.isServer = true
+		data.Items = {}; data.Gear = {}; data.Hotbar = {}; data.Inventory = {}; data.Equipped = {}
+		ReplicationSystem.mark(p, "Items", "Gear", "Hotbar", "Inventory", "Equipped")
+		M.isServer = false
+		adv(2)
+		local backpack = UIKit.getPanel("Backpack")
+		backpack:Open(); adv(0.6)
+		local function visibleTextWith(root, needle)
+			for _, d in M.descendants(root) do
+				local dd = RawData[d]
+				if dd.ClassName == "TextLabel" and dd.Props.Visible ~= false and type(dd.Props.Text) == "string" and string.find(dd.Props.Text, needle, 1, true) then
+					-- every ancestor up to the window must be visible too
+					local node, shown = dd.Parent, true
+					while node and node ~= root do
+						if RawData[node].Props.Visible == false then shown = false end
+						node = RawData[node].Parent
+					end
+					if shown then return true end
+				end
+			end
+			return false
+		end
+		press(byName(backpack.Gui, "Tab_Items")[1]); adv(0.4)
+		check("a new player's Backpack > Items tab says it is empty and where to get items", visibleTextWith(backpack.Gui, "Your backpack is empty"))
+		press(byName(backpack.Gui, "Tab_Hamsters")[1]); adv(0.4)
+		check("a new player's Backpack > Hamsters tab says there are no hamsters yet", visibleTextWith(backpack.Gui, "No hamsters yet"))
+		backpack:Close(); adv(0.3)
 	end
 
 	print(string.format("PASS %d FAIL %d errors %d", results.pass, results.fail, #M.Sim.errors))
